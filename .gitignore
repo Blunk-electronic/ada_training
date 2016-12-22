@@ -1,0 +1,6 @@
+#ada stuff
+*.ali
+*.o
+
+*.odp#
+*~
