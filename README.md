@@ -1,6 +1,6 @@
 # Training files for Ada courses
-Ada Training
-contact: http://www.blunk-electronic.de
+Ada Training Contact: http://www.blunk-electronic.de
+
 
 
 
