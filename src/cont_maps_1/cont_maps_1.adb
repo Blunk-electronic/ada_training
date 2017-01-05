@@ -15,9 +15,9 @@ procedure cont_maps_1 is
  	n : natural;
 begin
 	type_my_map.insert(m,123,7); -- insert object '7' with key '123'
-  	type_my_map.insert(m,74188,99); -- insert object '99' with key '74188'
+  	type_my_map.insert(m,788,99); -- insert object '99' with key '788'
 
-	n := type_my_map.element(m,74188); -- get object with key '74188'
+	n := type_my_map.element(m,788); -- get object with key '788'
  	put_line(natural'image(n));
 	
 	n := type_my_map.element(m,123); -- get object with key '123'
