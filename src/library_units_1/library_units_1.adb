@@ -2,7 +2,7 @@
 -- that demonstrates how to use a
 -- simple library unit.
 
-with simple_library;
+with simple_library; -- use simple_library;
 
 procedure library_units_1 is
 
