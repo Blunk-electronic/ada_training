@@ -11,15 +11,15 @@ procedure cont_doubly_linked_list_1 is
 	c : type_my_list.cursor;
 	n : natural;
 begin
-	type_my_list.append(l,7);
-	type_my_list.append(l,9);
+	type_my_list.append(l,7); -- append object '7' to list 'l'
+	type_my_list.append(l,9); -- append object '9' to list 'l'
 
-	c := type_my_list.first(l);
-	n := type_my_list.element(c);
-	put_line(natural'image(n));
+	c := type_my_list.first(l); -- set cursor at begin of list
+	n := type_my_list.element(c); -- get first object
+	put_line(natural'image(n)); -- display object
 
-	c := type_my_list.next(c);
-	n := type_my_list.element(c);
-	put_line(natural'image(n));
+	c := type_my_list.next(c); -- advance cursor to next object
+	n := type_my_list.element(c); -- get next object
+	put_line(natural'image(n)); -- display object
 	
 end cont_doubly_linked_list_1;
