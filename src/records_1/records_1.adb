@@ -7,7 +7,7 @@ procedure records_1 is
 
 	type type_color is (red, green, yellow);
 
-	-- define the array type
+	-- define an apple
 	type type_apple is
 		record
 			color		: type_color;
@@ -15,7 +15,7 @@ procedure records_1 is
 			rotten		: boolean := false;
 		end record;
 
-	-- instantiate the record
+	-- instantiate an apple
 	apple : type_apple;
 begin
 	apple.color := yellow;
