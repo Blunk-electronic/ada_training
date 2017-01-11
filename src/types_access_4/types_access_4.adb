@@ -1,29 +1,29 @@
 -- This is a simple ada program, that
--- demonstrates a simple access type.
+-- demonstrates how to copy objects
+-- accessed by access types.
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_access_3 is
+procedure types_access_4 is
 
-	-- Create two different named access types:
+	-- Create two different incompatible named access types:
 	type ptr_a is access integer;
 	type ptr_b is access integer;	
 
-	-- Declare two different incompatible accesses to an integer:
+	-- Declare two different accesses to an integer:
 	ai : ptr_a;
-	bi : ptr_b; -- try ptr_a ?
+	bi : ptr_b;
 
 begin
 	-- Create integer #1 of value -10 where ai is pointing at:
 	ai := new integer'(-10);
 	-- Create integer #2 of value -20 where ai is pointing at:
-	ai := new integer'(-20);
-	-- Change integer #2 to value -21
-	ai.all := -21; 
+	bi := new integer'(-20);
 	
-	-- bi := ai; -- does not compile
+	-- Overwrite integer #1 with integer #2 (copy):
+	ai.all := bi.all; 
 
 	-- Display the value of the integer where ai is pointing at:
 	put_line ( integer'image(ai.all) );
 	
-end types_access_3;
+end types_access_4;
