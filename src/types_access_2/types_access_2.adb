@@ -9,17 +9,17 @@ procedure types_access_2 is
 	ai, bi : access integer;
 
 begin
-	-- Create an integer of value -10 where ai is pointing at:
+	-- Create integer #1 of value -10 where ai is pointing at:
 	ai := new integer'(-10);
-	bi := ai; -- backup address
+	bi := ai; -- backup address of integer #1
 	
-	-- Create another integer of value 4 where ai is pointing at now:
+	-- Create integer #2 of value 4 where ai is pointing at now:
 	ai := new integer'(4);
 
 	-- Display the value of the integer where ai is pointing at:
 	put_line ( integer'image(ai.all) );
 
-	ai := bi; -- restore address
+	ai := bi; -- restore address of integer #1
 
 	-- Display the value of the integer where ai is pointing at:
 	put_line ( integer'image(ai.all) );
