@@ -13,7 +13,7 @@ begin
 	-- mass := 11.4; -- Causes a warning at compile and
 					 -- a constraint error at run time.
 
-	mass := 10.035;  -- discards the last digit (5).
+	mass := 10.035;  -- rounding takes place
 
 	put_line("the apple weights :" & kilogramms'image(mass) & " kg");
 
