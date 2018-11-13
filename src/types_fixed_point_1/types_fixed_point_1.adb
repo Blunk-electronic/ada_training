@@ -15,7 +15,7 @@ begin
 	put_line ("step width :" & type_angle'image (step_width));
 	
 	angle := type_angle'last; -- 359.99
-	angle := type_angle'first; -- 0.01
+	angle := type_angle'first; -- 0.00
 
 	for i in 1..10 loop
 		
