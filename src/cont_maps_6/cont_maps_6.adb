@@ -24,7 +24,7 @@ procedure cont_maps_6 is
 
 	procedure change (
 		name	: in character;
-		thing	: in out list) is
+		thing	: in out my_list.list) is
 	begin
 		thing.append(100);
 		thing.append(101);
@@ -32,15 +32,21 @@ procedure cont_maps_6 is
 
 	procedure query (
 		name	: in character;
-		thing	: in list) is
+		thing	: in my_list.list) is
+		c : my_list.cursor := thing.first;
 
-		procedure print_item (cursor : my_list.list.cursor) is
-		begin	
-			put_line (natural'image (element (cursor)));
-		end print_item;
+-- 		procedure print_item (cursor : my_list.cursor) is
+-- 		begin	
+-- 			put_line (natural'image (element (cursor)));
+-- 		end print_item;
 
 	begin -- query
-		thing.iterate (print_item'access);
+		--thing.iterate (print_item'access);
+		
+		while c /= my_list.no_element loop
+			put_line (natural'image (element (c)));
+			next (c);
+		end loop;
 	end query;
 
 begin -- cont_maps_6
@@ -58,9 +64,7 @@ begin -- cont_maps_6
 			process		=> change'access);
 	end if;
 
-	--put_line (natural'image ( element (c).first_element));
 	query_element (
-		container	=> m,
 		position	=> c,
 		process		=> query'access);
 
