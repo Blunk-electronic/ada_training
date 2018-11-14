@@ -12,6 +12,7 @@ package body library_with_private_types is
 	begin
 		w.cash := c;
 		w.estate := 0;
+		w.total := c;
 		return w;
 	end take_money;
 
@@ -20,6 +21,7 @@ package body library_with_private_types is
 	begin
 		w.cash := 0;
 		w.estate := e;
+		w.total := e;
 		return w;
 	end take_estate;
 	
@@ -33,10 +35,8 @@ package body library_with_private_types is
 	end "+";
 
 	function show_wealth (w : in wealth) return natural is
-		total : natural;
 	begin
-		total := w.cash + w.estate;
-		return (total);
+		return (w.total);
 	end show_wealth;
 	
 end library_with_private_types;
