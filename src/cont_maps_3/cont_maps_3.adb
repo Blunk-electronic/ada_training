@@ -13,20 +13,20 @@ procedure cont_maps_3 is
 	use type_my_map;
 
  	m : type_my_map.map;
- 	n : natural;
 	c : type_my_map.cursor;
 begin
 	type_my_map.insert(m,'A',7); -- insert object '7' with key 'A'
   	type_my_map.insert(m,'X',99); -- insert object '99' with key 'X'
   	type_my_map.insert(m,'Z',4); -- insert object '99' with key 'X'
 
-	c := first(m);
+	c := first (m);
 
 	while c /= no_element loop
 
-		n := element(c);
-		next(c);
-		put_line(natural'image(n));
+		put_line (key (c) & " " & natural'image (element (c)));
+
+		next (c);
+
 
 	end loop;
 
