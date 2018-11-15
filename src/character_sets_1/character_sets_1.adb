@@ -11,7 +11,8 @@ procedure character_sets_1 is
 	use type_string;
 	bs : type_string.bounded_string := to_bounded_string ("AB-C");
 	
-	char_set : character_set := to_set (span => ('A','Z')); 
+	--char_set : character_set := to_set (span => ('A','Z')); 
+	char_set : character_set := to_set (ranges => (('A','Z'),('a','z')));
 
 	invalid_character_position : natural := 0;
 begin
