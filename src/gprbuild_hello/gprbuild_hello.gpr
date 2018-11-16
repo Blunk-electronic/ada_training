@@ -1,0 +1,12 @@
+ project gprbuild_hello is
+
+	--for exec_dir use ".";
+ 	--for object_dir use "obj";
+ 	--for source_dirs use ("." , "src" , "src/include");
+	--for source_dirs use (".");
+
+ 	for main use ("gprbuild_hello");
+ end gprbuild_hello;
+
+-- build with command "gprbuild gprbuild_hello"
+-- clean up with command "gprclean"
