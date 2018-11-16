@@ -1,0 +1,3 @@
+project threading_1 is
+    for Main use ("threading_1.adb");
+end threading_1;
