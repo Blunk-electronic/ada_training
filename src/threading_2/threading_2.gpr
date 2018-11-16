@@ -1,0 +1,4 @@
+project threading_2 is
+ 	  for object_dir use "obj";
+    for Main use ("threading_2.adb");
+end threading_2;
