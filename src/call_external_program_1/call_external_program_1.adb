@@ -9,7 +9,7 @@ procedure call_external_program_1 is
 begin
 	spawn  -- blocking
 		(  
-		program_name           => "/usr/bin/ls",
+		program_name           => "/bin/ls",
 		args                   => 	(
 									1=> new string'("-l")
 									),
@@ -19,6 +19,10 @@ begin
 
 	-- execution continues here after 
 	-- program_name has finished.
-	put_line ("done");
-	
+	if result = 0 then
+		put_line ("done");
+	else
+		put_line ("program execution failed");
+	end if;
+
 end call_external_program_1;

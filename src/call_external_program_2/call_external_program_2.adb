@@ -9,7 +9,7 @@ procedure call_external_program_2 is
 begin
 	pid := non_blocking_spawn
 		(  
-		program_name           => "/usr/bin/ls",
+		program_name           => "/bin/ls",
 		args                   => 	(
 									1=> new string'("-l")
 									),
