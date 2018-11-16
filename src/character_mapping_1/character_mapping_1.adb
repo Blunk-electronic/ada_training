@@ -9,13 +9,13 @@ procedure character_mapping_1 is
 
 	package type_string is new generic_bounded_length (100);
 	use type_string;
-	bs : type_string.bounded_string := to_bounded_string ("AB-C");
+	bs : type_string.bounded_string := to_bounded_string ("/home/user/.config/test.txt");
 	
 	characters : character_mapping := to_mapping ("./","_#");
 begin
-	put_line ("before: " & to_bounded_string (bs));
+	put_line ("before: " & to_string (bs));
 	translate (bs, characters);
 
-	put_line ("now   : " & to_bounded_string (bs));
+	put_line ("now   : " & to_string (bs));
 	
 end character_mapping_1;
