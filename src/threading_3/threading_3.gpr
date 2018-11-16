@@ -1,0 +1,4 @@
+project threading_3 is
+ 	  for object_dir use "obj";
+    for Main use ("threading_3.adb");
+end threading_3;
