@@ -1,15 +1,15 @@
 -- This is a simple ada program, that
--- demonstrates a doubly linked list.
+-- demonstrates an indefinitely doubly linked list.
 
-with ada.text_io; use ada.text_io;
-with ada.containers; use ada.containers;
+with ada.text_io; 		use ada.text_io;
+with ada.containers; 	use ada.containers;
 with ada.containers.indefinite_doubly_linked_lists;
 
 procedure cont_doubly_linked_list_2b is
 
 	type type_car (broken : boolean) is record
 		seats	: positive;
-		weight	: float;
+		weight : float;
 		case broken is
 			when false => null;
 			when true => damage : float;
