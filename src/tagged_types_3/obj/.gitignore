@@ -1,0 +1,7 @@
+*.adb
+*.ads
+*.ali
+*.o
+*.stderr
+*.stdout
+*.bexch
