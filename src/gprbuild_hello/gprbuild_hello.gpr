@@ -1,8 +1,7 @@
  project gprbuild_hello is
 
+  --for exec_dir use external ("HOME") & "/bin";
 	--for exec_dir use ".";
-	--for exec_dir use "/home/user/bin"; -- does work
-	--for exec_dir use "$HOME/bin"; -- does not work
  	--for object_dir use "obj";
  	--for source_dirs use ("." , "src" , "src/include");
 	--for source_dirs use (".");
