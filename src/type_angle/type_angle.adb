@@ -1,13 +1,19 @@
 -- This is a simple ada program,
 -- demonstrates some data types.
 
+
 pragma assertion_policy (check);
+with system.assertions;
 with ada.text_io;	use ada.text_io;
 
 procedure type_angle is
+
+	angle_delta : constant := 5;
+
 	subtype angle is integer range -355 .. 355
-	with dynamic_predicate => angle mod 5 = 0;
+	with dynamic_predicate => angle mod angle_delta = 0;
 	a : angle;
+	
 begin
 	a := -355;
 	a :=  355;
@@ -15,7 +21,7 @@ begin
 	a := 0;
 	a := 5;
 	
-	-- a := 7; -- error at compile time -> ok
+	a := 7; -- error at compile time -> ok
 
 	a := a + 2; -- error at runtime -> ok
 
@@ -23,8 +29,10 @@ begin
 		when constraint_error => 
 			put_line ("outside range");
 
-		--when SYSTEM.ASSERTIONS.ASSERT_FAILURE => -- ?
-		when others =>
-			put_line ("invalid step width ! Step width must be " & "5"); -- ?
+		when system.assertions.assert_failure =>
+			put_line ("invalid step width ! Step width must be" & integer'image (angle_delta));
 
+		when others =>
+			put_line ("other error");
+			
 end type_angle;
