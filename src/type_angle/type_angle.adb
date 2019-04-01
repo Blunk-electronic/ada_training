@@ -21,9 +21,9 @@ begin
 	a := 0;
 	a := 5;
 	
-	a := 7; -- error at compile time -> ok
+	a := 7; -- no error at compile time -> would be good to get an error here
 
-	a := a + 2; -- error at runtime -> ok
+	--a := a + 2; -- error at runtime -> ok
 
 	exception 
 		when constraint_error => 
