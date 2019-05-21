@@ -25,16 +25,15 @@ with ada.text_io;			use ada.text_io;
 
 procedure gtkada_2 is
 
+	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class) is
+	begin
+		put_line("exiting ...");
+		gtk.main.main_quit;
+	end terminate_main;
+	
 	window : gtk.window.gtk_window;
 
--- 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class) is
--- 	begin
--- 		put_line("exiting ...");
--- 		gtk.main.main_quit;
--- 	end terminate_main;
-	
 begin
-
 	put_line ("init gtkada");
 
 	-- initialize gtkada
@@ -43,7 +42,11 @@ begin
 	-- create the main window
 	gtk.window.gtk_new (window);
 
-	--window.on_destroy (terminate_main'access);
+	-- window.on_destroy (terminate_main'access);
+	-- compile error: subprogram must not be deeper than access type
+	
+	window.on_destroy (terminate_main'unrestricted_access);
+
 	
 	-- show the window
 	window.show_all;
@@ -52,5 +55,5 @@ begin
 	-- and waits for an event to occur (like a key press or a mouse event),
 	-- until Gtk.Main.Main_Quit is called.
 	gtk.main.main;
-	
+
 end;
