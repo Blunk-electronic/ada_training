@@ -6,30 +6,18 @@
 -- clean up with command "gprclean"
 
 with gtk.main;
-with gtk.window; 				--use gtk.window;
-
-with gtk.widget;  				--use gtk.widget;
--- with gtk.box;					use gtk.box;
--- with gtk.button;     			use gtk.button;
--- with gtk.label;					use gtk.label;
--- with gtk.image;					use gtk.image;
--- with gtk.file_chooser;			use gtk.file_chooser;
--- with gtk.file_chooser_button;	use gtk.file_chooser_button;
--- with gtk.file_filter;			use gtk.file_filter;
--- with gtkada.handlers; 			use gtkada.handlers;
--- with glib.object;
--- with gdk.event;
+with gtk.window;
+with gtk.widget;
 
 with ada.text_io;			use ada.text_io;
 
-
 procedure gtkada_2 is
 
-	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class) is
+	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class) is 
 	begin
 		put_line("exiting ...");
 		gtk.main.main_quit;
-	end terminate_main;
+	end;
 	
 	window : gtk.window.gtk_window;
 
@@ -43,10 +31,9 @@ begin
 	gtk.window.gtk_new (window);
 
 	-- window.on_destroy (terminate_main'access);
-	-- compile error: subprogram must not be deeper than access type
+	-- compile error: "subprogram must not be deeper than access type"
 	
 	window.on_destroy (terminate_main'unrestricted_access);
-
 	
 	-- show the window
 	window.show_all;
@@ -55,5 +42,4 @@ begin
 	-- and waits for an event to occur (like a key press or a mouse event),
 	-- until Gtk.Main.Main_Quit is called.
 	gtk.main.main;
-
 end;
