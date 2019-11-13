@@ -1,5 +1,5 @@
 -- This is a simple ada program, that demonstrates gtkada
--- It draws just a window. The program exits only on CTRL-C.
+-- It draws just a window. The program exits on clicking X or on CTRL-C.
 -- It requires to have package gtkada installed.
 
 -- build with command "gprbuild"
