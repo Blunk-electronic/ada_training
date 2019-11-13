@@ -30,9 +30,8 @@ begin
 	-- create the main window
 	gtk.window.gtk_new (window);
 
-	-- window.on_destroy (terminate_main'access);
-	-- compile error: "subprogram must not be deeper than access type"
-	
+	-- On clicking the "X" button in the upper right corner of the window
+	-- the program must terminate (by exiting the main loop):
 	window.on_destroy (terminate_main'unrestricted_access);
 	
 	-- show the window
