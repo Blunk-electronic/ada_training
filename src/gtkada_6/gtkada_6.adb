@@ -2,20 +2,22 @@
 -- It draws a window with some elements in it.
 
 with gtk.main;
-with gtk.window; 			use gtk.window;
-with gtk.widget;  			use gtk.widget;
-with gtk.box;				use gtk.box;
-with gtk.button;     		use gtk.button;
+with gtk.window; 				use gtk.window;
+with gtk.widget;  				use gtk.widget;
+with gtk.box;					use gtk.box;
+with gtk.button;     			use gtk.button;
+with gtk.label;					use gtk.label;
 
 with ada.text_io;			use ada.text_io;
 
 with callbacks_3;
 
-procedure gtkada_5 is
+procedure gtkada_6 is
 
 	window 					: gtk_window;
 	box_back, box_A, box_B	: gtk_box;
 	button_on, button_off	: gtk_button;	
+	label					: gtk.label.gtk_label;
 	
 begin
 	gtk.main.init;
@@ -36,15 +38,21 @@ begin
 
 	-- Create another box inside box_back with extra space AROUND it.
 	gtk_new_vbox (box_B);
-	pack_start (box_back, box_B, padding => 50);	
+	pack_start (box_back, box_B, padding => 50); -- left of box A
 
 	
-	-- Create buttons with extra space AROUND them and place them in the boxes:
+	-- Create a button with extra space AROUND and place it in box A:
 	gtk_new (button_off, "POWER OFF");
 	pack_start (box_A, button_off, padding => 100);
 
+	-- Create a label with extra space AROUND and place it in box B:
+	gtk_new (label, "A USELESS LABEL");
+	pack_start (box_B, label, padding => 100);
+
+	-- Create a button wand place it in box B below the label:
 	gtk_new (button_on, "POWER ON");
-	pack_start (box_B, button_on, padding => 200);
+	pack_start (box_B, button_on, padding => 100);
+
 
 	
 	-- Now we connect the events issued by the window

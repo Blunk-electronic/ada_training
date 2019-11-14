@@ -1,10 +1,7 @@
+with gtk.widget;  		--use gtk.widget;
+with gtk.button;     	--use gtk.button;
+with glib.object;		-- use glib.object;
 
--- with gtk.main;
--- with gtk.window; 				--use gtk.window;
-
-with gtk.widget;  				--use gtk.widget;
--- with gtk.box;					use gtk.box;
-with gtk.button;     			--use gtk.button;
 -- with gtk.label;					use gtk.label;
 -- with gtk.image;					use gtk.image;
 -- with gtk.file_chooser;			use gtk.file_chooser;
@@ -23,5 +20,7 @@ package callbacks_3 is
 
 	procedure write_message_off (self : access gtk.button.gtk_button_record'class);
 	procedure write_message_on (self : access gtk.button.gtk_button_record'class);
-	
+
+	procedure write_message_up (self : access glib.object.gobject_record'class);
+	procedure write_message_down (self : access glib.object.gobject_record'class);	
 end;

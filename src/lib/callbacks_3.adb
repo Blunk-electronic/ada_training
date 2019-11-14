@@ -2,6 +2,8 @@ with gtk.widget;
 with gtk.main;
 with gtk.window;
 with gtk.button;
+with glib.object;
+
 
 with ada.text_io;			use ada.text_io;
 
@@ -27,5 +29,13 @@ package body callbacks_3 is
 		-- do things requried to power up the machine ...
 	end;
 
+	
+	procedure write_message_up (self : access glib.object.gobject_record'class) is begin
+		put_line("The blinds are moving up ...");
+	end;
+	
+	procedure write_message_down (self : access glib.object.gobject_record'class) is begin
+		put_line("The blinds are moving down ...");
+	end;
 	
 end;

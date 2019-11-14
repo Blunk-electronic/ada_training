@@ -1,0 +1,13 @@
+with "gtkada.gpr";
+
+ project gtkada_7 is
+
+	for exec_dir use ".";
+ 	for object_dir use "obj";
+ 	for source_dirs use ("." , "../lib");
+
+ 	for main use ("gtkada_7");
+ end gtkada_7;
+
+-- build with command "gprbuild"
+-- clean up with command "gprclean"
