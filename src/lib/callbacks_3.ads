@@ -1,18 +1,8 @@
 with gtk.widget;  		--use gtk.widget;
 with gtk.button;     	--use gtk.button;
 with glib.object;		-- use glib.object;
-
--- with gtk.label;					use gtk.label;
--- with gtk.image;					use gtk.image;
--- with gtk.file_chooser;			use gtk.file_chooser;
--- with gtk.file_chooser_button;	use gtk.file_chooser_button;
--- with gtk.file_filter;			use gtk.file_filter;
--- with gtkada.handlers; 			use gtkada.handlers;
--- with glib.object;
--- with gdk.event;
-
--- with ada.text_io;			use ada.text_io;
-
+with gtk.gentry;
+-- with gtk.combo_box;
 
 package callbacks_3 is
 
@@ -23,4 +13,7 @@ package callbacks_3 is
 
 	procedure write_message_up (self : access glib.object.gobject_record'class);
 	procedure write_message_down (self : access glib.object.gobject_record'class);	
+
+	procedure echo_command_simple (self : access gtk.gentry.gtk_entry_record'class);
+-- 	procedure echo_command_advanced (self : access gtk.combo_box.gtk_combo_box_record'class);	
 end;
