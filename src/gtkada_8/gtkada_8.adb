@@ -14,6 +14,7 @@ with gtk.combo_box_text;	use gtk.combo_box_text;
 with gtk.frame;				use gtk.frame;
 with gtk.scrolled_window;	use gtk.scrolled_window;
 
+with glib;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with gtkada.canvas;			use gtkada.canvas;
@@ -32,46 +33,66 @@ procedure gtkada_8 is
 	button_up, button_down	: gtk_tool_button;	
 	toolbar					: gtk_toolbar;
 	console					: gtk_entry;
-	--console_2    			: gtk_combo_box_text;
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 
-   type Display_Item_Record is new Canvas_Item_Record with record
-      Canvas : Interactive_Canvas;
-      Color  : Gdk.RGBA.Gdk_RGBA;
-      Title  : Gdk.RGBA.Gdk_RGBA;
-      W, H   : Gint;
-      Num    : Positive;
-   end record;
+	type display_item_record is new canvas_item_record with null record;
+-- 		canvas : interactive_canvas;
+-- 		color  : gdk.rgba.gdk_rgba;
+-- 		title  : gdk.rgba.gdk_rgba;
+-- 		w, h   : gint;
+-- 		num    : positive;
+-- 	end record;
+
+	type type_dummy is access all display_item_record;
+	dummy : type_dummy;
+
+	cr : cairo.cairo_context;
+	
+	procedure draw (
+		item : access display_item_record;
+		cr   : cairo.cairo_context) is 
+		use glib;
+	begin
+      cairo.rectangle
+		  (cr => cr,
+		   x => 0.5, 
+		   y => 0.5, 
+		   width => gdouble (100), 
+		   height => gdouble (200));
+	  
+      cairo.fill (cr);
+	end;
 
 	
-	type image_canvas_record is new interactive_canvas_record with record
-		background : cairo_pattern := null_pattern;
-		draw_grid  : boolean := true;
-	end record;
-	
-	type image_canvas is access all image_canvas_record'class;
-
-   procedure Initialize
-     (Item   : access Display_Item_Record'Class;
-      Canvas : access Interactive_Canvas_Record'Class)
-   is
-   begin
-      Item.Canvas := Interactive_Canvas (Canvas);
-      Item.Color := Colors (Color_Random.Random (Color_Gen));
-      Item.Title := (0.0, 0.0, 0.0, 1.0);
-      Item.W := Item_Width * Random (Zoom_Gen);
-      Item.H := Item_Height * Random (Zoom_Gen);
-      Item.Num := Last_Item;
-      if Last_Item <= Items_List'Last then
-         Items_List (Item.Num) := Canvas_Item (Item);
-      end if;
-      Last_Item := Last_Item + 1;
-      Set_Screen_Size (Item, Item.W, Item.H);
-      Set_Text (Num_Items_Label, Positive'Image (Last_Item - 1) & " items");
-   end Initialize;
-	
-	canvas : image_canvas;
+-- 	type image_canvas_record is new interactive_canvas_record with record
+-- 		background : cairo_pattern := null_pattern;
+-- 		draw_grid  : boolean := true;
+-- 	end record;
+-- 	
+-- 	type image_canvas is access all image_canvas_record'class;
+-- 
+--    procedure Initialize
+--      (Item   : access Display_Item_Record'Class;
+--       Canvas : access Interactive_Canvas_Record'Class)
+--    is
+--    begin
+--       Item.Canvas := Interactive_Canvas (Canvas);
+--       Item.Color := Colors (Color_Random.Random (Color_Gen));
+--       Item.Title := (0.0, 0.0, 0.0, 1.0);
+--       Item.W := Item_Width * Random (Zoom_Gen);
+--       Item.H := Item_Height * Random (Zoom_Gen);
+--       Item.Num := Last_Item;
+--       if Last_Item <= Items_List'Last then
+--          Items_List (Item.Num) := Canvas_Item (Item);
+--       end if;
+--       Last_Item := Last_Item + 1;
+--       Set_Screen_Size (Item, Item.W, Item.H);
+--       Set_Text (Num_Items_Label, Positive'Image (Last_Item - 1) & " items");
+--    end Initialize;
+-- 	
+   --canvas : image_canvas;
+	canvas : interactive_canvas;
 	
 begin
 	gtk.main.init;
@@ -142,12 +163,13 @@ begin
 	set_policy (scrolled, policy_automatic, policy_automatic);
 	add (frame, scrolled);
 
-	canvas := new image_canvas_record;
+	-- 	canvas := new image_canvas_record;
+	canvas := new interactive_canvas_record;
 	initialize (canvas);
 	add (scrolled, canvas);
 	align_on_grid (canvas, false);
 
-	
+-- 	draw (dummy, cr);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
