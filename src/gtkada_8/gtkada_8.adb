@@ -17,8 +17,8 @@ with gtk.scrolled_window;	use gtk.scrolled_window;
 with glib;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
-with gtkada.canvas;			use gtkada.canvas;
-
+with gtkada.canvas_view;	use gtkada.canvas_view;
+with gtkada.style;     		use gtkada.style;
 with ada.text_io;			use ada.text_io;
 
 with callbacks_3;
@@ -36,41 +36,31 @@ procedure gtkada_8 is
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 
-	type display_item_record is new canvas_item_record with null record;
--- 		canvas : interactive_canvas;
--- 		color  : gdk.rgba.gdk_rgba;
--- 		title  : gdk.rgba.gdk_rgba;
--- 		w, h   : gint;
--- 		num    : positive;
--- 	end record;
-
-	type type_dummy is access all display_item_record;
-	dummy : type_dummy;
-
-	cr : cairo.cairo_context;
-	
-	procedure draw (
-		item : access display_item_record;
-		cr   : cairo.cairo_context) is 
-		use glib;
-	begin
-      cairo.rectangle
-		  (cr => cr,
-		   x => 0.5, 
-		   y => 0.5, 
-		   width => gdouble (100), 
-		   height => gdouble (200));
-	  
-      cairo.fill (cr);
-	end;
+	type type_item is abstract new canvas_item_record with null record;
 
 	
--- 	type image_canvas_record is new interactive_canvas_record with record
--- 		background : cairo_pattern := null_pattern;
--- 		draw_grid  : boolean := true;
--- 	end record;
--- 	
--- 	type image_canvas is access all image_canvas_record'class;
+-- 	type type_dummy is access all display_item_record;
+-- 	dummy : type_dummy;
+-- 
+-- 	cr : cairo.cairo_context;
+	
+-- 	procedure draw (
+-- 		item : access display_item_record;
+-- 		cr   : cairo.cairo_context) is 
+-- 		use glib;
+-- 	begin
+--       cairo.rectangle
+-- 		  (cr => cr,
+-- 		   x => 0.5, 
+-- 		   y => 0.5, 
+-- 		   width => gdouble (100), 
+-- 		   height => gdouble (200));
+-- 	  
+--       cairo.fill (cr);
+-- 	end;
+
+	type type_canvas is new canvas_view_record with null record;
+	type type_canvas_view is access all type_canvas'class;
 -- 
 --    procedure Initialize
 --      (Item   : access Display_Item_Record'Class;
@@ -92,7 +82,7 @@ procedure gtkada_8 is
 --    end Initialize;
 -- 	
    --canvas : image_canvas;
-	canvas : interactive_canvas;
+-- 	canvas : interactive_canvas;
 	
 begin
 	gtk.main.init;
@@ -164,10 +154,10 @@ begin
 	add (frame, scrolled);
 
 	-- 	canvas := new image_canvas_record;
-	canvas := new interactive_canvas_record;
-	initialize (canvas);
-	add (scrolled, canvas);
-	align_on_grid (canvas, false);
+-- 	canvas := new interactive_canvas_record;
+-- 	initialize (canvas);
+-- 	add (scrolled, canvas);
+-- 	align_on_grid (canvas, false);
 
 -- 	draw (dummy, cr);
 	
