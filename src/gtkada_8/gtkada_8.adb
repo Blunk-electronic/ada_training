@@ -19,6 +19,10 @@ with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
+
+with ada.containers;		use ada.containers;
+with ada.containers.doubly_linked_lists;
+
 with ada.text_io;			use ada.text_io;
 
 with callbacks_3;
@@ -36,15 +40,38 @@ procedure gtkada_8 is
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 
-	canvas : canvas_view; -- type canvas_view is access all canvas_view_record'class
+	canvas : canvas_view; -- access to canvas_view_record'class
 
-	model : list_canvas_model;
+	model : list_canvas_model; -- access to list_canvas_model_record'class
 
 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
 	context : draw_context;
 
+-- 	function is_link (
+-- 		self : not null access abstract_item_record) return boolean;
 	
-	type type_item is abstract new canvas_item_record with null record;
+	type type_item is new abstract_item_record with record
+		x, y : gdouble;
+	end record;
+
+	function is_link (
+		self : not null access abstract_item_record) return boolean is 
+	begin
+		return false;
+	end;
+
+	
+-- 	type type_item_pointer is access all type_item;
+	item_pointer : abstract_item;
+
+	package pac_items is new ada.containers.doubly_linked_lists (type_item);
+
+	procedure draw (
+		self	: not null access type_item;
+		context : draw_context) is
+	begin
+		null;
+	end;
 
 begin
 	gtk.main.init;
@@ -124,6 +151,15 @@ begin
 	set_grid_size (canvas);
 -- 	draw_internal (canvas, context, model_rec);
 
+	item_pointer := new type_item;
+-- 	add (self => model,
+-- 		item => item_pointer);
+
+	--      Self : not null access List_Canvas_Model_Record;
+--       Item : not null access Abstract_Item_Record'Class);
+   --  Add a new item to the model.
+
+	
 -- 	draw (dummy, cr);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
