@@ -14,7 +14,7 @@ with gtk.combo_box_text;	use gtk.combo_box_text;
 with gtk.frame;				use gtk.frame;
 with gtk.scrolled_window;	use gtk.scrolled_window;
 
-with glib;
+with glib;					use glib;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with gtkada.canvas_view;	use gtkada.canvas_view;
@@ -36,54 +36,16 @@ procedure gtkada_8 is
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 
+	canvas : canvas_view; -- type canvas_view is access all canvas_view_record'class
+
+	model : list_canvas_model;
+
+	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
+	context : draw_context;
+
+	
 	type type_item is abstract new canvas_item_record with null record;
 
-	
--- 	type type_dummy is access all display_item_record;
--- 	dummy : type_dummy;
--- 
--- 	cr : cairo.cairo_context;
-	
--- 	procedure draw (
--- 		item : access display_item_record;
--- 		cr   : cairo.cairo_context) is 
--- 		use glib;
--- 	begin
---       cairo.rectangle
--- 		  (cr => cr,
--- 		   x => 0.5, 
--- 		   y => 0.5, 
--- 		   width => gdouble (100), 
--- 		   height => gdouble (200));
--- 	  
---       cairo.fill (cr);
--- 	end;
-
-	type type_canvas is new canvas_view_record with null record;
-	type type_canvas_view is access all type_canvas'class;
--- 
---    procedure Initialize
---      (Item   : access Display_Item_Record'Class;
---       Canvas : access Interactive_Canvas_Record'Class)
---    is
---    begin
---       Item.Canvas := Interactive_Canvas (Canvas);
---       Item.Color := Colors (Color_Random.Random (Color_Gen));
---       Item.Title := (0.0, 0.0, 0.0, 1.0);
---       Item.W := Item_Width * Random (Zoom_Gen);
---       Item.H := Item_Height * Random (Zoom_Gen);
---       Item.Num := Last_Item;
---       if Last_Item <= Items_List'Last then
---          Items_List (Item.Num) := Canvas_Item (Item);
---       end if;
---       Last_Item := Last_Item + 1;
---       Set_Screen_Size (Item, Item.W, Item.H);
---       Set_Text (Num_Items_Label, Positive'Image (Last_Item - 1) & " items");
---    end Initialize;
--- 	
-   --canvas : image_canvas;
--- 	canvas : interactive_canvas;
-	
 begin
 	gtk.main.init;
 
@@ -122,7 +84,7 @@ begin
 	button_down.on_clicked (callbacks_3.write_message_down'access, toolbar);
 
 
-	-- console on the right top
+	-- box for console on the right top
 	gtk_new_vbox (box_console);
 	set_spacing (box_console, 10);
 	add (box_right, box_console);
@@ -132,14 +94,6 @@ begin
 	set_text (console, "cmd");
 	pack_start (box_console, console);
 	console.on_activate (callbacks_3.echo_command_simple'access); -- on hitting enter
-
-	-- a more advanced text entry below
-	-- gtk_new_with_entry (console_2);
-	-- 	set_text (console_2, "cmd");
-	-- console_2.append_text ("cmd1");
-	-- console_2.append_text ("cmd2 cmd2");	
-	-- add (box_console, console_2);
-	-- console_2.on_changed (callbacks_3.echo_command_advanced'access);
 
 	-- drawing area on the right bottom
 	gtk_new_hbox (box_drawing);
@@ -153,11 +107,22 @@ begin
 	set_policy (scrolled, policy_automatic, policy_automatic);
 	add (frame, scrolled);
 
-	-- 	canvas := new image_canvas_record;
--- 	canvas := new interactive_canvas_record;
--- 	initialize (canvas);
--- 	add (scrolled, canvas);
--- 	align_on_grid (canvas, false);
+	-- canvas in scrolled box
+
+	-- model
+	gtk_new (model);
+	initialize (model);
+
+	-- view
+	gtk_new (canvas, model); -- canvas is access all canvas_view_record'class;
+	initialize (canvas);
+	add (scrolled, canvas);
+
+	-- context
+	context := build_context (canvas);
+
+	set_grid_size (canvas);
+-- 	draw_internal (canvas, context, model_rec);
 
 -- 	draw (dummy, cr);
 	
