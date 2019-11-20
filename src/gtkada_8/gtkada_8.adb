@@ -22,6 +22,8 @@ with cairo.pattern;			use cairo.pattern;
 with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
 
+with pango.layout;			use pango.layout;
+
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
@@ -42,6 +44,70 @@ procedure gtkada_8 is
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 
+	procedure init is begin
+		gtk.main.init;
+
+		gtk_new (window);
+		window.set_title ("Some Title");
+		window.set_default_size (800, 600);
+
+		-- background box
+		gtk_new_hbox (box_back);
+		set_spacing (box_back, 10);
+		add (window, box_back);
+
+		-- left box
+		gtk_new_hbox (box_left);
+		set_spacing (box_left, 10);
+		add (box_back, box_left);
+
+		-- right box
+		gtk_new_vbox (box_right);
+		set_spacing (box_right, 10);
+		add (box_back, box_right);
+
+		-- toolbar on the left
+		gtk_new (toolbar);
+		set_orientation (toolbar, orientation_vertical);
+		pack_start (box_left, toolbar);
+		
+		-- Create a button and place it in the toolbar:
+		gtk.tool_button.gtk_new (button_up, label => "UP");
+		insert (toolbar, button_up);
+		button_up.on_clicked (callbacks_3.write_message_up'access, toolbar);
+
+		-- Create another button and place it in the toolbar:
+		gtk.tool_button.gtk_new (button_down, label => "DOWN");
+		insert (toolbar, button_down);
+		button_down.on_clicked (callbacks_3.write_message_down'access, toolbar);
+
+
+		-- box for console on the right top
+		gtk_new_vbox (box_console);
+		set_spacing (box_console, 10);
+		add (box_right, box_console);
+
+		-- a simple text entry
+		gtk_new (console);
+		set_text (console, "cmd");
+		pack_start (box_console, console);
+		console.on_activate (callbacks_3.echo_command_simple'access); -- on hitting enter
+
+		-- drawing area on the right bottom
+		gtk_new_hbox (box_drawing);
+		set_spacing (box_drawing, 10);
+		add (box_right, box_drawing);
+
+		gtk_new (frame);
+		pack_start (box_drawing, frame);
+
+		gtk_new (scrolled);
+		set_policy (scrolled, policy_automatic, policy_automatic);
+		add (frame, scrolled);
+
+	end;
+	
+-- ITEM
 	type type_item is tagged record
 		x, y : gdouble;
 	end record;
@@ -52,23 +118,29 @@ procedure gtkada_8 is
 	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
 
 
-	
-	type type_model is new glib.object.gobject_record with record
-		items : pac_items.list;
-	end record;
+-- MODEL
+--	type type_model is new glib.object.gobject_record with record
+-- 		layout    	: pango.layout.pango_layout;
+-- 		selection 	: item_sets.set;
+-- 		mode     	: selection_mode := selection_single;
+-- 		items 		: pac_items.list;
+-- 	end record;
+-- 	type type_model is new canvas_model_record with null record;
+-- 	type type_model_pointer is access all type_model;
+	--model : type_model_pointer; -- pointer to the model
+	--model : canvas_model;
+	model : list_canvas_model;
 
-	type type_model_pointer is access all type_model;
-	model : type_model_pointer; -- pointer to the model
 
+-- VIEW
+-- 	type type_view is new gtk.widget.gtk_widget_record with record
+-- 		model : type_model_pointer;
+-- 	end record;
 
-	
-	type type_view is new gtk.widget.gtk_widget_record with record
-		model : type_model_pointer;
-	end record;
-
-	type type_view_pointer is access type_view;
+-- 	type type_view_pointer is access Canvas_View_Record; --type_view'class;
 		
-	view : type_view_pointer; -- pointer to a view
+	-- 	view : type_view_pointer; -- pointer to a view
+	view : canvas_view;
 
 
 	
@@ -76,102 +148,97 @@ procedure gtkada_8 is
 	context : draw_context;
 
 
-	
-	procedure init_model (
-		self : not null access type_model'class) is
-		use glib.object;
-	begin
-		if not self.is_created then
-			g_new (self, model_get_type);
-		end if;
-      --  ??? When destroyed, should unreferenced Self.Layout
-	end;
-
-	procedure set_model (
-		self  : not null access type_view'class;
-		model : access type_model'class)
-	is
-	begin
-		if self.model = type_model_pointer (model) then
-			return;
-		end if;
-
--- 		if self.model /= null then
--- 			disconnect (self.model, self.id_layout_changed);
--- 			disconnect (self.model, self.id_item_contents_changed);
--- 			disconnect (self.model, self.id_selection_changed);
--- 			disconnect (self.model, self.id_item_destroyed);
--- 			unref (self.model);
+-- 	
+-- 	procedure init_model (
+-- 		self : not null access type_model'class) is
+-- 		use glib.object;
+-- 	begin
+-- 		if not self.is_created then
+-- 			g_new (self, model_get_type);
+-- 		end if;
+--       --  ??? When destroyed, should unreferenced Self.Layout
+-- 	end;
+-- 
+-- 	procedure set_model (
+-- 		self  : not null access type_view'class;
+-- 		model : access type_model'class) is
+-- 	begin
+-- 		if self.model = type_model_pointer (model) then
+-- 			return;
 -- 		end if;
 -- 
--- 		self.model := canvas_model (model);
+-- -- 		if self.model /= null then
+-- -- 			disconnect (self.model, self.id_layout_changed);
+-- -- 			disconnect (self.model, self.id_item_contents_changed);
+-- -- 			disconnect (self.model, self.id_selection_changed);
+-- -- 			disconnect (self.model, self.id_item_destroyed);
+-- -- 			unref (self.model);
+-- -- 		end if;
+-- -- 
+-- -- 		self.model := canvas_model (model);
+-- -- 
+-- -- 		if self.model /= null then
+-- -- 			ref (self.model);
+-- -- 			self.id_layout_changed := model.on_layout_changed
+-- -- 			(on_layout_changed_for_view'access, self);
+-- -- 			self.id_selection_changed := model.on_selection_changed
+-- -- 			(on_selection_changed_for_view'access, self);
+-- -- 			self.id_item_contents_changed := model.on_item_contents_changed
+-- -- 			(on_item_contents_changed_for_view'access, self);
+-- -- 			self.id_item_destroyed :=
+-- -- 			model.on_item_destroyed (on_item_destroyed_for_view'access, self);
+-- -- 		end if;
+-- -- 
+-- -- 		if self.model /= null and then self.model.layout = null then
+-- -- 			self.model.layout := self.layout;  --  needed for layout
+-- -- 			ref (self.model.layout);
+-- -- 			self.model.refresh_layout;
+-- -- 		else
+-- -- 			set_adjustment_values (self);
+-- -- 			self.queue_draw;
+-- -- 		end if;
+-- -- 
+-- -- 		self.viewport_changed;
+-- 	end set_model;
+-- 	
+-- 	procedure initialize_view (
+-- 		self  : not null access type_view'class;
+-- 		model : access type_model'class := null) is
+-- 		use glib.object;
+-- 	begin
+-- 		g_new (self, view_get_type);
 -- 
--- 		if self.model /= null then
--- 			ref (self.model);
--- 			self.id_layout_changed := model.on_layout_changed
--- 			(on_layout_changed_for_view'access, self);
--- 			self.id_selection_changed := model.on_selection_changed
--- 			(on_selection_changed_for_view'access, self);
--- 			self.id_item_contents_changed := model.on_item_contents_changed
--- 			(on_item_contents_changed_for_view'access, self);
--- 			self.id_item_destroyed :=
--- 			model.on_item_destroyed (on_item_destroyed_for_view'access, self);
--- 		end if;
--- 
--- 		if self.model /= null and then self.model.layout = null then
--- 			self.model.layout := self.layout;  --  needed for layout
--- 			ref (self.model.layout);
--- 			self.model.refresh_layout;
--- 		else
--- 			set_adjustment_values (self);
--- 			self.queue_draw;
--- 		end if;
--- 
--- 		self.viewport_changed;
-	end set_model;
-	
-	procedure initialize_view (
-		self  : not null access type_view'class;
-		model : access type_model'class := null) is
-		use glib.object;
-	begin
-		g_new (self, view_get_type);
-
--- 		self.layout := self.create_pango_layout;
--- 		self.set_has_window (true);
--- 
--- 		self.add_events
--- 		(scroll_mask or smooth_scroll_mask or touch_mask
--- 			or button_press_mask or button_release_mask
--- 			or button1_motion_mask
--- 			or button2_motion_mask
--- 			or button3_motion_mask
--- 			--  or pointer_motion_mask or pointer_motion_hint_mask
--- 		);
--- 
--- 		self.on_destroy (on_view_destroy'access);
--- 		self.on_button_press_event (on_button_event'access);
--- 		self.on_button_release_event (on_button_event'access);
--- 		self.on_motion_notify_event (on_motion_notify_event'access);
--- 		self.on_key_press_event (on_key_event'access);
--- 		self.on_scroll_event (on_scroll_event'access);
--- 
--- 		self.set_can_focus (true);
--- 
-		self.set_model (model);
--- 		set_model (self, model);
-	end initialize_view;
-
-	
-	procedure new_view (
-		self  : out type_view_pointer;
-		model : access type_model := null) is
-	begin
-		self := new type_view;
-		initialize_view (self, model);
-	end;
-	
-
+-- -- 		self.layout := self.create_pango_layout;
+-- -- 		self.set_has_window (true);
+-- -- 
+-- -- 		self.add_events
+-- -- 		(scroll_mask or smooth_scroll_mask or touch_mask
+-- -- 			or button_press_mask or button_release_mask
+-- -- 			or button1_motion_mask
+-- -- 			or button2_motion_mask
+-- -- 			or button3_motion_mask
+-- -- 			--  or pointer_motion_mask or pointer_motion_hint_mask
+-- -- 		);
+-- -- 
+-- -- 		self.on_destroy (on_view_destroy'access);
+-- -- 		self.on_button_press_event (on_button_event'access);
+-- -- 		self.on_button_release_event (on_button_event'access);
+-- -- 		self.on_motion_notify_event (on_motion_notify_event'access);
+-- -- 		self.on_key_press_event (on_key_event'access);
+-- -- 		self.on_scroll_event (on_scroll_event'access);
+-- -- 
+-- -- 		self.set_can_focus (true);
+-- -- 
+-- 		self.set_model (model);
+-- 	end initialize_view;
+-- 	
+-- 	procedure new_view (
+-- 		self  : out type_view_pointer;
+-- 		model : access type_model := null) is
+-- 	begin
+-- 		self := new type_view;
+-- 		initialize_view (self, model);
+-- 	end;
 
 -- 	procedure draw (
 -- 		self	: not null access type_item;
@@ -181,82 +248,25 @@ procedure gtkada_8 is
 -- 	end;
 
 begin
-	gtk.main.init;
-
-	gtk_new (window);
-	window.set_title ("Some Title");
-	window.set_default_size (800, 600);
-
-	-- background box
-	gtk_new_hbox (box_back);
-	set_spacing (box_back, 10);
-	add (window, box_back);
-
-	-- left box
-	gtk_new_hbox (box_left);
-	set_spacing (box_left, 10);
-	add (box_back, box_left);
-
-	-- right box
-	gtk_new_vbox (box_right);
-	set_spacing (box_right, 10);
-	add (box_back, box_right);
-
-	-- toolbar on the left
-	gtk_new (toolbar);
-	set_orientation (toolbar, orientation_vertical);
-	pack_start (box_left, toolbar);
-	
-	-- Create a button and place it in the toolbar:
-	gtk.tool_button.gtk_new (button_up, label => "UP");
-	insert (toolbar, button_up);
-	button_up.on_clicked (callbacks_3.write_message_up'access, toolbar);
-
-	-- Create another button and place it in the toolbar:
-	gtk.tool_button.gtk_new (button_down, label => "DOWN");
-	insert (toolbar, button_down);
-	button_down.on_clicked (callbacks_3.write_message_down'access, toolbar);
-
-
-	-- box for console on the right top
-	gtk_new_vbox (box_console);
-	set_spacing (box_console, 10);
-	add (box_right, box_console);
-
-	-- a simple text entry
-	gtk_new (console);
-	set_text (console, "cmd");
-	pack_start (box_console, console);
-	console.on_activate (callbacks_3.echo_command_simple'access); -- on hitting enter
-
-	-- drawing area on the right bottom
-	gtk_new_hbox (box_drawing);
-	set_spacing (box_drawing, 10);
-	add (box_right, box_drawing);
-
-	gtk_new (frame);
-	pack_start (box_drawing, frame);
-
-	gtk_new (scrolled);
-	set_policy (scrolled, policy_automatic, policy_automatic);
-	add (frame, scrolled);
-
-	-- canvas in scrolled box
+	init;
 
 	-- model
-	model := new type_model;
-	init_model (model);
-
+	model := new list_canvas_model_record;
+-- 	init_model (model);
+-- 	gtk_new (model);
+	initialize (model);
+	
 	-- view
-	new_view (view, model);
--- 	initialize (canvas);
-	add (scrolled, view);
+	-- 	new_view (view, model);
+	gtk_new (view, model);
+-- 	initialize (view, model);
+-- 	unref (model);
 
 	-- context
--- 	context := build_context (canvas);
+	context := build_context (view);
 
--- 	set_grid_size (canvas);
--- 	draw_internal (canvas, context, model_rec);
+	set_grid_size (view);
+	draw_internal (view, context, model_rec);
 
 -- 	item_pointer := new type_item;
 -- 	add (self => model,
@@ -267,7 +277,9 @@ begin
    --  Add a new item to the model.
 
 	
--- 	draw (dummy, cr);
+	-- 	draw (dummy, cr);
+	
+	add (scrolled, view);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
