@@ -42,36 +42,30 @@ procedure gtkada_8 is
 
 	canvas : canvas_view; -- access to canvas_view_record'class
 
-	model : list_canvas_model; -- access to list_canvas_model_record'class
+-- 	model : list_canvas_model; -- access to list_canvas_model_record'class
+	type type_canvas_model is new canvas_model_record with record
+		items : items_lists.list;
+	end record;
 
+	
 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
 	context : draw_context;
 
--- 	function is_link (
--- 		self : not null access abstract_item_record) return boolean;
-	
-	type type_item is new abstract_item_record with record
+	type type_item is tagged record
 		x, y : gdouble;
 	end record;
 
-	function is_link (
-		self : not null access abstract_item_record) return boolean is 
-	begin
-		return false;
-	end;
+	type type_item_pointer is access all type_item'class;
+-- 	item_pointer : abstract_item;
 
-	
--- 	type type_item_pointer is access all type_item;
-	item_pointer : abstract_item;
+	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
 
-	package pac_items is new ada.containers.doubly_linked_lists (type_item);
-
-	procedure draw (
-		self	: not null access type_item;
-		context : draw_context) is
-	begin
-		null;
-	end;
+-- 	procedure draw (
+-- 		self	: not null access type_item;
+-- 		context : draw_context) is
+-- 	begin
+-- 		null;
+-- 	end;
 
 begin
 	gtk.main.init;
@@ -151,7 +145,7 @@ begin
 	set_grid_size (canvas);
 -- 	draw_internal (canvas, context, model_rec);
 
-	item_pointer := new type_item;
+-- 	item_pointer := new type_item;
 -- 	add (self => model,
 -- 		item => item_pointer);
 
