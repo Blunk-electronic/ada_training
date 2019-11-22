@@ -107,175 +107,47 @@ procedure gtkada_8 is
 
 	end;
 	
--- ITEM
-	type type_item is tagged record
-		x, y : gdouble;
-	end record;
-
-	type type_item_pointer is access all type_item'class;
-	item : type_item_pointer;
-
-	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
-
-
--- MODEL
---	type type_model is new glib.object.gobject_record with record
--- 		layout    	: pango.layout.pango_layout;
--- 		selection 	: item_sets.set;
--- 		mode     	: selection_mode := selection_single;
--- 		items 		: pac_items.list;
--- 	end record;
--- 	type type_model is new canvas_model_record with null record;
--- 	type type_model_pointer is access all type_model;
-	--model : type_model_pointer; -- pointer to the model
-	--model : canvas_model;
-	model : list_canvas_model;
-
-
--- VIEW
--- 	type type_view is new gtk.widget.gtk_widget_record with record
--- 		model : type_model_pointer;
+	-- ITEM
+	item : canvas_item;
+-- 	type type_item is abstract new abstract_item_record with null record;
+-- 	type type_item is tagged record
+-- 		x, y : gdouble;
 -- 	end record;
 
--- 	type type_view_pointer is access Canvas_View_Record; --type_view'class;
-		
-	-- 	view : type_view_pointer; -- pointer to a view
-	view : canvas_view;
+-- 	type type_item_pointer is access all type_item'class;
+-- 	item : type_item_pointer;
+-- 
+-- 	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
+
+
+	-- pointers to model and view
+	model : gtkada.canvas_view.list_canvas_model;
+	view : gtkada.canvas_view.canvas_view;
 
 
 	
 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
 	context : draw_context;
 
-
--- 	
--- 	procedure init_model (
--- 		self : not null access type_model'class) is
--- 		use glib.object;
--- 	begin
--- 		if not self.is_created then
--- 			g_new (self, model_get_type);
--- 		end if;
---       --  ??? When destroyed, should unreferenced Self.Layout
--- 	end;
--- 
--- 	procedure set_model (
--- 		self  : not null access type_view'class;
--- 		model : access type_model'class) is
--- 	begin
--- 		if self.model = type_model_pointer (model) then
--- 			return;
--- 		end if;
--- 
--- -- 		if self.model /= null then
--- -- 			disconnect (self.model, self.id_layout_changed);
--- -- 			disconnect (self.model, self.id_item_contents_changed);
--- -- 			disconnect (self.model, self.id_selection_changed);
--- -- 			disconnect (self.model, self.id_item_destroyed);
--- -- 			unref (self.model);
--- -- 		end if;
--- -- 
--- -- 		self.model := canvas_model (model);
--- -- 
--- -- 		if self.model /= null then
--- -- 			ref (self.model);
--- -- 			self.id_layout_changed := model.on_layout_changed
--- -- 			(on_layout_changed_for_view'access, self);
--- -- 			self.id_selection_changed := model.on_selection_changed
--- -- 			(on_selection_changed_for_view'access, self);
--- -- 			self.id_item_contents_changed := model.on_item_contents_changed
--- -- 			(on_item_contents_changed_for_view'access, self);
--- -- 			self.id_item_destroyed :=
--- -- 			model.on_item_destroyed (on_item_destroyed_for_view'access, self);
--- -- 		end if;
--- -- 
--- -- 		if self.model /= null and then self.model.layout = null then
--- -- 			self.model.layout := self.layout;  --  needed for layout
--- -- 			ref (self.model.layout);
--- -- 			self.model.refresh_layout;
--- -- 		else
--- -- 			set_adjustment_values (self);
--- -- 			self.queue_draw;
--- -- 		end if;
--- -- 
--- -- 		self.viewport_changed;
--- 	end set_model;
--- 	
--- 	procedure initialize_view (
--- 		self  : not null access type_view'class;
--- 		model : access type_model'class := null) is
--- 		use glib.object;
--- 	begin
--- 		g_new (self, view_get_type);
--- 
--- -- 		self.layout := self.create_pango_layout;
--- -- 		self.set_has_window (true);
--- -- 
--- -- 		self.add_events
--- -- 		(scroll_mask or smooth_scroll_mask or touch_mask
--- -- 			or button_press_mask or button_release_mask
--- -- 			or button1_motion_mask
--- -- 			or button2_motion_mask
--- -- 			or button3_motion_mask
--- -- 			--  or pointer_motion_mask or pointer_motion_hint_mask
--- -- 		);
--- -- 
--- -- 		self.on_destroy (on_view_destroy'access);
--- -- 		self.on_button_press_event (on_button_event'access);
--- -- 		self.on_button_release_event (on_button_event'access);
--- -- 		self.on_motion_notify_event (on_motion_notify_event'access);
--- -- 		self.on_key_press_event (on_key_event'access);
--- -- 		self.on_scroll_event (on_scroll_event'access);
--- -- 
--- -- 		self.set_can_focus (true);
--- -- 
--- 		self.set_model (model);
--- 	end initialize_view;
--- 	
--- 	procedure new_view (
--- 		self  : out type_view_pointer;
--- 		model : access type_model := null) is
--- 	begin
--- 		self := new type_view;
--- 		initialize_view (self, model);
--- 	end;
-
--- 	procedure draw (
--- 		self	: not null access type_item;
--- 		context : draw_context) is
--- 	begin
--- 		null;
--- 	end;
-
+	
 begin
 	init;
 
 	-- model
 	model := new list_canvas_model_record;
--- 	init_model (model);
--- 	gtk_new (model);
 	initialize (model);
 	
 	-- view
-	-- 	new_view (view, model);
 	gtk_new (view, model);
--- 	initialize (view, model);
 -- 	unref (model);
 
 	-- context
 	context := build_context (view);
 
-	set_grid_size (view);
-	draw_internal (view, context, model_rec);
+-- 	set_grid_size (view);
+-- 	draw_internal (view, context, model_rec);
 
--- 	item_pointer := new type_item;
--- 	add (self => model,
--- 		item => item_pointer);
-
-	--      Self : not null access List_Canvas_Model_Record;
---       Item : not null access Abstract_Item_Record'Class);
-   --  Add a new item to the model.
-
+-- 	item := new canvas_item_record;
 	
 	-- 	draw (dummy, cr);
 	
