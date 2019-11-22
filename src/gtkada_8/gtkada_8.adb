@@ -108,18 +108,22 @@ procedure gtkada_8 is
 	end;
 	
 	-- ITEM
-	item : canvas_item;
--- 	type type_item is abstract new abstract_item_record with null record;
--- 	type type_item is tagged record
--- 		x, y : gdouble;
--- 	end record;
+-- 	item : canvas_item;
 
--- 	type type_item_pointer is access all type_item'class;
--- 	item : type_item_pointer;
+-- 	type type_item_abstract is interface;
+-- 
+-- 	type type_item_pointer is access all type_item_abstract'class;
+-- -- 	item : type_item_pointer;
 -- 
 -- 	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
+-- 
+-- 	type type_model is new canvas_model_record with record
+-- 		items : pac_items.list;
+-- 		--  items are sorted: lowest items first (minimal z-layer)
+-- 	end record;
 
 
+	
 	-- pointers to model and view
 	model : gtkada.canvas_view.list_canvas_model;
 	view : gtkada.canvas_view.canvas_view;
@@ -139,6 +143,7 @@ begin
 	
 	-- view
 	gtk_new (view, model);
+	initialize (view, model);
 -- 	unref (model);
 
 	-- context
