@@ -19,7 +19,8 @@ with glib;					use glib;
 with glib.object;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
-with gtkada.canvas_view;	use gtkada.canvas_view;
+--with gtkada.canvas_view;	use gtkada.canvas_view;
+with canvas_test;			use canvas_test;
 with gtkada.style;     		use gtkada.style;
 
 with pango.layout;			use pango.layout;
@@ -108,30 +109,17 @@ procedure gtkada_8 is
 	end;
 	
 	-- ITEM
--- 	item : canvas_item;
-
--- 	type type_item_abstract is interface;
--- 
--- 	type type_item_pointer is access all type_item_abstract'class;
--- -- 	item : type_item_pointer;
--- 
--- 	package pac_items is new ada.containers.doubly_linked_lists (type_item_pointer);
--- 
--- 	type type_model is new canvas_model_record with record
--- 		items : pac_items.list;
--- 		--  items are sorted: lowest items first (minimal z-layer)
--- 	end record;
-
+	item : canvas_item;
 
 	
 	-- pointers to model and view
-	model : gtkada.canvas_view.list_canvas_model;
-	view : gtkada.canvas_view.canvas_view;
+	model : canvas_test.list_canvas_model;
+	view : canvas_test.canvas_view;
 
 
 	
-	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
-	context : draw_context;
+-- 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
+-- 	context : draw_context;
 
 	
 begin
@@ -143,11 +131,11 @@ begin
 	
 	-- view
 	gtk_new (view, model);
-	initialize (view, model);
+-- 	initialize (view, model);
 -- 	unref (model);
 
 	-- context
-	context := build_context (view);
+-- 	context := build_context (view);
 
 -- 	set_grid_size (view);
 -- 	draw_internal (view, context, model_rec);
@@ -156,7 +144,7 @@ begin
 	
 	-- 	draw (dummy, cr);
 	
-	add (scrolled, view);
+-- 	add (scrolled, view);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
