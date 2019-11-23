@@ -109,7 +109,7 @@ procedure gtkada_8 is
 	end;
 	
 	-- ITEM
-	item : canvas_item;
+-- 	item : canvas_item;
 
 	
 	-- pointers to model and view
