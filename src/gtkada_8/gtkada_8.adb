@@ -19,8 +19,7 @@ with glib;					use glib;
 with glib.object;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
---with gtkada.canvas_view;	use gtkada.canvas_view;
-with canvas_test;			use canvas_test;
+with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
 
 with pango.layout;			use pango.layout;
@@ -31,6 +30,7 @@ with ada.containers.doubly_linked_lists;
 with ada.text_io;			use ada.text_io;
 
 with callbacks_3;
+with canvas_test;			use canvas_test;
 
 procedure gtkada_8 is
 
@@ -108,18 +108,17 @@ procedure gtkada_8 is
 
 	end;
 	
-	-- ITEM
--- 	item : canvas_item;
 
+	item : type_item_ptr;
 	
 	-- pointers to model and view
-	model : canvas_test.list_canvas_model;
-	view : canvas_test.canvas_view;
+	model : list_canvas_model;
+	view : canvas_view;
 
 
 	
 -- 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
--- 	context : draw_context;
+	context : draw_context;
 
 	
 begin
@@ -131,20 +130,21 @@ begin
 	
 	-- view
 	gtk_new (view, model);
--- 	initialize (view, model);
+	initialize (view, model);
 -- 	unref (model);
 
 	-- context
--- 	context := build_context (view);
+	context := build_context (view);
 
 -- 	set_grid_size (view);
 -- 	draw_internal (view, context, model_rec);
 
--- 	item := new canvas_item_record;
+	item := new type_item;
+	model.clear;
+	add (model, item);
+	translate_and_draw_item (item, context);
 	
-	-- 	draw (dummy, cr);
-	
--- 	add (scrolled, view);
+	add (scrolled, view);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
