@@ -35,6 +35,9 @@ package canvas_test is
 	
 	type type_item_ptr is access all type_item'class;
 
+
+
+	
 	overriding function position (self : not null access type_item) return gtkada.style.point;
 	
 	overriding function bounding_box (self : not null access type_item) return item_rectangle;

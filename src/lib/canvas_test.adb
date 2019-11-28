@@ -1,3 +1,5 @@
+with ada.text_io;			use ada.text_io;
+
 with gtk.main;
 with gtk.window; 			use gtk.window;
 with gtk.widget;  			use gtk.widget;
@@ -27,30 +29,35 @@ with ada.containers.doubly_linked_lists;
 
 package body canvas_test is
 
-	
+
 	overriding function position (self : not null access type_item) return gtkada.style.point is
 	begin
-		return no_position;
+		return self.position;
 	end;
 
 	function bounding_box (self : not null access type_item) return item_rectangle is 
-		box : item_rectangle;
 	begin
-		return box;
+		return (0.0, 0.0, 10.0, 10.0);
 	end;
 
 	procedure draw (
 		self 	: not null access type_item;
 		context	: draw_context) is 
 	begin
-		null;
-		Cairo.Move_To (context.cr, 2.0 / 2.0, 4.0 + 0.5);
-		Cairo.Line_To (context.cr, 0.0, 0.5);
+		put_line ("drawing ...");
+		
 
--- 		cairo.set_fill_rule (context.cr, cairo_fill_rule_even_odd);
--- 		cairo.rectangle (context.cr, 0.0, 0.0, 500.0, 400.0);
--- 		clip (context.cr);
+		cairo.set_line_width (context.cr, 0.1);
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
+
+		cairo.move_to (context.cr, 0.0, 0.0);
+		cairo.line_to (context.cr, 500.0, 500.0);
+
+		-- cairo.set_fill_rule (context.cr, cairo_fill_rule_even_odd);
+		cairo.rectangle (context.cr, 0.0, 0.0, 500.0, 500.0);
+		-- clip (context.cr);
 		cairo.stroke (context.cr);
+		
 	end;
 
 	procedure draw_as_selected (
@@ -117,9 +124,8 @@ package body canvas_test is
 	end;
 
 	function get_visibility_threshold (self : not null access type_item) return gdouble is
-		t : gdouble;
 	begin
-		return t;
+		return self.visibility_threshold;
 	end;
 
 

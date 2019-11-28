@@ -19,6 +19,7 @@ with glib;					use glib;
 with glib.object;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
+with cairo.image_surface;	use cairo.image_surface;
 with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
 
@@ -60,7 +61,7 @@ procedure gtkada_8 is
 		-- left box
 		gtk_new_hbox (box_left);
 		set_spacing (box_left, 10);
-		add (box_back, box_left);
+		pack_start (box_back, box_left, expand => false);
 
 		-- right box
 		gtk_new_vbox (box_right);
@@ -70,7 +71,7 @@ procedure gtkada_8 is
 		-- toolbar on the left
 		gtk_new (toolbar);
 		set_orientation (toolbar, orientation_vertical);
-		pack_start (box_left, toolbar);
+		pack_start (box_left, toolbar, expand => false);
 		
 		-- Create a button and place it in the toolbar:
 		gtk.tool_button.gtk_new (button_up, label => "UP");
@@ -86,12 +87,12 @@ procedure gtkada_8 is
 		-- box for console on the right top
 		gtk_new_vbox (box_console);
 		set_spacing (box_console, 10);
-		add (box_right, box_console);
+		pack_start (box_right, box_console, expand => false);
 
 		-- a simple text entry
 		gtk_new (console);
 		set_text (console, "cmd");
-		pack_start (box_console, console);
+		pack_start (box_console, console, expand => false);
 		console.on_activate (callbacks_3.echo_command_simple'access); -- on hitting enter
 
 		-- drawing area on the right bottom
@@ -115,11 +116,14 @@ procedure gtkada_8 is
 	model : list_canvas_model;
 	view : canvas_view;
 
-
+	surface : cairo_surface := create (
+		format	=> Cairo_Format_A8,
+		width	=> 10,
+		height	=> 10);
 	
--- 	model_rec : model_rectangle := (gdouble (0), gdouble (0), gdouble (20), gdouble (20));
+	cr : cairo_context := create (surface);
+	
 	context : draw_context;
-
 	
 begin
 	init;
@@ -132,19 +136,25 @@ begin
 	gtk_new (view, model);
 	initialize (view, model);
 -- 	unref (model);
+	add (scrolled, view);
+-- 	pack_start (box_drawing, view, expand => false);
 
+	
 	-- context
 	context := build_context (view);
+	context.cr := cr;
 
 -- 	set_grid_size (view);
 -- 	draw_internal (view, context, model_rec);
 
 	item := new type_item;
-	model.clear;
+
 	add (model, item);
+
 	translate_and_draw_item (item, context);
+-- 	refresh_layout (model);
 	
-	add (scrolled, view);
+-- 	view.scale_to_fit;
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
