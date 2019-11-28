@@ -137,18 +137,22 @@ procedure gtkada_8 is
 	cr : cairo_context := create (surface);
 	
 	context : draw_context;
+	r : rect_item;
+
+	p : Gtkada.Style.Point := (10.0, 10.0);
 	
 begin
 	init;
 
 	-- model
-	model_ptr := new list_canvas_model_record;
+-- 	model_ptr := new list_canvas_model_record;
+	gtk_new (model_ptr);
 	initialize (model_ptr);
 	
 	-- view
 	gtk_new (view, model_ptr);
-	initialize (view, model_ptr);
--- 	unref (model);
+-- 	initialize (view, model_ptr);
+-- 	unref (model_ptr);
 	add (scrolled, view);
 
 	
@@ -160,7 +164,15 @@ begin
 -- 	draw_internal (view, context, model_rec);
 
 	item := new type_item;
+	set_position (item, p);
+-- 	r := gtk_new_rect (
+-- 		style	=> no_drawing_style
+-- 		);
+
+	-- 	add (model_ptr, r);
+-- 	draw (r, context);
 	add (model_ptr, item);
+	
 -- 	translate_and_draw_item (item, context);
 
 	
