@@ -47,16 +47,16 @@ package body canvas_test is
 		put_line ("drawing ...");
 		
 
-		cairo.set_line_width (context.cr, 0.1);
-		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
+-- 		cairo.set_line_width (context.cr, 1.1);
+-- 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (1));
 
-		cairo.move_to (context.cr, 0.0, 0.0);
-		cairo.line_to (context.cr, 500.0, 500.0);
+-- 		cairo.move_to (context.cr, 0.0, 0.0);
+-- 		cairo.line_to (context.cr, 500.0, 500.0);
 
 		-- cairo.set_fill_rule (context.cr, cairo_fill_rule_even_odd);
-		cairo.rectangle (context.cr, 0.0, 0.0, 500.0, 500.0);
+-- 		cairo.rectangle (context.cr, 0.0, 0.0, 50.0, 50.0);
 		-- clip (context.cr);
-		cairo.stroke (context.cr);
+-- 		cairo.stroke (context.cr);
 		
 	end;
 

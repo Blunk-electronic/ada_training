@@ -30,7 +30,7 @@ with ada.containers.doubly_linked_lists;
 
 with ada.text_io;			use ada.text_io;
 
-with callbacks_3;
+with callbacks_3;			use callbacks_3;
 with canvas_test;			use canvas_test;
 
 procedure gtkada_8 is
@@ -40,11 +40,14 @@ procedure gtkada_8 is
 	box_left, box_right		: gtk_box;
 	box_console				: gtk_box;
 	box_drawing				: gtk_box;
-	button_up, button_down	: gtk_tool_button;	
+	
+	button_zoom_to_fit		: gtk_tool_button;
+	button_zoom_in, button_zoom_out	: gtk_tool_button;
+	
 	toolbar					: gtk_toolbar;
 	console					: gtk_entry;
 	frame					: gtk_frame;
-	scrolled				: gtk_scrolled_window;
+
 
 	procedure init is begin
 		gtk.main.init;
@@ -74,16 +77,26 @@ procedure gtkada_8 is
 		pack_start (box_left, toolbar, expand => false);
 		
 		-- Create a button and place it in the toolbar:
-		gtk.tool_button.gtk_new (button_up, label => "UP");
-		insert (toolbar, button_up);
-		button_up.on_clicked (callbacks_3.write_message_up'access, toolbar);
+-- 		gtk.tool_button.gtk_new (button_up, label => "UP");
+-- 		insert (toolbar, button_up);
+-- 		button_up.on_clicked (callbacks_3.write_message_up'access, toolbar);
 
 		-- Create another button and place it in the toolbar:
-		gtk.tool_button.gtk_new (button_down, label => "DOWN");
-		insert (toolbar, button_down);
-		button_down.on_clicked (callbacks_3.write_message_down'access, toolbar);
+		gtk.tool_button.gtk_new (button_zoom_to_fit, label => "FIT");
+		insert (toolbar, button_zoom_to_fit);
+		button_zoom_to_fit.on_clicked (callbacks_3.zoom_to_fit'access, toolbar);
 
+		-- Create a button and place it in the toolbar:
+		gtk.tool_button.gtk_new (button_zoom_in, label => "IN");
+		insert (toolbar, button_zoom_in);
+		button_zoom_in.on_clicked (callbacks_3.zoom_in'access, toolbar);
 
+		-- Create another button and place it in the toolbar:
+		gtk.tool_button.gtk_new (button_zoom_out, label => "OUT");
+		insert (toolbar, button_zoom_out);
+		button_zoom_out.on_clicked (callbacks_3.zoom_out'access, toolbar);
+
+		
 		-- box for console on the right top
 		gtk_new_vbox (box_console);
 		set_spacing (box_console, 10);
@@ -113,13 +126,13 @@ procedure gtkada_8 is
 	item : type_item_ptr;
 	
 	-- pointers to model and view
-	model : list_canvas_model;
-	view : canvas_view;
+-- 	model : list_canvas_model;
+-- 	view : canvas_view;
 
 	surface : cairo_surface := create (
 		format	=> Cairo_Format_A8,
-		width	=> 10,
-		height	=> 10);
+		width	=> 1000,
+		height	=> 1000);
 	
 	cr : cairo_context := create (surface);
 	
@@ -129,32 +142,28 @@ begin
 	init;
 
 	-- model
-	model := new list_canvas_model_record;
-	initialize (model);
+	model_ptr := new list_canvas_model_record;
+	initialize (model_ptr);
 	
 	-- view
-	gtk_new (view, model);
-	initialize (view, model);
+	gtk_new (view, model_ptr);
+	initialize (view, model_ptr);
 -- 	unref (model);
 	add (scrolled, view);
--- 	pack_start (box_drawing, view, expand => false);
 
 	
 	-- context
-	context := build_context (view);
+-- 	context := build_context (view);
 	context.cr := cr;
 
 -- 	set_grid_size (view);
 -- 	draw_internal (view, context, model_rec);
 
 	item := new type_item;
+	add (model_ptr, item);
+-- 	translate_and_draw_item (item, context);
 
-	add (model, item);
-
-	translate_and_draw_item (item, context);
--- 	refresh_layout (model);
 	
--- 	view.scale_to_fit;
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
 	
