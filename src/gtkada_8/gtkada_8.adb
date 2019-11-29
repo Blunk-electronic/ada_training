@@ -48,7 +48,6 @@ procedure gtkada_8 is
 	console					: gtk_entry;
 	frame					: gtk_frame;
 
-
 	procedure init is begin
 		gtk.main.init;
 
@@ -121,66 +120,50 @@ procedure gtkada_8 is
 		add (frame, scrolled);
 
 	end;
-	
 
 	item : type_item_ptr;
-	
-	-- pointers to model and view
--- 	model : list_canvas_model;
--- 	view : canvas_view;
 
 	surface : cairo_surface := create (
 		format	=> Cairo_Format_A8,
-		width	=> 1000,
-		height	=> 1000);
+		width	=> 0,
+		height	=> 0);
 	
 	cr : cairo_context := create (surface);
-	
 	context : draw_context;
-	r : rect_item;
 
-	p : Gtkada.Style.Point := (10.0, 10.0);
+	p1 : Gtkada.Style.Point := (0.0, 0.0);
+	p2 : Gtkada.Style.Point := (1000.0, 0.0);
 	
 begin
 	init;
 
 	-- model
--- 	model_ptr := new list_canvas_model_record;
 	gtk_new (model_ptr);
 	initialize (model_ptr);
 	
 	-- view
 	gtk_new (view, model_ptr);
--- 	initialize (view, model_ptr);
--- 	unref (model_ptr);
 	add (scrolled, view);
-
 	
 	-- context
 -- 	context := build_context (view);
-	context.cr := cr;
-
--- 	set_grid_size (view);
--- 	draw_internal (view, context, model_rec);
-
+-- 	context.cr := cr;
+	
 	item := new type_item;
-	set_position (item, p);
--- 	r := gtk_new_rect (
--- 		style	=> no_drawing_style
--- 		);
-
-	-- 	add (model_ptr, r);
--- 	draw (r, context);
+	
+	set_position (item, p1);
+	put_line (to_string (position (item)));
 	add (model_ptr, item);
-	
--- 	translate_and_draw_item (item, context);
 
+-- 	item := new type_item;
+-- 	set_position (item, p2);
+-- 	put_line (to_string (position (item)));
+-- 	add (model_ptr, item);
 	
+	scale_to_fit (view);
 	
 	window.on_destroy (callbacks_3.terminate_main'access);
-	
+
 	window.show_all;
-
 	gtk.main.main;
-
 end;

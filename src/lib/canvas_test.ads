@@ -36,6 +36,9 @@ package canvas_test is
 	type type_item_ptr is access all type_item'class;
 
 
+	overriding procedure set_position (
+		self	: not null access type_item;
+		pos		: gtkada.style.point);
 
 	
 	overriding function position (self : not null access type_item) return gtkada.style.point;

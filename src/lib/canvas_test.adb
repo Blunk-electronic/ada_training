@@ -29,7 +29,13 @@ with ada.containers.doubly_linked_lists;
 
 package body canvas_test is
 
-
+	overriding procedure set_position (
+		self	: not null access type_item;
+		pos		: gtkada.style.point) is
+	begin
+		self.position := pos;
+	end;
+	
 	overriding function position (self : not null access type_item) return gtkada.style.point is
 	begin
 		return self.position;
@@ -37,7 +43,7 @@ package body canvas_test is
 
 	function bounding_box (self : not null access type_item) return item_rectangle is 
 	begin
-		return (0.0, 0.0, 10.0, 10.0);
+		return (0.0, 0.0, 1000.0, 1000.0);
 	end;
 
 	procedure draw (
@@ -45,19 +51,19 @@ package body canvas_test is
 		context	: draw_context) is 
 	begin
 		put_line ("drawing ...");
+
+		cairo.set_line_width (context.cr, 1.1);
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (1));
+
+		cairo.move_to (context.cr, 0.0, 0.0);
+		cairo.line_to (context.cr, 1000.0, 1000.0);
+
+		cairo.move_to (context.cr, 1000.0, 0.0);
+		cairo.line_to (context.cr, 0.0, 1000.0);
+
+		cairo.rectangle (context.cr, 0.0, 0.0, 1000.0, 1000.0);
 		
-
--- 		cairo.set_line_width (context.cr, 1.1);
--- 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (1));
-
--- 		cairo.move_to (context.cr, 0.0, 0.0);
--- 		cairo.line_to (context.cr, 500.0, 500.0);
-
-		-- cairo.set_fill_rule (context.cr, cairo_fill_rule_even_odd);
--- 		cairo.rectangle (context.cr, 0.0, 0.0, 50.0, 50.0);
-		-- clip (context.cr);
--- 		cairo.stroke (context.cr);
-		
+		cairo.stroke (context.cr);
 	end;
 
 	procedure draw_as_selected (

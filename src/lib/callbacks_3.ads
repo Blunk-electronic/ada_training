@@ -3,6 +3,7 @@ with gtk.widget;  		--use gtk.widget;
 with gtk.button;     	--use gtk.button;
 with glib.object;		--use glib.object;
 with gtk.gentry;
+with gtkada.style;     use gtkada.style;
 -- with gtk.combo_box;
 
 with gtk.scrolled_window;	use gtk.scrolled_window;
@@ -21,10 +22,12 @@ package callbacks_3 is
 	scrolled				: gtk_scrolled_window;
 	
 	view : canvas_view;
-	model_ptr : list_canvas_model;	
-	scale : gdouble := 1.0;
+	model_ptr : list_canvas_model;
+	scale_default : constant gdouble := 1.0;
+	scale : gdouble := scale_default;
 
-
+	function to_string (d : in gdouble) return string;
+	function to_string (p : in gtkada.style.point) return string;
 	
 	procedure zoom_to_fit (self : access glib.object.gobject_record'class);	
 	procedure zoom_in (self : access glib.object.gobject_record'class);
