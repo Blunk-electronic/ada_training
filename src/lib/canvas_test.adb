@@ -81,6 +81,14 @@ package body canvas_test is
 		return false;
 	end;
 
+	procedure destroy (
+		self	: not null access type_item;
+		in_model: not null access canvas_model_record'class) is
+	begin
+		put_line ("destroy 2");
+		-- 		type_item (self.all).destroy (in_model);  --  inherited
+	end;
+
 	function edit_widget (
 		self  : not null access type_item;
 		view  : not null access canvas_view_record'class)

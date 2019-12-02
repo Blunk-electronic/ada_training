@@ -41,8 +41,10 @@ procedure gtkada_8 is
 	box_console				: gtk_box;
 	box_drawing				: gtk_box;
 	
-	button_zoom_to_fit		: gtk_tool_button;
-	button_zoom_in, button_zoom_out	: gtk_tool_button;
+	button_zoom_to_fit					: gtk_tool_button;
+	button_zoom_in, button_zoom_out		: gtk_tool_button;
+	button_move_right, button_move_left	: gtk_tool_button;
+	button_delete						: gtk_tool_button;
 	
 	toolbar					: gtk_toolbar;
 	console					: gtk_entry;
@@ -95,6 +97,19 @@ procedure gtkada_8 is
 		insert (toolbar, button_zoom_out);
 		button_zoom_out.on_clicked (callbacks_3.zoom_out'access, toolbar);
 
+		-- Create another button and place it in the toolbar:
+		gtk.tool_button.gtk_new (button_move_right, label => "MOVE RIGHT");
+		insert (toolbar, button_move_right);
+		button_move_right.on_clicked (callbacks_3.move_right'access, toolbar);
+		
+		gtk.tool_button.gtk_new (button_move_left, label => "MOVE LEFT");
+		insert (toolbar, button_move_left);
+		button_move_left.on_clicked (callbacks_3.move_left'access, toolbar);
+
+		gtk.tool_button.gtk_new (button_delete, label => "DELETE");
+		insert (toolbar, button_delete);
+		button_delete.on_clicked (callbacks_3.delete'access, toolbar);
+
 		
 		-- box for console on the right top
 		gtk_new_vbox (box_console);
@@ -121,7 +136,7 @@ procedure gtkada_8 is
 
 	end;
 
-	item : type_item_ptr;
+
 
 	surface : cairo_surface := create (
 		format	=> Cairo_Format_A8,
@@ -130,9 +145,6 @@ procedure gtkada_8 is
 	
 	cr : cairo_context := create (surface);
 	context : draw_context;
-
-	p1 : Gtkada.Style.Point := (0.0, 0.0);
-	p2 : Gtkada.Style.Point := (1000.0, 0.0);
 	
 begin
 	init;
@@ -155,10 +167,6 @@ begin
 	put_line (to_string (position (item)));
 	add (model_ptr, item);
 
--- 	item := new type_item;
--- 	set_position (item, p2);
--- 	put_line (to_string (position (item)));
--- 	add (model_ptr, item);
 	
 	scale_to_fit (view);
 	

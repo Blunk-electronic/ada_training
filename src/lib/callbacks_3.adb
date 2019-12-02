@@ -32,11 +32,6 @@ package body callbacks_3 is
 		-- do things requried to power up the machine ...
 	end;
 
-	
--- 	procedure write_message_up (self : access glib.object.gobject_record'class) is begin
--- 		put_line ("The blinds are moving up ...");
--- 	end;
-
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;
@@ -49,13 +44,9 @@ package body callbacks_3 is
 		rec : model_rectangle := bounding_box (model_ptr);
 	begin
 		put_line ("zoom to fit ...");
-		--set_scale (view, scale_default);
-		--scale_to_fit (view, min_scale => 0.1, max_scale => 0.5);
-		--put_line (to_string (get_scale (view)));
 		scale_to_fit (view);
 		put_line (to_string (get_scale (view)));
 	end;
-
 
 	procedure zoom_in (self : access glib.object.gobject_record'class) is begin
 		put_line ("zooming in ...");
@@ -75,20 +66,31 @@ package body callbacks_3 is
 		put_line (to_string (get_scale (view)));
 	end;
 
+	procedure move_right (self : access glib.object.gobject_record'class) is begin
+		put_line ("moving right ...");
+		set_position (item, p2);
+		refresh_layout (model_ptr);
+	end;
 
+	procedure move_left (self : access glib.object.gobject_record'class) is begin
+		put_line ("moving left ...");
+		set_position (item, p1);
+		refresh_layout (model_ptr);
+	end;
+
+	procedure delete (self : access glib.object.gobject_record'class) is begin
+		put_line ("deleting ...");
+
+		model_ptr.remove (item);
+		-- model_ptr.clear; -- removes all items
+
+		refresh_layout (model_ptr);
+	end;
 	
 	procedure echo_command_simple (self : access gtk.gentry.gtk_entry_record'class) is 
 		use gtk.gentry;
 	begin
 		put_line (get_text (self));
 	end;
-
--- 	procedure echo_command_advanced (self : access gtk.combo_box.gtk_combo_box_record'class) is 
--- 		use gtk.combo_box_text;
--- 	begin
--- 		null;
--- 		put_line (get_active_text (self));
--- 	end;
-
 
 end;

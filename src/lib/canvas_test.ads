@@ -55,14 +55,18 @@ package canvas_test is
 		self    : not null access type_item;
 		context : draw_context);
 
+	procedure destroy (
+		self	: not null access type_item;
+		in_model: not null access canvas_model_record'class);
+
 	function contains
 		(self	: not null access type_item;
 		point   : item_point;
 		context : draw_context) return boolean;
 
 	function edit_widget (
-		self  : not null access type_item;
-		view  : not null access canvas_view_record'class)
+		self  	: not null access type_item;
+		view  	: not null access canvas_view_record'class)
 		return gtk.widget.gtk_widget;
 
 	function parent (self : not null access type_item) return abstract_item;
