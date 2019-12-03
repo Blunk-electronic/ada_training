@@ -157,7 +157,7 @@ package body gtkada.canvas_view.canvas_test is
 		put_line ("drawing ...");
 
 		cairo.set_line_width (context.cr, 1.1);
-		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (1));
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
 
 		cairo.move_to (context.cr, 0.0, 0.0);
 		cairo.line_to (context.cr, 1000.0, 1000.0);

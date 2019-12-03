@@ -138,13 +138,13 @@ procedure gtkada_8 is
 
 
 
-	surface : cairo_surface := create (
-		format	=> Cairo_Format_A8,
-		width	=> 0,
-		height	=> 0);
-	
-	cr : cairo_context := create (surface);
-	context : draw_context;
+-- 	surface : cairo_surface := create (
+-- 		format	=> Cairo_Format_A8,
+-- 		width	=> 0,
+-- 		height	=> 0);
+-- 	
+-- 	cr : cairo_context := create (surface);
+-- 	context : draw_context;
 	
 begin
 	init;
