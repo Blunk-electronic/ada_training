@@ -68,7 +68,7 @@ with Gtkada.Canvas_View.Views;           use Gtkada.Canvas_View.Views;
 package body gtkada.canvas_view.canvas_test is
 
 	procedure draw_internal (
-		self	: not null access type_view;
+		self	: not null access canvas_view_record;
 		context	: draw_context;
 		area	: model_rectangle)
 	is
@@ -98,8 +98,10 @@ package body gtkada.canvas_view.canvas_test is
 		c  : item_drag_infos.cursor;
 		c2 : item_sets.cursor;
 	begin
+		put_line ("draw internal");
+		
 		if self.model /= null then
-			
+
 			set_source_rgb (context.cr, 1.0, 1.0, 1.0);
 			paint (context.cr);
 			

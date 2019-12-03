@@ -24,6 +24,7 @@ package callbacks_3 is
 	scrolled				: gtk_scrolled_window;
 	
 	view : canvas_view;
+
 	model_ptr : list_canvas_model;
 	scale_default : constant gdouble := 1.0;
 	scale : gdouble := scale_default;

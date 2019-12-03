@@ -27,10 +27,10 @@ with ada.containers.doubly_linked_lists;
 
 package gtkada.canvas_view.canvas_test is
 
-	type type_view is new canvas_view_record with null record;
+-- 	type type_view is new canvas_view_record with null record;
 	
-	overriding procedure draw_internal (
-		self    : not null access type_view;
+	procedure draw_internal (
+		self    : not null access canvas_view_record;
 		context : draw_context;
 		area    : model_rectangle);
 
