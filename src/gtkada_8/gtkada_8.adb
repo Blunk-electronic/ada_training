@@ -137,7 +137,8 @@ procedure gtkada_8 is
 	end;
 
 
-
+-- no need for this stuff:
+	
 -- 	surface : cairo_surface := create (
 -- 		format	=> Cairo_Format_A8,
 -- 		width	=> 0,
@@ -145,6 +146,7 @@ procedure gtkada_8 is
 -- 	
 -- 	cr : cairo_context := create (surface);
 -- 	context : draw_context;
+
 	
 begin
 	init;

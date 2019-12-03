@@ -26,49 +26,15 @@ with pango.layout;			use pango.layout;
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
--- 
--- with Ada.Unchecked_Conversion;
--- with GNAT.Strings;                       use GNAT.Strings;
--- with Interfaces.C.Strings;               use Interfaces.C.Strings;
--- with System;
--- with Cairo.Matrix;                       use Cairo.Matrix;
--- with Cairo.Png;
--- with Cairo.PDF;                          use Cairo.PDF;
--- with Cairo.Surface;
--- with Cairo.SVG;
--- with Glib.Main;                          use Glib.Main;
--- with Glib.Properties.Creation;           use Glib.Properties.Creation;
--- with Glib.Values;                        use Glib.Values;
--- with Gdk;                                use Gdk;
--- with Gdk.Cairo;                          use Gdk.Cairo;
--- with Gdk.RGBA;                           use Gdk.RGBA;
--- with Gdk.Types.Keysyms;                  use Gdk.Types.Keysyms;
--- with Gdk.Window_Attr;                    use Gdk.Window_Attr;
--- with Gdk.Window;                         use Gdk.Window;
--- with Gtk.Accel_Group;                    use Gtk.Accel_Group;
--- with Gtk.Enums;                          use Gtk.Enums;
--- with Gtk.Handlers;                       use Gtk.Handlers;
--- with Gtk.Scrollable;                     use Gtk.Scrollable;
--- with Gtk.Style_Context;                  use Gtk.Style_Context;
--- with Gtk.Text_Buffer;                    use Gtk.Text_Buffer;
--- with Gtk.Text_Iter;                      use Gtk.Text_Iter;
--- with Gtk.Text_View;                      use Gtk.Text_View;
--- with Gtk.Widget;                         use Gtk.Widget;
--- with Gtkada.Bindings;                    use Gtkada.Bindings;
--- with Gtkada.Canvas_View.Links;           use Gtkada.Canvas_View.Links;
--- with Gtkada.Canvas_View.Objects;         use Gtkada.Canvas_View.Objects;
-with Gtkada.Canvas_View.Views;           use Gtkada.Canvas_View.Views;
--- with Gtkada.Handlers;                    use Gtkada.Handlers;
--- with Gtkada.Types;                       use Gtkada.Types;
--- with Pango.Font;                         use Pango.Font;
--- with System.Storage_Elements;            use System.Storage_Elements;
+with gtkada.canvas_view.views;           use gtkada.canvas_view.views;
 
 
 
 package body gtkada.canvas_view.canvas_test is
 
-	procedure draw_internal (
-		self	: not null access canvas_view_record;
+	overriding procedure draw_internal (
+		--self	: not null access canvas_view_record;
+		self	: not null access type_view;
 		context	: draw_context;
 		area	: model_rectangle)
 	is
@@ -98,10 +64,13 @@ package body gtkada.canvas_view.canvas_test is
 		c  : item_drag_infos.cursor;
 		c2 : item_sets.cursor;
 	begin
-		put_line ("draw internal");
+		put_line ("TEST: draw internal");
 		
 		if self.model /= null then
 
+			-- Two statements inserted according to advise in
+			-- child package gtkada.canvas_view.views.
+			-- Maybe not correct here:
 			set_source_rgb (context.cr, 1.0, 1.0, 1.0);
 			paint (context.cr);
 			

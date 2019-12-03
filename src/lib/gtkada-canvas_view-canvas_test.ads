@@ -25,12 +25,14 @@ with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
 
-package gtkada.canvas_view.canvas_test is
+package gtkada.canvas_view.canvas_test is -- a child package of gtkada.canvas_view
 
--- 	type type_view is new canvas_view_record with null record;
+	type type_view is new canvas_view_record with null record;
+	type type_view_ptr is access all type_view;
 	
-	procedure draw_internal (
-		self    : not null access canvas_view_record;
+	overriding procedure draw_internal (
+		--self    : not null access canvas_view_record;
+		self    : not null access type_view;
 		context : draw_context;
 		area    : model_rectangle);
 
