@@ -27,7 +27,7 @@ with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
 
-package body canvas_test is
+package body gtkada.canvas_view.canvas_test is
 
 	overriding procedure set_position (
 		self	: not null access type_item;
@@ -144,4 +144,4 @@ package body canvas_test is
 
 
 	
-end canvas_test;
+end gtkada.canvas_view.canvas_test;

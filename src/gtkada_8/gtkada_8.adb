@@ -30,8 +30,8 @@ with ada.containers.doubly_linked_lists;
 
 with ada.text_io;			use ada.text_io;
 
-with callbacks_3;			use callbacks_3;
-with canvas_test;			use canvas_test;
+with callbacks_3;						use callbacks_3;
+with gtkada.canvas_view.canvas_test;	use gtkada.canvas_view.canvas_test;
 
 procedure gtkada_8 is
 

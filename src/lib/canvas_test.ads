@@ -25,7 +25,7 @@ with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
 
-package canvas_test is
+package gtkada.canvas_view.canvas_test is
 
 	-- This is the implementation of the interface abstract_item_record:
 	type type_item is new abstract_item_record with record
@@ -92,4 +92,4 @@ package canvas_test is
 
 
 	
-end canvas_test;
+end gtkada.canvas_view.canvas_test;

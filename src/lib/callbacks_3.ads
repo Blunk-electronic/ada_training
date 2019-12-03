@@ -8,8 +8,9 @@ with gtkada.style;     use gtkada.style;
 
 with gtk.scrolled_window;	use gtk.scrolled_window;
 
-with gtkada.canvas_view;	use gtkada.canvas_view;
-with canvas_test;			use canvas_test;
+with gtkada.canvas_view;				use gtkada.canvas_view;
+with gtkada.canvas_view.canvas_test;	use gtkada.canvas_view.canvas_test;
+
 
 package callbacks_3 is
 
@@ -29,8 +30,8 @@ package callbacks_3 is
 
 	item : canvas_test.type_item_ptr;
 	
-	p1 : Gtkada.Style.Point := (0.0, 0.0);
-	p2 : Gtkada.Style.Point := (1000.0, 0.0);
+	p1 : gtkada.style.point := (0.0, 0.0);
+	p2 : gtkada.style.point := (1000.0, 0.0);
 	
 	function to_string (d : in gdouble) return string;
 	function to_string (p : in gtkada.style.point) return string;
