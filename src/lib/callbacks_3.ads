@@ -16,11 +16,9 @@ package callbacks_3 is
 
 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class);
 
-
 	scrolled				: gtk_scrolled_window;
 	
-	view : canvas_view;
--- 	view : type_view_ptr;
+	view : type_view_ptr;
 
 	model_ptr : list_canvas_model;
 	scale_default : constant gdouble := 1.0;

@@ -28,16 +28,21 @@ with ada.containers.doubly_linked_lists;
 
 with gtkada.canvas_view.views;           use gtkada.canvas_view.views;
 
-
-
 package body gtkada.canvas_view.canvas_test is
 
+	procedure gtk_new (
+		self  : out type_view_ptr;
+		model : access canvas_model_record'class := null) is
+	begin
+		self := new type_view;
+		initialize (self, model);
+	end;
+	
 	overriding procedure draw_internal (
-		--self	: not null access canvas_view_record;
 		self	: not null access type_view;
 		context	: draw_context;
-		area	: model_rectangle)
-	is
+		area	: model_rectangle) is
+	
 		s  : item_sets.set;
 
 		procedure draw_item
@@ -69,9 +74,8 @@ package body gtkada.canvas_view.canvas_test is
 		if self.model /= null then
 
 			-- Two statements inserted according to advise in
-			-- child package gtkada.canvas_view.views.
-			-- Maybe not correct here:
-			set_source_rgb (context.cr, 1.0, 1.0, 1.0);
+			-- child package gtkada.canvas_view.views on order to draw a black background.
+			set_source_rgb (context.cr, 0.0, 0.0, 0.0);
 			paint (context.cr);
 			
 			--  we must always draw the selected items and their links explicitly
