@@ -21,6 +21,7 @@ with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with cairo.image_surface;	use cairo.image_surface;
 with gtkada.canvas_view;	use gtkada.canvas_view;
+with gtkada.canvas_view.views;	use gtkada.canvas_view.views;
 with gtkada.style;     		use gtkada.style;
 
 with pango.layout;			use pango.layout;
@@ -168,6 +169,7 @@ begin
 	set_position (item, p1);
 	put_line (to_string (position (item)));
 	add (model_ptr, item);
+
 
 	
 	scale_to_fit (view);

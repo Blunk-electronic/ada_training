@@ -73,10 +73,13 @@ package body gtkada.canvas_view.canvas_test is
 		
 		if self.model /= null then
 
+			draw_grid_lines (self, no_drawing_style, context, area);
+
 			-- Two statements inserted according to advise in
 			-- child package gtkada.canvas_view.views on order to draw a black background.
 			set_source_rgb (context.cr, 0.0, 0.0, 0.0);
 			paint (context.cr);
+
 			
 			--  we must always draw the selected items and their links explicitly
 			--  (since the model might not have been updated yet if we are during
