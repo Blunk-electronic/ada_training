@@ -20,7 +20,7 @@ with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
-
+with gdk.rgba;
 with pango.layout;			use pango.layout;
 
 with ada.containers;		use ada.containers;
@@ -68,18 +68,24 @@ package body gtkada.canvas_view.canvas_test is
 		use item_drag_infos, item_sets;
 		c  : item_drag_infos.cursor;
 		c2 : item_sets.cursor;
+
+		-- prepare draing style so that white grid dots will be drawn.
+		style : drawing_style := gtk_new (stroke => gdk.rgba.white_rgba);
 	begin
 		put_line ("TEST: draw internal");
 		
 		if self.model /= null then
 
-			draw_grid_lines (self, no_drawing_style, context, area);
+			-- Additional statements inserted according to advise in
+			-- child package gtkada.canvas_view.views:
 
-			-- Two statements inserted according to advise in
-			-- child package gtkada.canvas_view.views on order to draw a black background.
+			-- draw a black background:
 			set_source_rgb (context.cr, 0.0, 0.0, 0.0);
 			paint (context.cr);
 
+			-- draw white grid dots:
+			set_grid_size (self, 100.0);
+			draw_grid_dots (self, style, context, area);
 			
 			--  we must always draw the selected items and their links explicitly
 			--  (since the model might not have been updated yet if we are during
