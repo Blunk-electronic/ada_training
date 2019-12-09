@@ -152,19 +152,19 @@ procedure gtkada_9 is
 -- 	cr : cairo_context := create (surface);
 -- 	context : draw_context;
 
-	
+	canvas : type_canvas_ptr;
+	model : type_model_ptr;
 	
 begin
 	init;
 
-	canvas := new type_canvas;
-	g_new (canvas, canvas_get_type);
--- 	gtk_new (model_ptr);
--- 	initialize (model_ptr);
+	-- model
+	gtk_new (model);
+	initialize (model);
 	
-	-- view
--- 	gtk_new (view, model_ptr);
-	add (scrolled, canvas);
+	-- canvas
+	gtk_new (canvas, model);
+-- 	add (scrolled, canvas);
 	
 	-- context
 -- 	context := build_context (view);

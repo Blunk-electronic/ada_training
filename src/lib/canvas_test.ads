@@ -29,14 +29,32 @@ with ada.containers.doubly_linked_lists;
 
 package canvas_test is
 
-	procedure dummy;
+	type type_model is new glib.object.gobject_record with null record;
+	type type_model_ptr is access all type_model;
+
+	procedure init (self : not null access type_model'class);
+   --  initialize the internal data so that signals can be sent.
+
+	
+	procedure gtk_new (self : out type_model_ptr);
 	
 	type type_canvas is new gtk.widget.gtk_widget_record with record
+		model : type_model_ptr;
 		hadj, vadj : gtk.adjustment.gtk_adjustment;
 	end record;
 	
 	type type_canvas_ptr is access all type_canvas;
 
+
+	
+	procedure gtk_new (
+		self	: out type_canvas_ptr;
+		model	: access type_model'class := null);
+	
 	function canvas_get_type return glib.gtype;
+-- 	function view_get_type return glib.gtype;
+	pragma convention (c, canvas_get_type);
+-- 	pragma convention (c, view_get_type);
+	--  return the internal type
 	
 end canvas_test;
