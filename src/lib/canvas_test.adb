@@ -1,5 +1,7 @@
 with ada.text_io;			use ada.text_io;
 
+with interfaces.c.strings;	use interfaces.c.strings;
+
 with gtk.main;
 with gtk.window; 			use gtk.window;
 with gtk.widget;  			use gtk.widget;
@@ -22,9 +24,9 @@ with glib.values;			use glib.values;
 with glib.properties.creation;	use glib.properties.creation;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
--- with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
 with gtkada.types;			use gtkada.types;
+with gtkada.handlers;		use gtkada.handlers;
 with gdk.rgba;
 with pango.layout;			use pango.layout;
 with system.storage_elements;            use system.storage_elements;
@@ -36,11 +38,18 @@ with ada.containers.doubly_linked_lists;
 
 package body canvas_test is
 
+-- 	model_signals : constant gtkada.types.chars_ptr_array := (
+-- 		1 => new_string (string (signal_item_contents_changed)),
+-- 		2 => new_string (string (signal_layout_changed)),
+-- 		3 => new_string (string (signal_selection_changed)),
+-- 		4 => new_string (string (signal_item_destroyed)));
+	
 -- 	view_signals : constant gtkada.types.chars_ptr_array := (
--- 		1 => new_string (string (signal_viewport_changed)),
+-- 		1 => new_string (string (signal_viewport_changed))
 -- 		2 => new_string (string (signal_item_event)),
 -- 		3 => new_string (string (signal_inline_editing_started)),
--- 		4 => new_string (string (signal_inline_editing_finished)));
+-- 		4 => new_string (string (signal_inline_editing_finished))
+-- 		);
 
 	h_adj_property    : constant property_id := 1;
 	v_adj_property    : constant property_id := 2;
@@ -53,13 +62,15 @@ package body canvas_test is
 	function model_get_type return glib.gtype is begin
 		glib.object.initialize_class_record (
 			ancestor     => gtype_object,
--- CS			signals      => model_signals,
+-- 			signals      => model_signals,
 			class_record => model_class_record,
-			type_name    => "gtkada_model",
-			parameters   => (1 => (1 => gtype_pointer), --  item_content_changed
-							2 => (1 => gtype_none),  --  layout_changed
-							3 => (1 => gtype_pointer),
-							4 => (1 => gtype_pointer)));  --  item_destroyed
+			type_name    => "gtkada_model"
+-- 			parameters   => (
+-- 				1 => (1 => gtype_pointer), 	-- item_content_changed
+-- 				2 => (1 => gtype_none),  	-- layout_changed
+-- 				3 => (1 => gtype_pointer),	-- selection_changed
+-- 				4 => (1 => gtype_pointer)) 	-- item_destroyed
+				);  
 		return model_class_record.the_type;
 	end model_get_type;
 
@@ -77,8 +88,189 @@ package body canvas_test is
 
 	canvas_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 
+	function view_to_model (
+		self   : not null access type_canvas;
+		rect   : type_view_rectangle) 
+		return type_model_rectangle is
+	begin
+		return (x      => rect.x / self.scale + self.topleft.x,
+				y      => rect.y / self.scale + self.topleft.y,
+				width  => rect.width / self.scale,
+				height => rect.height / self.scale);
+	end view_to_model;
+	
+	function get_visible_area (self : not null access type_canvas)
+		return type_model_rectangle is
+	begin
+		return self.view_to_model
+		((0.0,
+			0.0,
+			gdouble (self.get_allocated_width),
+			gdouble (self.get_allocated_height)));
+	end get_visible_area;
+
+	function bounding_box (
+		self   : not null access type_model;
+		margin : type_model_coordinate := 0.0)
+		return type_model_rectangle
+	is
+		result : type_model_rectangle;
+		is_first : boolean := true;
+
+-- 		procedure do_item (item : not null access abstract_item_record'class);
+-- 		procedure do_item (item : not null access abstract_item_record'class) is
+-- 			box : constant model_rectangle := item.model_bounding_box;
+-- 		begin
+-- 			if is_first then
+-- 			is_first := false;
+-- 			result := box;
+-- 			else
+-- 			union (result, box);
+-- 			end if;
+-- 		end do_item;
+	begin
+-- 		canvas_model_record'class (self.all).for_each_item
+-- 		(do_item'access);
+-- 
+-- 		if is_first then
+-- 			return no_rectangle;
+-- 		else
+-- 			result.x := result.x - margin;
+-- 			result.y := result.y - margin;
+-- 			result.width := result.width + 2.0 * margin;
+-- 			result.height := result.height + 2.0 * margin;
+			return result;
+-- 		end if;
+	end bounding_box;
+
+	procedure viewport_changed (self : not null access type_canvas'class) is begin
+		object_callback.emit_by_name (self, signal_viewport_changed);
+	end viewport_changed;
+	
+	procedure set_adjustment_values (self : not null access type_canvas'class) is
+		box   : type_model_rectangle;
+		area  : constant type_model_rectangle := self.get_visible_area;
+		min, max : gdouble;
+	begin
+		if self.model = null or else area.width <= 1.0 then
+			--  not allocated yet
+			return;
+		end if;
+
+		--  we want a small margin around the minimal box for the model, since it
+		--  looks better.
+
+		box := self.model.bounding_box (view_margin / self.scale);
+
+		--  we set the adjustments to include the model area, but also at least
+		--  the current visible area (if we don't, then part of the display will
+		--  not be properly refreshed).
+
+		if self.hadj /= null then
+			min := gdouble'min (area.x, box.x);
+			max := gdouble'max (area.x + area.width, box.x + box.width);
+			self.hadj.configure
+			(value          => area.x,
+			lower          => min,
+			upper          => max,
+			step_increment => 5.0,
+			page_increment => 100.0,
+			page_size      => area.width);
+		end if;
+
+		if self.vadj /= null then
+			min := gdouble'min (area.y, box.y);
+			max := gdouble'max (area.y + area.height, box.y + box.height);
+			self.vadj.configure
+			(value          => area.y,
+			lower          => min,
+			upper          => max,
+			step_increment => 5.0,
+			page_increment => 100.0,
+			page_size      => area.height);
+		end if;
+
+		self.viewport_changed;
+	end set_adjustment_values;
+
+	procedure on_adj_value_changed (view : access glib.object.gobject_record'class) is
+	-- Called when one of the scrollbars has changed value.		
+		self : constant type_canvas_ptr := type_canvas_ptr (view);
+		pos  : constant type_model_point := (
+							x => self.hadj.get_value,
+							y => self.vadj.get_value);
+	begin
+		if pos /= self.topleft then
+			self.topleft := pos;
+			self.viewport_changed;
+			queue_draw (self);
+		end if;
+	end on_adj_value_changed;
+
+	procedure view_set_property (
+		object        : access glib.object.gobject_record'class;
+		prop_id       : property_id;
+		value         : glib.values.gvalue;
+		property_spec : param_spec)
+	is
+		pragma unreferenced (property_spec);
+		self : constant type_canvas_ptr := type_canvas_ptr (object);
+	begin
+		case prop_id is
+			when h_adj_property =>
+				self.hadj := gtk_adjustment (get_object (value));
+				if self.hadj /= null then
+					set_adjustment_values (self);
+					self.hadj.on_value_changed (on_adj_value_changed'access, self);
+					self.queue_draw;
+				end if;
+
+			when v_adj_property => 
+
+				self.vadj := gtk_adjustment (get_object (value));
+
+				if self.vadj /= null then
+					set_adjustment_values (self);
+					self.vadj.on_value_changed (on_adj_value_changed'access, self);
+					self.queue_draw;
+				end if;
+
+			when h_scroll_property => null;
+
+			when v_scroll_property => null;
+
+			when others => null;
+		end case;
+	end view_set_property;
+	
+	procedure view_get_property (
+		object        : access glib.object.gobject_record'class;
+		prop_id       : property_id;
+		value         : out glib.values.gvalue;
+		property_spec : param_spec)
+	is
+		pragma unreferenced (property_spec);
+		self : constant type_canvas_ptr := type_canvas_ptr (object);
+	begin
+		case prop_id is
+			when h_adj_property => set_object (value, self.hadj);
+
+			when v_adj_property => set_object (value, self.vadj);
+
+			when h_scroll_property => set_enum (value, gtk_policy_type'pos (policy_automatic));
+
+			when v_scroll_property => set_enum (value, gtk_policy_type'pos (policy_automatic));
+
+			when others => null;
+		end case;
+	end view_get_property;
+
+	
+	procedure canvas_class_init (self : gobject_class);
+	pragma convention (c, canvas_class_init);
+	
 	procedure canvas_class_init (self : gobject_class) is begin
--- 		set_properties_handlers (self, view_set_property'access, view_get_property'access);
+		set_properties_handlers (self, view_set_property'access, view_get_property'access);
 
 		override_property (self, h_adj_property, "hadjustment");
 		override_property (self, v_adj_property, "vadjustment");
@@ -98,10 +290,11 @@ package body canvas_test is
 -- 			signals      => canvas_signals,
 			class_record => canvas_class_record'access,
 			type_name    => "gtkada_canvas",
-			parameters   => (1 => (1 => gtype_none),
-							2 => (1 => gtype_pointer),
-							3 => (1 => gtype_pointer),
-							4 => (1 => gtype_pointer)),
+-- 			parameters   => (
+-- 				1 => (1 => gtype_none),
+-- 				2 => (1 => gtype_pointer),
+-- 				3 => (1 => gtype_pointer),
+-- 				4 => (1 => gtype_pointer)),
 			returns      => (1 => gtype_none, 2 => gtype_boolean),
 			class_init   => canvas_class_init'access
 			)
@@ -200,115 +393,5 @@ package body canvas_test is
 		self := new type_canvas;
 		init (self, model);
 	end;
-	
-
-
--- 	procedure set_adjustment_values
--- 		(self : not null access type_view'class)
--- 	is
--- 		box   : model_rectangle;
--- 		area  : constant model_rectangle := self.get_visible_area;
--- 		min, max : gdouble;
--- 	begin
--- 		if self.model = null or else area.width <= 1.0 then
--- 			--  not allocated yet
--- 			return;
--- 		end if;
--- 
--- 		--  we want a small margin around the minimal box for the model, since it
--- 		--  looks better.
--- 
--- 		box := self.model.bounding_box (view_margin / self.scale);
--- 
--- 		--  we set the adjustments to include the model area, but also at least
--- 		--  the current visible area (if we don't, then part of the display will
--- 		--  not be properly refreshed).
--- 
--- 		if self.hadj /= null then
--- 			min := gdouble'min (area.x, box.x);
--- 			max := gdouble'max (area.x + area.width, box.x + box.width);
--- 			self.hadj.configure
--- 			(value          => area.x,
--- 			lower          => min,
--- 			upper          => max,
--- 			step_increment => 5.0,
--- 			page_increment => 100.0,
--- 			page_size      => area.width);
--- 		end if;
--- 
--- 		if self.vadj /= null then
--- 			min := gdouble'min (area.y, box.y);
--- 			max := gdouble'max (area.y + area.height, box.y + box.height);
--- 			self.vadj.configure
--- 			(value          => area.y,
--- 			lower          => min,
--- 			upper          => max,
--- 			step_increment => 5.0,
--- 			page_increment => 100.0,
--- 			page_size      => area.height);
--- 		end if;
--- 
--- 		self.viewport_changed;
--- 	end set_adjustment_values;
-
-	
-	
--- 	procedure canvas_set_property
--- 		(object        : access glib.object.gobject_record'class;
--- 		prop_id       : property_id;
--- 		value         : glib.values.gvalue;
--- 		property_spec : param_spec)
--- 	is
--- 		pragma unreferenced (property_spec);
--- 		self : constant type_canvas_ptr := type_canvas_ptr (object);
--- 	begin
--- 		case prop_id is
--- 			when h_adj_property =>
--- 			self.hadj := gtk_adjustment (get_object (value));
--- 			if self.hadj /= null then
--- 				set_adjustment_values (self);
--- 				self.hadj.on_value_changed (on_adj_value_changed'access, self);
--- 				self.queue_draw;
--- 			end if;
--- 
--- 			when v_adj_property =>
--- 			self.vadj := gtk_adjustment (get_object (value));
--- 			if self.vadj /= null then
--- 				set_adjustment_values (self);
--- 				self.vadj.on_value_changed (on_adj_value_changed'access, self);
--- 				self.queue_draw;
--- 			end if;
--- 
--- 			when h_scroll_property =>
--- 			null;
--- 
--- 			when v_scroll_property =>
--- 			null;
--- 
--- 			when others =>
--- 			null;
--- 		end case;
--- 	end canvas_set_property;
-
-
-	
--- 	procedure canvas_class_init (self : gobject_class);
--- 	pragma convention (c, canvas_class_init);
-
--- 	procedure canvas_class_init (self : gobject_class) is
--- 	begin
--- 		set_properties_handlers (self, canvas_set_property'access, view_get_property'access);
--- 
--- 		override_property (self, h_adj_property, "hadjustment");
--- 		override_property (self, v_adj_property, "vadjustment");
--- 		override_property (self, h_scroll_property, "hscroll-policy");
--- 		override_property (self, v_scroll_property, "vscroll-policy");
--- 
--- 		set_default_draw_handler (self, on_view_draw'access);
--- 		set_default_size_allocate_handler (self, on_size_allocate'access);
--- 		set_default_realize_handler (self, on_view_realize'access);
--- 	end canvas_class_init;
-	
-
 	
 end canvas_test;
