@@ -164,7 +164,7 @@ begin
 	
 	-- canvas
 	gtk_new (canvas, model);
--- 	add (scrolled, canvas);
+	add (scrolled, canvas);
 	
 	-- context
 -- 	context := build_context (view);
