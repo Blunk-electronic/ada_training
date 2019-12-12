@@ -5,6 +5,7 @@ with gtk.window; 			use gtk.window;
 with gtk.widget;  			use gtk.widget;
 with gtk.box;				use gtk.box;
 with gtk.button;     		use gtk.button;
+with gtk.handlers;			use gtk.handlers;
 with gtk.toolbar; 			use gtk.toolbar;
 with gtk.tool_button;		use gtk.tool_button;
 with gtk.enums;				use gtk.enums;
@@ -31,7 +32,10 @@ with ada.containers.doubly_linked_lists;
 
 package canvas_test is
 
-	type type_model is new glib.object.gobject_record with null record;
+	type type_model is new glib.object.gobject_record with record
+		layout    : pango.layout.pango_layout;
+	end record;
+	
 	type type_model_ptr is access all type_model;
 
 	subtype type_model_coordinate is gdouble;
@@ -44,18 +48,29 @@ package canvas_test is
 		x, y, width, height : type_model_coordinate;
 	end record;
 
+	no_rectangle : constant type_model_rectangle := (0.0, 0.0, 0.0, 0.0);
 	
 	procedure init (self : not null access type_model'class);
    --  initialize the internal data so that signals can be sent.
 
 	
 	procedure gtk_new (self : out type_model_ptr);
+
+	signal_layout_changed : constant glib.signal_name := "layout_changed";
 	
 	type type_canvas is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
 		topleft   	: type_model_point := (0.0, 0.0);
 		scale     	: gdouble := 1.0;
+		layout		: pango.layout.pango_layout;
 		hadj, vadj	: gtk.adjustment.gtk_adjustment;
+
+		--  connections to model signals
+		id_layout_changed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
+		--id_item_contents_changed,
+		--id_selection_changed
+-- 		id_item_destroyed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
+		
 	end record;
 	
 	type type_canvas_ptr is access all type_canvas'class;
@@ -76,10 +91,24 @@ package canvas_test is
 		x, y, width, height : type_view_coordinate;
 	end record;
 
+	function view_to_model (
+		self   : not null access type_canvas;
+		rect   : type_view_rectangle) 
+		return type_model_rectangle;
+	
 	view_margin : constant type_view_coordinate := 20.0;
 	--  The number of blank pixels on each sides of the view. This avoids having
 	--  items displays exactly next to the border of the view.
 
+
+	type type_draw_context is record
+		cr     : cairo.cairo_context := cairo.null_context;
+		layout : pango.layout.pango_layout := null;
+		view   : type_canvas_ptr := null;
+	end record;
+	--  context to perform the actual drawing
+
+	
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;
@@ -88,5 +117,7 @@ package canvas_test is
 	function canvas_get_type return glib.gtype;
 	pragma convention (c, canvas_get_type);
 	--  return the internal type
+
+
 	
 end canvas_test;
