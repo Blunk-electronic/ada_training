@@ -141,19 +141,9 @@ procedure gtkada_9 is
 
 	end;
 
-
--- no need for this stuff:
-	
--- 	surface : cairo_surface := create (
--- 		format	=> Cairo_Format_A8,
--- 		width	=> 0,
--- 		height	=> 0);
--- 	
--- 	cr : cairo_context := create (surface);
--- 	context : draw_context;
-
 	canvas : type_canvas_ptr;
 	model : type_model_ptr;
+	item : type_item_ptr;
 	
 begin
 	init;
@@ -166,19 +156,14 @@ begin
 	gtk_new (canvas, model);
 	add (scrolled, canvas);
 	
-	-- context
--- 	context := build_context (view);
--- 	context.cr := cr;
+	item := new type_item;
 	
--- 	item := new type_item;
-	
--- 	set_position (item, p1);
+	set_position (item, p1);
 -- 	put_line (to_string (position (item)));
--- 	add (model_ptr, item);
-
+	add (model, item);
 
 	
--- 	scale_to_fit (view);
+	scale_to_fit (canvas);
 	
 	window.on_destroy (callbacks_4.terminate_main'access);
 

@@ -26,8 +26,8 @@ package callbacks_4 is
 
 -- 	item : canvas_test.type_item_ptr;
 	
--- 	p1 : gtkada.style.point := (0.0, 0.0);
--- 	p2 : gtkada.style.point := (1000.0, 0.0);
+	p1 : gtkada.style.point := (0.0, 0.0);
+	p2 : gtkada.style.point := (1000.0, 0.0);
 	
 -- 	function to_string (d : in gdouble) return string;
 -- 	function to_string (p : in gtkada.style.point) return string;

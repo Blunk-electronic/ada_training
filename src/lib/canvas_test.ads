@@ -16,6 +16,9 @@ with gtk.scrolled_window;	use gtk.scrolled_window;
 with gtk.adjustment;		use gtk.adjustment;
 -- with gtk.bin;				use gtk.bin;
 
+with gdk;
+with gdk.types;
+
 with glib;					use glib;
 with glib.object;			use glib.object;
 with glib.values;			use glib.values;
@@ -33,14 +36,22 @@ with ada.containers.doubly_linked_lists;
 package canvas_test is
 
 	subtype type_model_coordinate is gdouble;
+
+	no_position : constant gtkada.style.point := (gdouble'first, gdouble'first);
 	
 	type type_item is tagged record
+		position : gtkada.style.point := no_position;
+		
+		visibility_threshold : gdouble := 0.0;
+		
 		width, height : type_model_coordinate;
 		--  Computed by Size_Request. Always expressed in pixels.
 	end record;
 	
 	type type_item_ptr is access all type_item'class;
 
+	function get_visibility_threshold (self : not null access type_item) return gdouble;
+	
 	subtype type_item_coordinate is gdouble;
 	
 	type type_item_rectangle is record
@@ -60,7 +71,7 @@ package canvas_test is
 	end record;
 	
 	type type_model_ptr is access all type_model;
-
+	
 	procedure for_each_item (
 		self     : not null access type_model;
 		callback : not null access procedure (item : not null access type_item'class));
@@ -98,7 +109,9 @@ package canvas_test is
 		--id_item_contents_changed,
 		--id_selection_changed
 -- 		id_item_destroyed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
-		
+
+		scale_to_fit_requested : gdouble := 0.0;
+		scale_to_fit_area : type_model_rectangle;
 	end record;
 	
 	type type_canvas_ptr is access all type_canvas'class;
@@ -127,6 +140,11 @@ package canvas_test is
 		self   : not null access type_canvas;
 		rect   : type_view_rectangle) 
 		return type_model_rectangle;
+
+	function model_to_view (
+		self   : not null access type_canvas;
+		rect   : type_model_rectangle) return type_view_rectangle;
+
 	
 	view_margin : constant type_view_coordinate := 20.0;
 	--  The number of blank pixels on each sides of the view. This avoids having
@@ -149,6 +167,10 @@ package canvas_test is
 		self    : not null access type_item;
 		context : type_draw_context); -- CS no need
 
+	procedure draw (
+		self 	: not null access type_item;
+		context	: type_draw_context);
+	
 	procedure set_transform (
 		self   : not null access type_canvas;
 		cr     : cairo.cairo_context;
@@ -159,15 +181,103 @@ package canvas_test is
 		context : type_draw_context;
 		area    : type_model_rectangle);
 
+	procedure set_position (
+		self  : not null access type_item;
+		pos   : gtkada.style.point);
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;
 		model	: access type_model'class := null);
+
+	procedure add (
+		self : not null access type_model;
+		item : not null access type_item'class);
+
+	procedure scale_to_fit (
+		self      : not null access type_canvas;
+		rect      : type_model_rectangle := no_rectangle;
+		min_scale : gdouble := 1.0 / 4.0;
+		max_scale : gdouble := 4.0;
+		duration  : standard.duration := 0.0);
+
 	
 	function canvas_get_type return glib.gtype;
 	pragma convention (c, canvas_get_type);
 	--  return the internal type
 
+	
+	subtype type_window_coordinate is gdouble;
+	
+	type type_window_point is record
+		x, y : type_window_coordinate;
+	end record;
+
+	function view_to_model (
+		self   : not null access type_canvas;
+		p      : type_view_point) return type_model_point;
+	
+	function window_to_model (
+		self   : not null access type_canvas;
+		p      : type_window_point) return type_model_point;
+
+	no_item_point : constant type_item_point := (gdouble'first, gdouble'first);
+
+	function model_to_item (
+		item   : not null access type_item'class;
+		p      : type_model_rectangle) return type_item_rectangle;
+	
+	type canvas_event_type is (
+		button_press, button_release, double_click,
+		start_drag, in_drag, end_drag, key_press, scroll, custom);
+	
+	type canvas_event_details is record
+		event_type     : canvas_event_type;
+		button         : guint;
+
+		state          : gdk.types.gdk_modifier_type;
+		--  the modifier keys (shift, alt, control). it can be used to activate
+		--  different behavior in such cases.
+
+		key            : gdk.types.gdk_key_type;
+		--  the key that was pressed (for key events)
+
+		root_point     : gtkada.style.point;
+		--  coordinates in root window.
+		--  attributes of the low-level event.
+		--   this is an implementation detail for proper handling of dragging.
+
+		m_point        : type_model_point;
+		--  where in the model the user clicked. this is independent of the zoom
+		--  level or current scrolling.
+
+		item           : type_item_ptr;
+		--  the actual item that was clicked.
+		--  set to null when the user clicked in the background.
+
+-- 		toplevel_item  : abstract_item;
+		--  the toplevel item that contains item (might be item itself).
+		--  set to null when the user clicked in the background.
+
+-- 		t_point        : item_point;
+		--  the corodinates of the click in toplevel_item
+
+		i_point        : type_item_point;
+		--  the coordinates of the click in item
+
+-- 		allowed_drag_area : type_model_rectangle := no_drag_allowed;
+		--  allowed_drag_area should be modified by the callback when the event
+		--  is a button_press event. it should be set to the area within which
+		--  the item (and all currently selected items) can be moved. if you
+		--  leave it to no_drag_allowed, the item cannot be moved.
+		--
+		--  this field is ignored for events other than button_press, since it
+		--  makes no sense for instance to start a drag on a button release.
+
+-- 		allow_snapping    : boolean := true;
+		--  if set to false, this temporary overrides the settings from
+		--  set_snap, and prevents any snapping on the grid or smart guides.
+		--  it should be set at the same time that allowed_drag_area is set.
+	end record;
 
 	
 end canvas_test;

@@ -108,7 +108,25 @@ package body canvas_test is
 				width  => rect.width / self.scale,
 				height => rect.height / self.scale);
 	end view_to_model;
-	
+
+	function model_to_view (
+		self   : not null access type_canvas;
+		p      : type_model_point) return type_view_point is
+	begin
+		return (x => (p.x - self.topleft.x) * self.scale,
+				y => (p.y - self.topleft.y) * self.scale);
+	end model_to_view;
+
+	function model_to_view (
+		self   : not null access type_canvas;
+		rect   : type_model_rectangle) return type_view_rectangle is
+	begin
+		return (x      => (rect.x - self.topleft.x) * self.scale,
+				y      => (rect.y - self.topleft.y) * self.scale,
+				width  => rect.width * self.scale,
+				height => rect.height * self.scale);
+	end model_to_view;
+   
 	function get_visible_area (self : not null access type_canvas)
 		return type_model_rectangle is
 	begin
@@ -121,8 +139,7 @@ package body canvas_test is
 
 	procedure union (
 		rect1 : in out type_model_rectangle;
-		rect2 : type_model_rectangle)
-	is
+		rect2 : type_model_rectangle) is
 		right : constant type_model_coordinate := 
 			type_model_coordinate'max (rect1.x + rect1.width, rect2.x + rect2.width);
 		bottom : constant type_model_coordinate :=
@@ -155,13 +172,22 @@ package body canvas_test is
 		return result;
 	end item_to_model;
 
+	function item_to_model (
+		item   : not null access type_item'class;
+		p      : type_item_point) return type_model_point
+	is
+		r : constant type_model_rectangle :=
+		item.item_to_model ((p.x, p.y, 0.0, 0.0));
+	begin
+		return (r.x, r.y);
+	end item_to_model;
+
 	function bounding_box (self : not null access type_item) return type_item_rectangle is
 	begin
 		--  assumes size_request has been called already
-		return (0.0,
-				0.0,
-				self.width,
-				self.height);
+-- CS		return (0.0, 0.0, self.width, self.height);
+
+		return (0.0, 0.0, 1000.0, 1000.0);
 	end bounding_box;
 	
 	function model_bounding_box (self : not null access type_item'class) 
@@ -331,16 +357,104 @@ package body canvas_test is
 		p       : type_view_point;
 	begin
 		if item /= null then
-			null;
--- 			model_p := item.item_to_model ((0.0, 0.0));
+			model_p := item.item_to_model ((0.0, 0.0));
 		else
 			model_p := (0.0, 0.0);
 		end if;
 
--- 		p := self.model_to_view (model_p);
+		p := self.model_to_view (model_p);
 		translate (cr, p.x, p.y);
--- 		scale (cr, self.scale, self.scale);
+		scale (cr, self.scale, self.scale);
 	end set_transform;
+
+	function get_visibility_threshold (self : not null access type_item) return gdouble is
+	begin
+		return self.visibility_threshold;
+	end get_visibility_threshold;
+	
+	function size_above_threshold (
+		self : not null access type_item'class;
+		view : access type_canvas'class) return boolean
+	is
+		r   : type_view_rectangle;
+		threshold : constant gdouble := self.get_visibility_threshold;
+	begin
+		if threshold = gdouble'last then
+			--  always hidden
+			return false;
+		elsif threshold > 0.0 and then view /= null then
+			r := view.model_to_view (self.model_bounding_box);
+			if r.width < threshold or else r.height < threshold then
+				return false;
+			end if;
+		end if;
+		return true;
+	end size_above_threshold;
+
+	procedure draw (
+		self 	: not null access type_item;
+		context	: type_draw_context) is 
+	begin
+		put_line ("drawing ...");
+
+		cairo.set_line_width (context.cr, 1.1);
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
+
+		cairo.move_to (context.cr, 0.0, 0.0);
+		cairo.line_to (context.cr, 1000.0, 1000.0);
+
+		cairo.move_to (context.cr, 1000.0, 0.0);
+		cairo.line_to (context.cr, 0.0, 1000.0);
+
+		cairo.rectangle (context.cr, 0.0, 0.0, 1000.0, 1000.0);
+		
+		cairo.stroke (context.cr);
+	end;
+	
+	procedure translate_and_draw_item (
+		self          : not null access type_item'class;
+		context       : type_draw_context;
+		as_outline    : boolean := false;
+		outline_style : drawing_style := no_drawing_style)
+	is
+		pos : gtkada.style.point;
+	begin
+		if not size_above_threshold (self, context.view) then
+			return;
+		end if;
+
+		save (context.cr);
+		pos := self.position;
+		translate (context.cr, pos.x, pos.y);
+
+-- 		if as_outline then
+-- 			self.draw_outline (outline_style, context);
+-- 		elsif context.view /= null
+-- 		and then context.view.model /= null
+-- 		and then context.view.model.is_selected (self)
+-- 		then
+-- 			self.draw_as_selected (context);
+-- 		else
+			self.draw (context);
+-- 		end if;
+-- 
+-- 		if debug_show_bounding_boxes then
+-- 			declare
+-- 			box : constant item_rectangle := self.bounding_box;
+-- 			begin
+-- 			gtk_new (stroke => (1.0, 0.0, 0.0, 0.8),
+-- 						dashes => (2.0, 2.0))
+-- 				.draw_rect (context.cr, (box.x, box.y), box.width, box.height);
+-- 			end;
+-- 		end if;
+
+		restore (context.cr);
+
+	exception
+		when e : others =>
+			restore (context.cr);
+			process_exception (e);
+	end translate_and_draw_item;
 	
 	procedure draw_internal (
 		self    : not null access type_canvas;
@@ -354,12 +468,11 @@ package body canvas_test is
 		procedure draw_item (
 			item : not null access type_item'class) is
 		begin
-			null;
 			--  if the item is not displayed explicitly afterwards.
 -- 			if not self.in_drag
 -- 			or else not s.contains (abstract_item (item))
 -- 			then
--- CS			translate_and_draw_item (item, context);
+			translate_and_draw_item (item, context);
 -- 			end if;
 		end draw_item;
 
@@ -400,6 +513,7 @@ package body canvas_test is
 
 -- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_link);
 -- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_item);
+
 -- 			self.model.for_each_item (draw_item'access, in_area => area); -- CS
 			self.model.for_each_item (draw_item'access); -- CS
 			
@@ -750,6 +864,133 @@ package body canvas_test is
 			s.layout := null;
 		end if;
 	end on_view_destroy;
+
+	function view_to_model (
+		self   : not null access type_canvas;
+		p      : type_view_point) return type_model_point
+	is
+	begin
+		return (x      => p.x / self.scale + self.topleft.x,
+				y      => p.y / self.scale + self.topleft.y);
+	end view_to_model;
+	
+	function window_to_model (
+		self   : not null access type_canvas;
+		p      : type_window_point) return type_model_point
+	is
+		alloc : gtk_allocation;
+	begin
+		self.get_allocation (alloc);
+		return self.view_to_model (
+			(
+			x      => type_view_coordinate (p.x) - type_view_coordinate (alloc.x),
+			y      => type_view_coordinate (p.y) - type_view_coordinate (alloc.y))
+			);
+	end window_to_model;
+
+-- 
+--    function Window_To_Model
+--      (Self   : not null access Canvas_View_Record;
+--       Rect   : Window_Rectangle) return Model_Rectangle
+--    is
+--       Alloc : Gtk_Allocation;
+--    begin
+--       Self.Get_Allocation (Alloc);
+--       return Self.View_To_Model
+--         ((X      => View_Coordinate (Rect.X) - View_Coordinate (Alloc.X),
+--           Y      => View_Coordinate (Rect.Y) - View_Coordinate (Alloc.Y),
+--           Width  => View_Coordinate (Rect.Width),
+--           Height => View_Coordinate (Rect.Height)));
+--    end Window_To_Model;
+	-- 	
+
+
+	function model_to_item (
+		item   : not null access type_item'class;
+		p      : type_model_rectangle) return type_item_rectangle
+	is
+-- 		parent : type_item_ptr := type_item_ptr (item);
+		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
+-- 		pos    : type_item_point;
+	begin
+-- 		while parent /= null loop
+-- 			pos := parent.position;
+-- 			result.x := result.x - pos.x;
+-- 			result.y := result.y - pos.y;
+-- 			parent := parent.parent;
+-- 		end loop;
+		return result;
+	end model_to_item;
+	
+	procedure compute_item (
+		self    : not null access type_canvas'class;
+		details : in out canvas_event_details)
+	is
+		context : type_draw_context;
+	begin
+		context := (cr     => gdk.cairo.create (self.get_window),
+					view   => type_canvas_ptr (self),
+					layout => null);
+
+-- 		details.toplevel_item := self.model.toplevel_item_at (details.m_point, context => context);
+
+-- 		if details.toplevel_item = null then
+-- 			details.item := null;
+-- 		else
+-- 			details.t_point := details.toplevel_item.model_to_item (details.m_point);
+-- 			details.item := details.toplevel_item.inner_most_item (details.m_point, context);
+
+			if details.item /= null then
+				details.i_point := details.item.model_to_item (details.m_point);
+			end if;
+-- 		end if;
+
+		cairo.destroy (context.cr);
+	end compute_item;
+
+	
+	function on_scroll_event (
+		view  : access gtk_widget_record'class;
+		event : gdk_event_scroll) return boolean
+	is
+		self    : constant type_canvas_ptr := type_canvas_ptr (view);
+		details : aliased canvas_event_details;
+		button  : guint;
+	begin
+		if self.model /= null then
+			case event.direction is
+				when scroll_up | scroll_left => button := 5;
+				when scroll_down | scroll_right => button := 6;
+				when scroll_smooth => 
+					if event.delta_y > 0.0 then
+						button := 6;
+					else
+						button := 5;
+					end if;
+			end case;
+
+			details := (
+				event_type => scroll,
+				button     => button,
+				key        => 0,
+				state      => event.state,
+				root_point => (event.x_root, event.y_root),
+				m_point    => self.window_to_model ((x => event.x, y => event.y)),
+-- 				t_point    => no_item_point,
+				i_point    => no_item_point,
+				item       => null
+-- 				toplevel_item => null,
+-- 				allow_snapping    => true,
+-- 				allowed_drag_area => no_drag_allowed
+				);
+			
+-- 			compute_item (self, details);
+-- 			
+-- 			return self.item_event (details'unchecked_access);
+		end if;
+		return false;
+	end on_scroll_event;
+
 	
 	procedure init (
 		self  : not null access type_canvas'class;
@@ -780,6 +1021,12 @@ package body canvas_test is
 		self.set_model (model);
 	end init;
 
+	procedure set_position (
+		self  : not null access type_item;
+		pos   : gtkada.style.point) is
+	begin
+		self.position := pos;
+	end set_position;
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;
@@ -788,5 +1035,70 @@ package body canvas_test is
 		self := new type_canvas;
 		init (self, model);
 	end;
+
+	procedure add (
+		self : not null access type_model;
+		item : not null access type_item'class) is
+	begin
+		self.items.append (type_item_ptr (item));
+	end add;
+
+	procedure scale_to_fit (
+		self      : not null access type_canvas;
+		rect      : type_model_rectangle := no_rectangle;
+		min_scale : gdouble := 1.0 / 4.0;
+		max_scale : gdouble := 4.0;
+		duration  : standard.duration := 0.0)
+	is
+		box     : type_model_rectangle;
+		w, h, s : gdouble;
+		alloc   : gtk_allocation;
+		tl      : type_model_point;
+		wmin, hmin : gdouble;
+	begin
+		self.get_allocation (alloc);
+		if alloc.width <= 1 then
+			self.scale_to_fit_requested := max_scale;
+			self.scale_to_fit_area := rect;
+
+		elsif self.model /= null then
+			self.scale_to_fit_requested := 0.0;
+
+			if rect = no_rectangle then
+				box := self.model.bounding_box;
+			else
+				box := rect;
+			end if;
+
+			if box.width /= 0.0 and then box.height /= 0.0 then
+				w := gdouble (alloc.width);
+				h := gdouble (alloc.height);
+
+				--  the "-1.0" below compensates for rounding errors, since
+				--  otherwise we are still seeing the scrollbar along the axis
+				--  used to compute the scale.
+				wmin := (w - 2.0 * view_margin - 1.0) / box.width;
+				hmin := (h - 2.0 * view_margin - 1.0) / box.height;
+				wmin := gdouble'min (wmin, hmin);
+				s := gdouble'min (max_scale, wmin);
+				s := gdouble'max (min_scale, s);
+				tl :=
+					(x => box.x - (w / s - box.width) / 2.0,
+					y => box.y - (h / s - box.height) / 2.0);
+
+				if duration = 0.0 then
+					self.scale := s;
+					self.topleft := tl;
+					self.set_adjustment_values;
+					self.queue_draw;
+
+-- 				else
+-- 					animate_scale (self, s, duration => duration).start (self);
+-- 					animate_scroll (self, tl, duration).start (self);
+				end if;
+			end if;
+		end if;
+	end scale_to_fit;
+
 	
 end canvas_test;
