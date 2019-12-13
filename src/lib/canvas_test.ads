@@ -32,13 +32,41 @@ with ada.containers.doubly_linked_lists;
 
 package canvas_test is
 
+	subtype type_model_coordinate is gdouble;
+	
+	type type_item is tagged record
+		width, height : type_model_coordinate;
+		--  Computed by Size_Request. Always expressed in pixels.
+	end record;
+	
+	type type_item_ptr is access all type_item'class;
+
+	subtype type_item_coordinate is gdouble;
+	
+	type type_item_rectangle is record
+		x, y, width, height : type_item_coordinate;
+	end record;
+
+	function bounding_box (self : not null access type_item) return type_item_rectangle;
+	
+	subtype type_item_point is gtkada.style.point;
+
+	
+	package pac_items is new doubly_linked_lists (type_item_ptr);
+	
 	type type_model is new glib.object.gobject_record with record
-		layout    : pango.layout.pango_layout;
+		layout	: pango.layout.pango_layout;
+		items	: pac_items.list;
 	end record;
 	
 	type type_model_ptr is access all type_model;
 
-	subtype type_model_coordinate is gdouble;
+	procedure for_each_item (
+		self     : not null access type_model;
+		callback : not null access procedure (item : not null access type_item'class));
+
+	
+
 
 	type type_model_point is record
 		x, y : type_model_coordinate;
@@ -87,6 +115,10 @@ package canvas_test is
 	
 	subtype type_view_coordinate is gdouble;
 
+	type type_view_point is record
+		x, y : type_view_coordinate;
+	end record;
+	
 	type type_view_rectangle is record
 		x, y, width, height : type_view_coordinate;
 	end record;
@@ -108,7 +140,25 @@ package canvas_test is
 	end record;
 	--  context to perform the actual drawing
 
+
+	procedure refresh_layout (
+		self    : not null access type_item;
+		context : type_draw_context);
 	
+	procedure size_request (
+		self    : not null access type_item;
+		context : type_draw_context); -- CS no need
+
+	procedure set_transform (
+		self   : not null access type_canvas;
+		cr     : cairo.cairo_context;
+		item	: access type_item'class := null);
+	
+	procedure draw_internal (
+		self    : not null access type_canvas;
+		context : type_draw_context;
+		area    : type_model_rectangle);
+
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;

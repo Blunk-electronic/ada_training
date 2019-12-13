@@ -119,6 +119,57 @@ package body canvas_test is
 			gdouble (self.get_allocated_height)));
 	end get_visible_area;
 
+	procedure union (
+		rect1 : in out type_model_rectangle;
+		rect2 : type_model_rectangle)
+	is
+		right : constant type_model_coordinate := 
+			type_model_coordinate'max (rect1.x + rect1.width, rect2.x + rect2.width);
+		bottom : constant type_model_coordinate :=
+			type_model_coordinate'max (rect1.y + rect1.height, rect2.y + rect2.height);
+	begin
+		rect1.x := type_model_coordinate'min (rect1.x, rect2.x);
+		rect1.width := right - rect1.x;
+
+		rect1.y := type_model_coordinate'min (rect1.y, rect2.y);
+		rect1.height := bottom - rect1.y;
+	end union;
+
+	function item_to_model (
+		item   : not null access type_item'class;
+		rect   : type_item_rectangle) return type_model_rectangle
+	is
+-- 		parent : type_item_ptr := type_item_ptr (item);
+-- 		pos    : type_item_point;
+		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
+	begin
+-- 		while parent /= null loop
+			--  ??? should take item rotation into account when we implement it.
+
+-- 			pos := position (parent);
+-- 			result.x := result.x + pos.x;
+-- 			result.y := result.y + pos.y;
+
+-- 			parent := parent.parent;
+-- 		end loop;
+		return result;
+	end item_to_model;
+
+	function bounding_box (self : not null access type_item) return type_item_rectangle is
+	begin
+		--  assumes size_request has been called already
+		return (0.0,
+				0.0,
+				self.width,
+				self.height);
+	end bounding_box;
+	
+	function model_bounding_box (self : not null access type_item'class) 
+		return type_model_rectangle is
+	begin
+		return self.item_to_model (self.bounding_box);
+	end model_bounding_box;
+	
 	function bounding_box (
 		self   : not null access type_model;
 		margin : type_model_coordinate := 0.0)
@@ -128,29 +179,29 @@ package body canvas_test is
 		is_first : boolean := true;
 
 -- 		procedure do_item (item : not null access abstract_item_record'class);
--- 		procedure do_item (item : not null access abstract_item_record'class) is
--- 			box : constant model_rectangle := item.model_bounding_box;
--- 		begin
--- 			if is_first then
--- 			is_first := false;
--- 			result := box;
--- 			else
--- 			union (result, box);
--- 			end if;
--- 		end do_item;
+		procedure do_item (item : not null access type_item'class) is
+			box : constant type_model_rectangle := item.model_bounding_box;
+		begin
+			if is_first then
+				is_first := false;
+				result := box;
+			else
+				union (result, box);
+			end if;
+		end do_item;
 	begin
--- 		canvas_model_record'class (self.all).for_each_item
--- 		(do_item'access);
--- 
--- 		if is_first then
--- 			return no_rectangle;
--- 		else
--- 			result.x := result.x - margin;
--- 			result.y := result.y - margin;
--- 			result.width := result.width + 2.0 * margin;
--- 			result.height := result.height + 2.0 * margin;
+-- 		canvas_model_record'class (self.all).for_each_item (do_item'access);
+		type_model'class (self.all).for_each_item (do_item'access);
+
+		if is_first then
+			return no_rectangle;
+		else
+			result.x := result.x - margin;
+			result.y := result.y - margin;
+			result.width := result.width + 2.0 * margin;
+			result.height := result.height + 2.0 * margin;
 			return result;
--- 		end if;
+		end if;
 	end bounding_box;
 
 	procedure viewport_changed (self : not null access type_canvas'class) is begin
@@ -264,17 +315,104 @@ package body canvas_test is
 	begin
 		case prop_id is
 			when h_adj_property => set_object (value, self.hadj);
-
 			when v_adj_property => set_object (value, self.vadj);
-
 			when h_scroll_property => set_enum (value, gtk_policy_type'pos (policy_automatic));
-
 			when v_scroll_property => set_enum (value, gtk_policy_type'pos (policy_automatic));
-
 			when others => null;
 		end case;
 	end view_get_property;
 
+	procedure set_transform (
+		self	: not null access type_canvas;
+		cr		: cairo.cairo_context;
+		item	: access type_item'class := null)
+	is
+		model_p : type_model_point;
+		p       : type_view_point;
+	begin
+		if item /= null then
+			null;
+-- 			model_p := item.item_to_model ((0.0, 0.0));
+		else
+			model_p := (0.0, 0.0);
+		end if;
+
+-- 		p := self.model_to_view (model_p);
+		translate (cr, p.x, p.y);
+-- 		scale (cr, self.scale, self.scale);
+	end set_transform;
+	
+	procedure draw_internal (
+		self    : not null access type_canvas;
+		context : type_draw_context;
+		area    : type_model_rectangle)
+	is
+-- 		s  : item_sets.set;
+
+-- 		procedure draw_item
+-- 		(item : not null access abstract_item_record'class);
+		procedure draw_item (
+			item : not null access type_item'class) is
+		begin
+			null;
+			--  if the item is not displayed explicitly afterwards.
+-- 			if not self.in_drag
+-- 			or else not s.contains (abstract_item (item))
+-- 			then
+-- CS			translate_and_draw_item (item, context);
+-- 			end if;
+		end draw_item;
+
+-- 		procedure add_to_set (item : not null access abstract_item_record'class);
+-- 		procedure add_to_set (
+-- 			item : not null access abstract_item_record'class) is
+-- 		begin
+-- 			s.include (abstract_item (item));
+-- 		end add_to_set;
+
+-- 		use item_drag_infos, item_sets;
+-- 		c  : item_drag_infos.cursor;
+-- 		c2 : item_sets.cursor;
+	begin
+		if self.model /= null then
+			--  we must always draw the selected items and their links explicitly
+			--  (since the model might not have been updated yet if we are during
+			--  an automatic scrolling for instance, using a rtree).
+
+-- 			if self.in_drag then
+-- 			c := self.dragged_items.first;
+-- 			while has_element (c) loop
+-- 				s.include (element (c).item);  --  toplevel items
+-- 				next (c);
+-- 			end loop;
+-- 			self.model.for_each_link (add_to_set'access, from_or_to => s);
+-- 			end if;
+
+			--  draw the active smart guides if needed
+-- 			if self.in_drag
+-- 			and then self.last_button_press.allow_snapping
+-- 			and then self.snap.smart_guides
+-- 			and then not self.dragged_items.is_empty
+-- 			then
+-- 			draw_visible_smart_guides
+-- 				(self, context, element (self.dragged_items.first).item);
+-- 			end if;
+
+-- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_link);
+-- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_item);
+-- 			self.model.for_each_item (draw_item'access, in_area => area); -- CS
+			self.model.for_each_item (draw_item'access); -- CS
+			
+-- 			if self.in_drag then
+-- 			c2 := s.first;
+-- 			while has_element (c2) loop
+-- 				translate_and_draw_item (element (c2), context);
+-- 				next (c2);
+-- 			end loop;
+-- 			end if;
+		end if;
+	end draw_internal;
+	
 	procedure refresh (
 		self : not null access type_canvas'class;
 		cr   : cairo.cairo_context;
@@ -298,8 +436,8 @@ package body canvas_test is
 			view	=> type_canvas_ptr (self));
 
 		save (cr);
--- 		self.set_transform (cr);
--- 		self.draw_internal (c, a);
+		self.set_transform (cr);
+		self.draw_internal (c, a);
 		restore (cr);
 	end refresh;
 	
@@ -359,16 +497,17 @@ package body canvas_test is
 			w.set_realized (true);
 			w.get_allocation (allocation);
 
-			gdk_new
-			(attr,
-			window_type => gdk.window.window_child,
-			x           => allocation.x,
-			y           => allocation.y,
-			width       => allocation.width,
-			height      => allocation.height,
-			wclass      => gdk.window.input_output,
-			visual      => w.get_visual,
-			event_mask  => w.get_events or exposure_mask);
+			gdk_new (
+				attr,
+				window_type => gdk.window.window_child,
+				x           => allocation.x,
+				y           => allocation.y,
+				width       => allocation.width,
+				height      => allocation.height,
+				wclass      => gdk.window.input_output,
+				visual      => w.get_visual,
+				event_mask  => w.get_events or exposure_mask);
+			
 			mask := wa_x or wa_y or wa_visual;
 
 			gdk_new (window, w.get_parent_window, attr, mask);
@@ -470,9 +609,72 @@ package body canvas_test is
 -- 		move_inline_edit_widget (self);
 	end on_layout_changed_for_view;
 
+	procedure for_each_item (
+		self     : not null access type_model;
+		callback : not null access procedure (item : not null access type_item'class))
+-- 		selected_only : boolean := false;
+-- 		filter        : item_kind_filter := kind_any;
+-- 		in_area       : model_rectangle := no_rectangle) -- CS
+	is
+		use pac_items;
+		c    : pac_items.cursor := self.items.first;
+		item : type_item_ptr;
+	begin
+		while has_element (c) loop
+			item := element (c);
+
+			--  ??? might not work when the callback removes the item, which in
+			--  turn removes a link which might happen to be the next element
+			--  we were pointing to.
+			next (c);
+
+-- 			if (filter = kind_any
+-- 				or else (filter = kind_item and then not item.is_link)
+-- 				or else (filter = kind_link and then item.is_link))
+-- 			and then
+-- 				(not selected_only
+-- 				or else list_canvas_model (self).is_selected (item))
+-- 			and then
+-- 				(in_area = no_rectangle
+-- 				or else intersects (in_area, item.model_bounding_box))
+-- 			then
+			callback (item);
+-- 			end if;
+		end loop;
+	end for_each_item;
+
+	procedure size_request (
+		self    : not null access type_item;
+		context : type_draw_context) -- CS no need
+	is
+		use pac_items;
+-- 		c     : pac_items.cursor := self.children.first;
+-- 		child : container_item;
+-- 		tmp, tmp2 : type_model_coordinate;
+	begin
+		-- CS
+		self.width  := 100.0;
+		self.height := 100.0;
+	end size_request;
+	
+	procedure refresh_layout (
+		self    : not null access type_item;
+		context : type_draw_context) is
+	begin
+		null;
+-- 		self.computed_position := self.position;
+		type_item'class (self.all).size_request (context);
+-- 		container_item_record'class (self.all).size_allocate;
+-- 
+-- 		self.computed_position.x :=
+-- 		self.computed_position.x - (self.width * self.anchor_x);
+-- 		self.computed_position.y :=
+-- 		self.computed_position.y - (self.height * self.anchor_y);
+	end refresh_layout;
+	
 	procedure refresh_layout (
 		self        : not null access type_model;
-		send_signal : boolean := true)
+		send_signal : boolean := true) 
 	is
 		context : constant type_draw_context := (
 					cr		=> <>,
@@ -480,13 +682,13 @@ package body canvas_test is
 					view	=> null);
 
 -- 		procedure do_container_layout (item : not null access abstract_item_record'class);
--- 		procedure do_container_layout (item : not null access abstract_item_record'class) is
--- 		begin
--- 			item.refresh_layout (context);
--- 		end do_container_layout;
+		procedure do_container_layout (item : not null access type_item'class) is begin
+			item.refresh_layout (context);
+		end do_container_layout;
 
 	begin
 -- 		type_model'class (self.all).for_each_item (do_container_layout'access, filter => kind_item);
+		type_model'class (self.all).for_each_item (do_container_layout'access);
 -- 		refresh_link_layout (self);
 
 		if send_signal then
@@ -498,7 +700,6 @@ package body canvas_test is
 		self  : not null access type_canvas'class;
 		model : access type_model'class) is
 	begin
-		--if self.model = canvas_model (model) then
 		if self.model = type_model_ptr (model) then
 			return;
 		end if;
