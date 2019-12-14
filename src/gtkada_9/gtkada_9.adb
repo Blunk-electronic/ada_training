@@ -162,6 +162,7 @@ begin
 -- 	put_line (to_string (position (item)));
 	add (model, item);
 
+-- 	canvas.set_scale (0.4);
 	
 	scale_to_fit (canvas);
 	

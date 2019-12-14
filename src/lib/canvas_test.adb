@@ -77,7 +77,7 @@ package body canvas_test is
 			class_record => model_class_record,
 			type_name    => "gtkada_model",
 			parameters   => (
--- 				1 => (1 => gtype_pointer), 	-- item_content_changed
+-- 				1 => (1 => gtype_pointer), 	-- item_contents_changed
 				1 => (1 => gtype_none)  	-- layout_changed
 -- 				3 => (1 => gtype_pointer),	-- selection_changed
 -- 				4 => (1 => gtype_pointer)) 	-- item_destroyed
@@ -127,7 +127,33 @@ package body canvas_test is
 				width  => rect.width * self.scale,
 				height => rect.height * self.scale);
 	end model_to_view;
-   
+
+	procedure set_scale (
+		self     : not null access type_canvas;
+		scale    : gdouble := 1.0;
+		preserve : type_model_point := no_point)
+	is
+		box : type_model_rectangle;
+		old_scale : constant gdouble := self.scale;
+		p   : type_model_point;
+	begin
+		if preserve /= no_point then
+			p := preserve;
+		else
+			box := self.get_visible_area;
+			p := (box.x + box.width / 2.0, box.y + box.height / 2.0);
+		end if;
+
+		self.scale := scale;
+		self.topleft :=
+		(p.x - (p.x - self.topleft.x) * old_scale / scale,
+			p.y - (p.y - self.topleft.y) * old_scale / scale);
+
+		self.scale_to_fit_requested := 0.0;
+		self.set_adjustment_values;
+		self.queue_draw;
+	end set_scale;
+	
 	function get_visible_area (self : not null access type_canvas)
 		return type_model_rectangle is
 	begin
@@ -186,7 +212,7 @@ package body canvas_test is
 	function bounding_box (self : not null access type_item) return type_item_rectangle is
 	begin
 		--  assumes size_request has been called already
--- CS		return (0.0, 0.0, self.width, self.height);
+-- 		return (0.0, 0.0, self.width, self.height);
 
 		return (0.0, 0.0, 1000.0, 1000.0);
 	end bounding_box;
@@ -515,8 +541,8 @@ package body canvas_test is
 -- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_link);
 -- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_item);
 
--- 			self.model.for_each_item (draw_item'access, in_area => area); -- CS
-			self.model.for_each_item (draw_item'access); -- CS
+			self.model.for_each_item (draw_item'access, in_area => area);
+-- 			self.model.for_each_item (draw_item'access); -- CS
 			
 -- 			if self.in_drag then
 -- 			c2 := s.first;
@@ -724,12 +750,20 @@ package body canvas_test is
 -- 		move_inline_edit_widget (self);
 	end on_layout_changed_for_view;
 
+	function intersects (rect1, rect2 : type_model_rectangle) return boolean is begin
+		return not (
+			rect1.x > rect2.x + rect2.width            --  r1 on the right of r2
+			or else rect2.x > rect1.x + rect1.width    --  r2 on the right of r1
+			or else rect1.y > rect2.y + rect2.height   --  r1 below r2
+			or else rect2.y > rect1.y + rect1.height); --  r1 above r2
+	end intersects;
+	
 	procedure for_each_item (
-		self     : not null access type_model;
-		callback : not null access procedure (item : not null access type_item'class))
+		self		: not null access type_model;
+		callback	: not null access procedure (item : not null access type_item'class);
 -- 		selected_only : boolean := false;
 -- 		filter        : item_kind_filter := kind_any;
--- 		in_area       : model_rectangle := no_rectangle) -- CS
+		in_area		: type_model_rectangle := no_rectangle)
 	is
 		use pac_items;
 		c    : pac_items.cursor := self.items.first;
@@ -753,8 +787,15 @@ package body canvas_test is
 -- 				(in_area = no_rectangle
 -- 				or else intersects (in_area, item.model_bounding_box))
 -- 			then
-			callback (item);
+-- 			callback (item);
 -- 			end if;
+
+			if (in_area = no_rectangle
+				or else intersects (in_area, item.model_bounding_box))
+			then
+				callback (item);
+			end if;
+			
 		end loop;
 	end for_each_item;
 
@@ -768,18 +809,17 @@ package body canvas_test is
 -- 		tmp, tmp2 : type_model_coordinate;
 	begin
 		-- CS
-		self.width  := 100.0;
-		self.height := 100.0;
+		self.width  := 1000.0;
+		self.height := 1000.0;
 	end size_request;
-	
+
 	procedure refresh_layout (
 		self    : not null access type_item;
 		context : type_draw_context) is
 	begin
-		null;
 -- 		self.computed_position := self.position;
 		type_item'class (self.all).size_request (context);
--- 		container_item_record'class (self.all).size_allocate;
+-- 		container_item_record'class (self.all).size_allocate; -- for children only. no need
 -- 
 -- 		self.computed_position.x :=
 -- 		self.computed_position.x - (self.width * self.anchor_x);

@@ -59,7 +59,7 @@ package canvas_test is
 	end record;
 
 	function bounding_box (self : not null access type_item) return type_item_rectangle;
-	
+
 	subtype type_item_point is gtkada.style.point;
 
 	
@@ -72,11 +72,6 @@ package canvas_test is
 	
 	type type_model_ptr is access all type_model;
 	
-	procedure for_each_item (
-		self     : not null access type_model;
-		callback : not null access procedure (item : not null access type_item'class));
-
-	
 
 
 	type type_model_point is record
@@ -88,6 +83,12 @@ package canvas_test is
 	end record;
 
 	no_rectangle : constant type_model_rectangle := (0.0, 0.0, 0.0, 0.0);
+
+	procedure for_each_item (
+		self    	: not null access type_model;
+		callback	: not null access procedure (item : not null access type_item'class);
+		in_area		: type_model_rectangle := no_rectangle);
+
 	
 	procedure init (self : not null access type_model'class);
    --  initialize the internal data so that signals can be sent.
@@ -115,6 +116,21 @@ package canvas_test is
 	end record;
 	
 	type type_canvas_ptr is access all type_canvas'class;
+
+	procedure set_adjustment_values (self : not null access type_canvas'class);
+	
+	no_point : constant type_model_point := (gdouble'first, gdouble'first);
+	
+	procedure set_scale (
+		self     : not null access type_canvas;
+		scale    : gdouble := 1.0;
+		preserve : type_model_point := no_point);
+	--  changes the scaling factor for self.
+	--  this also scrolls the view so that either preserve or the current center
+	--  of the view remains at the same location in the widget, as if the user
+	--  was zooming towards that specific point.
+	--  see also gtkada.canvas_view.views.animate_scale for a way to do this
+	--  change via an animation.
 
 	
 	function get_visible_area (self : not null access type_canvas) return type_model_rectangle;
