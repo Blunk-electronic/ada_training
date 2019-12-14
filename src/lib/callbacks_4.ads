@@ -16,13 +16,13 @@ package callbacks_4 is
 
 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class);
 
-	scrolled				: gtk_scrolled_window;
+-- 	scrolled				: gtk_scrolled_window;
 	
--- 	canvas : type_canvas_ptr;
+	canvas : type_canvas_ptr;
 
 -- 	model_ptr : list_canvas_model;
--- 	scale_default : constant gdouble := 1.0;
--- 	scale : gdouble := scale_default;
+	scale_default : constant gdouble := 1.0;
+	scale : gdouble := scale_default;
 
 -- 	item : canvas_test.type_item_ptr;
 	

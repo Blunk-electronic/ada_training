@@ -218,8 +218,8 @@ package canvas_test is
 		duration  : standard.duration := 0.0);
 
 	
-	function canvas_get_type return glib.gtype;
-	pragma convention (c, canvas_get_type);
+	function view_get_type return glib.gtype;
+	pragma convention (c, view_get_type);
 	--  return the internal type
 
 	
@@ -241,11 +241,11 @@ package canvas_test is
 
 	function model_to_item (
 		item   : not null access type_item'class;
-		p      : type_model_point) return type_item_point;
-	
+		p      : type_model_rectangle) return type_item_rectangle;
+
 	function model_to_item (
 		item   : not null access type_item'class;
-		p      : type_model_rectangle) return type_item_rectangle;
+		p      : type_model_point) return type_item_point;
 
 	type canvas_event_type is (
 		button_press, button_release, double_click,

@@ -661,10 +661,10 @@ package body canvas_test is
 		end if;
 	end on_view_realize;
 	
-	procedure canvas_class_init (self : gobject_class);
-	pragma convention (c, canvas_class_init);
+	procedure view_class_init (self : gobject_class);
+	pragma convention (c, view_class_init);
 	
-	procedure canvas_class_init (self : gobject_class) is begin
+	procedure view_class_init (self : gobject_class) is begin
 		set_properties_handlers (self, view_set_property'access, view_get_property'access);
 
 		override_property (self, h_adj_property, "hadjustment");
@@ -677,14 +677,14 @@ package body canvas_test is
 		set_default_realize_handler (self, on_view_realize'access);
 	end;
 	
-	function canvas_get_type return glib.gtype is
+	function view_get_type return glib.gtype is
 		info : access ginterface_info;
 	begin
 		if glib.object.initialize_class_record (
 			ancestor     => gtk.bin.get_type,
 			signals      => view_signals,
 			class_record => canvas_class_record'access,
-			type_name    => "gtkada_canvas",
+			type_name    => "GtkadaCanvasView",
 			parameters   => (
 				1 => (1 => gtype_none),
 				2 => (1 => gtype_pointer)
@@ -692,7 +692,7 @@ package body canvas_test is
 -- 				4 => (1 => gtype_pointer)
 				),
 			returns      => (1 => gtype_none, 2 => gtype_boolean),
-			class_init   => canvas_class_init'access
+			class_init   => view_class_init'access
 			)
 		then
 			info := new ginterface_info' (
@@ -707,7 +707,7 @@ package body canvas_test is
 		end if;
 
 		return canvas_class_record.the_type;
-	end canvas_get_type;
+	end view_get_type;
 
 	procedure layout_changed (self : not null access type_model'class) is begin
 		object_callback.emit_by_name (self, signal_layout_changed);
@@ -945,6 +945,22 @@ package body canvas_test is
 --    end Window_To_Model;
 	-- 	
 
+	function model_to_item (
+		item   : not null access type_item'class;
+		p      : type_model_rectangle) return type_item_rectangle
+	is
+		parent : type_item_ptr := type_item_ptr (item);
+		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
+		pos    : type_item_point;
+	begin
+		while parent /= null loop
+			pos := parent.position;
+			result.x := result.x - pos.x;
+			result.y := result.y - pos.y;
+-- 			parent := parent.parent;
+		end loop;
+		return result;
+	end model_to_item;
 
 	function model_to_item (
 		item   : not null access type_item'class;
@@ -955,22 +971,6 @@ package body canvas_test is
 		return (rect.x, rect.y);
 	end model_to_item;
 	
-	function model_to_item (
-		item   : not null access type_item'class;
-		p      : type_model_rectangle) return type_item_rectangle
-	is
--- 		parent : type_item_ptr := type_item_ptr (item);
-		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
--- 		pos    : type_item_point;
-	begin
--- 		while parent /= null loop
--- 			pos := parent.position;
--- 			result.x := result.x - pos.x;
--- 			result.y := result.y - pos.y;
--- 			parent := parent.parent;
--- 		end loop;
-		return result;
-	end model_to_item;
 
 	function gvalue_to_eda (value : gvalue) return event_details_access is
 		s : constant system.address := get_address (value);
@@ -1069,7 +1069,7 @@ package body canvas_test is
 		self  : not null access type_canvas'class;
 		model : access type_model'class := null) is
 	begin
-		g_new (self, canvas_get_type);
+		g_new (self, view_get_type);
 		self.layout := self.create_pango_layout;
 		self.set_has_window (true);
 

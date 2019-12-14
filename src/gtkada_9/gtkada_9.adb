@@ -54,7 +54,8 @@ procedure gtkada_9 is
 	toolbar					: gtk_toolbar;
 	console					: gtk_entry;
 	frame					: gtk_frame;
-
+	scrolled				: gtk_scrolled_window;
+	
 	procedure init is begin
 		gtk.main.init;
 
@@ -141,7 +142,7 @@ procedure gtkada_9 is
 
 	end;
 
-	canvas : type_canvas_ptr;
+
 	model : type_model_ptr;
 	item : type_item_ptr;
 	

@@ -10,6 +10,8 @@ with gtkada.style;     use gtkada.style;
 
 with ada.text_io;			use ada.text_io;
 
+with canvas_test;			use canvas_test;
+
 package body callbacks_4 is
 
 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class) is
@@ -30,7 +32,7 @@ package body callbacks_4 is
 -- 		rec : model_rectangle := bounding_box (model_ptr);
 	begin
 		put_line ("zoom to fit ...");
--- 		scale_to_fit (view);
+-- 		scale_to_fit (canvas);
 -- 		put_line (to_string (get_scale (view)));
 	end;
 
