@@ -31,6 +31,7 @@ with gtkada.types;			use gtkada.types;
 with gtkada.handlers;		use gtkada.handlers;
 with gtkada.bindings;		use gtkada.bindings;
 with gdk;					use gdk;
+with gdk.cairo;				use gdk.cairo;
 with gdk.window;			use gdk.window;
 with gdk.window_attr;		use gdk.window_attr;
 with gdk.event;				use gdk.event;
@@ -39,6 +40,7 @@ with gdk.rgba;
 with pango.layout;			use pango.layout;
 with system.storage_elements;            use system.storage_elements;
 
+with ada.unchecked_conversion;
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
 
@@ -54,8 +56,8 @@ package body canvas_test is
 		);
 	
 	view_signals : constant gtkada.types.chars_ptr_array := (
-		1 => new_string (string (signal_viewport_changed))
--- 		2 => new_string (string (signal_item_event)),
+		1 => new_string (string (signal_viewport_changed)),
+		2 => new_string (string (signal_item_event))
 -- 		3 => new_string (string (signal_inline_editing_started)),
 -- 		4 => new_string (string (signal_inline_editing_finished))
 		);
@@ -83,7 +85,6 @@ package body canvas_test is
 			);  
 		return model_class_record.the_type;
 	end model_get_type;
-
 	
 	procedure init (self : not null access type_model'class) is begin
 		if not self.is_created then
@@ -659,8 +660,8 @@ package body canvas_test is
 			class_record => canvas_class_record'access,
 			type_name    => "gtkada_canvas",
 			parameters   => (
-				1 => (1 => gtype_none)
--- 				2 => (1 => gtype_pointer),
+				1 => (1 => gtype_none),
+				2 => (1 => gtype_pointer)
 -- 				3 => (1 => gtype_pointer),
 -- 				4 => (1 => gtype_pointer)
 				),
@@ -907,6 +908,15 @@ package body canvas_test is
 
 	function model_to_item (
 		item   : not null access type_item'class;
+		p      : type_model_point) return type_item_point
+	is
+		rect   : constant type_item_rectangle := model_to_item (item, (p.x, p.y, 1.0, 1.0));
+	begin
+		return (rect.x, rect.y);
+	end model_to_item;
+	
+	function model_to_item (
+		item   : not null access type_item'class;
 		p      : type_model_rectangle) return type_item_rectangle
 	is
 -- 		parent : type_item_ptr := type_item_ptr (item);
@@ -921,6 +931,29 @@ package body canvas_test is
 -- 		end loop;
 		return result;
 	end model_to_item;
+
+	function gvalue_to_eda (value : gvalue) return event_details_access is
+		s : constant system.address := get_address (value);
+		pragma warnings (off, "possible aliasing problem*");
+		function unchecked_convert is new ada.unchecked_conversion (system.address, event_details_access);
+		pragma warnings (on, "possible aliasing problem*");
+	begin
+		return unchecked_convert (s);
+	end gvalue_to_eda;
+	
+	package eda_marshallers is new object_return_callback.marshallers.generic_marshaller (event_details_access, gvalue_to_eda);
+	function eda_to_address is new ada.unchecked_conversion (event_details_access, system.address);
+	
+	function eda_emit is new eda_marshallers.emit_by_name_generic (eda_to_address);
+	--  support for the "item_contents_changed" signal
+	
+	function item_event (
+		self    : not null access type_canvas'class;
+		details : event_details_access)
+		return boolean is
+	begin
+		return eda_emit (self, signal_item_event & ascii.nul, details);
+	end item_event;
 	
 	procedure compute_item (
 		self    : not null access type_canvas'class;
@@ -928,9 +961,10 @@ package body canvas_test is
 	is
 		context : type_draw_context;
 	begin
-		context := (cr     => gdk.cairo.create (self.get_window),
-					view   => type_canvas_ptr (self),
-					layout => null);
+		context := (
+			cr     => gdk.cairo.create (self.get_window),
+			view   => type_canvas_ptr (self),
+			layout => null);
 
 -- 		details.toplevel_item := self.model.toplevel_item_at (details.m_point, context => context);
 
@@ -947,7 +981,6 @@ package body canvas_test is
 
 		cairo.destroy (context.cr);
 	end compute_item;
-
 	
 	function on_scroll_event (
 		view  : access gtk_widget_record'class;
@@ -984,9 +1017,9 @@ package body canvas_test is
 -- 				allowed_drag_area => no_drag_allowed
 				);
 			
--- 			compute_item (self, details);
+			compute_item (self, details);
 -- 			
--- 			return self.item_event (details'unchecked_access);
+			return self.item_event (details'unchecked_access);
 		end if;
 		return false;
 	end on_scroll_event;
@@ -1014,7 +1047,7 @@ package body canvas_test is
 -- 		self.on_button_release_event (on_button_event'access);
 -- 		self.on_motion_notify_event (on_motion_notify_event'access);
 -- 		self.on_key_press_event (on_key_event'access);
--- 		self.on_scroll_event (on_scroll_event'access);
+		self.on_scroll_event (on_scroll_event'access);
 
 		self.set_can_focus (true);
 

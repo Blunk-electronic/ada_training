@@ -116,6 +116,7 @@ package canvas_test is
 	
 	type type_canvas_ptr is access all type_canvas'class;
 
+	
 	function get_visible_area (self : not null access type_canvas) return type_model_rectangle;
 	--  return the area of the model that is currently displayed in the view.
 	--  this is in model coordinates (since the canvas coordinates are always
@@ -224,8 +225,12 @@ package canvas_test is
 
 	function model_to_item (
 		item   : not null access type_item'class;
-		p      : type_model_rectangle) return type_item_rectangle;
+		p      : type_model_point) return type_item_point;
 	
+	function model_to_item (
+		item   : not null access type_item'class;
+		p      : type_model_rectangle) return type_item_rectangle;
+
 	type canvas_event_type is (
 		button_press, button_release, double_click,
 		start_drag, in_drag, end_drag, key_press, scroll, custom);
@@ -278,6 +283,14 @@ package canvas_test is
 		--  set_snap, and prevents any snapping on the grid or smart guides.
 		--  it should be set at the same time that allowed_drag_area is set.
 	end record;
+
+	type event_details_access is not null access all canvas_event_details;
+
+	signal_item_event : constant glib.signal_name := "item_event";
+	
+	function item_event (
+		self    : not null access type_canvas'class;
+		details : event_details_access) return boolean;
 
 	
 end canvas_test;
