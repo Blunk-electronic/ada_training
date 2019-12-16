@@ -144,7 +144,7 @@ procedure gtkada_9 is
 
 
 	model : type_model_ptr;
-	item : type_item_ptr;
+
 	
 begin
 	init;
@@ -160,7 +160,7 @@ begin
 	item := new type_item;
 	
 	set_position (item, p1);
--- 	put_line (to_string (position (item)));
+	put_line (to_string (position (item)));
 	add (model, item);
 
 -- 	canvas.set_scale (0.4);

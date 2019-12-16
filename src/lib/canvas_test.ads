@@ -102,6 +102,7 @@ package canvas_test is
 		model 		: type_model_ptr;
 		topleft   	: type_model_point := (0.0, 0.0);
 		scale     	: gdouble := 1.0;
+		grid_size 	: type_model_coordinate := 20.0;
 		layout		: pango.layout.pango_layout;
 		hadj, vadj	: gtk.adjustment.gtk_adjustment;
 
@@ -120,6 +121,8 @@ package canvas_test is
 	procedure set_adjustment_values (self : not null access type_canvas'class);
 	
 	no_point : constant type_model_point := (gdouble'first, gdouble'first);
+
+	function get_scale (self : not null access type_canvas) return gdouble;
 	
 	procedure set_scale (
 		self     : not null access type_canvas;
@@ -192,12 +195,24 @@ package canvas_test is
 		self   : not null access type_canvas;
 		cr     : cairo.cairo_context;
 		item	: access type_item'class := null);
+
+	procedure set_grid_size (
+		self : not null access type_canvas'class;
+		size : type_model_coordinate := 30.0);
+
+	procedure draw_grid_dots (
+		self    : not null access type_canvas'class;
+		style   : gtkada.style.drawing_style;
+		context : type_draw_context;
+		area    : type_model_rectangle);
 	
 	procedure draw_internal (
 		self    : not null access type_canvas;
 		context : type_draw_context;
 		area    : type_model_rectangle);
 
+	function position (self : not null access type_item) return gtkada.style.point;
+	
 	procedure set_position (
 		self  : not null access type_item;
 		pos   : gtkada.style.point);

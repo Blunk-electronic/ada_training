@@ -68,7 +68,8 @@ package body canvas_test is
 	v_scroll_property : constant property_id := 4;
 
 	model_class_record : glib.object.ada_gobject_class := glib.object.uninitialized_class;
-	view_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
+-- 	view_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
+	canvas_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 	
 	function model_get_type return glib.gtype is begin
 		glib.object.initialize_class_record (
@@ -97,7 +98,6 @@ package body canvas_test is
 		init (self);
 	end;	
 
-	canvas_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 
 	function view_to_model (
 		self   : not null access type_canvas;
@@ -128,6 +128,11 @@ package body canvas_test is
 				height => rect.height * self.scale);
 	end model_to_view;
 
+	function get_scale (self : not null access type_canvas) return gdouble is
+	begin
+		return self.scale;
+	end get_scale;
+	
 	procedure set_scale (
 		self     : not null access type_canvas;
 		scale    : gdouble := 1.0;
@@ -145,8 +150,8 @@ package body canvas_test is
 		end if;
 
 		self.scale := scale;
-		self.topleft :=
-		(p.x - (p.x - self.topleft.x) * old_scale / scale,
+		self.topleft := (
+			p.x - (p.x - self.topleft.x) * old_scale / scale,
 			p.y - (p.y - self.topleft.y) * old_scale / scale);
 
 		self.scale_to_fit_requested := 0.0;
@@ -482,6 +487,46 @@ package body canvas_test is
 			restore (context.cr);
 			process_exception (e);
 	end translate_and_draw_item;
+
+	procedure set_grid_size (
+		self : not null access type_canvas'class;
+		size : type_model_coordinate := 30.0) is
+	begin
+		self.grid_size := size;
+	end set_grid_size;
+
+	procedure draw_grid_dots (
+		self    : not null access type_canvas'class;
+		style   : gtkada.style.drawing_style;
+		context : type_draw_context;
+		area    : type_model_rectangle)
+	is
+		tmpx, tmpy  : gdouble;
+	begin
+		if style.get_fill /= null_pattern then
+			set_source (context.cr, style.get_fill);
+			paint (context.cr);
+		end if;
+
+		if self.grid_size /= 0.0 then
+			new_path (context.cr);
+
+			tmpx := gdouble (gint (area.x / self.grid_size)) * self.grid_size;
+			
+			while tmpx < area.x + area.width loop
+				tmpy := gdouble (gint (area.y / self.grid_size)) * self.grid_size;
+				
+				while tmpy < area.y + area.height loop
+					rectangle (context.cr, tmpx - 0.5, tmpy - 0.5, 1.0, 1.0);
+					tmpy := tmpy + self.grid_size;
+				end loop;
+
+				tmpx := tmpx + self.grid_size;
+			end loop;
+
+			style.finish_path (context.cr);
+		end if;
+	end draw_grid_dots;
 	
 	procedure draw_internal (
 		self    : not null access type_canvas;
@@ -512,9 +557,27 @@ package body canvas_test is
 
 -- 		use item_drag_infos, item_sets;
 -- 		c  : item_drag_infos.cursor;
--- 		c2 : item_sets.cursor;
+		-- 		c2 : item_sets.cursor;
+
+		-- prepare draing style so that white grid dots will be drawn.
+		style : drawing_style := gtk_new (stroke => gdk.rgba.white_rgba);
+		
 	begin
+		put_line ("draw internal ...");
+		
 		if self.model /= null then
+
+			-- Additional statements inserted according to advise in
+			-- child package gtkada.canvas_view.views:
+
+			-- draw a black background:
+			set_source_rgb (context.cr, 0.0, 0.0, 0.0);
+			paint (context.cr);
+
+			-- draw white grid dots:
+			set_grid_size (self, 100.0);
+			draw_grid_dots (self, style, context, area);
+			
 			--  we must always draw the selected items and their links explicitly
 			--  (since the model might not have been updated yet if we are during
 			--  an automatic scrolling for instance, using a rtree).
@@ -633,7 +696,7 @@ package body canvas_test is
 		mask       : gdk_window_attributes_type;
 	begin
 		if not w.get_has_window then
-			inherited_realize (view_class_record, w);
+			inherited_realize (canvas_class_record, w);
 		else
 			w.set_realized (true);
 			w.get_allocation (allocation);
@@ -953,12 +1016,12 @@ package body canvas_test is
 		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
 		pos    : type_item_point;
 	begin
-		while parent /= null loop
+-- 		while parent /= null loop
 			pos := parent.position;
 			result.x := result.x - pos.x;
 			result.y := result.y - pos.y;
 -- 			parent := parent.parent;
-		end loop;
+-- 		end loop;
 		return result;
 	end model_to_item;
 
@@ -1030,6 +1093,8 @@ package body canvas_test is
 		details : aliased canvas_event_details;
 		button  : guint;
 	begin
+		put_line ("scrolling ...");
+		
 		if self.model /= null then
 			case event.direction is
 				when scroll_up | scroll_left => button := 5;
@@ -1094,6 +1159,11 @@ package body canvas_test is
 		self.set_model (model);
 	end init;
 
+	function position (self : not null access type_item) return gtkada.style.point is
+	begin
+		return self.position;
+	end position;
+	
 	procedure set_position (
 		self  : not null access type_item;
 		pos   : gtkada.style.point) is
@@ -1129,6 +1199,7 @@ package body canvas_test is
 		tl      : type_model_point;
 		wmin, hmin : gdouble;
 	begin
+		put_line ("scale to fit ...");
 		self.get_allocation (alloc);
 		if alloc.width <= 1 then
 			self.scale_to_fit_requested := max_scale;
@@ -1172,6 +1243,5 @@ package body canvas_test is
 			end if;
 		end if;
 	end scale_to_fit;
-
 	
 end canvas_test;
