@@ -48,6 +48,11 @@ with ada.containers.doubly_linked_lists;
 
 package body canvas_test is
 
+	function to_string (d : in gdouble) return string is begin
+		return gdouble'image (d);
+	end;
+
+	
 	model_signals : constant gtkada.types.chars_ptr_array := (
 -- 		1 => new_string (string (signal_item_contents_changed)),
 		1 => new_string (string (signal_layout_changed))
@@ -121,11 +126,26 @@ package body canvas_test is
 	function model_to_view (
 		self   : not null access type_canvas;
 		rect   : type_model_rectangle) return type_view_rectangle is
+		result : type_view_rectangle;
 	begin
-		return (x      => (rect.x - self.topleft.x) * self.scale,
+-- 		return (x      => (rect.x - self.topleft.x) * self.scale,
+-- 				y      => (rect.y - self.topleft.y) * self.scale,
+-- 				width  => rect.width * self.scale,
+			-- 				height => rect.height * self.scale);
+
+		result := (x      => (rect.x - self.topleft.x) * self.scale,
 				y      => (rect.y - self.topleft.y) * self.scale,
 				width  => rect.width * self.scale,
 				height => rect.height * self.scale);
+
+		put_line ("view " & 
+					to_string (result.x) & " " &
+					to_string (result.y) & " " &
+					to_string (result.width) & " " &
+					to_string (result.height)
+					);
+		
+		return result;
 	end model_to_view;
 
 	function get_scale (self : not null access type_canvas) return gdouble is
@@ -189,18 +209,27 @@ package body canvas_test is
 		rect   : type_item_rectangle) return type_model_rectangle
 	is
 -- 		parent : type_item_ptr := type_item_ptr (item);
--- 		pos    : type_item_point;
+		pos    : type_item_point;
 		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
 	begin
 -- 		while parent /= null loop
 			--  ??? should take item rotation into account when we implement it.
 
 -- 			pos := position (parent);
--- 			result.x := result.x + pos.x;
--- 			result.y := result.y + pos.y;
+			pos := position (item);
+			result.x := result.x + pos.x;
+			result.y := result.y + pos.y;
 
 -- 			parent := parent.parent;
 -- 		end loop;
+
+-- 			put_line ("bounding box model " & 
+-- 					  to_string (result.x) & " " &
+-- 					  to_string (result.y) & " " &
+-- 					  to_string (result.width) & " " &
+-- 					  to_string (result.height)
+-- 					 );
+			
 		return result;
 	end item_to_model;
 
@@ -208,8 +237,7 @@ package body canvas_test is
 		item   : not null access type_item'class;
 		p      : type_item_point) return type_model_point
 	is
-		r : constant type_model_rectangle :=
-		item.item_to_model ((p.x, p.y, 0.0, 0.0));
+		r : constant type_model_rectangle := item.item_to_model ((p.x, p.y, 0.0, 0.0));
 	begin
 		return (r.x, r.y);
 	end item_to_model;
@@ -251,6 +279,14 @@ package body canvas_test is
 -- 		canvas_model_record'class (self.all).for_each_item (do_item'access);
 		type_model'class (self.all).for_each_item (do_item'access);
 
+			put_line ("bounding box model total " & 
+					  to_string (result.x) & " " &
+					  to_string (result.y) & " " &
+					  to_string (result.width) & " " &
+					  to_string (result.height)
+					 );
+
+		
 		if is_first then
 			return no_rectangle;
 		else
@@ -427,7 +463,7 @@ package body canvas_test is
 		self 	: not null access type_item;
 		context	: type_draw_context) is 
 	begin
-		put_line ("drawing ...");
+-- 		put_line ("drawing ...");
 
 		cairo.set_line_width (context.cr, 1.1);
 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
@@ -563,7 +599,7 @@ package body canvas_test is
 		style : drawing_style := gtk_new (stroke => gdk.rgba.white_rgba);
 		
 	begin
-		put_line ("draw internal ...");
+-- 		put_line ("draw internal ...");
 		
 		if self.model /= null then
 

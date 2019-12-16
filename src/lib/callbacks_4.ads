@@ -19,12 +19,11 @@ package callbacks_4 is
 -- 	scrolled				: gtk_scrolled_window;
 	
 	canvas : type_canvas_ptr;
-
--- 	model_ptr : list_canvas_model;
+	model : type_model_ptr;
+	item : type_item_ptr;
+	
 	scale_default : constant gdouble := 1.0;
 	scale : gdouble := scale_default;
-
-	item : type_item_ptr;
 	
 	p1 : gtkada.style.point := (0.0, 0.0);
 	p2 : gtkada.style.point := (1000.0, 0.0);

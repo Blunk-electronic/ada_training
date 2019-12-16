@@ -141,10 +141,6 @@ procedure gtkada_9 is
 		add (frame, scrolled);
 
 	end;
-
-
-	model : type_model_ptr;
-
 	
 begin
 	init;
