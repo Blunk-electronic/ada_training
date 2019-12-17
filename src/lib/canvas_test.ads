@@ -31,6 +31,8 @@ with pango.layout;			use pango.layout;
 
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
+private with ada.containers.hashed_maps;
+with ada.containers.hashed_sets;
 
 
 package canvas_test is
@@ -229,6 +231,17 @@ package canvas_test is
 		self : not null access type_model;
 		item : not null access type_item'class);
 
+-- 	function hash (key : type_item_ptr) return ada.containers.hash_type;
+-- 	package item_sets is new ada.containers.hashed_sets (
+-- 		element_type		=> type_item_ptr,
+-- 		hash                => hash,
+-- 		equivalent_elements => "=",
+-- 		"="                 => "=");
+	
+	procedure remove (
+		self : not null access type_model;
+		item : not null access type_item'class);
+	
 	procedure scale_to_fit (
 		self      : not null access type_canvas;
 		rect      : type_model_rectangle := no_rectangle;

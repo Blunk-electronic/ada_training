@@ -160,11 +160,8 @@ begin
 	set_position (item, p1);
 	refresh_layout (model);
 	
--- 	canvas.set_scale (0.513);
-	
 	scale_to_fit (canvas);
-	put_line (to_string (get_scale (canvas)));
--- 	refresh_layout (model);
+-- 	put_line (to_string (get_scale (canvas)));
 	
 	window.on_destroy (callbacks_4.terminate_main'access);
 

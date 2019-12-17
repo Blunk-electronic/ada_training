@@ -1203,7 +1203,7 @@ package body canvas_test is
 				--  or pointer_motion_mask or pointer_motion_hint_mask
 			);
 
-		self.on_destroy (on_view_destroy'access);
+-- 		self.on_destroy (on_view_destroy'access);
 -- 		self.on_button_press_event (on_button_event'access);
 -- 		self.on_button_release_event (on_button_event'access);
 -- 		self.on_motion_notify_event (on_motion_notify_event'access);
@@ -1242,6 +1242,27 @@ package body canvas_test is
 		self.items.append (type_item_ptr (item));
 	end add;
 
+-- 	function hash (key : type_item_ptr) return ada.containers.hash_type is
+-- 	begin
+-- 		if key = null then
+-- 			return 0;
+-- 		else
+-- 			return ada.containers.hash_type (
+-- 				to_integer (key.all'address)
+-- 				mod integer_address (ada.containers.hash_type'last));
+-- 		end if;
+-- 	end hash;
+	
+	procedure remove (
+		self : not null access type_model;
+		item : not null access type_item'class) is
+-- 		to_remove : item_sets.set;
+	begin
+-- 		self.include_related_items (item, to_remove);
+		-- 		remove (self, to_remove);
+		null;
+	end;
+
 	procedure scale_to_fit (
 		self      : not null access type_canvas;
 		rect      : type_model_rectangle := no_rectangle;
@@ -1258,26 +1279,19 @@ package body canvas_test is
 		put_line ("scale to fit ...");
 		self.get_allocation (alloc);
 		if alloc.width <= 1 then
-			put_line (" A");
-			
 			self.scale_to_fit_requested := max_scale;
 			self.scale_to_fit_area := rect;
 
 		elsif self.model /= null then
 			self.scale_to_fit_requested := 0.0;
-
-			put_line (" B");
 			
 			if rect = no_rectangle then
-				put_line (" no rectangle");
 				box := self.model.bounding_box;
 			else
-				put_line (" with rectangle");
 				box := rect;
 			end if;
 
 			if box.width /= 0.0 and then box.height /= 0.0 then
-				put_line (" margin");
 						  
 				w := gdouble (alloc.width);
 				h := gdouble (alloc.height);

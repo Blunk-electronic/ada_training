@@ -4,11 +4,9 @@ with gtk.button;     	--use gtk.button;
 with glib.object;		--use glib.object;
 with gtk.gentry;
 with gtkada.style;     use gtkada.style;
--- with gtk.combo_box;
 
 with gtk.scrolled_window;	use gtk.scrolled_window;
 
--- with gtkada.canvas_view;				use gtkada.canvas_view;
 with canvas_test;		use canvas_test;
 
 
@@ -16,8 +14,6 @@ package callbacks_4 is
 
 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class);
 
--- 	scrolled				: gtk_scrolled_window;
-	
 	canvas : type_canvas_ptr;
 	model : type_model_ptr;
 	item : type_item_ptr;

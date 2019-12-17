@@ -6,7 +6,6 @@ with glib.object;
 with gtk.gentry;
 with gtk.combo_box;
 with gtkada.style;     use gtkada.style;
--- with gtk.combo_box_text;
 
 with ada.text_io;			use ada.text_io;
 
@@ -68,10 +67,10 @@ package body callbacks_4 is
 	procedure delete (self : access glib.object.gobject_record'class) is begin
 		put_line ("deleting ...");
 
--- 		model_ptr.remove (item);
+		model.remove (item);
 		-- model_ptr.clear; -- removes all items
 
--- 		refresh_layout (model_ptr);
+		refresh_layout (model);
 	end;
 	
 	procedure echo_command_simple (self : access gtk.gentry.gtk_entry_record'class) is 
