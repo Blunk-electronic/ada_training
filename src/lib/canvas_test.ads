@@ -231,13 +231,6 @@ package canvas_test is
 		self : not null access type_model;
 		item : not null access type_item'class);
 
--- 	function hash (key : type_item_ptr) return ada.containers.hash_type;
--- 	package item_sets is new ada.containers.hashed_sets (
--- 		element_type		=> type_item_ptr,
--- 		hash                => hash,
--- 		equivalent_elements => "=",
--- 		"="                 => "=");
-	
 	procedure remove (
 		self : not null access type_model;
 		item : not null access type_item'class);

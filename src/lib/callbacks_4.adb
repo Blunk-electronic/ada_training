@@ -68,7 +68,7 @@ package body callbacks_4 is
 		put_line ("deleting ...");
 
 		model.remove (item);
-		-- model_ptr.clear; -- removes all items
+		--model.items.clear; -- removes all items
 
 		refresh_layout (model);
 	end;

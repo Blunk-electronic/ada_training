@@ -40,6 +40,7 @@ with gdk.rgba;
 with pango.layout;			use pango.layout;
 with system.storage_elements;            use system.storage_elements;
 
+with ada.unchecked_deallocation;
 with ada.unchecked_conversion;
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
@@ -1242,25 +1243,33 @@ package body canvas_test is
 		self.items.append (type_item_ptr (item));
 	end add;
 
--- 	function hash (key : type_item_ptr) return ada.containers.hash_type is
--- 	begin
--- 		if key = null then
--- 			return 0;
--- 		else
--- 			return ada.containers.hash_type (
--- 				to_integer (key.all'address)
--- 				mod integer_address (ada.containers.hash_type'last));
--- 		end if;
--- 	end hash;
+	procedure destroy_and_free (
+		self     : in out type_item_ptr;
+		in_model : not null access type_model'class) is
+		
+		procedure unchecked_free is new ada.unchecked_deallocation (type_item'class, type_item_ptr);
+	begin
+		if self /= null then
+			unchecked_free (self);
+		end if;
+	end destroy_and_free;
 	
 	procedure remove (
 		self : not null access type_model;
 		item : not null access type_item'class) is
--- 		to_remove : item_sets.set;
+		i : type_item_ptr;
+		use pac_items;
+		c : pac_items.cursor;
 	begin
--- 		self.include_related_items (item, to_remove);
-		-- 		remove (self, to_remove);
-		null;
+		c := self.items.find (item);
+		
+		i := element (c);
+
+		-- remove in items list
+		self.items.delete (c);
+
+		-- destroy in model
+		destroy_and_free (i, self);
 	end;
 
 	procedure scale_to_fit (
