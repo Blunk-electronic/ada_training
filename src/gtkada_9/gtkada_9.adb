@@ -159,9 +159,10 @@ begin
 	put_line (to_string (position (item)));
 	add (model, item);
 
--- 	canvas.set_scale (0.4);
+	canvas.set_scale (0.4);
 	
 	scale_to_fit (canvas);
+-- 	refresh_layout (model);
 	
 	window.on_destroy (callbacks_4.terminate_main'access);
 

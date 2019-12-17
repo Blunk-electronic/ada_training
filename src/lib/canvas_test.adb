@@ -138,12 +138,12 @@ package body canvas_test is
 				width  => rect.width * self.scale,
 				height => rect.height * self.scale);
 
-		put_line ("view " & 
-					to_string (result.x) & " " &
-					to_string (result.y) & " " &
-					to_string (result.width) & " " &
-					to_string (result.height)
-					);
+-- 		put_line ("view " & 
+-- 					to_string (result.x) & " " &
+-- 					to_string (result.y) & " " &
+-- 					to_string (result.width) & " " &
+-- 					to_string (result.height)
+-- 					);
 		
 		return result;
 	end model_to_view;
@@ -264,7 +264,6 @@ package body canvas_test is
 		result : type_model_rectangle;
 		is_first : boolean := true;
 
--- 		procedure do_item (item : not null access abstract_item_record'class);
 		procedure do_item (item : not null access type_item'class) is
 			box : constant type_model_rectangle := item.model_bounding_box;
 		begin
@@ -276,15 +275,14 @@ package body canvas_test is
 			end if;
 		end do_item;
 	begin
--- 		canvas_model_record'class (self.all).for_each_item (do_item'access);
 		type_model'class (self.all).for_each_item (do_item'access);
 
-			put_line ("bounding box model total " & 
-					  to_string (result.x) & " " &
-					  to_string (result.y) & " " &
-					  to_string (result.width) & " " &
-					  to_string (result.height)
-					 );
+-- 			put_line ("bounding box model total " & 
+-- 					  to_string (result.x) & " " &
+-- 					  to_string (result.y) & " " &
+-- 					  to_string (result.width) & " " &
+-- 					  to_string (result.height)
+-- 					 );
 
 		
 		if is_first then
@@ -935,15 +933,13 @@ package body canvas_test is
 					layout 	=> self.layout,
 					view	=> null);
 
--- 		procedure do_container_layout (item : not null access abstract_item_record'class);
 		procedure do_container_layout (item : not null access type_item'class) is begin
 			item.refresh_layout (context);
-		end do_container_layout;
+		end;
 
 	begin
 -- 		type_model'class (self.all).for_each_item (do_container_layout'access, filter => kind_item);
 		type_model'class (self.all).for_each_item (do_container_layout'access);
--- 		refresh_link_layout (self);
 
 		if send_signal then
 			type_model'class (self.all).layout_changed;
@@ -1027,22 +1023,6 @@ package body canvas_test is
 			y      => type_view_coordinate (p.y) - type_view_coordinate (alloc.y))
 			);
 	end window_to_model;
-
--- 
---    function Window_To_Model
---      (Self   : not null access Canvas_View_Record;
---       Rect   : Window_Rectangle) return Model_Rectangle
---    is
---       Alloc : Gtk_Allocation;
---    begin
---       Self.Get_Allocation (Alloc);
---       return Self.View_To_Model
---         ((X      => View_Coordinate (Rect.X) - View_Coordinate (Alloc.X),
---           Y      => View_Coordinate (Rect.Y) - View_Coordinate (Alloc.Y),
---           Width  => View_Coordinate (Rect.Width),
---           Height => View_Coordinate (Rect.Height)));
---    end Window_To_Model;
-	-- 	
 
 	function model_to_item (
 		item   : not null access type_item'class;
@@ -1188,7 +1168,7 @@ package body canvas_test is
 -- 		self.on_button_release_event (on_button_event'access);
 -- 		self.on_motion_notify_event (on_motion_notify_event'access);
 -- 		self.on_key_press_event (on_key_event'access);
-		self.on_scroll_event (on_scroll_event'access);
+-- 		self.on_scroll_event (on_scroll_event'access); -- CS
 
 		self.set_can_focus (true);
 

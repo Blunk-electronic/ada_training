@@ -56,13 +56,13 @@ package body callbacks_4 is
 	procedure move_right (self : access glib.object.gobject_record'class) is begin
 		put_line ("moving right ...");
 		set_position (item, p2);
--- 		refresh_layout (model_ptr);
+		refresh_layout (model);
 	end;
 
 	procedure move_left (self : access glib.object.gobject_record'class) is begin
 		put_line ("moving left ...");
 		set_position (item, p1);
--- 		refresh_layout (model_ptr);
+		refresh_layout (model);
 	end;
 
 	procedure delete (self : access glib.object.gobject_record'class) is begin

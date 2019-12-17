@@ -182,6 +182,10 @@ package canvas_test is
 	procedure refresh_layout (
 		self    : not null access type_item;
 		context : type_draw_context);
+
+	procedure refresh_layout (
+		self        : not null access type_model;
+		send_signal : boolean := true);
 	
 	procedure size_request (
 		self    : not null access type_item;
