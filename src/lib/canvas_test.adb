@@ -757,6 +757,46 @@ package body canvas_test is
 			--  proper location.
 		end if;
 	end on_view_realize;
+
+	procedure on_size_allocate (view : system.address; alloc : gtk_allocation);
+	pragma convention (c, on_size_allocate);
+	--  default handler for "size_allocate" on views.
+	
+	procedure on_size_allocate (view : system.address; alloc : gtk_allocation) is
+		self : constant type_canvas_ptr := type_canvas_ptr (glib.object.convert (view));
+		salloc : gtk_allocation := alloc;
+	begin
+		--  for some reason, when we maximize the toplevel window in testgtk, or
+		--  at least enlarge it horizontally, we are starting to see an alloc
+		--  with x < 0 (likely related to the gtkpaned). the drawing area then
+		--  moves the gdkwindow, which would introduce an extra ofset in the
+		--  display (and influence the clipping done automatically by gtk+
+		--  before it emits "draw"). so we prevent the automatic offseting done
+		--  by gtkdrawingarea.
+
+		salloc.x := 0;
+		salloc.y := 0;
+		self.set_allocation (salloc);
+		set_adjustment_values (self);
+
+		if self.get_realized then
+			if self.get_has_window then
+			move_resize
+				(self.get_window, alloc.x, alloc.y, alloc.width, alloc.height);
+			end if;
+
+			--  send_configure event ?
+		end if;
+
+		--  are we in the middle of inline-editing ?
+		--move_inline_edit_widget (self);
+
+		if self.scale_to_fit_requested /= 0.0 then
+			self.scale_to_fit
+			(rect      => self.scale_to_fit_area,
+			max_scale => self.scale_to_fit_requested);
+		end if;
+	end on_size_allocate;
 	
 	procedure view_class_init (self : gobject_class);
 	pragma convention (c, view_class_init);
@@ -770,7 +810,7 @@ package body canvas_test is
 		override_property (self, v_scroll_property, "vscroll-policy");
 
 		set_default_draw_handler (self, on_view_draw'access);
--- 		set_default_size_allocate_handler (self, on_size_allocate'access);
+		set_default_size_allocate_handler (self, on_size_allocate'access);
 		set_default_realize_handler (self, on_view_realize'access);
 	end;
 	
@@ -1218,19 +1258,27 @@ package body canvas_test is
 		put_line ("scale to fit ...");
 		self.get_allocation (alloc);
 		if alloc.width <= 1 then
+			put_line (" A");
+			
 			self.scale_to_fit_requested := max_scale;
 			self.scale_to_fit_area := rect;
 
 		elsif self.model /= null then
 			self.scale_to_fit_requested := 0.0;
 
+			put_line (" B");
+			
 			if rect = no_rectangle then
+				put_line (" no rectangle");
 				box := self.model.bounding_box;
 			else
+				put_line (" with rectangle");
 				box := rect;
 			end if;
 
 			if box.width /= 0.0 and then box.height /= 0.0 then
+				put_line (" margin");
+						  
 				w := gdouble (alloc.width);
 				h := gdouble (alloc.height);
 
