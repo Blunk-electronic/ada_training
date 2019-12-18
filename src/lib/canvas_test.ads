@@ -13,10 +13,6 @@
 -- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
 -- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
 --                                                                          --
--- As a special exception under Section 7 of GPL version 3, you are granted --
--- additional permissions described in the GCC Runtime Library Exception,   --
--- version 3.1, as published by the Free Software Foundation.               --
---                                                                          --
 -- You should have received a copy of the GNU General Public License and    --
 -- a copy of the GCC Runtime Library Exception along with this program;     --
 -- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
@@ -40,7 +36,9 @@
 -- Rationale: Aims to help users understanding programming with gtkada,
 -- especially creating a canvas with items displayed on it.
 -- The code is reduced to a minimum so that the newcomer is not overtaxed
--- and sees only the most relevant code.
+-- and is concerned with only the most relevant code.
+-- For the sake for simplicity we do not use abstract types, interfaces
+-- or private types.
 
 with gtk.main;
 with gtk.window; 			use gtk.window;
@@ -75,10 +73,21 @@ with ada.containers.doubly_linked_lists;
 
 package canvas_test is
 
+	-- The items to be displayed have a coordinate, a place in the drawing. 
+	-- For understanding here an example:
+	-- If you draw a circle at position 40/50 on a sheet of paper then this
+	-- is the model coordinate. The circle is always at this place independed
+	-- of scale, zoom or the visible area of your drawing.
 	subtype type_model_coordinate is gdouble;
 
+	-- Indicates that the item did not get assigned a proper position:
 	no_position : constant gtkada.style.point := (gdouble'first, gdouble'first);
+
+
+-- ITEM:
 	
+	-- This is a simple item. In our case it is a rectangle with a 
+	-- position (in the drawing):
 	type type_item is tagged record
 		position : gtkada.style.point := no_position;
 		
@@ -87,57 +96,87 @@ package canvas_test is
 		width, height : type_model_coordinate;
 		--  Computed by Size_Request. Always expressed in pixels.
 	end record;
-	
+
+	-- We need pointers to all types derived from the base type_item.
 	type type_item_ptr is access all type_item'class;
 
 	function get_visibility_threshold (self : not null access type_item) return gdouble;
-	
+
+	-- Coordinates relative to the position of the item are used when drawing
+	-- an item:
 	subtype type_item_coordinate is gdouble;
-	
+
+	-- The so called bounding box of an item is a rectangle where the items fits in.
+	-- It is used to calculate the area required for an item.
 	type type_item_rectangle is record
-		x, y, width, height : type_item_coordinate;
+		x, y			: type_item_coordinate; -- position of bounding box
+		width, height	: type_item_coordinate; -- size of bounding box
 	end record;
 
 	function bounding_box (self : not null access type_item) return type_item_rectangle;
 
 	subtype type_item_point is gtkada.style.point;
 
+
 	
+	-- Access values of items are stored in a simple list:
 	package pac_items is new doubly_linked_lists (type_item_ptr);
+
 	
+
+-- MODEL:
+	
+	-- To stay with the example of the drawing sheet (see above) the model is the sheet
+	-- where items are placed at.
+	-- The model consists of a list of item access values.
+	-- NOTE: The model stores pointers, not the items themselves ! The items are located in the heap.
 	type type_model is new glib.object.gobject_record with record
-		layout	: pango.layout.pango_layout;
 		items	: pac_items.list;
+		layout	: pango.layout.pango_layout;
 	end record;
-	
+
+	-- The type to access the model:
 	type type_model_ptr is access all type_model;
 	
 
 
+	-- A point at the model (or at the sheet):
 	type type_model_point is record
 		x, y : type_model_coordinate;
 	end record;
-	
+
+	-- A rectangular area of the model:
 	type type_model_rectangle is record
-		x, y, width, height : type_model_coordinate;
+		x, y			: type_model_coordinate; -- position
+		width, height	: type_model_coordinate; -- size
 	end record;
 
 	no_rectangle : constant type_model_rectangle := (0.0, 0.0, 0.0, 0.0);
 
+
+
+
+	
 	procedure for_each_item (
 		self    	: not null access type_model;
 		callback	: not null access procedure (item : not null access type_item'class);
 		in_area		: type_model_rectangle := no_rectangle);
 
 	
+	-- initialize the internal data so that signals can be sent:
 	procedure init (self : not null access type_model'class);
-   --  initialize the internal data so that signals can be sent.
 
 	
 	procedure gtk_new (self : out type_model_ptr);
 
 	signal_layout_changed : constant glib.signal_name := "layout_changed";
+
+
 	
+-- CANVAS
+
+	-- The canvas displays a certain area of the model (the sheet) depending
+	-- on scrolling or zoom.
 	type type_canvas is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
 		topleft   	: type_model_point := (0.0, 0.0);
@@ -146,15 +185,20 @@ package canvas_test is
 		layout		: pango.layout.pango_layout;
 		hadj, vadj	: gtk.adjustment.gtk_adjustment;
 
-		--  connections to model signals
+		-- connections to model signals
 		id_layout_changed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
 
 		scale_to_fit_requested : gdouble := 0.0;
 		scale_to_fit_area : type_model_rectangle;
 	end record;
-	
+
+	-- The pointer to the canvas:
 	type type_canvas_ptr is access all type_canvas'class;
 
+
+
+
+	
 	procedure set_adjustment_values (self : not null access type_canvas'class);
 	
 	no_point : constant type_model_point := (gdouble'first, gdouble'first);
@@ -182,38 +226,43 @@ package canvas_test is
 	-- This signal is emitted whenever the view is zoomed or scrolled.
 
 
-	
+	-- To stay with the example of a drawing sheet, the view coordinates are the 
+	-- coordinates of items on the screen. They change when the operators zooms or scrolls.
 	subtype type_view_coordinate is gdouble;
 
+	-- The point within the view.
 	type type_view_point is record
 		x, y : type_view_coordinate;
 	end record;
-	
+
+	-- A rectangular regions of the view:
 	type type_view_rectangle is record
 		x, y, width, height : type_view_coordinate;
 	end record;
 
+	-- Converts for the given canvas from given view rectangle to model rectangle:
 	function view_to_model (
 		self   : not null access type_canvas;
 		rect   : type_view_rectangle) 
 		return type_model_rectangle;
 
+	-- Converts for the given canvas from given model rectangle to view rectangle:	
 	function model_to_view (
 		self   : not null access type_canvas;
 		rect   : type_model_rectangle) return type_view_rectangle;
-
 	
-	view_margin : constant type_view_coordinate := 20.0;
 	--  The number of blank pixels on each sides of the view. This avoids having
 	--  items displays exactly next to the border of the view.
+	view_margin : constant type_view_coordinate := 20.0;
 
 
+	-- The cairo context to perform the actual drawing.
+	-- NOTE: The final drawing is performed in the view (hence in view coordinates):
 	type type_draw_context is record
 		cr     : cairo.cairo_context := cairo.null_context;
 		layout : pango.layout.pango_layout := null;
 		view   : type_canvas_ptr := null;
 	end record;
-	--  context to perform the actual drawing
 
 
 	procedure refresh_layout (

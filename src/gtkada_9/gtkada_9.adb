@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                  GtkAda - Test and Education Program                     --
 --                                                                          --
---      Modified and witten by Mario Blunk, Blunk electronic                --
+--      Modified and written by Mario Blunk, Blunk electronic               --
 --                                                                          --
 -- This library is free software;  you can redistribute it and/or modify it --
 -- under terms of the  GNU General Public License  as published by the Free --
@@ -9,10 +9,6 @@
 -- version. This library is distributed in the hope that it will be useful, --
 -- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
 -- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
---                                                                          --
--- As a special exception under Section 7 of GPL version 3, you are granted --
--- additional permissions described in the GCC Runtime Library Exception,   --
--- version 3.1, as published by the Free Software Foundation.               --
 --                                                                          --
 -- You should have received a copy of the GNU General Public License and    --
 -- a copy of the GCC Runtime Library Exception along with this program;     --
@@ -60,26 +56,33 @@ with canvas_test;			use canvas_test;
 
 procedure gtkada_9 is
 
-	window 					: gtk_window;
-	box_back				: gtk_box;
+	-- The window is composed of several boxes that contain boxes with things in them.
+	-- All these things a called "widgets". Their type is basically an access (or a pointer).
+	-- A widget is a button, a text box, a frame, in short something the operator
+	-- can click on or something that displays stuff.
+	
+	window 					: gtk_window; -- This is an access/pointer to the actual window.
+	box_back				: gtk_box; -- This is an access/pointer to the actual box.
 	box_left, box_right		: gtk_box;
 	box_console				: gtk_box;
 	box_drawing				: gtk_box;
-	
-	button_zoom_to_fit					: gtk_tool_button;
+
+	-- We will have some buttons:
+	button_zoom_to_fit					: gtk_tool_button; -- This is an access/pointer to the actual button.
 	button_zoom_in, button_zoom_out		: gtk_tool_button;
 	button_move_right, button_move_left	: gtk_tool_button;
 	button_delete						: gtk_tool_button;
-	
-	toolbar					: gtk_toolbar;
+
+	-- We will have a toolbar, a console, a frame and a scrolled window:
+	toolbar					: gtk_toolbar; -- This is an access/pointer to the actual toolbar.
 	console					: gtk_entry;
 	frame					: gtk_frame;
 	scrolled				: gtk_scrolled_window;
 	
 	procedure init is begin
-		gtk.main.init;
+		gtk.main.init; -- initialize the main gtk stuff
 
-		gtk_new (window);
+		gtk_new (window); -- create the main window (where pointer "window" is pointing at)
 		window.set_title ("Some Title");
 		window.set_default_size (800, 600);
 
@@ -102,34 +105,72 @@ procedure gtkada_9 is
 		gtk_new (toolbar);
 		set_orientation (toolbar, orientation_vertical);
 		pack_start (box_left, toolbar, expand => false);
+
+
+
 		
-		-- Create another button and place it in the toolbar:
+		-- Create a button and place it in the toolbar:
 		gtk.tool_button.gtk_new (button_zoom_to_fit, label => "FIT");
 		insert (toolbar, button_zoom_to_fit);
+
+		-- If the operator clicks the button
+		-- call the procedure zoom_to_fit in package callbacks_4:
 		button_zoom_to_fit.on_clicked (callbacks_4.zoom_to_fit'access, toolbar);
 
+
+
+		
 		-- Create a button and place it in the toolbar:
 		gtk.tool_button.gtk_new (button_zoom_in, label => "IN");
 		insert (toolbar, button_zoom_in);
+
+		-- If the operator clicks the button
+		-- call the procedure zoom_in in package callbacks_4:
 		button_zoom_in.on_clicked (callbacks_4.zoom_in'access, toolbar);
 
+
+
+		
 		-- Create another button and place it in the toolbar:
 		gtk.tool_button.gtk_new (button_zoom_out, label => "OUT");
 		insert (toolbar, button_zoom_out);
+
+		-- If the operator clicks the button
+		-- call the procedure zoom_out in package callbacks_4:
 		button_zoom_out.on_clicked (callbacks_4.zoom_out'access, toolbar);
 
+
+		
+		
 		-- Create another button and place it in the toolbar:
 		gtk.tool_button.gtk_new (button_move_right, label => "MOVE RIGHT");
 		insert (toolbar, button_move_right);
+		
+		-- If the operator clicks the button
+		-- call the procedure move_right in package callbacks_4:		
 		button_move_right.on_clicked (callbacks_4.move_right'access, toolbar);
+
+
+		
 		
 		gtk.tool_button.gtk_new (button_move_left, label => "MOVE LEFT");
 		insert (toolbar, button_move_left);
+
+		-- If the operator clicks the button
+		-- call the procedure move_left in package callbacks_4:
 		button_move_left.on_clicked (callbacks_4.move_left'access, toolbar);
 
+
+		
+		
 		gtk.tool_button.gtk_new (button_delete, label => "DELETE");
 		insert (toolbar, button_delete);
+
+		-- If the operator clicks the button
+		-- call the procedure delete in package callbacks_4:
 		button_delete.on_clicked (callbacks_4.delete'access, toolbar);
+
+
 
 		
 		-- box for console on the right top
@@ -141,16 +182,24 @@ procedure gtkada_9 is
 		gtk_new (console);
 		set_text (console, "cmd: ");
 		pack_start (box_console, console, expand => false);
+
+		-- If the operator hits enter after typing text in the console,
+		-- call the procedure echo_command_simple in package callbacks_4:
 		console.on_activate (callbacks_4.echo_command_simple'access); -- on hitting enter
 
+
+
+		
 		-- drawing area on the right bottom
 		gtk_new_hbox (box_drawing);
 		set_spacing (box_drawing, 10);
 		add (box_right, box_drawing);
 
+		-- frame inside the drawing box
 		gtk_new (frame);
 		pack_start (box_drawing, frame);
 
+		-- scrolled window inside the frame
 		gtk_new (scrolled);
 		set_policy (scrolled, policy_automatic, policy_automatic);
 		add (frame, scrolled);
@@ -158,29 +207,48 @@ procedure gtkada_9 is
 	end;
 	
 begin
-	init;
+	init; -- set up the main window
 
-	-- model
-	gtk_new (model);
+	-- create a so called model for the items to be displayed:
+	gtk_new (model); -- model is declared in callbacks_4
 	initialize (model);
 	
-	-- canvas
-	gtk_new (canvas, model);
-	add (scrolled, canvas);
-	
-	item := new type_item;
-	
--- 	put_line (to_string (position (item)));
-	add (model, item);
-	set_position (item, p1);
+	-- create a canvas that uses the model
+	gtk_new (canvas, model); -- canvas is declared in callbacks_4
+	add (scrolled, canvas); -- place the canvas in the scrolled window
+
+	-- create a new item. The item is created in the memory. 
+	-- The model in turn stores not the item but the access to it.
+	-- So each newly created item advances the access "item".
+	-- Since the items are created in the memory they must later be cleared from
+	-- memory when the operator wishes to delete them.
+	item := new type_item; -- item is declared in callbacks_4
+
+	-- add the item access value to the model
+	-- put_line (to_string (position (item)));
+	add (model, item); 
+
+	-- Set position of the item. 
+	-- The procedure set_position changes the coordinate of the item
+	-- by modifying the object where "item" is pointing at. 
+	-- After changing the item position the layout must be refreshed.
+	set_position (item, p1); -- point p1 is declared callbacks_4.
 	refresh_layout (model);
-	
+
+	-- Zoom so that the item is fully visible.
 	scale_to_fit (canvas);
 -- 	put_line (to_string (get_scale (canvas)));
-	
+
+
+	-- If the operator wishes to terminate the program (by clicking X)
+	-- the procedure terminate_main (in callbacks_4) is to be called.
 	window.on_destroy (callbacks_4.terminate_main'access);
 
+	-- Display all the widgets on the screen:
 	window.show_all;
+
+	-- Start the main gtk loop. This is a loop that permanently draws the widgets and
+	-- samples them for possible signals sent.
 	gtk.main.main;
 end;
 

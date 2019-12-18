@@ -13,10 +13,6 @@
 -- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
 -- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
 --                                                                          --
--- As a special exception under Section 7 of GPL version 3, you are granted --
--- additional permissions described in the GCC Runtime Library Exception,   --
--- version 3.1, as published by the Free Software Foundation.               --
---                                                                          --
 -- You should have received a copy of the GNU General Public License and    --
 -- a copy of the GCC Runtime Library Exception along with this program;     --
 -- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
@@ -40,7 +36,7 @@
 -- Rationale: Aims to help users understanding programming with gtkada,
 -- especially creating a canvas with items displayed on it.
 -- The code is reduced to a minimum so that the newcomer is not overtaxed
--- and sees only the most relevant code.
+-- and is concerned with only the most relevant code.
 
 with ada.text_io;			use ada.text_io;
 
