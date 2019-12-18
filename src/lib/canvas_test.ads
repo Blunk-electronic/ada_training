@@ -1,4 +1,46 @@
--- pragma ada_2012;
+------------------------------------------------------------------------------
+--                  GtkAda - Test and Education Program                     --
+--                                                                          --
+--      Bases on the package gtkada.canvas_view written by                  --
+--      E. Briot, J. Brobecker and A. Charlet, AdaCore                      --
+--                                                                          --
+--      Modified and simplyfied by Mario Blunk, Blunk electronic            --
+--                                                                          --
+-- This library is free software;  you can redistribute it and/or modify it --
+-- under terms of the  GNU General Public License  as published by the Free --
+-- Software  Foundation;  either version 3,  or (at your  option) any later --
+-- version. This library is distributed in the hope that it will be useful, --
+-- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
+-- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
+--                                                                          --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
+--                                                                          --
+------------------------------------------------------------------------------
+
+--   For correct displaying set tab width in your editor to 4.
+
+--   The two letters "CS" indicate a "construction site" where things are not
+--   finished yet or intended for the future.
+
+--   Please send your questions and comments to:
+--
+--   info@blunk-electronic.de
+--   or visit <http://www.blunk-electronic.de> for more contact data
+--
+--   history of changes:
+--
+
+-- Rationale: Aims to help users understanding programming with gtkada,
+-- especially creating a canvas with items displayed on it.
+-- The code is reduced to a minimum so that the newcomer is not overtaxed
+-- and sees only the most relevant code.
 
 with gtk.main;
 with gtk.window; 			use gtk.window;
@@ -14,7 +56,6 @@ with gtk.combo_box_text;	use gtk.combo_box_text;
 with gtk.frame;				use gtk.frame;
 with gtk.scrolled_window;	use gtk.scrolled_window;
 with gtk.adjustment;		use gtk.adjustment;
--- with gtk.bin;				use gtk.bin;
 
 with gdk;
 with gdk.types;
@@ -24,15 +65,12 @@ with glib.object;			use glib.object;
 with glib.values;			use glib.values;
 with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
--- with gtkada.canvas_view;	use gtkada.canvas_view;
 with gtkada.style;     		use gtkada.style;
 
 with pango.layout;			use pango.layout;
 
 with ada.containers;		use ada.containers;
 with ada.containers.doubly_linked_lists;
-private with ada.containers.hashed_maps;
-with ada.containers.hashed_sets;
 
 
 package canvas_test is
@@ -110,9 +148,6 @@ package canvas_test is
 
 		--  connections to model signals
 		id_layout_changed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
-		--id_item_contents_changed,
-		--id_selection_changed
--- 		id_item_destroyed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
 
 		scale_to_fit_requested : gdouble := 0.0;
 		scale_to_fit_area : type_model_rectangle;
@@ -189,9 +224,7 @@ package canvas_test is
 		self        : not null access type_model;
 		send_signal : boolean := true);
 	
-	procedure size_request (
-		self    : not null access type_item;
-		context : type_draw_context); -- CS no need
+	procedure size_request (self : not null access type_item);
 
 	procedure draw (
 		self 	: not null access type_item;
@@ -272,66 +305,11 @@ package canvas_test is
 		item   : not null access type_item'class;
 		p      : type_model_point) return type_item_point;
 
-	type canvas_event_type is (
-		button_press, button_release, double_click,
-		start_drag, in_drag, end_drag, key_press, scroll, custom);
-	
-	type canvas_event_details is record
-		event_type     : canvas_event_type;
-		button         : guint;
-
-		state          : gdk.types.gdk_modifier_type;
-		--  the modifier keys (shift, alt, control). it can be used to activate
-		--  different behavior in such cases.
-
-		key            : gdk.types.gdk_key_type;
-		--  the key that was pressed (for key events)
-
-		root_point     : gtkada.style.point;
-		--  coordinates in root window.
-		--  attributes of the low-level event.
-		--   this is an implementation detail for proper handling of dragging.
-
-		m_point        : type_model_point;
-		--  where in the model the user clicked. this is independent of the zoom
-		--  level or current scrolling.
-
-		item           : type_item_ptr;
-		--  the actual item that was clicked.
-		--  set to null when the user clicked in the background.
-
--- 		toplevel_item  : abstract_item;
-		--  the toplevel item that contains item (might be item itself).
-		--  set to null when the user clicked in the background.
-
--- 		t_point        : item_point;
-		--  the corodinates of the click in toplevel_item
-
-		i_point        : type_item_point;
-		--  the coordinates of the click in item
-
--- 		allowed_drag_area : type_model_rectangle := no_drag_allowed;
-		--  allowed_drag_area should be modified by the callback when the event
-		--  is a button_press event. it should be set to the area within which
-		--  the item (and all currently selected items) can be moved. if you
-		--  leave it to no_drag_allowed, the item cannot be moved.
-		--
-		--  this field is ignored for events other than button_press, since it
-		--  makes no sense for instance to start a drag on a button release.
-
--- 		allow_snapping    : boolean := true;
-		--  if set to false, this temporary overrides the settings from
-		--  set_snap, and prevents any snapping on the grid or smart guides.
-		--  it should be set at the same time that allowed_drag_area is set.
-	end record;
-
-	type event_details_access is not null access all canvas_event_details;
-
-	signal_item_event : constant glib.signal_name := "item_event";
-	
-	function item_event (
-		self    : not null access type_canvas'class;
-		details : event_details_access) return boolean;
-
-	
 end canvas_test;
+
+-- Soli Deo Gloria
+
+-- For God so loved the world that he gave 
+-- his one and only Son, that whoever believes in him 
+-- shall not perish but have eternal life.
+-- The Bible, John 3.16

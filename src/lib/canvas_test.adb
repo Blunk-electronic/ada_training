@@ -1,3 +1,47 @@
+------------------------------------------------------------------------------
+--                  GtkAda - Test and Education Program                     --
+--                                                                          --
+--      Bases on the package gtkada.canvas_view written by                  --
+--      E. Briot, J. Brobecker and A. Charlet, AdaCore                      --
+--                                                                          --
+--      Modified and simplyfied by Mario Blunk, Blunk electronic            --
+--                                                                          --
+-- This library is free software;  you can redistribute it and/or modify it --
+-- under terms of the  GNU General Public License  as published by the Free --
+-- Software  Foundation;  either version 3,  or (at your  option) any later --
+-- version. This library is distributed in the hope that it will be useful, --
+-- but WITHOUT ANY WARRANTY;  without even the implied warranty of MERCHAN- --
+-- TABILITY or FITNESS FOR A PARTICULAR PURPOSE.                            --
+--                                                                          --
+-- As a special exception under Section 7 of GPL version 3, you are granted --
+-- additional permissions described in the GCC Runtime Library Exception,   --
+-- version 3.1, as published by the Free Software Foundation.               --
+--                                                                          --
+-- You should have received a copy of the GNU General Public License and    --
+-- a copy of the GCC Runtime Library Exception along with this program;     --
+-- see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see    --
+-- <http://www.gnu.org/licenses/>.                                          --
+--                                                                          --
+------------------------------------------------------------------------------
+
+--   For correct displaying set tab width in your editor to 4.
+
+--   The two letters "CS" indicate a "construction site" where things are not
+--   finished yet or intended for the future.
+
+--   Please send your questions and comments to:
+--
+--   info@blunk-electronic.de
+--   or visit <http://www.blunk-electronic.de> for more contact data
+--
+--   history of changes:
+--
+
+-- Rationale: Aims to help users understanding programming with gtkada,
+-- especially creating a canvas with items displayed on it.
+-- The code is reduced to a minimum so that the newcomer is not overtaxed
+-- and sees only the most relevant code.
+
 with ada.text_io;			use ada.text_io;
 
 with interfaces.c.strings;	use interfaces.c.strings;
@@ -20,52 +64,36 @@ with gtk.bin;				use gtk.bin;
 with gtk.scrollable;		use gtk.scrollable;
 with gtk.style_context;		use gtk.style_context;
 
-with glib;					use glib;
-with glib.object;			use glib.object;
-with glib.values;			use glib.values;
 with glib.properties.creation;	use glib.properties.creation;
 with cairo;					use cairo;
-with cairo.pattern;			use cairo.pattern;
-with gtkada.style;     		use gtkada.style;
 with gtkada.types;			use gtkada.types;
 with gtkada.handlers;		use gtkada.handlers;
 with gtkada.bindings;		use gtkada.bindings;
 with gdk;					use gdk;
-with gdk.cairo;				use gdk.cairo;
 with gdk.window;			use gdk.window;
 with gdk.window_attr;		use gdk.window_attr;
 with gdk.event;				use gdk.event;
 
 with gdk.rgba;
-with pango.layout;			use pango.layout;
-with system.storage_elements;            use system.storage_elements;
+with pango.layout;					use pango.layout;
+with system.storage_elements;		use system.storage_elements;
 
 with ada.unchecked_deallocation;
-with ada.unchecked_conversion;
-with ada.containers;		use ada.containers;
+with ada.containers;				use ada.containers;
 with ada.containers.doubly_linked_lists;
-
--- with gtkada.canvas_view.views;           use gtkada.canvas_view.views;
 
 package body canvas_test is
 
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;
-
 	
 	model_signals : constant gtkada.types.chars_ptr_array := (
--- 		1 => new_string (string (signal_item_contents_changed)),
 		1 => new_string (string (signal_layout_changed))
--- 		3 => new_string (string (signal_selection_changed)),
-		-- 		2 => new_string (string (signal_item_destroyed))
 		);
 	
 	view_signals : constant gtkada.types.chars_ptr_array := (
-		1 => new_string (string (signal_viewport_changed)),
-		2 => new_string (string (signal_item_event))
--- 		3 => new_string (string (signal_inline_editing_started)),
--- 		4 => new_string (string (signal_inline_editing_finished))
+		1 => new_string (string (signal_viewport_changed))
 		);
 
 	h_adj_property    : constant property_id := 1;
@@ -74,7 +102,6 @@ package body canvas_test is
 	v_scroll_property : constant property_id := 4;
 
 	model_class_record : glib.object.ada_gobject_class := glib.object.uninitialized_class;
--- 	view_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 	canvas_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 	
 	function model_get_type return glib.gtype is begin
@@ -84,10 +111,7 @@ package body canvas_test is
 			class_record => model_class_record,
 			type_name    => "gtkada_model",
 			parameters   => (
--- 				1 => (1 => gtype_pointer), 	-- item_contents_changed
 				1 => (1 => gtype_none)  	-- layout_changed
--- 				3 => (1 => gtype_pointer),	-- selection_changed
--- 				4 => (1 => gtype_pointer)) 	-- item_destroyed
 				)
 			);  
 		return model_class_record.the_type;
@@ -103,7 +127,6 @@ package body canvas_test is
 		self := new type_model;
 		init (self);
 	end;	
-
 
 	function view_to_model (
 		self   : not null access type_canvas;
@@ -129,22 +152,11 @@ package body canvas_test is
 		rect   : type_model_rectangle) return type_view_rectangle is
 		result : type_view_rectangle;
 	begin
--- 		return (x      => (rect.x - self.topleft.x) * self.scale,
--- 				y      => (rect.y - self.topleft.y) * self.scale,
--- 				width  => rect.width * self.scale,
-			-- 				height => rect.height * self.scale);
-
-		result := (x      => (rect.x - self.topleft.x) * self.scale,
-				y      => (rect.y - self.topleft.y) * self.scale,
-				width  => rect.width * self.scale,
-				height => rect.height * self.scale);
-
--- 		put_line ("view " & 
--- 					to_string (result.x) & " " &
--- 					to_string (result.y) & " " &
--- 					to_string (result.width) & " " &
--- 					to_string (result.height)
--- 					);
+		result := (
+			x      => (rect.x - self.topleft.x) * self.scale,
+			y      => (rect.y - self.topleft.y) * self.scale,
+			width  => rect.width * self.scale,
+			height => rect.height * self.scale);
 		
 		return result;
 	end model_to_view;
@@ -209,27 +221,12 @@ package body canvas_test is
 		item   : not null access type_item'class;
 		rect   : type_item_rectangle) return type_model_rectangle
 	is
--- 		parent : type_item_ptr := type_item_ptr (item);
 		pos    : type_item_point;
 		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
 	begin
--- 		while parent /= null loop
-			--  ??? should take item rotation into account when we implement it.
-
--- 			pos := position (parent);
-			pos := position (item);
-			result.x := result.x + pos.x;
-			result.y := result.y + pos.y;
-
--- 			parent := parent.parent;
--- 		end loop;
-
--- 			put_line ("bounding box model " & 
--- 					  to_string (result.x) & " " &
--- 					  to_string (result.y) & " " &
--- 					  to_string (result.width) & " " &
--- 					  to_string (result.height)
--- 					 );
+		pos := position (item);
+		result.x := result.x + pos.x;
+		result.y := result.y + pos.y;
 			
 		return result;
 	end item_to_model;
@@ -278,14 +275,6 @@ package body canvas_test is
 	begin
 		type_model'class (self.all).for_each_item (do_item'access);
 
--- 			put_line ("bounding box model total " & 
--- 					  to_string (result.x) & " " &
--- 					  to_string (result.y) & " " &
--- 					  to_string (result.width) & " " &
--- 					  to_string (result.height)
--- 					 );
-
-		
 		if is_first then
 			return no_rectangle;
 		else
@@ -446,14 +435,16 @@ package body canvas_test is
 		r   : type_view_rectangle;
 		threshold : constant gdouble := self.get_visibility_threshold;
 	begin
-		if threshold = gdouble'last then
-			--  always hidden
+		if threshold = gdouble'last then --  always hidden
 			return false;
+			
 		elsif threshold > 0.0 and then view /= null then
+			
 			r := view.model_to_view (self.model_bounding_box);
 			if r.width < threshold or else r.height < threshold then
 				return false;
 			end if;
+			
 		end if;
 		return true;
 	end size_above_threshold;
@@ -494,27 +485,7 @@ package body canvas_test is
 		pos := self.position;
 		translate (context.cr, pos.x, pos.y);
 
--- 		if as_outline then
--- 			self.draw_outline (outline_style, context);
--- 		elsif context.view /= null
--- 		and then context.view.model /= null
--- 		and then context.view.model.is_selected (self)
--- 		then
--- 			self.draw_as_selected (context);
--- 		else
-			self.draw (context);
--- 		end if;
--- 
--- 		if debug_show_bounding_boxes then
--- 			declare
--- 			box : constant item_rectangle := self.bounding_box;
--- 			begin
--- 			gtk_new (stroke => (1.0, 0.0, 0.0, 0.8),
--- 						dashes => (2.0, 2.0))
--- 				.draw_rect (context.cr, (box.x, box.y), box.width, box.height);
--- 			end;
--- 		end if;
-
+		self.draw (context);
 		restore (context.cr);
 
 	exception
@@ -568,31 +539,11 @@ package body canvas_test is
 		context : type_draw_context;
 		area    : type_model_rectangle)
 	is
--- 		s  : item_sets.set;
-
--- 		procedure draw_item
--- 		(item : not null access abstract_item_record'class);
 		procedure draw_item (
 			item : not null access type_item'class) is
 		begin
-			--  if the item is not displayed explicitly afterwards.
--- 			if not self.in_drag
--- 			or else not s.contains (abstract_item (item))
--- 			then
 			translate_and_draw_item (item, context);
--- 			end if;
-		end draw_item;
-
--- 		procedure add_to_set (item : not null access abstract_item_record'class);
--- 		procedure add_to_set (
--- 			item : not null access abstract_item_record'class) is
--- 		begin
--- 			s.include (abstract_item (item));
--- 		end add_to_set;
-
--- 		use item_drag_infos, item_sets;
--- 		c  : item_drag_infos.cursor;
-		-- 		c2 : item_sets.cursor;
+		end;
 
 		-- prepare draing style so that white grid dots will be drawn.
 		style : drawing_style := gtk_new (stroke => gdk.rgba.white_rgba);
@@ -602,9 +553,6 @@ package body canvas_test is
 		
 		if self.model /= null then
 
-			-- Additional statements inserted according to advise in
-			-- child package gtkada.canvas_view.views:
-
 			-- draw a black background:
 			set_source_rgb (context.cr, 0.0, 0.0, 0.0);
 			paint (context.cr);
@@ -613,42 +561,8 @@ package body canvas_test is
 			set_grid_size (self, 100.0);
 			draw_grid_dots (self, style, context, area);
 			
-			--  we must always draw the selected items and their links explicitly
-			--  (since the model might not have been updated yet if we are during
-			--  an automatic scrolling for instance, using a rtree).
-
--- 			if self.in_drag then
--- 			c := self.dragged_items.first;
--- 			while has_element (c) loop
--- 				s.include (element (c).item);  --  toplevel items
--- 				next (c);
--- 			end loop;
--- 			self.model.for_each_link (add_to_set'access, from_or_to => s);
--- 			end if;
-
-			--  draw the active smart guides if needed
--- 			if self.in_drag
--- 			and then self.last_button_press.allow_snapping
--- 			and then self.snap.smart_guides
--- 			and then not self.dragged_items.is_empty
--- 			then
--- 			draw_visible_smart_guides
--- 				(self, context, element (self.dragged_items.first).item);
--- 			end if;
-
--- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_link);
--- 			self.model.for_each_item (draw_item'access, in_area => area, filter => kind_item);
-
 			self.model.for_each_item (draw_item'access, in_area => area);
--- 			self.model.for_each_item (draw_item'access); -- CS
 			
--- 			if self.in_drag then
--- 			c2 := s.first;
--- 			while has_element (c2) loop
--- 				translate_and_draw_item (element (c2), context);
--- 				next (c2);
--- 			end loop;
--- 			end if;
 		end if;
 	end draw_internal;
 	
@@ -702,16 +616,7 @@ package body canvas_test is
 			refresh (self, cr, self.view_to_model ((x1, y1, x2 - x1, y2 - y1)));
 		end if;
 
-		--  we might have an inline widget, which we need to draw.
--- 		if self.inline_edit.item /= null then
--- 			if inherited_draw (view_class_record, widget => self, cr => cr) then
--- 				return 1;
--- 			else
--- 				return 0;
--- 			end if;
--- 		else
-			return 1;
--- 		end if;
+		return 1;
 
 	exception
 		when e : others =>
@@ -782,15 +687,11 @@ package body canvas_test is
 
 		if self.get_realized then
 			if self.get_has_window then
-			move_resize
-				(self.get_window, alloc.x, alloc.y, alloc.width, alloc.height);
+				move_resize (self.get_window, alloc.x, alloc.y, alloc.width, alloc.height);
 			end if;
 
 			--  send_configure event ?
 		end if;
-
-		--  are we in the middle of inline-editing ?
-		--move_inline_edit_widget (self);
 
 		if self.scale_to_fit_requested /= 0.0 then
 			self.scale_to_fit
@@ -824,10 +725,7 @@ package body canvas_test is
 			class_record => canvas_class_record'access,
 			type_name    => "GtkadaCanvasView",
 			parameters   => (
-				1 => (1 => gtype_none),
-				2 => (1 => gtype_pointer)
--- 				3 => (1 => gtype_pointer),
--- 				4 => (1 => gtype_pointer)
+				1 => (1 => gtype_none)
 				),
 			returns      => (1 => gtype_none, 2 => gtype_boolean),
 			class_init   => view_class_init'access
@@ -885,7 +783,6 @@ package body canvas_test is
 			self.queue_draw;
 		end if;
 
--- 		move_inline_edit_widget (self);
 	end on_layout_changed_for_view;
 
 	function intersects (rect1, rect2 : type_model_rectangle) return boolean is begin
@@ -899,8 +796,6 @@ package body canvas_test is
 	procedure for_each_item (
 		self		: not null access type_model;
 		callback	: not null access procedure (item : not null access type_item'class);
--- 		selected_only : boolean := false;
--- 		filter        : item_kind_filter := kind_any;
 		in_area		: type_model_rectangle := no_rectangle)
 	is
 		use pac_items;
@@ -909,24 +804,7 @@ package body canvas_test is
 	begin
 		while has_element (c) loop
 			item := element (c);
-
-			--  ??? might not work when the callback removes the item, which in
-			--  turn removes a link which might happen to be the next element
-			--  we were pointing to.
 			next (c);
-
--- 			if (filter = kind_any
--- 				or else (filter = kind_item and then not item.is_link)
--- 				or else (filter = kind_link and then item.is_link))
--- 			and then
--- 				(not selected_only
--- 				or else list_canvas_model (self).is_selected (item))
--- 			and then
--- 				(in_area = no_rectangle
--- 				or else intersects (in_area, item.model_bounding_box))
--- 			then
--- 			callback (item);
--- 			end if;
 
 			if (in_area = no_rectangle
 				or else intersects (in_area, item.model_bounding_box))
@@ -937,14 +815,7 @@ package body canvas_test is
 		end loop;
 	end for_each_item;
 
-	procedure size_request (
-		self    : not null access type_item;
-		context : type_draw_context) -- CS no need
-	is
-		use pac_items;
--- 		c     : pac_items.cursor := self.children.first;
--- 		child : container_item;
--- 		tmp, tmp2 : type_model_coordinate;
+	procedure size_request (self : not null access type_item) is
 	begin
 		-- CS
 		self.width  := 1000.0;
@@ -955,15 +826,8 @@ package body canvas_test is
 		self    : not null access type_item;
 		context : type_draw_context) is
 	begin
--- 		self.computed_position := self.position;
-		type_item'class (self.all).size_request (context);
--- 		container_item_record'class (self.all).size_allocate; -- for children only. no need
--- 
--- 		self.computed_position.x :=
--- 		self.computed_position.x - (self.width * self.anchor_x);
--- 		self.computed_position.y :=
--- 		self.computed_position.y - (self.height * self.anchor_y);
-	end refresh_layout;
+		type_item'class (self.all).size_request;
+	end;
 	
 	procedure refresh_layout (
 		self        : not null access type_model;
@@ -979,7 +843,6 @@ package body canvas_test is
 		end;
 
 	begin
--- 		type_model'class (self.all).for_each_item (do_container_layout'access, filter => kind_item);
 		type_model'class (self.all).for_each_item (do_container_layout'access);
 
 		if send_signal then
@@ -997,9 +860,6 @@ package body canvas_test is
 
 		if self.model /= null then
 			disconnect (self.model, self.id_layout_changed);
--- 			disconnect (self.model, self.id_item_contents_changed);
--- 			disconnect (self.model, self.id_selection_changed);
--- 			disconnect (self.model, self.id_item_destroyed);
 			unref (self.model);
 		end if;
 
@@ -1008,9 +868,6 @@ package body canvas_test is
 		if self.model /= null then
 			ref (self.model);
 			self.id_layout_changed := model.on_layout_changed (on_layout_changed_for_view'access, self);
--- 			self.id_selection_changed := model.on_selection_changed (on_selection_changed_for_view'access, self);
--- 			self.id_item_contents_changed := model.on_item_contents_changed (on_item_contents_changed_for_view'access, self);
--- 			self.id_item_destroyed := model.on_item_destroyed (on_item_destroyed_for_view'access, self);
 		end if;
 
 		if self.model /= null and then self.model.layout = null then
@@ -1024,23 +881,6 @@ package body canvas_test is
 
 		self.viewport_changed;
 	end set_model;
-
-	procedure on_view_destroy (self : access gtk_widget_record'class) is
-		s : constant type_canvas_ptr := type_canvas_ptr (self);
-	begin
--- 		cancel_continuous_scrolling (s);
--- 		terminate_animation (s);
-
-		if s.model /= null then
-			unref (s.model);
-			s.model := null;
-		end if;
-
-		if s.layout /= null then
-			unref (s.layout);
-			s.layout := null;
-		end if;
-	end on_view_destroy;
 
 	function view_to_model (
 		self   : not null access type_canvas;
@@ -1073,12 +913,10 @@ package body canvas_test is
 		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
 		pos    : type_item_point;
 	begin
--- 		while parent /= null loop
-			pos := parent.position;
-			result.x := result.x - pos.x;
-			result.y := result.y - pos.y;
--- 			parent := parent.parent;
--- 		end loop;
+		pos := parent.position;
+		result.x := result.x - pos.x;
+		result.y := result.y - pos.y;
+		
 		return result;
 	end model_to_item;
 
@@ -1090,102 +928,6 @@ package body canvas_test is
 	begin
 		return (rect.x, rect.y);
 	end model_to_item;
-	
-
-	function gvalue_to_eda (value : gvalue) return event_details_access is
-		s : constant system.address := get_address (value);
-		pragma warnings (off, "possible aliasing problem*");
-		function unchecked_convert is new ada.unchecked_conversion (system.address, event_details_access);
-		pragma warnings (on, "possible aliasing problem*");
-	begin
-		return unchecked_convert (s);
-	end gvalue_to_eda;
-	
-	package eda_marshallers is new object_return_callback.marshallers.generic_marshaller (event_details_access, gvalue_to_eda);
-	function eda_to_address is new ada.unchecked_conversion (event_details_access, system.address);
-	
-	function eda_emit is new eda_marshallers.emit_by_name_generic (eda_to_address);
-	--  support for the "item_contents_changed" signal
-	
-	function item_event (
-		self    : not null access type_canvas'class;
-		details : event_details_access)
-		return boolean is
-	begin
-		return eda_emit (self, signal_item_event & ascii.nul, details);
-	end item_event;
-	
-	procedure compute_item (
-		self    : not null access type_canvas'class;
-		details : in out canvas_event_details)
-	is
-		context : type_draw_context;
-	begin
-		context := (
-			cr     => gdk.cairo.create (self.get_window),
-			view   => type_canvas_ptr (self),
-			layout => null);
-
--- 		details.toplevel_item := self.model.toplevel_item_at (details.m_point, context => context);
-
--- 		if details.toplevel_item = null then
--- 			details.item := null;
--- 		else
--- 			details.t_point := details.toplevel_item.model_to_item (details.m_point);
--- 			details.item := details.toplevel_item.inner_most_item (details.m_point, context);
-
-			if details.item /= null then
-				details.i_point := details.item.model_to_item (details.m_point);
-			end if;
--- 		end if;
-
-		cairo.destroy (context.cr);
-	end compute_item;
-	
-	function on_scroll_event (
-		view  : access gtk_widget_record'class;
-		event : gdk_event_scroll) return boolean
-	is
-		self    : constant type_canvas_ptr := type_canvas_ptr (view);
-		details : aliased canvas_event_details;
-		button  : guint;
-	begin
-		put_line ("scrolling ...");
-		
-		if self.model /= null then
-			case event.direction is
-				when scroll_up | scroll_left => button := 5;
-				when scroll_down | scroll_right => button := 6;
-				when scroll_smooth => 
-					if event.delta_y > 0.0 then
-						button := 6;
-					else
-						button := 5;
-					end if;
-			end case;
-
-			details := (
-				event_type => scroll,
-				button     => button,
-				key        => 0,
-				state      => event.state,
-				root_point => (event.x_root, event.y_root),
-				m_point    => self.window_to_model ((x => event.x, y => event.y)),
--- 				t_point    => no_item_point,
-				i_point    => no_item_point,
-				item       => null
--- 				toplevel_item => null,
--- 				allow_snapping    => true,
--- 				allowed_drag_area => no_drag_allowed
-				);
-			
-			compute_item (self, details);
--- 			
-			return self.item_event (details'unchecked_access);
-		end if;
-		return false;
-	end on_scroll_event;
-
 	
 	procedure init (
 		self  : not null access type_canvas'class;
@@ -1201,15 +943,7 @@ package body canvas_test is
 				or button1_motion_mask
 				or button2_motion_mask
 				or button3_motion_mask
-				--  or pointer_motion_mask or pointer_motion_hint_mask
 			);
-
--- 		self.on_destroy (on_view_destroy'access);
--- 		self.on_button_press_event (on_button_event'access);
--- 		self.on_button_release_event (on_button_event'access);
--- 		self.on_motion_notify_event (on_motion_notify_event'access);
--- 		self.on_key_press_event (on_key_event'access);
--- 		self.on_scroll_event (on_scroll_event'access); -- CS
 
 		self.set_can_focus (true);
 
@@ -1322,13 +1056,16 @@ package body canvas_test is
 					self.topleft := tl;
 					self.set_adjustment_values;
 					self.queue_draw;
-
--- 				else
--- 					animate_scale (self, s, duration => duration).start (self);
--- 					animate_scroll (self, tl, duration).start (self);
 				end if;
 			end if;
 		end if;
 	end scale_to_fit;
 	
 end canvas_test;
+
+-- Soli Deo Gloria
+
+-- For God so loved the world that he gave 
+-- his one and only Son, that whoever believes in him 
+-- shall not perish but have eternal life.
+-- The Bible, John 3.16
