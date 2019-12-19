@@ -105,7 +105,7 @@ package body canvas_test is
 	v_scroll_property : constant property_id := 4;
 
 	model_class_record : glib.object.ada_gobject_class := glib.object.uninitialized_class;
-	canvas_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
+	view_class_record : aliased glib.object.ada_gobject_class := glib.object.uninitialized_class;
 	
 	function model_get_type return glib.gtype is begin
 		glib.object.initialize_class_record (
@@ -132,7 +132,7 @@ package body canvas_test is
 	end;	
 
 	function view_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		rect   : type_view_rectangle) 
 		return type_model_rectangle is
 	begin
@@ -143,7 +143,7 @@ package body canvas_test is
 	end view_to_model;
 
 	function model_to_view (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		p      : type_model_point) return type_view_point is
 	begin
 		return (x => (p.x - self.topleft.x) * self.scale,
@@ -151,7 +151,7 @@ package body canvas_test is
 	end model_to_view;
 
 	function model_to_view (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		rect   : type_model_rectangle) return type_view_rectangle is
 		result : type_view_rectangle;
 	begin
@@ -164,13 +164,13 @@ package body canvas_test is
 		return result;
 	end model_to_view;
 
-	function get_scale (self : not null access type_canvas) return gdouble is
+	function get_scale (self : not null access type_view) return gdouble is
 	begin
 		return self.scale;
 	end get_scale;
 	
 	procedure set_scale (
-		self     : not null access type_canvas;
+		self     : not null access type_view;
 		scale    : gdouble := 1.0;
 		preserve : type_model_point := no_point)
 	is
@@ -195,7 +195,7 @@ package body canvas_test is
 		self.queue_draw;
 	end set_scale;
 	
-	function get_visible_area (self : not null access type_canvas)
+	function get_visible_area (self : not null access type_view)
 		return type_model_rectangle is
 	begin
 		return self.view_to_model
@@ -289,11 +289,11 @@ package body canvas_test is
 		end if;
 	end bounding_box;
 
-	procedure viewport_changed (self : not null access type_canvas'class) is begin
+	procedure viewport_changed (self : not null access type_view'class) is begin
 		object_callback.emit_by_name (self, signal_viewport_changed);
 	end viewport_changed;
 	
-	procedure set_adjustment_values (self : not null access type_canvas'class) is
+	procedure set_adjustment_values (self : not null access type_view'class) is
 		box   : type_model_rectangle;
 		area  : constant type_model_rectangle := self.get_visible_area;
 		min, max : gdouble;
@@ -341,7 +341,7 @@ package body canvas_test is
 
 	procedure on_adj_value_changed (view : access glib.object.gobject_record'class) is
 	-- Called when one of the scrollbars has changed value.		
-		self : constant type_canvas_ptr := type_canvas_ptr (view);
+		self : constant type_view_ptr := type_view_ptr (view);
 		pos  : constant type_model_point := (
 							x => self.hadj.get_value,
 							y => self.vadj.get_value);
@@ -360,7 +360,7 @@ package body canvas_test is
 		property_spec : param_spec)
 	is
 		pragma unreferenced (property_spec);
-		self : constant type_canvas_ptr := type_canvas_ptr (object);
+		self : constant type_view_ptr := type_view_ptr (object);
 	begin
 		case prop_id is
 			when h_adj_property =>
@@ -396,7 +396,7 @@ package body canvas_test is
 		property_spec : param_spec)
 	is
 		pragma unreferenced (property_spec);
-		self : constant type_canvas_ptr := type_canvas_ptr (object);
+		self : constant type_view_ptr := type_view_ptr (object);
 	begin
 		case prop_id is
 			when h_adj_property => set_object (value, self.hadj);
@@ -408,7 +408,7 @@ package body canvas_test is
 	end view_get_property;
 
 	procedure set_transform (
-		self	: not null access type_canvas;
+		self	: not null access type_view;
 		cr		: cairo.cairo_context;
 		item	: access type_item'class := null)
 	is
@@ -433,7 +433,7 @@ package body canvas_test is
 	
 	function size_above_threshold (
 		self : not null access type_item'class;
-		view : access type_canvas'class) return boolean
+		view : access type_view'class) return boolean
 	is
 		r   : type_view_rectangle;
 		threshold : constant gdouble := self.get_visibility_threshold;
@@ -498,14 +498,14 @@ package body canvas_test is
 	end translate_and_draw_item;
 
 	procedure set_grid_size (
-		self : not null access type_canvas'class;
+		self : not null access type_view'class;
 		size : type_model_coordinate := 30.0) is
 	begin
 		self.grid_size := size;
 	end set_grid_size;
 
 	procedure draw_grid_dots (
-		self    : not null access type_canvas'class;
+		self    : not null access type_view'class;
 		style   : gtkada.style.drawing_style;
 		context : type_draw_context;
 		area    : type_model_rectangle)
@@ -538,7 +538,7 @@ package body canvas_test is
 	end draw_grid_dots;
 	
 	procedure draw_internal (
-		self    : not null access type_canvas;
+		self    : not null access type_view;
 		context : type_draw_context;
 		area    : type_model_rectangle)
 	is
@@ -570,7 +570,7 @@ package body canvas_test is
 	end draw_internal;
 	
 	procedure refresh (
-		self : not null access type_canvas'class;
+		self : not null access type_view'class;
 		cr   : cairo.cairo_context;
 		area : type_model_rectangle := no_rectangle)
 	is
@@ -589,7 +589,7 @@ package body canvas_test is
 		c := (
 			cr		=> cr,
 			layout	=> self.layout,
-			view	=> type_canvas_ptr (self));
+			view	=> type_view_ptr (self));
 
 		save (cr);
 		self.set_transform (cr);
@@ -608,7 +608,7 @@ package body canvas_test is
 		view	: system.address; 
 		cr		: cairo_context) return gboolean is
 		
-		self : constant type_canvas_ptr := type_canvas_ptr (glib.object.convert (view));
+		self : constant type_view_ptr := type_view_ptr (glib.object.convert (view));
 		x1, y1, x2, y2 : gdouble;
 	begin
 		clip_extents (cr, x1, y1, x2, y2);
@@ -639,7 +639,7 @@ package body canvas_test is
 		mask       : gdk_window_attributes_type;
 	begin
 		if not w.get_has_window then
-			inherited_realize (canvas_class_record, w);
+			inherited_realize (view_class_record, w);
 		else
 			w.set_realized (true);
 			w.get_allocation (allocation);
@@ -672,7 +672,7 @@ package body canvas_test is
 	--  default handler for "size_allocate" on views.
 	
 	procedure on_size_allocate (view : system.address; alloc : gtk_allocation) is
-		self : constant type_canvas_ptr := type_canvas_ptr (glib.object.convert (view));
+		self : constant type_view_ptr := type_view_ptr (glib.object.convert (view));
 		salloc : gtk_allocation := alloc;
 	begin
 		--  for some reason, when we maximize the toplevel window in testgtk, or
@@ -725,7 +725,7 @@ package body canvas_test is
 		if glib.object.initialize_class_record (
 			ancestor     => gtk.bin.get_type,
 			signals      => view_signals,
-			class_record => canvas_class_record'access,
+			class_record => view_class_record'access,
 			type_name    => "GtkadaCanvasView",
 			parameters   => (
 				1 => (1 => gtype_none)
@@ -739,13 +739,13 @@ package body canvas_test is
 				interface_finalize => null,
 				interface_data     => system.null_address);
 				glib.object.add_interface (
-					canvas_class_record,
+					view_class_record,
 					iface => gtk.scrollable.get_type,
 					info  => info
 				);
 		end if;
 
-		return canvas_class_record.the_type;
+		return view_class_record.the_type;
 	end view_get_type;
 
 	procedure layout_changed (self : not null access type_model'class) is begin
@@ -773,7 +773,7 @@ package body canvas_test is
 	end on_layout_changed;
 
 	procedure on_layout_changed_for_view (view : not null access gobject_record'class) is
-		self  : constant type_canvas_ptr := type_canvas_ptr (view);
+		self  : constant type_view_ptr := type_view_ptr (view);
 		alloc : gtk_allocation;
 	begin
 		self.get_allocation (alloc);
@@ -854,7 +854,7 @@ package body canvas_test is
 	end refresh_layout;
    
 	procedure set_model (
-		self  : not null access type_canvas'class;
+		self  : not null access type_view'class;
 		model : access type_model'class) is
 	begin
 		if self.model = type_model_ptr (model) then
@@ -886,7 +886,7 @@ package body canvas_test is
 	end set_model;
 
 	function view_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		p      : type_view_point) return type_model_point
 	is
 	begin
@@ -895,7 +895,7 @@ package body canvas_test is
 	end view_to_model;
 	
 	function window_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		p      : type_window_point) return type_model_point
 	is
 		alloc : gtk_allocation;
@@ -933,7 +933,7 @@ package body canvas_test is
 	end model_to_item;
 	
 	procedure init (
-		self  : not null access type_canvas'class;
+		self  : not null access type_view'class;
 		model : access type_model'class := null) is
 	begin
 		g_new (self, view_get_type);
@@ -968,10 +968,10 @@ package body canvas_test is
 	end;
 	
 	procedure gtk_new (
-		self	: out type_canvas_ptr;
+		self	: out type_view_ptr;
 		model	: access type_model'class := null) is 
 	begin
-		self := new type_canvas;
+		self := new type_view;
 		init (self, model);
 	end;
 
@@ -1012,7 +1012,7 @@ package body canvas_test is
 	end;
 
 	procedure scale_to_fit (
-		self      : not null access type_canvas;
+		self      : not null access type_view;
 		rect      : type_model_rectangle := no_rectangle;
 		min_scale : gdouble := 1.0 / 4.0;
 		max_scale : gdouble := 4.0;

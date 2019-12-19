@@ -186,11 +186,11 @@ package canvas_test is
 
 
 	
--- CANVAS
+-- VIEW / CANVAS
 
-	-- The canvas displays a certain region of the model (or the sheet) depending
-	-- on scrolling or zoom.
-	type type_canvas is new gtk.widget.gtk_widget_record with record
+	-- The view (or canvas) displays a certain region of the model (or the sheet) 
+	-- depending on scrolling or zoom.
+	type type_view is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
 		topleft   	: type_model_point := (0.0, 0.0);
 		scale     	: gdouble := 1.0;
@@ -205,23 +205,23 @@ package canvas_test is
 		scale_to_fit_area : type_model_rectangle;
 	end record;
 
-	-- The pointer to the canvas:
-	type type_canvas_ptr is access all type_canvas'class;
+	-- The pointer to the canvas/view:
+	type type_view_ptr is access all type_view'class;
 
 
 
 
 	
-	procedure set_adjustment_values (self : not null access type_canvas'class);
+	procedure set_adjustment_values (self : not null access type_view'class);
 	
 	no_point : constant type_model_point := (
 					x	=> type_model_coordinate'first,
 					y	=> type_model_coordinate'first);
 
-	function get_scale (self : not null access type_canvas) return gdouble;
+	function get_scale (self : not null access type_view) return gdouble;
 	
 	procedure set_scale (
-		self     : not null access type_canvas;
+		self     : not null access type_view;
 		scale    : gdouble := 1.0;
 		preserve : type_model_point := no_point);
 	-- Changes the scaling factor for self.
@@ -230,9 +230,9 @@ package canvas_test is
 	-- was zooming towards that specific point.
 
 	
-	function get_visible_area (self : not null access type_canvas) return type_model_rectangle;
+	function get_visible_area (self : not null access type_view) return type_model_rectangle;
 	-- Return the area of the model that is currently displayed in the view.
-	-- this is in model coordinates (since the canvas coordinates are always
+	-- This is in model coordinates (since the canvas coordinates are always
 	-- from (0,0) to (self.get_allocation_width, self.get_allocation_height).
 
 	signal_viewport_changed : constant glib.signal_name := "viewport_changed";
@@ -253,15 +253,15 @@ package canvas_test is
 		x, y, width, height : type_view_coordinate;
 	end record;
 
-	-- Converts for the given canvas from given view rectangle to model rectangle:
+	-- Converts for the given canvas/view from given view rectangle to model rectangle:
 	function view_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		rect   : type_view_rectangle) 
 		return type_model_rectangle;
 
-	-- Converts for the given canvas from given model rectangle to view rectangle:	
+	-- Converts for the given canvas/view from given model rectangle to view rectangle:	
 	function model_to_view (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		rect   : type_model_rectangle) return type_view_rectangle;
 	
 	--  The number of blank pixels on each sides of the view. This avoids having
@@ -274,7 +274,7 @@ package canvas_test is
 	type type_draw_context is record
 		cr     : cairo.cairo_context := cairo.null_context;
 		layout : pango.layout.pango_layout := null;
-		view   : type_canvas_ptr := null;
+		view   : type_view_ptr := null;
 	end record;
 
 
@@ -293,26 +293,25 @@ package canvas_test is
 		context	: type_draw_context);
 	
 	procedure set_transform (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		cr     : cairo.cairo_context;
 		item	: access type_item'class := null);
 
 	procedure set_grid_size (
-		self : not null access type_canvas'class;
+		self : not null access type_view'class;
 		size : type_model_coordinate := 30.0);
 
 	procedure draw_grid_dots (
-		self    : not null access type_canvas'class;
+		self    : not null access type_view'class;
 		style   : gtkada.style.drawing_style;
 		context : type_draw_context;
 		area    : type_model_rectangle);
 	
 	procedure draw_internal (
-		self    : not null access type_canvas;
+		self    : not null access type_view;
 		context : type_draw_context;
 		area    : type_model_rectangle);
 
-	--function position (self : not null access type_item) return gtkada.style.point;
 	function position (self : not null access type_item) return type_model_point;
 	
 	procedure set_position (
@@ -321,7 +320,7 @@ package canvas_test is
 		pos		: type_model_point);
 	
 	procedure gtk_new (
-		self	: out type_canvas_ptr;
+		self	: out type_view_ptr;
 		model	: access type_model'class := null);
 
 	procedure add (
@@ -333,7 +332,7 @@ package canvas_test is
 		item : not null access type_item'class);
 	
 	procedure scale_to_fit (
-		self      : not null access type_canvas;
+		self      : not null access type_view;
 		rect      : type_model_rectangle := no_rectangle;
 		min_scale : gdouble := 1.0 / 4.0;
 		max_scale : gdouble := 4.0;
@@ -352,11 +351,11 @@ package canvas_test is
 	end record;
 
 	function view_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		p      : type_view_point) return type_model_point;
 	
 	function window_to_model (
-		self   : not null access type_canvas;
+		self   : not null access type_view;
 		p      : type_window_point) return type_model_point;
 
 	no_item_point : constant type_item_point := (gdouble'first, gdouble'first);

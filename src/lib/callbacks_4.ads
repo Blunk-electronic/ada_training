@@ -51,7 +51,7 @@ package callbacks_4 is
 	-- Here are the pointers/access variables to the canvas, model and item.
 	-- They must be declared here because the so called "callbacks" (see below)
 	-- use them.
-	canvas	: type_canvas_ptr;
+	canvas	: type_view_ptr;
 	model	: type_model_ptr;
 	item	: type_item_ptr;
 	
