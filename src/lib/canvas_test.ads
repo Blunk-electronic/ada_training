@@ -90,11 +90,14 @@ package canvas_test is
 						x	=> type_model_coordinate'first,
 						y	=> type_model_coordinate'first);
 
-
-	function to_style_point (point : in type_model_point) return gtkada.style.point;
-	-- Converts a model point to a stlye point.
 		
 -- ITEM:
+	-- Coordinates relative to the position of the item are used when drawing an item:
+	subtype type_item_coordinate is gdouble;
+	
+	type type_item_point is record
+		x, y : type_item_coordinate := type_item_coordinate'first;
+	end record;
 	
 	-- This is a simple item. In our case it is a rectangle with a 
 	-- position in the model (or on the sheet):
@@ -102,9 +105,19 @@ package canvas_test is
 		position : type_model_point := no_position;
 		
 		visibility_threshold : gdouble := 0.0;
+
+		c1 : type_item_point := (250.0, 500.0);
+		c2 : type_item_point := (750.0, 500.0);
+
+		c10 : type_item_point := (0.0, 0.0);
+		c11 : type_item_point := (1000.0, 0.0);
+		c12 : type_item_point := (0.0, 1000.0);
+		c13 : type_item_point := (1000.0, 1000.0);
+		-- In this simple example c13 is the point that defines the greatest x and y 
+		-- size of the item. On computing the size of the item 
+		-- (see procedure size_request) this point is required. 
 		
-		width, height : type_model_coordinate;
-		--  Computed by Size_Request. Always expressed in pixels.
+		width, height : type_model_coordinate; -- computed by Size_Request
 	end record;
 
 	-- We need pointers to all types derived from the base type_item.
@@ -112,11 +125,9 @@ package canvas_test is
 
 	function get_visibility_threshold (self : not null access type_item) return gdouble;
 
-	-- Coordinates relative to the position of the item are used when drawing
-	-- an item:
-	subtype type_item_coordinate is gdouble;
 
-	-- The so called bounding box of an item is a rectangle where the items fits in.
+
+	-- The so called "bounding box" of an item is a rectangle where the items fits in.
 	-- It is used to calculate the area required for an item.
 	type type_item_rectangle is record
 		x, y			: type_item_coordinate; -- position of bounding box
@@ -125,7 +136,7 @@ package canvas_test is
 
 	function bounding_box (self : not null access type_item) return type_item_rectangle;
 
-	subtype type_item_point is gtkada.style.point;
+
 
 
 	
@@ -316,7 +327,6 @@ package canvas_test is
 	
 	procedure set_position (
 		self	: not null access type_item;
-		--pos   : gtkada.style.point);
 		pos		: type_model_point);
 	
 	procedure gtk_new (

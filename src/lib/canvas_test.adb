@@ -83,13 +83,6 @@ package body canvas_test is
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;
-
-	function to_style_point (point : in type_model_point) return gtkada.style.point is
-	begin
-		return (
-			x	=> gdouble (point.x),
-			y	=> gdouble (point.y));
-	end;
 	
 	model_signals : constant gtkada.types.chars_ptr_array := (
 		1 => new_string (string (signal_layout_changed))
@@ -218,7 +211,7 @@ package body canvas_test is
 
 		rect1.y := type_model_coordinate'min (rect1.y, rect2.y);
 		rect1.height := bottom - rect1.y;
-	end union;
+	end;
 
 	function item_to_model (
 		item   : not null access type_item'class;
@@ -232,7 +225,7 @@ package body canvas_test is
 		result.y := result.y + pos.y;
 			
 		return result;
-	end item_to_model;
+	end;
 
 	function item_to_model (
 		item   : not null access type_item'class;
@@ -241,27 +234,25 @@ package body canvas_test is
 		r : constant type_model_rectangle := item.item_to_model ((p.x, p.y, 0.0, 0.0));
 	begin
 		return (r.x, r.y);
-	end item_to_model;
+	end;
 
 	function bounding_box (self : not null access type_item) return type_item_rectangle is
 	begin
 		--  assumes size_request has been called already
--- 		return (0.0, 0.0, self.width, self.height);
-
-		return (0.0, 0.0, 1000.0, 1000.0);
-	end bounding_box;
+		return (0.0, 0.0, self.width, self.height);
+	end;
 	
 	function model_bounding_box (self : not null access type_item'class) 
 		return type_model_rectangle is
 	begin
 		return self.item_to_model (self.bounding_box);
-	end model_bounding_box;
+	end;
 	
 	function bounding_box (
 		self   : not null access type_model;
 		margin : type_model_coordinate := 0.0)
-		return type_model_rectangle
-	is
+		return type_model_rectangle is
+		
 		result : type_model_rectangle;
 		is_first : boolean := true;
 
@@ -459,15 +450,33 @@ package body canvas_test is
 -- 		put_line ("drawing ...");
 
 		cairo.set_line_width (context.cr, 1.1);
-		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0));
 
-		cairo.move_to (context.cr, 0.0, 0.0);
-		cairo.line_to (context.cr, 1000.0, 1000.0);
+		-- Draw objects with the corner points as specified in type_item (see spec for type_item):
+		-- NOTE: The corner points are in item coordinates relative to the item position.
+		
+		-- draw the big X in red
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0)); -- red
 
-		cairo.move_to (context.cr, 1000.0, 0.0);
-		cairo.line_to (context.cr, 0.0, 1000.0);
+		cairo.move_to (context.cr, self.c10.x, self.c10.y);
+		cairo.line_to (context.cr, self.c13.x, self.c13.y);
 
-		cairo.rectangle (context.cr, 0.0, 0.0, 1000.0, 1000.0);
+		cairo.move_to (context.cr, self.c12.x, self.c12.y);
+		cairo.line_to (context.cr, self.c11.x, self.c11.y);
+
+		cairo.stroke (context.cr);
+
+		
+		-- draw the surounding rectangle in yellow
+		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (0)); -- yellow
+		cairo.rectangle (context.cr, self.c10.x, self.c10.y, self.c13.x, self.c13.y);
+
+		cairo.stroke (context.cr);
+		
+
+		-- draw a line between point c1 and c2 in green
+		cairo.set_source_rgb (context.cr, gdouble (0), gdouble (1), gdouble (0)); -- green
+		cairo.move_to (context.cr, self.c1.x, self.c1.y);
+		cairo.line_to (context.cr, self.c2.x, self.c2.y);
 		
 		cairo.stroke (context.cr);
 	end;
@@ -476,17 +485,14 @@ package body canvas_test is
 		self          : not null access type_item'class;
 		context       : type_draw_context;
 		as_outline    : boolean := false;
-		outline_style : drawing_style := no_drawing_style)
-	is
-		pos : gtkada.style.point;
+		outline_style : drawing_style := no_drawing_style) is
 	begin
 		if not size_above_threshold (self, context.view) then
 			return;
 		end if;
 
 		save (context.cr);
-		pos := to_style_point (self.position);
-		translate (context.cr, pos.x, pos.y);
+		translate (context.cr, self.position.x, self.position.y);
 
 		self.draw (context);
 		restore (context.cr);
@@ -820,9 +826,11 @@ package body canvas_test is
 
 	procedure size_request (self : not null access type_item) is
 	begin
-		-- CS
-		self.width  := 1000.0;
-		self.height := 1000.0;
+		-- CS: This is a very simple approach to get the size of the item.
+		-- An advanced implementation should sample all the points of the
+		-- item and figure out which one has the greatest x and y value.
+		self.width  := self.c13.x;
+		self.height := self.c13.y;
 	end size_request;
 
 	procedure refresh_layout (
@@ -912,11 +920,12 @@ package body canvas_test is
 		item   : not null access type_item'class;
 		p      : type_model_rectangle) return type_item_rectangle
 	is
-		parent : type_item_ptr := type_item_ptr (item);
 		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
 		pos    : type_item_point;
 	begin
-		pos := to_style_point (parent.position);
+		pos.x := item.position.x;
+		pos.y := item.position.y;
+		
 		result.x := result.x - pos.x;
 		result.y := result.y - pos.y;
 		
