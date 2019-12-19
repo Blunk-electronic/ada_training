@@ -59,8 +59,9 @@ package callbacks_4 is
 	scale : gdouble := scale_default;
 
 	-- Points where the item is to be placed:
-	p1 : gtkada.style.point := (0.0, 0.0);
-	p2 : gtkada.style.point := (1000.0, 0.0);
+	p1 : type_model_point := (0.0, 0.0);
+	p2 : type_model_point := (1000.0, 0.0);
+
 	
 	function to_string (d : in gdouble) return string;
 	function to_string (p : in gtkada.style.point) return string;

@@ -83,6 +83,13 @@ package body canvas_test is
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;
+
+	function to_style_point (point : in type_model_point) return gtkada.style.point is
+	begin
+		return (
+			x	=> gdouble (point.x),
+			y	=> gdouble (point.y));
+	end;
 	
 	model_signals : constant gtkada.types.chars_ptr_array := (
 		1 => new_string (string (signal_layout_changed))
@@ -217,7 +224,7 @@ package body canvas_test is
 		item   : not null access type_item'class;
 		rect   : type_item_rectangle) return type_model_rectangle
 	is
-		pos    : type_item_point;
+		pos : type_model_point;
 		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
 	begin
 		pos := position (item);
@@ -478,7 +485,7 @@ package body canvas_test is
 		end if;
 
 		save (context.cr);
-		pos := self.position;
+		pos := to_style_point (self.position);
 		translate (context.cr, pos.x, pos.y);
 
 		self.draw (context);
@@ -909,7 +916,7 @@ package body canvas_test is
 		result : type_item_rectangle := (p.x, p.y, p.width, p.height);
 		pos    : type_item_point;
 	begin
-		pos := parent.position;
+		pos := to_style_point (parent.position);
 		result.x := result.x - pos.x;
 		result.y := result.y - pos.y;
 		
@@ -946,17 +953,19 @@ package body canvas_test is
 		self.set_model (model);
 	end init;
 
-	function position (self : not null access type_item) return gtkada.style.point is
+	--function position (self : not null access type_item) return gtkada.style.point is
+	function position (self : not null access type_item) return type_model_point is
 	begin
 		return self.position;
-	end position;
+	end;
 	
 	procedure set_position (
-		self  : not null access type_item;
-		pos   : gtkada.style.point) is
+		self	: not null access type_item;
+		--pos   : gtkada.style.point) is
+		pos		: type_model_point) is
 	begin
 		self.position := pos;
-	end set_position;
+	end;
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;

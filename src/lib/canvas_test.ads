@@ -73,23 +73,33 @@ with ada.containers.doubly_linked_lists;
 
 package canvas_test is
 
-	-- The items to be displayed have a coordinate, a place in the drawing. 
-	-- For understanding here an example:
-	-- If you draw a circle at position 40/50 on a sheet of paper then this
-	-- is the model coordinate. The circle is always at this place independed
-	-- of scale, zoom or the visible area of your drawing.
+	-- The items to be displayed inside the model have a coordinate, a place
+	-- in the drawing. For understanding here an example:
+	--  If you draw a circle at position 40/50 on a sheet of paper then this
+	--  is the model coordinate. The circle is always at this place independed
+	--  of scale, zoom or the visible area of your drawing.
 	subtype type_model_coordinate is gdouble;
 
+	-- A point at the model (or at the sheet):
+	type type_model_point is record
+		x, y : type_model_coordinate := type_model_coordinate'first;
+	end record;
+	
 	-- Indicates that the item did not get assigned a proper position:
-	no_position : constant gtkada.style.point := (gdouble'first, gdouble'first);
+	no_position : constant type_model_point := (
+						x	=> type_model_coordinate'first,
+						y	=> type_model_coordinate'first);
 
 
+	function to_style_point (point : in type_model_point) return gtkada.style.point;
+	-- Converts a model point to a stlye point.
+		
 -- ITEM:
 	
 	-- This is a simple item. In our case it is a rectangle with a 
-	-- position (in the drawing):
+	-- position in the model (or on the sheet):
 	type type_item is tagged record
-		position : gtkada.style.point := no_position;
+		position : type_model_point := no_position;
 		
 		visibility_threshold : gdouble := 0.0;
 		
@@ -140,10 +150,7 @@ package canvas_test is
 	
 
 
-	-- A point at the model (or at the sheet):
-	type type_model_point is record
-		x, y : type_model_coordinate;
-	end record;
+
 
 	-- A rectangular area of the model:
 	type type_model_rectangle is record
@@ -156,26 +163,32 @@ package canvas_test is
 
 
 
-	
+	-- In order to process items contained in the model this procedure 
+	-- should be used. The procedure itself calls procedure "callback"
+	-- for each item.
+	-- If a certain region of the model via "in_area" provided, only the
+	-- items in that area are processed.
 	procedure for_each_item (
 		self    	: not null access type_model;
 		callback	: not null access procedure (item : not null access type_item'class);
 		in_area		: type_model_rectangle := no_rectangle);
 
 	
-	-- initialize the internal data so that signals can be sent:
+	-- Initializes the internal data so that the model can send signals:
 	procedure init (self : not null access type_model'class);
 
-	
+	-- Creates a new model (or a drawing sheet according to the example above):
 	procedure gtk_new (self : out type_model_ptr);
 
+	-- This signal is emitted by the model whenever items are added, moved, resized, ...
 	signal_layout_changed : constant glib.signal_name := "layout_changed";
+	
 
 
 	
 -- CANVAS
 
-	-- The canvas displays a certain area of the model (the sheet) depending
+	-- The canvas displays a certain region of the model (or the sheet) depending
 	-- on scrolling or zoom.
 	type type_canvas is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
@@ -201,7 +214,9 @@ package canvas_test is
 	
 	procedure set_adjustment_values (self : not null access type_canvas'class);
 	
-	no_point : constant type_model_point := (gdouble'first, gdouble'first);
+	no_point : constant type_model_point := (
+					x	=> type_model_coordinate'first,
+					y	=> type_model_coordinate'first);
 
 	function get_scale (self : not null access type_canvas) return gdouble;
 	
@@ -209,18 +224,16 @@ package canvas_test is
 		self     : not null access type_canvas;
 		scale    : gdouble := 1.0;
 		preserve : type_model_point := no_point);
-	--  changes the scaling factor for self.
-	--  this also scrolls the view so that either preserve or the current center
-	--  of the view remains at the same location in the widget, as if the user
-	--  was zooming towards that specific point.
-	--  see also gtkada.canvas_view.views.animate_scale for a way to do this
-	--  change via an animation.
+	-- Changes the scaling factor for self.
+	-- this also scrolls the view so that either preserve or the current center
+	-- of the view remains at the same location in the widget, as if the user
+	-- was zooming towards that specific point.
 
 	
 	function get_visible_area (self : not null access type_canvas) return type_model_rectangle;
-	--  return the area of the model that is currently displayed in the view.
-	--  this is in model coordinates (since the canvas coordinates are always
-	--  from (0,0) to (self.get_allocation_width, self.get_allocation_height).
+	-- Return the area of the model that is currently displayed in the view.
+	-- this is in model coordinates (since the canvas coordinates are always
+	-- from (0,0) to (self.get_allocation_width, self.get_allocation_height).
 
 	signal_viewport_changed : constant glib.signal_name := "viewport_changed";
 	-- This signal is emitted whenever the view is zoomed or scrolled.
@@ -299,11 +312,13 @@ package canvas_test is
 		context : type_draw_context;
 		area    : type_model_rectangle);
 
-	function position (self : not null access type_item) return gtkada.style.point;
+	--function position (self : not null access type_item) return gtkada.style.point;
+	function position (self : not null access type_item) return type_model_point;
 	
 	procedure set_position (
-		self  : not null access type_item;
-		pos   : gtkada.style.point);
+		self	: not null access type_item;
+		--pos   : gtkada.style.point);
+		pos		: type_model_point);
 	
 	procedure gtk_new (
 		self	: out type_canvas_ptr;
