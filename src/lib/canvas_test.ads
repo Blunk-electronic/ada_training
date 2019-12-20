@@ -78,7 +78,7 @@ package canvas_test is
 	--  If you draw a circle at position 40/50 on a sheet of paper then this
 	--  is the model coordinate. The circle is always at this place independed
 	--  of scale, zoom or the visible area of your drawing.
-	subtype type_model_coordinate is gdouble;
+	subtype type_model_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
 
 	-- A point at the model (or at the sheet):
 	type type_model_point is record
@@ -93,7 +93,7 @@ package canvas_test is
 		
 -- ITEM:
 	-- Coordinates relative to the position of the item are used when drawing an item:
-	subtype type_item_coordinate is gdouble;
+	subtype type_item_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
 	
 	type type_item_point is record
 		x, y : type_item_coordinate := type_item_coordinate'first;
@@ -104,7 +104,7 @@ package canvas_test is
 	type type_item is tagged record
 		position : type_model_point := no_position;
 		
-		visibility_threshold : gdouble := 0.0;
+		visibility_threshold : gdouble := 0.0; -- gdouble is a real floating-point type (see glib.ads) 
 
 		c1 : type_item_point := (250.0, 500.0);
 		c2 : type_item_point := (750.0, 500.0);
@@ -127,7 +127,7 @@ package canvas_test is
 
 
 
-	-- The so called "bounding box" of an item is a rectangle where the items fits in.
+	-- The so called "bounding box" of an item is a rectangle where the item fits in.
 	-- It is used to calculate the area required for an item.
 	type type_item_rectangle is record
 		x, y			: type_item_coordinate; -- position of bounding box
@@ -203,16 +203,25 @@ package canvas_test is
 	-- depending on scrolling or zoom.
 	type type_view is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
+
+		-- The size of the view is expessed in pixels whereas the coordinates inside
+		-- the model are real world units like millimeters.
+		-- This implementation assumes that the upper left corner of the model has 
+		-- the model coordinates 0/0.
 		topleft   	: type_model_point := (0.0, 0.0);
-		scale     	: gdouble := 1.0;
+		
+		scale     	: gdouble := 1.0; -- gdouble is a real floating-point type (see glib.ads)
 		grid_size 	: type_model_coordinate := 20.0;
-		layout		: pango.layout.pango_layout;
+		
+		layout		: pango.layout.pango_layout; -- CS for displaying text. not used yet
+
+		-- Required for the scrollbars:
 		hadj, vadj	: gtk.adjustment.gtk_adjustment;
 
 		-- connections to model signals
 		id_layout_changed : gtk.handlers.handler_id := (gtk.handlers.null_handler_id, null);
 
-		scale_to_fit_requested : gdouble := 0.0;
+		scale_to_fit_requested : gdouble := 0.0; -- gdouble is a real floating-point type (see glib.ads)
 		scale_to_fit_area : type_model_rectangle;
 	end record;
 
@@ -242,7 +251,7 @@ package canvas_test is
 
 	
 	function get_visible_area (self : not null access type_view) return type_model_rectangle;
-	-- Return the area of the model that is currently displayed in the view.
+	-- Return the area of the model (or the sheet) that is currently displayed in the view.
 	-- This is in model coordinates (since the canvas coordinates are always
 	-- from (0,0) to (self.get_allocation_width, self.get_allocation_height).
 
@@ -251,10 +260,11 @@ package canvas_test is
 
 
 	-- To stay with the example of a drawing sheet, the view coordinates are the 
-	-- coordinates of items on the screen. They change when the operators zooms or scrolls.
-	subtype type_view_coordinate is gdouble;
+	-- coordinates of items on the screen and are expressed in pixels.
+	-- They change when the operators zooms or scrolls.
+	subtype type_view_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
 
-	-- The point within the view.
+	-- The point inside the view.
 	type type_view_point is record
 		x, y : type_view_coordinate;
 	end record;
@@ -264,16 +274,23 @@ package canvas_test is
 		x, y, width, height : type_view_coordinate;
 	end record;
 
-	-- Converts for the given canvas/view from given view rectangle to model rectangle:
+	-- Converts the given area of the view to a model rectangle:
 	function view_to_model (
 		self   : not null access type_view;
-		rect   : type_view_rectangle) 
+		rect   : in type_view_rectangle) -- position and size are in pixels
 		return type_model_rectangle;
 
-	-- Converts for the given canvas/view from given model rectangle to view rectangle:	
+	-- Converts the given point in the model to a point in the view.
 	function model_to_view (
 		self   : not null access type_view;
-		rect   : type_model_rectangle) return type_view_rectangle;
+		p      : in type_model_point) -- position x/y given as a float type
+		return type_view_point;
+	
+	-- Converts the given area of the model to a view rectangle:	
+	function model_to_view (
+		self   : not null access type_view;
+		rect   : in type_model_rectangle) -- position x/y and size given as a float type
+		return type_view_rectangle;
 	
 	--  The number of blank pixels on each sides of the view. This avoids having
 	--  items displays exactly next to the border of the view.
@@ -284,7 +301,7 @@ package canvas_test is
 	-- NOTE: The final drawing is performed in the view (hence in view coordinates):
 	type type_draw_context is record
 		cr     : cairo.cairo_context := cairo.null_context;
-		layout : pango.layout.pango_layout := null;
+		layout : pango.layout.pango_layout := null; -- CS for displaying text. not used yet
 		view   : type_view_ptr := null;
 	end record;
 
@@ -354,7 +371,7 @@ package canvas_test is
 	--  return the internal type
 
 	
-	subtype type_window_coordinate is gdouble;
+	subtype type_window_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
 	
 	type type_window_point is record
 		x, y : type_window_coordinate;

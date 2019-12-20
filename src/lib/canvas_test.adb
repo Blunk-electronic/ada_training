@@ -126,7 +126,7 @@ package body canvas_test is
 
 	function view_to_model (
 		self   : not null access type_view;
-		rect   : type_view_rectangle) 
+		rect   : in type_view_rectangle) -- position and size are in pixels
 		return type_model_rectangle is
 	begin
 		return (x      => rect.x / self.scale + self.topleft.x,
@@ -137,7 +137,7 @@ package body canvas_test is
 
 	function model_to_view (
 		self   : not null access type_view;
-		p      : type_model_point) return type_view_point is
+		p      : in type_model_point) return type_view_point is
 	begin
 		return (x => (p.x - self.topleft.x) * self.scale,
 				y => (p.y - self.topleft.y) * self.scale);
@@ -145,7 +145,7 @@ package body canvas_test is
 
 	function model_to_view (
 		self   : not null access type_view;
-		rect   : type_model_rectangle) return type_view_rectangle is
+		rect   : in type_model_rectangle) return type_view_rectangle is
 		result : type_view_rectangle;
 	begin
 		result := (
@@ -191,11 +191,23 @@ package body canvas_test is
 	function get_visible_area (self : not null access type_view)
 		return type_model_rectangle is
 	begin
-		return self.view_to_model
-		((0.0,
-			0.0,
-			gdouble (self.get_allocated_width),
-			gdouble (self.get_allocated_height)));
+		return self.view_to_model (
+			-- Assemble a type_view_rectangle which will be converted
+			-- to a type_model_rectangle by function view_to_model.
+			(
+			-- The visible area of the view always starts at 0/0 (topleft corner):
+			x		=> 0.0, 
+			y		=> 0.0,
+
+			-- The view size is adjusted by the operator. So it must be inquired
+			-- by calling get_allocated_width and get_allocated_height.
+			-- get_allocated_width and get_allocated_height return an integer type
+			-- which corresponds to the number of pixels required by self in y and x
+			-- direction. Since the model coordinates are gdouble (a float type),
+			-- the number of pixels must be converted to a gdouble type:
+			width	=> gdouble (self.get_allocated_width),
+			height	=> gdouble (self.get_allocated_height)
+			));
 	end get_visible_area;
 
 	procedure union (
