@@ -305,24 +305,58 @@ package canvas_test is
 		view   : type_view_ptr := null;
 	end record;
 
-
-	procedure refresh_layout (
-		self    : not null access type_item;
-		context : type_draw_context);
-
-	procedure refresh_layout (
-		self        : not null access type_model;
-		send_signal : boolean := true);
-	
+	-- Sets the width and height of the item according to the greatest x and y
+	-- points used by the item.
 	procedure size_request (self : not null access type_item);
 
+	-- This procedure should be called every time items are moved, added or removed.
+	-- Call this procedure after having created after a view has been created for the model.
+	procedure refresh_layout (
+		self        : not null access type_model;
+		send_signal : boolean := true); -- sends "layout_changed" signal when true
+	
+	-- Draws the item on the given cairo context.
+	-- A transformation matrix has already been applied to Cr, so that all
+	-- drawing should be done in item-coordinates for Self, so that (0,0) is
+	-- the top-left corner of Self's bounding box.
+	-- Do not call this procedure directly. Instead, call
+	-- Translate_And_Draw_Item below:
 	procedure draw (
 		self 	: not null access type_item;
 		context	: type_draw_context);
-	
+
+	-- Translate the transformation matrix and draw the item.
+	-- This procedure should be used instead of calling Draw directly.
+	procedure translate_and_draw_item (
+		self          : not null access type_item'class;
+		context       : type_draw_context);
+
+	-- Set the transformation matrix for the current settings (scrolling and zooming).
+	--
+	-- The effect is that any drawing on this context should now be done using
+	-- the model coordinates, which will automatically be converted to the
+	-- view coordinates internally.
+	--
+	-- If Item is specified, all drawing becomes relative to that item
+	-- instead of the position of the top-left corner of the view. All drawing
+	-- to this context must then be done in item_coordinates, which will
+	-- automatically be converted to view coordinates internally.
+	--
+	-- This procedure does not need to be called directly in general, since the
+	-- context passed to the Draw primitive of the item has already been set
+	-- up appropriately.
+	--
+	-- The default coordinates follow the industry standard of having y
+	-- increase downwards. This is sometimes unusual for mathematically-
+	-- oriented people. One solution is to override this procedure in your
+	-- own view, and call Cairo.Set_Scale as in:
+	--      procedure Set_Transform (Self, Cr) is
+	--          Set_Transform (Canvas_View_Record (Self.all)'Access, Cr);
+	--          Cairo.Set_Scale (Cr, 1.0, -1.0);
+	-- which will make y increase upwards instead.
 	procedure set_transform (
-		self   : not null access type_view;
-		cr     : cairo.cairo_context;
+		self	: not null access type_view;
+		cr		: cairo.cairo_context;
 		item	: access type_item'class := null);
 
 	procedure set_grid_size (
@@ -334,7 +368,9 @@ package canvas_test is
 		style   : gtkada.style.drawing_style;
 		context : type_draw_context;
 		area    : type_model_rectangle);
-	
+
+	-- Redraw either the whole view, or a specific part of it only.
+	-- The transformation matrix has already been set on the context.
 	procedure draw_internal (
 		self    : not null access type_view;
 		context : type_draw_context;

@@ -410,25 +410,6 @@ package body canvas_test is
 		end case;
 	end view_get_property;
 
-	procedure set_transform (
-		self	: not null access type_view;
-		cr		: cairo.cairo_context;
-		item	: access type_item'class := null)
-	is
-		model_p : type_model_point;
-		p       : type_view_point;
-	begin
-		if item /= null then
-			model_p := item.item_to_model ((0.0, 0.0));
-		else
-			model_p := (0.0, 0.0);
-		end if;
-
-		p := self.model_to_view (model_p);
-		translate (cr, p.x, p.y);
-		scale (cr, self.scale, self.scale);
-	end set_transform;
-
 	function get_visibility_threshold (self : not null access type_item) return gdouble is
 	begin
 		return self.visibility_threshold;
@@ -495,9 +476,7 @@ package body canvas_test is
 	
 	procedure translate_and_draw_item (
 		self          : not null access type_item'class;
-		context       : type_draw_context;
-		as_outline    : boolean := false;
-		outline_style : drawing_style := no_drawing_style) is
+		context       : type_draw_context) is
 	begin
 		if not size_above_threshold (self, context.view) then
 			return;
@@ -515,6 +494,25 @@ package body canvas_test is
 			process_exception (e);
 	end translate_and_draw_item;
 
+	procedure set_transform (
+		self	: not null access type_view;
+		cr		: cairo.cairo_context;
+		item	: access type_item'class := null)
+	is
+		model_p : type_model_point;
+		p       : type_view_point;
+	begin
+		if item /= null then
+			model_p := item.item_to_model ((0.0, 0.0));
+		else
+			model_p := (0.0, 0.0);
+		end if;
+
+		p := self.model_to_view (model_p);
+		translate (cr, p.x, p.y);
+		scale (cr, self.scale, self.scale);
+	end set_transform;
+	
 	procedure set_grid_size (
 		self : not null access type_view'class;
 		size : type_model_coordinate := 30.0) is
@@ -846,27 +844,16 @@ package body canvas_test is
 	end size_request;
 
 	procedure refresh_layout (
-		self    : not null access type_item;
-		context : type_draw_context) is
-	begin
-		type_item'class (self.all).size_request;
-	end;
-	
-	procedure refresh_layout (
 		self        : not null access type_model;
-		send_signal : boolean := true) 
-	is
-		context : constant type_draw_context := (
-					cr		=> <>,
-					layout 	=> self.layout,
-					view	=> null);
-
-		procedure do_container_layout (item : not null access type_item'class) is begin
-			item.refresh_layout (context);
+		send_signal : boolean := true) is
+		
+		procedure do_size_request (item : not null access type_item'class) is begin
+			type_item'class (item.all).size_request;
 		end;
 
 	begin
-		type_model'class (self.all).for_each_item (do_container_layout'access);
+		-- Update the width and height of all items:
+		type_model'class (self.all).for_each_item (do_size_request'access);
 
 		if send_signal then
 			type_model'class (self.all).layout_changed;
