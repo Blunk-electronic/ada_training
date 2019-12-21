@@ -890,7 +890,60 @@ package body canvas_test is
 			type_model'class (self.all).layout_changed;
 		end if;
 	end refresh_layout;
-   
+
+	function on_motion_notify_event (
+		view  : access gtk_widget_record'class;
+		event : gdk_event_motion) return boolean
+	is
+-- 		self    : constant canvas_view := canvas_view (view);
+-- 		details : aliased canvas_event_details;
+-- 		dx, dy  : gdouble;
+-- 		dummy   : boolean;
+	begin
+		put_line ("mouse movement !");
+-- 		if self.model /= null
+-- 		and then self.last_button_press.allowed_drag_area /= no_drag_allowed
+-- 		and then self.get_child = null   --  no inline editing
+-- 		then
+-- 			if not self.in_drag then
+-- 			dx := event.x_root - self.last_button_press.root_point.x;
+-- 			dy := event.y_root - self.last_button_press.root_point.y;
+-- 
+-- 			if dx * dx + dy * dy >= mouse_move_before_drag then
+-- 				self.in_drag := true;
+-- 				details := self.last_button_press;
+-- 				details.event_type := start_drag;
+-- 				dummy := self.item_event (details'unchecked_access);
+-- 
+-- 				self.topleft_at_drag_start := self.topleft;
+-- 				self.grab_add;
+-- 
+-- 				--  ??? should add all selected items
+-- 				if details.toplevel_item /= null
+-- 					and then not details.toplevel_item.is_link
+-- 				then
+-- 					copy_selected_to_dragged_items
+-- 					(self, force => details.toplevel_item);
+-- 					prepare_smart_guides (self);
+-- 				end if;
+-- 			end if;
+-- 			end if;
+-- 
+-- 			--  whether we were already in a drag or just started
+-- 
+-- 			if self.in_drag then
+-- 			details            := self.last_button_press;
+-- 			details.event_type := in_drag;
+-- 			details.state      := event.state;
+-- 			details.root_point := (event.x_root, event.y_root);
+-- 			details.m_point    :=
+-- 				self.window_to_model ((x => event.x, y => event.y));
+-- 			dummy := self.item_event (details'unchecked_access);
+-- 			end if;
+-- 		end if;
+		return false;
+	end on_motion_notify_event;
+	
 	procedure set_model (
 		self  : not null access type_view'class;
 		model : access type_model'class) is
@@ -988,12 +1041,14 @@ package body canvas_test is
 				or button3_motion_mask
 			);
 
+		-- detect mouse movements in the canvas
+		self.on_motion_notify_event (on_motion_notify_event'access);
+		
 		self.set_can_focus (true);
 
 		self.set_model (model);
 	end init;
 
-	--function position (self : not null access type_item) return gtkada.style.point is
 	function position (self : not null access type_item) return type_model_point is
 	begin
 		return self.position;
@@ -1001,7 +1056,6 @@ package body canvas_test is
 	
 	procedure set_position (
 		self	: not null access type_item;
-		--pos   : gtkada.style.point) is
 		pos		: type_model_point) is
 	begin
 		self.position := pos;

@@ -58,7 +58,7 @@ with canvas_test;			use canvas_test;
 procedure gtkada_9 is
 
 	-- The window is composed of several boxes that contain boxes with things in them.
-	-- All these things a called "widgets". Their type is basically an access (or a pointer).
+	-- All these things are called "widgets". Their type is basically an access (or a pointer).
 	-- A widget is a button, a text box, a frame, in short something the operator
 	-- can click on or something that displays stuff.
 	
@@ -84,7 +84,7 @@ procedure gtkada_9 is
 		gtk.main.init; -- initialize the main gtk stuff
 
 		gtk_new (window); -- create the main window (where pointer "window" is pointing at)
-		window.set_title ("Some Title");
+		window.set_title ("Test canvas");
 		window.set_default_size (800, 600);
 
 		-- background box
