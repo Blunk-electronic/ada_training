@@ -129,18 +129,18 @@ package body canvas_test is
 		rect   : in type_view_rectangle) -- position and size are in pixels
 		return type_model_rectangle is
 	begin
-		return (x      => rect.x / self.scale + self.topleft.x,
-				y      => rect.y / self.scale + self.topleft.y,
-				width  => rect.width / self.scale,
-				height => rect.height / self.scale);
+		return (x      => type_model_coordinate (rect.x / self.scale) + self.topleft.x,
+				y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
+				width  => type_model_coordinate (rect.width / self.scale),
+				height => type_model_coordinate (rect.height / self.scale));
 	end view_to_model;
 
 	function model_to_view (
 		self   : not null access type_view;
 		p      : in type_model_point) return type_view_point is
 	begin
-		return (x => (p.x - self.topleft.x) * self.scale,
-				y => (p.y - self.topleft.y) * self.scale);
+		return (x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
+				y => type_view_coordinate (p.y - self.topleft.y) * self.scale);
 	end model_to_view;
 
 	function model_to_view (
@@ -149,10 +149,10 @@ package body canvas_test is
 		result : type_view_rectangle;
 	begin
 		result := (
-			x      => (rect.x - self.topleft.x) * self.scale,
-			y      => (rect.y - self.topleft.y) * self.scale,
-			width  => rect.width * self.scale,
-			height => rect.height * self.scale);
+			x      => type_view_coordinate (rect.x - self.topleft.x) * self.scale,
+			y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
+			width  => type_view_coordinate (rect.width) * self.scale,
+			height => type_view_coordinate (rect.height) * self.scale);
 		
 		return result;
 	end model_to_view;
@@ -180,8 +180,8 @@ package body canvas_test is
 
 		self.scale := scale;
 		self.topleft := (
-			p.x - (p.x - self.topleft.x) * old_scale / scale,
-			p.y - (p.y - self.topleft.y) * old_scale / scale);
+			p.x - (p.x - self.topleft.x) * type_model_coordinate (old_scale / scale),
+			p.y - (p.y - self.topleft.y) * type_model_coordinate (old_scale / scale));
 
 		self.scale_to_fit_requested := 0.0;
 		self.set_adjustment_values;
@@ -309,34 +309,34 @@ package body canvas_test is
 		--  we want a small margin around the minimal box for the model, since it
 		--  looks better.
 
-		box := self.model.bounding_box (view_margin / self.scale);
+		box := self.model.bounding_box (type_model_coordinate (view_margin / self.scale));
 
 		--  we set the adjustments to include the model area, but also at least
 		--  the current visible area (if we don't, then part of the display will
 		--  not be properly refreshed).
 
 		if self.hadj /= null then
-			min := gdouble'min (area.x, box.x);
-			max := gdouble'max (area.x + area.width, box.x + box.width);
-			self.hadj.configure
-			(value          => area.x,
-			lower          => min,
-			upper          => max,
-			step_increment => 5.0,
-			page_increment => 100.0,
-			page_size      => area.width);
+			min := gdouble'min (gdouble (area.x), gdouble (box.x));
+			max := gdouble'max (gdouble (area.x + area.width), gdouble (box.x + box.width));
+			self.hadj.configure (
+				value          => gdouble (area.x),
+				lower          => min,
+				upper          => max,
+				step_increment => 5.0,
+				page_increment => 100.0,
+				page_size      => gdouble (area.width));
 		end if;
 
 		if self.vadj /= null then
-			min := gdouble'min (area.y, box.y);
-			max := gdouble'max (area.y + area.height, box.y + box.height);
-			self.vadj.configure
-			(value          => area.y,
-			lower          => min,
-			upper          => max,
-			step_increment => 5.0,
-			page_increment => 100.0,
-			page_size      => area.height);
+			min := gdouble'min (gdouble (area.y), gdouble (box.y));
+			max := gdouble'max (gdouble (area.y + area.height), gdouble (box.y + box.height));
+			self.vadj.configure (
+				value          => gdouble (area.y),
+				lower          => min,
+				upper          => max,
+				step_increment => 5.0,
+				page_increment => 100.0,
+				page_size      => gdouble (area.height));
 		end if;
 
 		self.viewport_changed;
@@ -346,8 +346,8 @@ package body canvas_test is
 	-- Called when one of the scrollbars has changed value.		
 		self : constant type_view_ptr := type_view_ptr (view);
 		pos  : constant type_model_point := (
-							x => self.hadj.get_value,
-							y => self.vadj.get_value);
+							x => type_model_coordinate (self.hadj.get_value),
+							y => type_model_coordinate (self.vadj.get_value));
 	begin
 		if pos /= self.topleft then
 			self.topleft := pos;
@@ -442,7 +442,7 @@ package body canvas_test is
 	begin
 -- 		put_line ("drawing ...");
 
-		cairo.set_line_width (context.cr, 1.1);
+		cairo.set_line_width (context.cr, 1.5);
 
 		-- Draw objects with the corner points as specified in type_item (see spec for type_item):
 		-- NOTE: The corner points are in item coordinates relative to the item position.
@@ -450,26 +450,54 @@ package body canvas_test is
 		-- draw the big X in red
 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0)); -- red
 
-		cairo.move_to (context.cr, self.c10.x, self.c10.y);
-		cairo.line_to (context.cr, self.c13.x, self.c13.y);
+		cairo.move_to (
+			context.cr,
+			type_view_coordinate (self.c10.x),
+			type_view_coordinate (self.c10.y));
+		
+		cairo.line_to (
+			context.cr,
+			type_view_coordinate (self.c13.x),
+			type_view_coordinate (self.c13.y));
 
-		cairo.move_to (context.cr, self.c12.x, self.c12.y);
-		cairo.line_to (context.cr, self.c11.x, self.c11.y);
+		cairo.move_to (
+			context.cr,
+			type_view_coordinate (self.c12.x),
+			type_view_coordinate (self.c12.y));
+		
+		cairo.line_to (
+			context.cr,
+			type_view_coordinate (self.c11.x),
+			type_view_coordinate (self.c11.y));
 
 		cairo.stroke (context.cr);
 
 		
 		-- draw the surounding rectangle in yellow
 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (1), gdouble (0)); -- yellow
-		cairo.rectangle (context.cr, self.c10.x, self.c10.y, self.c13.x, self.c13.y);
+		
+		cairo.rectangle (
+			context.cr,
+			type_view_coordinate (self.c10.x),
+			type_view_coordinate (self.c10.y),
+			type_view_coordinate (self.c13.x),
+			type_view_coordinate (self.c13.y));
 
 		cairo.stroke (context.cr);
 		
 
 		-- draw a line between point c1 and c2 in green
 		cairo.set_source_rgb (context.cr, gdouble (0), gdouble (1), gdouble (0)); -- green
-		cairo.move_to (context.cr, self.c1.x, self.c1.y);
-		cairo.line_to (context.cr, self.c2.x, self.c2.y);
+		
+		cairo.move_to (
+			context.cr,
+			type_view_coordinate (self.c1.x),
+			type_view_coordinate (self.c1.y));
+		
+		cairo.line_to (
+			context.cr,
+			type_view_coordinate (self.c2.x),
+			type_view_coordinate (self.c2.y));
 		
 		cairo.stroke (context.cr);
 	end;
@@ -483,7 +511,10 @@ package body canvas_test is
 		end if;
 
 		save (context.cr);
-		translate (context.cr, self.position.x, self.position.y);
+		translate (
+			context.cr,
+			type_view_coordinate (self.position.x),
+			type_view_coordinate (self.position.y));
 
 		self.draw (context);
 		restore (context.cr);
@@ -526,7 +557,7 @@ package body canvas_test is
 		context : type_draw_context;
 		area    : type_model_rectangle)
 	is
-		tmpx, tmpy  : gdouble;
+		tmpx, tmpy  : type_view_coordinate;
 	begin
 		if style.get_fill /= null_pattern then
 			set_source (context.cr, style.get_fill);
@@ -536,17 +567,17 @@ package body canvas_test is
 		if self.grid_size /= 0.0 then
 			new_path (context.cr);
 
-			tmpx := gdouble (gint (area.x / self.grid_size)) * self.grid_size;
+			tmpx := type_view_coordinate (gint (area.x / self.grid_size)) * type_view_coordinate (self.grid_size);
 			
-			while tmpx < area.x + area.width loop
-				tmpy := gdouble (gint (area.y / self.grid_size)) * self.grid_size;
+			while tmpx < type_view_coordinate (area.x + area.width) loop
+				tmpy := type_view_coordinate (gint (area.y / self.grid_size)) * type_view_coordinate (self.grid_size);
 				
-				while tmpy < area.y + area.height loop
+				while tmpy < type_view_coordinate (area.y + area.height) loop
 					rectangle (context.cr, tmpx - 0.5, tmpy - 0.5, 1.0, 1.0);
-					tmpy := tmpy + self.grid_size;
+					tmpy := tmpy + type_view_coordinate (self.grid_size);
 				end loop;
 
-				tmpx := tmpx + self.grid_size;
+				tmpx := tmpx + type_view_coordinate (self.grid_size);
 			end loop;
 
 			style.finish_path (context.cr);
@@ -897,8 +928,9 @@ package body canvas_test is
 		p      : type_view_point) return type_model_point
 	is
 	begin
-		return (x      => p.x / self.scale + self.topleft.x,
-				y      => p.y / self.scale + self.topleft.y);
+		return (
+			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
+			y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y);
 	end view_to_model;
 	
 	function window_to_model (
@@ -1055,14 +1087,14 @@ package body canvas_test is
 				--  the "-1.0" below compensates for rounding errors, since
 				--  otherwise we are still seeing the scrollbar along the axis
 				--  used to compute the scale.
-				wmin := (w - 2.0 * view_margin - 1.0) / box.width;
-				hmin := (h - 2.0 * view_margin - 1.0) / box.height;
+				wmin := (w - 2.0 * view_margin - 1.0) / type_view_coordinate (box.width);
+				hmin := (h - 2.0 * view_margin - 1.0) / type_view_coordinate (box.height);
 				wmin := gdouble'min (wmin, hmin);
 				s := gdouble'min (max_scale, wmin);
 				s := gdouble'max (min_scale, s);
-				tl :=
-					(x => box.x - (w / s - box.width) / 2.0,
-					y => box.y - (h / s - box.height) / 2.0);
+				tl := (
+					x	=> box.x - (type_model_coordinate (w / s) - box.width) / 2.0,
+					y	=> box.y - (type_model_coordinate (h / s) - box.height) / 2.0);
 
 				if duration = 0.0 then
 					self.scale := s;

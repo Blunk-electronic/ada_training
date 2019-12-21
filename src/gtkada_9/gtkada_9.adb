@@ -31,7 +31,8 @@
 --
 
 -- This is a simple ada program, that demonstrates gtkada.
--- It draws a canvas, black drawing background, with a red square on it.
+-- It draws a canvas, black drawing background, a yellow rectangle, 
+-- a red X and a green horzontal line.
 
 -- Rationale: Aims to help users understanding programming with gtkada.
 

@@ -75,12 +75,18 @@ package canvas_test is
 
 	-- The items to be displayed inside the model have a coordinate, a place
 	-- in the drawing. For understanding here an example:
-	--  If you draw a circle at position 40/50 on a sheet of paper then this
+	--  If you draw a circle at position 40/50 mm on a sheet of paper then this
 	--  is the model coordinate. The circle is always at this place independed
 	--  of scale, zoom or the visible area of your drawing.
-	subtype type_model_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
 
-	-- A point at the model (or at the sheet):
+	-- For the real world coordinates we define millimeters:
+	type type_millimeters is delta 0.01 range -100_000_000.00 .. 100_000_000.00;
+	for type_millimeters'small use 0.01;
+ 
+	-- The items placed in the model (or on the sheet) use millimeters.
+	subtype type_model_coordinate is type_millimeters;
+	
+	-- A point at the model (or on the sheet):
 	type type_model_point is record
 		x, y : type_model_coordinate := type_model_coordinate'first;
 	end record;
@@ -92,8 +98,9 @@ package canvas_test is
 
 		
 -- ITEM:
-	-- Coordinates relative to the position of the item are used when drawing an item:
-	subtype type_item_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
+	-- Coordinates relative to the position of the item are used when drawing an item.
+	-- Since they are real world coordinates we use millimeters.
+	subtype type_item_coordinate is type_millimeters;
 	
 	type type_item_point is record
 		x, y : type_item_coordinate := type_item_coordinate'first;
@@ -421,7 +428,7 @@ package canvas_test is
 		self   : not null access type_view;
 		p      : type_window_point) return type_model_point;
 
-	no_item_point : constant type_item_point := (gdouble'first, gdouble'first);
+	no_item_point : constant type_item_point := (type_item_coordinate'first, type_item_coordinate'first);
 
 	function model_to_item (
 		item   : not null access type_item'class;
