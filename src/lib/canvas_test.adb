@@ -83,6 +83,23 @@ package body canvas_test is
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;
+
+	function to_string (d : in gint) return string is begin
+		return gint'image (d);
+	end;
+
+	function to_string (p : in type_view_point) return string is begin
+		return ("view x/y [pixels]" & to_string (gint (p.x)) & "/" & to_string (gint (p.y)));
+	end;
+
+	function to_string (d : in type_model_coordinate) return string is begin
+		return type_model_coordinate'image (d);
+	end;
+	
+	function to_string (p : in type_model_point) return string is begin
+		return ("model x/y [mm]" & to_string (p.x) & "/" & to_string (p.y));
+	end;
+
 	
 	model_signals : constant gtkada.types.chars_ptr_array := (
 		1 => new_string (string (signal_layout_changed))
@@ -410,7 +427,7 @@ package body canvas_test is
 		end case;
 	end view_get_property;
 
-	function get_visibility_threshold (self : not null access type_item) return gdouble is
+		function get_visibility_threshold (self : not null access type_item) return gdouble is
 	begin
 		return self.visibility_threshold;
 	end get_visibility_threshold;
@@ -891,58 +908,37 @@ package body canvas_test is
 		end if;
 	end refresh_layout;
 
-	function on_motion_notify_event (
+	-- For demonstrating the difference between view coordinates (pixels) and model coordinates
+	-- this function outputs them at the console.
+	function on_mouse_movement (
 		view  : access gtk_widget_record'class;
-		event : gdk_event_motion) return boolean
-	is
--- 		self    : constant canvas_view := canvas_view (view);
--- 		details : aliased canvas_event_details;
--- 		dx, dy  : gdouble;
--- 		dummy   : boolean;
+		event : gdk_event_motion) return boolean is
+		
+		-- the point where the mouse pointer is pointing at
+		view_point : type_view_point;
+
+		-- The conversion from view to model coordinates requires a pointer to
+		-- the view. This command sets self so that it points to the view:
+		self : constant type_view_ptr := type_view_ptr (view);
+
+		-- The point in the model (or on the sheet) expressed in millimeters:
+		model_point : type_model_point;
+		
 	begin
-		put_line ("mouse movement !");
--- 		if self.model /= null
--- 		and then self.last_button_press.allowed_drag_area /= no_drag_allowed
--- 		and then self.get_child = null   --  no inline editing
--- 		then
--- 			if not self.in_drag then
--- 			dx := event.x_root - self.last_button_press.root_point.x;
--- 			dy := event.y_root - self.last_button_press.root_point.y;
--- 
--- 			if dx * dx + dy * dy >= mouse_move_before_drag then
--- 				self.in_drag := true;
--- 				details := self.last_button_press;
--- 				details.event_type := start_drag;
--- 				dummy := self.item_event (details'unchecked_access);
--- 
--- 				self.topleft_at_drag_start := self.topleft;
--- 				self.grab_add;
--- 
--- 				--  ??? should add all selected items
--- 				if details.toplevel_item /= null
--- 					and then not details.toplevel_item.is_link
--- 				then
--- 					copy_selected_to_dragged_items
--- 					(self, force => details.toplevel_item);
--- 					prepare_smart_guides (self);
--- 				end if;
--- 			end if;
--- 			end if;
--- 
--- 			--  whether we were already in a drag or just started
--- 
--- 			if self.in_drag then
--- 			details            := self.last_button_press;
--- 			details.event_type := in_drag;
--- 			details.state      := event.state;
--- 			details.root_point := (event.x_root, event.y_root);
--- 			details.m_point    :=
--- 				self.window_to_model ((x => event.x, y => event.y));
--- 			dummy := self.item_event (details'unchecked_access);
--- 			end if;
--- 		end if;
+		new_line;
+		put_line ("mouse movement ! new positions are:");
+
+		-- Fetch the position of the mouse pointer and output it on the console:
+		view_point := (x => event.x, y => event.y);
+		put_line (" " & to_string (view_point));
+
+		-- Convert the view point (pixels) to the position (millimeters) in the model
+		-- and output in on the console:
+		model_point := self.view_to_model (view_point);
+		put_line (" " & to_string (model_point));
+
 		return false;
-	end on_motion_notify_event;
+	end on_mouse_movement;
 	
 	procedure set_model (
 		self  : not null access type_view'class;
@@ -1033,16 +1029,19 @@ package body canvas_test is
 		self.layout := self.create_pango_layout;
 		self.set_has_window (true);
 
+		-- These are the signals the view is to receive from input devices
+		-- like keyboard, mouse or touchpad:
 		self.add_events (
 			scroll_mask or smooth_scroll_mask or touch_mask
 				or button_press_mask or button_release_mask
 				or button1_motion_mask
 				or button2_motion_mask
 				or button3_motion_mask
+				or pointer_motion_mask -- whenever the mouse is being moved inside the canvas
 			);
 
-		-- detect mouse movements in the canvas
-		self.on_motion_notify_event (on_motion_notify_event'access);
+		-- reaction of mouse movements in the canvas
+		self.on_motion_notify_event (on_mouse_movement'access);
 		
 		self.set_can_focus (true);
 
