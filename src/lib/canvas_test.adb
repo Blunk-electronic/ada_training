@@ -982,20 +982,6 @@ package body canvas_test is
 			y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y);
 	end view_to_model;
 	
-	function window_to_model (
-		self   : not null access type_view;
-		p      : type_window_point) return type_model_point
-	is
-		alloc : gtk_allocation;
-	begin
-		self.get_allocation (alloc);
-		return self.view_to_model (
-			(
-			x      => type_view_coordinate (p.x) - type_view_coordinate (alloc.x),
-			y      => type_view_coordinate (p.y) - type_view_coordinate (alloc.y))
-			);
-	end window_to_model;
-
 	function model_to_item (
 		item   : not null access type_item'class;
 		p      : type_model_rectangle) return type_item_rectangle

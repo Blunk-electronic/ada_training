@@ -414,21 +414,9 @@ package canvas_test is
 	--  return the internal type
 
 	
-	subtype type_window_coordinate is gdouble; -- gdouble is a real floating-point type (see glib.ads)
-	
-	type type_window_point is record
-		x, y : type_window_coordinate;
-	end record;
-
 	function view_to_model (
 		self   : not null access type_view;
 		p      : type_view_point) return type_model_point;
-	
-	function window_to_model (
-		self   : not null access type_view;
-		p      : type_window_point) return type_model_point;
-
-	no_item_point : constant type_item_point := (type_item_coordinate'first, type_item_coordinate'first);
 
 	function model_to_item (
 		item   : not null access type_item'class;
