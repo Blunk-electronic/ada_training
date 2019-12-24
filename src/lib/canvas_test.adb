@@ -559,6 +559,9 @@ package body canvas_test is
 		p := self.model_to_view (model_p);
 		translate (cr, p.x, p.y);
 		scale (cr, self.scale, self.scale);
+
+-- 		scale (cr, self.scale, -1.0 * self.scale);
+-- 		cairo.scale (cr, 1.0, -1.0);
 	end set_transform;
 	
 	procedure set_grid_size (
