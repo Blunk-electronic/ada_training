@@ -113,8 +113,8 @@ package canvas_test is
 		
 		visibility_threshold : gdouble := 0.0; -- gdouble is a real floating-point type (see glib.ads) 
 
-		c1 : type_item_point := (250.0, 500.0);
-		c2 : type_item_point := (750.0, 500.0);
+		c1 : type_item_point := (250.0, 200.0);
+		c2 : type_item_point := (750.0, 200.0);
 
 		c10 : type_item_point := (0.0, 0.0);
 		c11 : type_item_point := (1000.0, 0.0);
@@ -215,7 +215,8 @@ package canvas_test is
 		-- the model are real world units like millimeters.
 		-- This implementation assumes that the upper left corner of the model has 
 		-- the model coordinates 0/0.
-		topleft   	: type_model_point := (0.0, 0.0);
+		--topleft   	: type_model_point := (0.0, 0.0);
+		topleft   	: type_model_point := (0.0, 1200.0);
 		
 		scale     	: gdouble := 1.0; -- gdouble is a real floating-point type (see glib.ads)
 		grid_size 	: type_model_coordinate := 20.0;

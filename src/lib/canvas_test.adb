@@ -147,7 +147,8 @@ package body canvas_test is
 		return type_model_rectangle is
 	begin
 		return (x      => type_model_coordinate (rect.x / self.scale) + self.topleft.x,
-				y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
+				--y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
+				y      => self.topleft.y - type_model_coordinate (rect.y / self.scale),
 				width  => type_model_coordinate (rect.width / self.scale),
 				height => type_model_coordinate (rect.height / self.scale));
 	end view_to_model;
@@ -156,8 +157,11 @@ package body canvas_test is
 		self   : not null access type_view;
 		p      : in type_model_point) return type_view_point is
 	begin
-		return (x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
-				y => type_view_coordinate (p.y - self.topleft.y) * self.scale);
+		return (
+			x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
+			--y => type_view_coordinate (p.y - self.topleft.y) * self.scale
+			y => type_view_coordinate (self.topleft.y - p.y) * self.scale
+			);
 	end model_to_view;
 
 	function model_to_view (
@@ -167,9 +171,11 @@ package body canvas_test is
 	begin
 		result := (
 			x      => type_view_coordinate (rect.x - self.topleft.x) * self.scale,
-			y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
+			--y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
+			y      => type_view_coordinate (self.topleft.y - rect.y) * self.scale,
 			width  => type_view_coordinate (rect.width) * self.scale,
-			height => type_view_coordinate (rect.height) * self.scale);
+			height => type_view_coordinate (rect.height) * self.scale
+			);
 		
 		return result;
 	end model_to_view;
@@ -528,12 +534,14 @@ package body canvas_test is
 		end if;
 
 		save (context.cr);
+		
 		translate (
 			context.cr,
 			type_view_coordinate (self.position.x),
 			type_view_coordinate (self.position.y));
 
 		self.draw (context);
+		
 		restore (context.cr);
 
 	exception
@@ -548,7 +556,7 @@ package body canvas_test is
 		item	: access type_item'class := null)
 	is
 		model_p : type_model_point;
-		p       : type_view_point;
+		view_p  : type_view_point;
 	begin
 		if item /= null then
 			model_p := item.item_to_model ((0.0, 0.0));
@@ -556,11 +564,11 @@ package body canvas_test is
 			model_p := (0.0, 0.0);
 		end if;
 
-		p := self.model_to_view (model_p);
-		translate (cr, p.x, p.y);
+		view_p := self.model_to_view (model_p);
+		translate (cr, view_p.x, view_p.y);
 		scale (cr, self.scale, self.scale);
 
--- 		scale (cr, self.scale, -1.0 * self.scale);
+-- 		scale (cr, self.scale, -1.0 * self.scale); -- mirrors
 -- 		cairo.scale (cr, 1.0, -1.0);
 	end set_transform;
 	
@@ -982,7 +990,9 @@ package body canvas_test is
 	begin
 		return (
 			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
-			y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y);
+			--y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
+			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
+			);
 	end view_to_model;
 	
 	function model_to_item (
