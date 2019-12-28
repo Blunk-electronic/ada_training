@@ -141,6 +141,22 @@ package body canvas_test is
 		init (self);
 	end;	
 
+
+-- CONVERSIONS BETWEEN COORDINATE SYSTEMS
+	
+	function view_to_model (
+		self   : not null access type_view;
+		p      : type_view_point) 
+		return type_model_point is
+	begin
+		return (
+			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
+			--y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
+			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
+			--y	=> self.topleft.y + type_model_coordinate (p.y / self.scale)
+			);
+	end view_to_model;
+	
 	function view_to_model (
 		self   : not null access type_view;
 		rect   : in type_view_rectangle) -- position and size are in pixels
@@ -149,13 +165,17 @@ package body canvas_test is
 		return (x      => type_model_coordinate (rect.x / self.scale) + self.topleft.x,
 				--y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
 				y      => self.topleft.y - type_model_coordinate (rect.y / self.scale),
+				--y      => self.topleft.y + type_model_coordinate (rect.y / self.scale),
 				width  => type_model_coordinate (rect.width / self.scale),
 				height => type_model_coordinate (rect.height / self.scale));
 	end view_to_model;
 
+
+	
 	function model_to_view (
 		self   : not null access type_view;
-		p      : in type_model_point) return type_view_point is
+		p      : in type_model_point) 
+		return type_view_point is
 	begin
 		return (
 			x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
@@ -166,7 +186,8 @@ package body canvas_test is
 
 	function model_to_view (
 		self   : not null access type_view;
-		rect   : in type_model_rectangle) return type_view_rectangle is
+		rect   : in type_model_rectangle)
+		return type_view_rectangle is
 		result : type_view_rectangle;
 	begin
 		result := (
@@ -180,6 +201,9 @@ package body canvas_test is
 		return result;
 	end model_to_view;
 
+
+
+	
 	function get_scale (self : not null access type_view) return gdouble is
 	begin
 		return self.scale;
@@ -983,18 +1007,6 @@ package body canvas_test is
 		self.viewport_changed;
 	end set_model;
 
-	function view_to_model (
-		self   : not null access type_view;
-		p      : type_view_point) return type_model_point
-	is
-	begin
-		return (
-			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
-			--y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
-			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
-			);
-	end view_to_model;
-	
 	function model_to_item (
 		item   : not null access type_item'class;
 		p      : type_model_rectangle) return type_item_rectangle
