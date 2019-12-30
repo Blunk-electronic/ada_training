@@ -151,8 +151,8 @@ package body canvas_test is
 	begin
 		return (
 			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
-			--y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
-			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
+			y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
+-- 			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
 			--y	=> self.topleft.y + type_model_coordinate (p.y / self.scale)
 			);
 	end view_to_model;
@@ -163,8 +163,8 @@ package body canvas_test is
 		return type_model_rectangle is
 	begin
 		return (x      => type_model_coordinate (rect.x / self.scale) + self.topleft.x,
-				--y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
-				y      => self.topleft.y - type_model_coordinate (rect.y / self.scale),
+				y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
+-- 				y      => self.topleft.y - type_model_coordinate (rect.y / self.scale),
 				--y      => self.topleft.y + type_model_coordinate (rect.y / self.scale),
 				width  => type_model_coordinate (rect.width / self.scale),
 				height => type_model_coordinate (rect.height / self.scale));
@@ -179,8 +179,8 @@ package body canvas_test is
 	begin
 		return (
 			x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
-			--y => type_view_coordinate (p.y - self.topleft.y) * self.scale
-			y => type_view_coordinate (self.topleft.y - p.y) * self.scale
+			y => type_view_coordinate (p.y - self.topleft.y) * self.scale
+-- 			y => type_view_coordinate (self.topleft.y - p.y) * self.scale
 			);
 	end model_to_view;
 
@@ -192,8 +192,8 @@ package body canvas_test is
 	begin
 		result := (
 			x      => type_view_coordinate (rect.x - self.topleft.x) * self.scale,
-			--y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
-			y      => type_view_coordinate (self.topleft.y - rect.y) * self.scale,
+			y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
+-- 			y      => type_view_coordinate (self.topleft.y - rect.y) * self.scale,
 			width  => type_view_coordinate (rect.width) * self.scale,
 			height => type_view_coordinate (rect.height) * self.scale
 			);
@@ -201,6 +201,28 @@ package body canvas_test is
 		return result;
 	end model_to_view;
 
+	function item_to_model (
+		item   : not null access type_item'class;
+		rect   : type_item_rectangle) return type_model_rectangle
+	is
+		pos : type_model_point;
+		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
+	begin
+		pos := position (item);
+		result.x := result.x + pos.x;
+		result.y := result.y + pos.y;
+			
+		return result;
+	end;
+
+	function item_to_model (
+		item	: not null access type_item'class;
+		i_point	: type_item_point) return type_model_point
+	is
+		r : constant type_model_rectangle := item.item_to_model ((i_point.x, i_point.y, 0.0, 0.0));
+	begin
+		return (r.x, r.y);
+	end;
 
 
 	
@@ -214,18 +236,26 @@ package body canvas_test is
 		scale    : gdouble := 1.0;
 		preserve : type_model_point := no_point)
 	is
-		box : type_model_rectangle;
+		-- backup the current scale
 		old_scale : constant gdouble := self.scale;
+		
+		box : type_model_rectangle;
 		p   : type_model_point;
 	begin
 		if preserve /= no_point then
+			-- set p at the point given by preserve
 			p := preserve;
 		else
+			-- get the visible area
 			box := self.get_visible_area;
+
+			-- set p at the center of the visible area
 			p := (box.x + box.width / 2.0, box.y + box.height / 2.0);
 		end if;
 
 		self.scale := scale;
+
+		-- calculate the new topleft corner of the visible area:
 		self.topleft := (
 			p.x - (p.x - self.topleft.x) * type_model_coordinate (old_scale / scale),
 			p.y - (p.y - self.topleft.y) * type_model_coordinate (old_scale / scale));
@@ -270,29 +300,6 @@ package body canvas_test is
 
 		rect1.y := type_model_coordinate'min (rect1.y, rect2.y);
 		rect1.height := bottom - rect1.y;
-	end;
-
-	function item_to_model (
-		item   : not null access type_item'class;
-		rect   : type_item_rectangle) return type_model_rectangle
-	is
-		pos : type_model_point;
-		result : type_model_rectangle := (rect.x, rect.y, rect.width, rect.height);
-	begin
-		pos := position (item);
-		result.x := result.x + pos.x;
-		result.y := result.y + pos.y;
-			
-		return result;
-	end;
-
-	function item_to_model (
-		item   : not null access type_item'class;
-		p      : type_item_point) return type_model_point
-	is
-		r : constant type_model_rectangle := item.item_to_model ((p.x, p.y, 0.0, 0.0));
-	begin
-		return (r.x, r.y);
 	end;
 
 	function bounding_box (self : not null access type_item) return type_item_rectangle is
@@ -493,6 +500,7 @@ package body canvas_test is
 
 		-- Draw objects with the corner points as specified in type_item (see spec for type_item):
 		-- NOTE: The corner points are in item coordinates relative to the item position.
+		-- See the calling procedure (translate_and_draw_item) for preparations.
 		
 		-- draw the big X in red
 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0)); -- red
@@ -558,12 +566,16 @@ package body canvas_test is
 		end if;
 
 		save (context.cr);
-		
+
+		-- Prepare the current transformation matrix (CTM) so that
+		-- drawing the item specific things are drawn relative to the
+		-- item position.
 		translate (
 			context.cr,
 			type_view_coordinate (self.position.x),
 			type_view_coordinate (self.position.y));
 
+		-- draw the item
 		self.draw (context);
 		
 		restore (context.cr);
@@ -583,17 +595,22 @@ package body canvas_test is
 		view_p  : type_view_point;
 	begin
 		if item /= null then
-			model_p := item.item_to_model ((0.0, 0.0));
+			model_p := item.item_to_model (i_point => (0.0, 0.0));
 		else
 			model_p := (0.0, 0.0);
 		end if;
 
+		-- compute a view point according to current model point:
 		view_p := self.model_to_view (model_p);
+
+		-- Set the CTM so that following draw operations are relative
+		-- to the current view point:
 		translate (cr, view_p.x, view_p.y);
+
+		-- Set the CTM so that following draw operations are scaled
+		-- according to the scale factor of the view:
 		scale (cr, self.scale, self.scale);
 
--- 		scale (cr, self.scale, -1.0 * self.scale); -- mirrors
--- 		cairo.scale (cr, 1.0, -1.0);
 	end set_transform;
 	
 	procedure set_grid_size (
@@ -1119,8 +1136,7 @@ package body canvas_test is
 		self      : not null access type_view;
 		rect      : type_model_rectangle := no_rectangle;
 		min_scale : gdouble := 1.0 / 4.0;
-		max_scale : gdouble := 4.0;
-		duration  : standard.duration := 0.0)
+		max_scale : gdouble := 4.0)
 	is
 		box     : type_model_rectangle;
 		w, h, s : gdouble;
@@ -1156,16 +1172,17 @@ package body canvas_test is
 				wmin := gdouble'min (wmin, hmin);
 				s := gdouble'min (max_scale, wmin);
 				s := gdouble'max (min_scale, s);
+
+				-- calculate the new topleft corner of the visible area:
 				tl := (
 					x	=> box.x - (type_model_coordinate (w / s) - box.width) / 2.0,
 					y	=> box.y - (type_model_coordinate (h / s) - box.height) / 2.0);
 
-				if duration = 0.0 then
-					self.scale := s;
-					self.topleft := tl;
-					self.set_adjustment_values;
-					self.queue_draw;
-				end if;
+				self.scale := s;
+				self.topleft := tl;
+				self.set_adjustment_values;
+				self.queue_draw;
+
 			end if;
 		end if;
 	end scale_to_fit;

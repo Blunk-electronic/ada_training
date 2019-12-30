@@ -211,12 +211,11 @@ package canvas_test is
 	type type_view is new gtk.widget.gtk_widget_record with record
 		model 		: type_model_ptr;
 
-		-- The size of the view is expessed in pixels whereas the coordinates inside
-		-- the model are real world units like millimeters.
-		-- This implementation assumes that the upper left corner of the model has 
-		-- the model coordinates 0/0.
-		--topleft   	: type_model_point := (0.0, 0.0);
-		topleft   	: type_model_point := (0.0, 1200.0);
+		-- The upper left corner of the visible area has its initial value at 0/0.
+		-- NOTE: This has nothing to do with the upper left corner of the
+		-- drawing sheet. topleft is not a constant and is changed on by procedure
+		-- set_scale or by procedure scale_to_fit.
+		topleft   	: type_model_point := (0.0, 0.0);
 		
 		scale     	: gdouble := 1.0; -- gdouble is a real floating-point type (see glib.ads)
 		grid_size 	: type_model_coordinate := 20.0;
@@ -406,8 +405,7 @@ package canvas_test is
 		self      : not null access type_view;
 		rect      : type_model_rectangle := no_rectangle;
 		min_scale : gdouble := 1.0 / 4.0;
-		max_scale : gdouble := 4.0;
-		duration  : standard.duration := 0.0);
+		max_scale : gdouble := 4.0);
 
 	
 	function view_get_type return glib.gtype;
