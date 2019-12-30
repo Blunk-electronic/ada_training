@@ -57,10 +57,10 @@ package callbacks_4 is
 	
 	scale_default : constant gdouble := 1.0;
 	scale : gdouble := scale_default;
-
+	
 	-- Points where the item is to be placed:
-	p1 : type_model_point := (0.0, 0.0);
-	p2 : type_model_point := (1000.0, 0.0);
+	p1 : type_model_point := (0.0, 0.0); -- initial position
+	p2 : type_model_point := (1000.0, 0.0); -- when moved to the right
 
 	
 	function to_string (d : in gdouble) return string;

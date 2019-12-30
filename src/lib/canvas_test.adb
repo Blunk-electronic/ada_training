@@ -152,8 +152,6 @@ package body canvas_test is
 		return (
 			x	=> type_model_coordinate (p.x / self.scale) + self.topleft.x,
 			y	=> type_model_coordinate (p.y / self.scale) + self.topleft.y
--- 			y	=> self.topleft.y - type_model_coordinate (p.y / self.scale)
-			--y	=> self.topleft.y + type_model_coordinate (p.y / self.scale)
 			);
 	end view_to_model;
 	
@@ -164,8 +162,6 @@ package body canvas_test is
 	begin
 		return (x      => type_model_coordinate (rect.x / self.scale) + self.topleft.x,
 				y      => type_model_coordinate (rect.y / self.scale) + self.topleft.y,
--- 				y      => self.topleft.y - type_model_coordinate (rect.y / self.scale),
-				--y      => self.topleft.y + type_model_coordinate (rect.y / self.scale),
 				width  => type_model_coordinate (rect.width / self.scale),
 				height => type_model_coordinate (rect.height / self.scale));
 	end view_to_model;
@@ -180,7 +176,6 @@ package body canvas_test is
 		return (
 			x => type_view_coordinate (p.x - self.topleft.x) * self.scale,
 			y => type_view_coordinate (p.y - self.topleft.y) * self.scale
--- 			y => type_view_coordinate (self.topleft.y - p.y) * self.scale
 			);
 	end model_to_view;
 
@@ -193,7 +188,6 @@ package body canvas_test is
 		result := (
 			x      => type_view_coordinate (rect.x - self.topleft.x) * self.scale,
 			y      => type_view_coordinate (rect.y - self.topleft.y) * self.scale,
--- 			y      => type_view_coordinate (self.topleft.y - rect.y) * self.scale,
 			width  => type_view_coordinate (rect.width) * self.scale,
 			height => type_view_coordinate (rect.height) * self.scale
 			);
@@ -501,6 +495,9 @@ package body canvas_test is
 		-- Draw objects with the corner points as specified in type_item (see spec for type_item):
 		-- NOTE: The corner points are in item coordinates relative to the item position.
 		-- See the calling procedure (translate_and_draw_item) for preparations.
+
+		-- Point c10 (at 0/0) is the upper left point. All drawing starts from here downwards
+		-- or to the right.
 		
 		-- draw the big X in red
 		cairo.set_source_rgb (context.cr, gdouble (1), gdouble (0), gdouble (0)); -- red

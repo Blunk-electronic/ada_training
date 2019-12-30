@@ -78,6 +78,9 @@ package canvas_test is
 	--  If you draw a circle at position 40/50 mm on a sheet of paper then this
 	--  is the model coordinate. The circle is always at this place independed
 	--  of scale, zoom or the visible area of your drawing.
+	-- NOTE: This simple demo program assumes the y-axis going downwards.
+	-- In order to have the y-axis going upwards the position of the items and
+	-- the item points (relative to the item position) must be converted.
 
 	-- For the real world coordinates we define millimeters:
 	type type_millimeters is delta 0.01 range -100_000_000.00 .. 100_000_000.00;
@@ -85,11 +88,15 @@ package canvas_test is
  
 	-- The items placed in the model (or on the sheet) use millimeters.
 	subtype type_model_coordinate is type_millimeters;
+
 	
 	-- A point at the model (or on the sheet):
 	type type_model_point is record
 		x, y : type_model_coordinate := type_model_coordinate'first;
 	end record;
+
+
+	
 	
 	-- Indicates that the item did not get assigned a proper position:
 	no_position : constant type_model_point := (
@@ -107,7 +114,9 @@ package canvas_test is
 	end record;
 	
 	-- This is a simple item. In our case it is a rectangle with a 
-	-- position in the model (or on the sheet):
+	-- position in the model (or on the sheet). The item points here are relative
+	-- to the item position. The item position is the upper-left corner of the so
+	-- called bounding box that surrounds the item.
 	type type_item is tagged record
 		position : type_model_point := no_position;
 		
