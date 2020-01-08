@@ -55,18 +55,22 @@ $ ./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./bootstrap
 Edit in bootstrap/share/gprconfig file compilers.xml section "GNAT":
 The section starts with:
 
+```xml
    <compiler_description>
     <name>GNAT</name> ...
+```
     
 Section 'runtimes' should read in its initial form:
 
+```xml
     <runtimes default="default,kernel,native">
        <directory group="default" >\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/adalib/</directory>
        <directory group="default" contents="^rts-">\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/ada_object_path</directory>
        <directory group="2" >\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/rts-(.*)/adalib/</directory>
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
-
+```
+    
 ### Prepare building on a 64 bit machine
 
 If you want to build on a 64bit machine:
@@ -75,12 +79,14 @@ If you want to build on a 64bit machine:
 
 Section 'runtimes' should read now:
 
+```xml
     <runtimes default="default,kernel,native">
        <directory group="default" >\.\./lib64/gcc(-lib)?/$TARGET/9/adalib/</directory>
        <directory group="default" contents="^rts-">\.\./lib64/gcc(-lib)?/$TARGET/9/ada_object_path</directory>
        <directory group="2" >\.\./lib64/gcc(-lib)?/$TARGET/9/rts-(.*)/adalib/</directory>
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
+```
 
 ### Prepare building on a 32 bit machine
 
@@ -89,12 +95,14 @@ If you want to build on a 32bit machine (they are still around):
 
 Section 'runtimes' should read now:
 
+```xml
     <runtimes default="default,kernel,native">
        <directory group="default" >\.\./lib/gcc(-lib)?/$TARGET/9/adalib/</directory>
        <directory group="default" contents="^rts-">\.\./lib/gcc(-lib)?/$TARGET/9/ada_object_path</directory>
        <directory group="2" >\.\./lib/gcc(-lib)?/$TARGET/9/rts-(.*)/adalib/</directory>
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
+```
 
 ## Install Gprbuild
 - log in as root
