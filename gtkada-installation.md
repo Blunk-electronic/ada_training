@@ -1,12 +1,6 @@
-# HOWTO INSTALL GTKADA ON OPENSUSE TUMBLEWEED i586 and x86_64 machines
+# HOWTO INSTALL GTKADA ON OpenSuSE TUMBLEWEED
 
-
-date: 2019-04-17
-author: Mario Blunk / http://www.blunk-electronic.de
-
-Any feedback his highly welcome ! Thanks.
-
-## prepare a directory for the installation
+## Prepare a directory for the installation
 
 - Create a directory 'gtkada' in your non-root home directory:
 
@@ -20,7 +14,7 @@ $ mkdir gtkada
 $ cd gtkada
 ```
 
-## install xmlada
+## Pnstall Xmlada
 
 - Download xmlada:
 
@@ -36,7 +30,7 @@ $ tar -xf xmlada-16.1.tar.gz
 There is no need to build xmlada.
 
 
-## install gprbuild
+## Install Gprbuild
 
 Clone gprbuild:
 
@@ -56,7 +50,7 @@ Build gprbuild via command:
 $ ./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./bootstrap
 ```
 
-## edit compilers.xml
+## Edit file compilers.xml
 
 Edit in bootstrap/share/gprconfig file compilers.xml section "GNAT":
 The section starts with:
@@ -73,7 +67,7 @@ Section 'runtimes' should read in its initial form:
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
 
-### prepare building on a 64 bit machine
+### Prepare building on a 64 bit machine
 
 If you want to build on a 64bit machine:
 - replace $gcc_version by just 9 (or older gnat version)
@@ -87,7 +81,7 @@ If you want to build on a 64bit machine:
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
 
-### prepare building on a 32 bit machine
+### Prepare building on a 32 bit machine
 
 If you want to build on a 32bit machine (they are still around):
 - replace $gcc_version by just 9 (or older gnat version)
@@ -100,7 +94,7 @@ If you want to build on a 32bit machine (they are still around):
        <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
     </runtimes>
 
-## install gprbuild
+## Install Gprbuild
 - log in as root
 - install via command
 
@@ -117,7 +111,7 @@ $ cp -R bootstrap/share/gprconfig/ /usr/local/share/
 $ cp -R bootstrap/libexec/gprbuild/ /usr/local/libexec/
 ```
 
-## test gprbuild
+## Test Gprbuild
 
 type command
 
@@ -141,7 +135,7 @@ Only those matching the target and the selected compilers are displayed.
 Select or unselect the following compiler (or "s" to save): 
 
 
-## install gtkada
+## Install Gtkada
 
 Make sure package gtk3-devel is installed.
 
@@ -161,17 +155,17 @@ Download gtkada (currently version 17.0)
 $ wget https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
 ```
 
-### configure on a 32 bit machine
+### Configure on a 32 bit machine
 ```sh
 $ ./configure --prefix=/usr/lib/gcc/i586-suse-linux/9
 ```
 
-### configure on a 64 bit machine
+### Configure on a 64 bit machine
 ```sh
 $ ./configure --prefix=/usr/lib64/gcc/x86_64-suse-linux/9
 ```
 
-### building
+### Building
 ```sh
 $ make
 ```
@@ -190,7 +184,7 @@ $ make install
 ```
 
 
-## set the Ada Project Path
+## Set the Ada project path
 
 Make sure the environment variable ADA_PROJECT_PATH is set so that
 gtkada.gpr can be found. For example do this (as root) in /etc/profile.local via these
@@ -208,3 +202,4 @@ Reboot your machine.
 
 Now you should be able to compile your ada gtk projects.
 
+Any feedback his highly welcome ! Thanks.
