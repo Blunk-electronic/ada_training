@@ -14,7 +14,7 @@ $ mkdir gtkada
 $ cd gtkada
 ```
 
-## Pnstall Xmlada
+## Install Xmlada
 
 - Download xmlada:
 
@@ -72,7 +72,8 @@ Section 'runtimes' should read in its initial form:
 If you want to build on a 64bit machine:
 - replace $gcc_version by just 9 (or older gnat version)
 - replace \.\./lib by \.\./lib64
-- The section should read now:
+
+Section 'runtimes' should read now:
 
     <runtimes default="default,kernel,native">
        <directory group="default" >\.\./lib64/gcc(-lib)?/$TARGET/9/adalib/</directory>
@@ -85,7 +86,8 @@ If you want to build on a 64bit machine:
 
 If you want to build on a 32bit machine (they are still around):
 - replace $gcc_version by just 9 (or older gnat version)
-- The section should read now:
+
+Section 'runtimes' should read now:
 
     <runtimes default="default,kernel,native">
        <directory group="default" >\.\./lib/gcc(-lib)?/$TARGET/9/adalib/</directory>
