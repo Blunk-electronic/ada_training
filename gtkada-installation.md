@@ -151,7 +151,7 @@ Make sure package gtk3-devel is installed.
 
 Login as non-root user:
 
-Change back to directory gtkada:
+Change back to directory 'gtkada':
 
 ```sh
 $ cd ..
@@ -232,4 +232,4 @@ Now you should be able to compile your ada gtk projects.
 
 Any feedback his highly welcome ! Thanks.
 
-Praise the Lord.
+Praise the Lord Jesus Christ.
