@@ -151,19 +151,37 @@ Make sure package gtk3-devel is installed.
 
 Login as non-root user:
 
-Download https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz in directory
-gtkada, unpack and change into gtkada-gtkada-17.0.
-
 Change back to directory gtkada:
+
 ```sh
 $ cd ..
 ```
+
+To make sure the current directory is correct type:
+
+```sh
+$ pwd
+```
+
 
 Download gtkada (currently version 17.0)
 
 ```sh
 $ wget https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
 ```
+
+Unpack:
+
+```sh
+$ tar -xf gtkada-17.0.tar.gz
+```
+
+Change into directory gtkada-17.0
+
+```sh
+$ cd gtkada-17.0
+```
+
 
 ### Configure on a 32 bit machine
 ```sh
@@ -213,3 +231,5 @@ Reboot your machine.
 Now you should be able to compile your ada gtk projects.
 
 Any feedback his highly welcome ! Thanks.
+
+Praise the Lord.
