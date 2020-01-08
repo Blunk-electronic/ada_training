@@ -55,7 +55,7 @@ $ ./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./bootstrap
 Edit in bootstrap/share/gprconfig file compilers.xml section "GNAT":
 The section starts with:
 
-```xml
+```code
    <compiler_description>
     <name>GNAT</name> ...
 ```
@@ -204,7 +204,7 @@ lines:
 ADA_PROJECT_PATH=/usr/lib64/gcc/x86_64-suse-linux/9/lib/gnat/
 export ADA_PROJECT_PATH
 
-## 32 bit machine
+### 32 bit machine
 ADA_PROJECT_PATH=/usr/lib/gcc/i586-suse-linux/9/lib/gnat/
 export ADA_PROJECT_PATH
 
