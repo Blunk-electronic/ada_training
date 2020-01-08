@@ -133,17 +133,17 @@ It should output this. Most important is the first point in the list. It
 indicates, that gprconfig has detected your GNAT compiler properly. No need
 to select or save anything here. Just press CTRL-C :
 
---------------------------------------------------
+```code
 gprconfig has found the following compilers on your PATH.
 Only those matching the target and the selected compilers are displayed.
-   1. GNAT for Ada in /usr/bin/ version 8.2 (default runtime)
-   2. GCC-ASM for Asm in /usr/bin/ version 8.2.1
-   3. GCC-ASM for Asm2 in /usr/bin/ version 8.2.1
-   4. GCC-ASM for Asm_Cpp in /usr/bin/ version 8.2.1
-   5. GCC for C in /usr/bin/ version 8.2.1
-   6. G++ for C++ in /usr/bin/ version 8.2.1
+   1. GNAT for Ada in /usr/bin/ version 9.2 (default runtime)
+   2. GCC-ASM for Asm in /usr/bin/ version 9.2.1
+   3. GCC-ASM for Asm2 in /usr/bin/ version 9.2.1
+   4. GCC-ASM for Asm_Cpp in /usr/bin/ version 9.2.1
+   5. GCC for C in /usr/bin/ version 9.2.1
+   6. G++ for C++ in /usr/bin/ version 9.2.1
 Select or unselect the following compiler (or "s" to save): 
-
+```
 
 ## Install Gtkada
 
