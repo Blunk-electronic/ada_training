@@ -219,12 +219,16 @@ gtkada.gpr can be found. For example do this (as root) in /etc/profile.local via
 lines:
 
 ### 64 bit machine
+```sh
 ADA_PROJECT_PATH=/usr/lib64/gcc/x86_64-suse-linux/9/lib/gnat/
 export ADA_PROJECT_PATH
+```
 
 ### 32 bit machine
+```sh
 ADA_PROJECT_PATH=/usr/lib/gcc/i586-suse-linux/9/lib/gnat/
 export ADA_PROJECT_PATH
+```
 
 Reboot your machine.
 
