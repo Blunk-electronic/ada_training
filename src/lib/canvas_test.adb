@@ -1045,6 +1045,24 @@ package body canvas_test is
 	begin
 		return (rect.x, rect.y);
 	end model_to_item;
+
+	function on_button_event (
+		view  : access gtk_widget_record'class;
+		event : gdk_event_button)
+		return boolean is
+	begin
+		put_line ("mouse button pressed");
+		return false;
+	end on_button_event;
+	
+	function on_key_event ( -- CS: is never called for some reason
+		view  : access gtk_widget_record'class;
+		event : gdk_event_key) 
+		return boolean is
+	begin
+		put_line ("key pressed");
+		return false;
+	end on_key_event;
 	
 	procedure init (
 		self  : not null access type_view'class;
@@ -1063,10 +1081,18 @@ package body canvas_test is
 				or button2_motion_mask
 				or button3_motion_mask
 				or pointer_motion_mask -- whenever the mouse is being moved inside the canvas
+				or key_press_mask
+				-- or all_events_mask -- does not help
 			);
 
-		-- reaction of mouse movements in the canvas
+		-- reaction to keyboard in the canvas
+		self.on_key_press_event (on_key_event'access); -- CS does not work for some reason
+		
+		-- reaction to mouse movements in the canvas
 		self.on_motion_notify_event (on_mouse_movement'access);
+
+		-- reaction to mouse button clicks in the canvas
+		self.on_button_press_event (on_button_event'access);
 		
 		self.set_can_focus (true);
 
