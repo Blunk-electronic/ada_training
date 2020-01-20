@@ -61,19 +61,22 @@ with gtk.scrollable;		use gtk.scrollable;
 with gtk.style_context;		use gtk.style_context;
 
 with glib.properties.creation;	use glib.properties.creation;
+
 with cairo;					use cairo;
+
 with gtkada.types;			use gtkada.types;
 with gtkada.handlers;		use gtkada.handlers;
 with gtkada.bindings;		use gtkada.bindings;
+
 with gdk;					use gdk;
 with gdk.window;			use gdk.window;
 with gdk.window_attr;		use gdk.window_attr;
 with gdk.event;				use gdk.event;
-
 with gdk.rgba;
-with pango.layout;					use pango.layout;
-with system.storage_elements;		use system.storage_elements;
 
+with pango.layout;					use pango.layout;
+
+with system.storage_elements;		use system.storage_elements;
 with ada.unchecked_deallocation;
 with ada.containers;				use ada.containers;
 with ada.containers.doubly_linked_lists;
@@ -957,38 +960,6 @@ package body canvas_test is
 		end if;
 	end refresh_layout;
 
-	-- For demonstrating the difference between view coordinates (pixels) and model coordinates
-	-- this function outputs them at the console.
-	function on_mouse_movement (
-		view  : access gtk_widget_record'class;
-		event : gdk_event_motion) return boolean is
-		
-		-- the point where the mouse pointer is pointing at
-		view_point : type_view_point;
-
-		-- The conversion from view to model coordinates requires a pointer to
-		-- the view. This command sets self so that it points to the view:
-		self : constant type_view_ptr := type_view_ptr (view);
-
-		-- The point in the model (or on the sheet) expressed in millimeters:
-		model_point : type_model_point;
-		
-	begin
-		new_line;
-		put_line ("mouse movement ! new positions are:");
-
-		-- Fetch the position of the mouse pointer and output it on the console:
-		view_point := (x => event.x, y => event.y);
-		put_line (" " & to_string (view_point));
-
-		-- Convert the view point (pixels) to the position (millimeters) in the model
-		-- and output in on the console:
-		model_point := self.view_to_model (view_point);
-		put_line (" " & to_string (model_point));
-
-		return false;
-	end on_mouse_movement;
-	
 	procedure set_model (
 		self  : not null access type_view'class;
 		model : access type_model'class) is
@@ -1046,22 +1017,90 @@ package body canvas_test is
 		return (rect.x, rect.y);
 	end model_to_item;
 
+	
+	-- For demonstrating the difference between view coordinates (pixels) and model coordinates
+	-- this function outputs them at the console.
+	function on_mouse_movement (
+		view  : access gtk_widget_record'class;
+		event : gdk_event_motion) return boolean is
+		
+		-- the point where the mouse pointer is pointing at
+		view_point : type_view_point;
+
+		-- The conversion from view to model coordinates requires a pointer to
+		-- the view. This command sets self so that it points to the view:
+		self : constant type_view_ptr := type_view_ptr (view);
+
+		-- The point in the model (or on the sheet) expressed in millimeters:
+		model_point : type_model_point;
+		
+	begin
+		new_line;
+		put_line ("mouse movement ! new positions are:");
+
+		-- Fetch the position of the mouse pointer and output it on the console:
+		view_point := (x => event.x, y => event.y);
+		put_line (" " & to_string (view_point));
+
+		-- Convert the view point (pixels) to the position (millimeters) in the model
+		-- and output in on the console:
+		model_point := self.view_to_model (view_point);
+		put_line (" " & to_string (model_point));
+
+		return true; -- indicate that event has been handled
+	end on_mouse_movement;
+
+	function on_scroll_event (
+		view	: access gtk_widget_record'class;
+		event	: gdk_event_scroll) return boolean is
+		
+		self    : constant type_view_ptr := type_view_ptr (view);
+		x,y		: gdouble := 0.5;
+	begin
+		if self.model /= null then
+			new_line;
+			put_line ("scroll detected");
+			
+		--    type Gdk_Event_Scroll is record
+		--       The_Type : Gdk_Event_Type;
+		--       Window : Gdk.Gdk_Window;
+		--       Send_Event : Gint8;
+		--       Time : Guint32;
+		--       X : Gdouble;
+		--       Y : Gdouble;
+		--       State : Gdk.Types.Gdk_Modifier_Type;
+		--       Direction : Gdk_Scroll_Direction;
+		--       Device : System.Address;
+		--       X_Root : Gdouble;
+		--       Y_Root : Gdouble;
+		--       Delta_X : Gdouble;
+		--       Delta_Y : Gdouble;
+		--    end record;
+
+		end if;
+		
+		return true; -- indicate that event has been handled
+	end on_scroll_event;
+	
 	function on_button_event (
 		view  : access gtk_widget_record'class;
 		event : gdk_event_button)
 		return boolean is
 	begin
+		new_line;
 		put_line ("mouse button pressed");
-		return false;
+		return true; -- indicate that event has been handled
 	end on_button_event;
 	
-	function on_key_event ( -- CS: is never called for some reason
+	function on_key_event (
 		view  : access gtk_widget_record'class;
 		event : gdk_event_key) 
 		return boolean is
 	begin
+		new_line;
 		put_line ("key pressed");
-		return false;
+		--return false;
+		return true;  -- indicates to parent window that event has been handled
 	end on_key_event;
 	
 	procedure init (
@@ -1081,18 +1120,20 @@ package body canvas_test is
 				or button2_motion_mask
 				or button3_motion_mask
 				or pointer_motion_mask -- whenever the mouse is being moved inside the canvas
-				or key_press_mask
-				-- or all_events_mask -- does not help
+				-- or key_press_mask -- no need
 			);
 
 		-- reaction to keyboard in the canvas
-		self.on_key_press_event (on_key_event'access); -- CS does not work for some reason
+		self.on_key_press_event (on_key_event'access);
 		
 		-- reaction to mouse movements in the canvas
 		self.on_motion_notify_event (on_mouse_movement'access);
 
 		-- reaction to mouse button clicks in the canvas
 		self.on_button_press_event (on_button_event'access);
+
+		-- reaction to mouse wheel being rotated
+		self.on_scroll_event (on_scroll_event'access);
 		
 		self.set_can_focus (true);
 

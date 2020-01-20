@@ -35,7 +35,10 @@
 
 -- Rationale: Aims to help users understanding programming with gtkada.
 
+with gdk.event;				use gdk.event;
+
 with gtk.main;
+with gtk.window;			use gtk.window;
 with ada.text_io;			use ada.text_io;
 with canvas_test;			use canvas_test;
 
@@ -47,6 +50,35 @@ package body callbacks_4 is
 		gtk.main.main_quit;
 	end;
 
+	function on_key_event (
+		self	: access gtk.widget.gtk_widget_record'class;
+		event	: gdk_event_key) 
+		return boolean is
+		
+		result : boolean; -- to be returned. Indicates that the event has been handled.
+
+		-- Make a pointer to the main window:
+		current_window : constant gtk_window := gtk_window (self);
+
+	begin
+		--new_line;
+		--put_line ("top level key pressed");
+
+		-- Set the focus to the canvas:
+		set_focus (current_window, canvas);
+
+		-- Propagate the key-press event to the canvas:
+		result := propagate_key_event (current_window, event);
+
+-- 		if result = true then
+-- 			put_line ("got handled");
+-- 		else
+-- 			put_line ("not handled");
+-- 		end if;
+		
+		return result;
+	end on_key_event;
+	
 	function to_string (d : in gdouble) return string is begin
 		return gdouble'image (d);
 	end;

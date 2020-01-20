@@ -33,8 +33,11 @@
 -- This is a simple ada program, that demonstrates gtkada.
 -- It draws a canvas, black drawing background, a yellow rectangle, 
 -- a red X and a green horzontal line.
+-- Reacts on keyboard and mouse events.
 
 -- Rationale: Aims to help users understanding programming with gtkada.
+
+with gdk.event;				use gdk.event;
 
 with gtk.main;
 with gtk.window; 			use gtk.window;
@@ -238,13 +241,19 @@ begin
 
 	-- Zoom so that the item is fully visible.
 	scale_to_fit (canvas);
--- 	put_line (to_string (get_scale (canvas)));
+	-- put_line (to_string (get_scale (canvas)));
 
 
 	-- If the operator wishes to terminate the program (by clicking X)
 	-- the procedure terminate_main (in callbacks_4) is to be called.
 	window.on_destroy (callbacks_4.terminate_main'access);
 
+	-- reaction to keys pressed on the keyboard:
+	-- This is required in order to propagate the key-pressed events
+	-- to sub-windows.
+	window.on_key_press_event (on_key_event'access);
+
+	
 	-- Display all the widgets on the screen:
 	window.show_all;
 

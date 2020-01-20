@@ -37,6 +37,7 @@
 
 
 with glib;				use glib;
+with gdk.event;			use gdk.event;
 with gtk.widget;  		--use gtk.widget;
 with gtk.button;     	--use gtk.button;
 with glib.object;		--use glib.object;
@@ -67,8 +68,16 @@ package callbacks_4 is
 	function to_string (p : in gtkada.style.point) return string;
 
 	-- Callbacks:
-	-- These procedures are called when the operator clicks buttons or terminates the program.
-	-- See procedure init in gtkada_9.adb where the connections are made.
+	-- These procedures are called when the operator presses a key on the keyboard,
+	-- clicks mouse buttons or terminates the program.
+	-- See procedure init in gtkada_9.adb where the required connections are made.
+
+	function on_key_event (
+		self	: access gtk.widget.gtk_widget_record'class;
+		event	: gdk_event_key) 
+		return boolean;
+
+	
 	procedure terminate_main (self : access gtk.widget.gtk_widget_record'class);
 	procedure zoom_to_fit (self : access glib.object.gobject_record'class);	
 	procedure zoom_in (self : access glib.object.gobject_record'class);
