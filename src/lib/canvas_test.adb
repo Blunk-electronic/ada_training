@@ -233,8 +233,14 @@ package body canvas_test is
 		scale    : gdouble := 1.0;
 		preserve : type_model_point := no_point)
 	is
-		-- backup the current scale
+		-- backup old scale
 		old_scale : constant gdouble := self.scale;
+
+		-- save requested scale
+		new_scale : constant gdouble := scale;
+
+		-- for calculating the new topleft point we need those tempoarily variables:
+		cx, cy : type_model_coordinate;
 		
 		box : type_model_rectangle;
 		p   : type_model_point;
@@ -252,11 +258,22 @@ package body canvas_test is
 
 		self.scale := scale;
 
-		-- calculate the new topleft corner of the visible area:
+		-- Calculate the new topleft corner of the visible area.
+		-- Reason: The next time a model point is computed (via view_to_model)
+		-- the point must not change. So topleft is now moved so that
+		-- function view_to_model returns for the same view point the same
+		-- model point.
+		cx := p.x - self.topleft.x;
+		cx := cx * type_model_coordinate (old_scale);
+		
+		cy := p.y - self.topleft.y;
+		cy := cy * type_model_coordinate (old_scale);
+		
 		self.topleft := (
-			p.x - (p.x - self.topleft.x) * type_model_coordinate (old_scale / scale),
-			p.y - (p.y - self.topleft.y) * type_model_coordinate (old_scale / scale));
-
+			p.x - cx / type_model_coordinate (new_scale),
+			p.y - cy / type_model_coordinate (new_scale)
+			);
+		
 		self.scale_to_fit_requested := 0.0;
 		self.set_adjustment_values;
 		self.queue_draw;
