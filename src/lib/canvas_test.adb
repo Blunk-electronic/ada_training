@@ -74,7 +74,9 @@ with gdk.window_attr;		use gdk.window_attr;
 with gdk.event;				use gdk.event;
 with gdk.rgba;
 
+with gnat.strings;
 with pango.layout;					use pango.layout;
+-- with pango.font;					use pango.font;
 
 with system.storage_elements;		use system.storage_elements;
 with ada.unchecked_deallocation;
@@ -1267,6 +1269,65 @@ package body canvas_test is
 			end if;
 		end if;
 	end scale_to_fit;
+
+
+-- TEXT
+	procedure initialize_text (
+		self     : not null access type_text;
+		style    : gtkada.style.drawing_style;
+		text     : glib.utf8_string;
+-- 		directed : text_arrow_direction := no_text_arrow;
+		width, height : type_model_coordinate := fit_size_as_double) is
+	begin
+		self.style := style;
+		self.text  := new string'(text);
+-- 		self.directed := directed;
+-- 		self.set_size (size_from_value (width), size_from_value (height));
+	end initialize_text;
+	
+	function gtk_new_text (
+		style		: gtkada.style.drawing_style;
+		text		: glib.utf8_string;
+-- 		directed	: text_arrow_direction := no_text_arrow;
+		width, height : type_model_coordinate := fit_size_as_double)
+		return type_text_ptr
+	is
+		r : constant type_text_ptr := new type_text;
+	begin
+		initialize_text (r, style, text, width, height);
+		return r;
+	end gtk_new_text;
+
+	procedure set_text (
+		self : not null access type_text;
+		text : string) is
+		use gnat.strings;
+	begin
+		free (self.text);
+		self.text := new string'(text);
+	end set_text;
+
+	procedure draw (
+		self    : not null access type_text;
+		context : type_draw_context)
+	is
+		--text : constant string := compute_text (self);
+		text : constant string := self.text.all;
+	begin
+-- 		resize_fill_pattern (self);
+		self.style.draw_rect (context.cr, (0.0, 0.0), gdouble (self.width), gdouble (self.height));
+
+		if context.layout /= null then
+			self.style.draw_text (
+				context.cr, 
+				context.layout,
+				(0.0, 0.0),
+				text,
+				max_width  => gdouble (self.width),
+				max_height => gdouble (self.height)
+				);
+		end if;
+	end draw;
 	
 end canvas_test;
 

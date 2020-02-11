@@ -40,6 +40,7 @@
 -- For the sake for simplicity we do not use abstract types, interfaces
 -- or private types.
 
+
 with gtk.main;
 with gtk.window; 			use gtk.window;
 with gtk.widget;  			use gtk.widget;
@@ -65,6 +66,7 @@ with cairo;					use cairo;
 with cairo.pattern;			use cairo.pattern;
 with gtkada.style;     		use gtkada.style;
 
+with gnat.strings;
 with pango.layout;			use pango.layout;
 
 with ada.containers;		use ada.containers;
@@ -434,6 +436,35 @@ package canvas_test is
 		item   : not null access type_item'class;
 		p      : type_model_point) return type_item_point;
 
+
+-- TEXT
+	type type_text is record
+		text     : gnat.strings.string_access;
+		width, height : type_model_coordinate;
+		style    : gtkada.style.drawing_style;
+		--directed : text_arrow_direction;
+	end record;
+
+	type type_text_ptr is access all type_text;
+
+	fit_size_as_double : constant type_model_coordinate := -1.0;
+
+	function gtk_new_text (
+		style		: gtkada.style.drawing_style;
+		text		: glib.utf8_string;
+-- 		directed	: text_arrow_direction := no_text_arrow;
+		width, height : type_model_coordinate := fit_size_as_double)
+		return type_text_ptr;
+
+	procedure set_text (
+		self : not null access type_text;
+		text : string);
+
+	procedure draw (
+		self    : not null access type_text;
+		context : type_draw_context);
+
+	
 end canvas_test;
 
 -- Soli Deo Gloria
