@@ -19,7 +19,7 @@ $ cd gtkada
 - Download xmlada:
 
 ```sh
-$ wget https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
+$ wget --no-netrc https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
 ```
 
 Unpack xmlada:
