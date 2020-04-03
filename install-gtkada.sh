@@ -1,5 +1,39 @@
 #! /bin/bash
 
+# ------------------------------------------------------------------------------
+# --                                                                          --
+# --                           GTKADA INSTALLER                               --
+# --                                                                          --
+# --         Copyright (C) 2020 Mario Blunk, Blunk electronic                 --
+# --                                                                          --
+# --    This program is free software: you can redistribute it and/or modify  --
+# --    it under the terms of the GNU General Public License as published by  --
+# --    the Free Software Foundation, either version 3 of the License, or     --
+# --    (at your option) any later version.                                   --
+# --                                                                          --
+# --    This program is distributed in the hope that it will be useful,       --
+# --    but WITHOUT ANY WARRANTY; without even the implied warranty of        --
+# --    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         --
+# --    GNU General Public License for more details.                          --
+# --                                                                          --
+# --    You should have received a copy of the GNU General Public License     --
+# --    along with this program.  If not, see <http://www.gnu.org/licenses/>. --
+# ------------------------------------------------------------------------------
+# 
+# --   For correct displaying set tab width in your editor to 4.
+# 
+# --   The two letters "CS" indicate a "construction site" where things are not
+# --   finished yet or intended for the future.
+# 
+# --   Please send your questions and comments to:
+# --
+# --   info@blunk-electronic.de
+# --   or visit <http://www.blunk-electronic.de> for more contact data
+# --
+# --   history of changes:
+# --
+
+
 set -e
 
 install_dir=gtkada
@@ -65,9 +99,15 @@ proc_build_gprbuild()
 proc_install()
 	{
 	echo "installing in" $target_dir
+	
+	# CS: Test whether directory "bin" exists.
 	cp $build_dir/bin/* $target_dir/bin/
+	
+	# CS: Test whether directory "share" exists.
 	cp -R $build_dir/share/gpr $target_dir/share/
 	cp -R $build_dir/share/gprconfig/ $target_dir/share/
+	
+	# CS: Test whether directory "libexec" exists.
 	cp -R $build_dir/libexec/gprbuild/ $target_dir/libexec/
 	}
 	
@@ -108,7 +148,7 @@ else
 fi
 
 cd gprbuild
-#proc_build_gprbuild
+proc_build_gprbuild
 proc_install
 
 # change back to base directory
@@ -117,7 +157,7 @@ cd ../../
 # install the patch
 proc_patch
 
-echo "installation complete."
+echo "gprbuild installation complete."
 echo "run command 'gprconfig' to see if gprbuild works."
 echo "Exit gprconfig with CTRL-C."
 
