@@ -3,6 +3,7 @@
 set -e
 
 install_dir=gtkada
+patch_dir=gprbuild-patch
 target_dir=/usr/local
 download_required=no
 
@@ -41,7 +42,7 @@ proc_make_install_dir()
 
 proc_dowload_xmlada()
 	{
-	# download and unpack xmlada
+	echo "downloading and unpacking xmlada ..."
 	wget --no-netrc https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
 	tar -xf xmlada-16.1.tar.gz
 	# There is no need to build xmlada.
@@ -49,7 +50,7 @@ proc_dowload_xmlada()
 
 proc_download_gprbuild()
 	{
-	# download gprbuild
+	echo "downloading gprbuild ..."
 	git clone https://github.com/AdaCore/gprbuild.git
 	}
 
@@ -57,6 +58,7 @@ build_dir=bootstrap
 
 proc_build_gprbuild()
 	{
+	echo "building gprbuild ..."
 	./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./$build_dir
 	}
 
@@ -69,7 +71,29 @@ proc_install()
 	cp -R $build_dir/libexec/gprbuild/ $target_dir/libexec/
 	}
 	
+proc_patch()
+	{
+	echo "copying the patch according to machine architecture ..."
+	
+	# get the architecture:
+	cpu=$(lscpu | grep -oP 'Architecture:\s*\K.+')
+	
+	case "$cpu" in
+		i686) 
+			echo "32 bit machine"
+			cp $patch_dir/compilers_x686.xml $target_dir/share/gprconfig/compilers.xml
+			;;
+			
+		x86_64) 
+			echo "64 bit machine"
+			cp $patch_dir/compilers_x86_64.xml $target_dir/share/gprconfig/compilers.xml
+			;;
+			
+		*) echo "ERROR: unkown architecture. No patch installed.";;
+	esac
+	}
 
+	
 if [ "$download_required" = "yes" ]; then
 	{
 	proc_make_install_dir
@@ -84,8 +108,18 @@ else
 fi
 
 cd gprbuild
-proc_build_gprbuild
+#proc_build_gprbuild
 proc_install
+
+# change back to base directory
+cd ../../
+
+# install the patch
+proc_patch
+
+echo "installation complete."
+echo "run command 'gprconfig' to see if gprbuild works."
+echo "Exit gprconfig with CTRL-C."
 
 exit
 
