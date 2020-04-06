@@ -1,24 +1,40 @@
-# How TO Install GTKADA ON OpenSuSE Tumbleweed
+# How To Install GTKADA ON OpenSuSE Tumbleweed
 
 ## Install Gprbuild
-To install Gprbuild this script [here] (install-gprbuild.sh) is provided.
+To install Gprbuild this script [here](install-gprbuild.sh) is provided.
 It does the following:
 - creates in the current working directory a folder "gtkada" where stuff gets unpacked and built
 - downloads xmlada 16.1 from https://github.com/AdaCore/
 - unpacks xmlada
 - clones gprbuild from https://github.com/AdaCore/
 - builds gprbuild
-- installs the gprbuild stuff in /usr/local (You must be root.)
+- installs the gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
 - Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
 
 WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
+You must be Root !
 Make sure you have a backup of /usr/local !!
 
-To launch the install script run this command in your terminal:
+If the script is launched without any arguments, then it downloads required stuff (see above) in
+directory "gtkada" and installs as described. 
+Launch the install script run this command in your terminal:
 
 ```sh
 $ sh install-gprbuild.sh
 ```
+
+If you just want to do the installation without downloading stuff then type:
+
+```sh
+$ sh install-gprbuild.sh no-download
+```
+
+### Uninstalling Gprbuild
+If you want to get grid of Gprbuild run this command:
+```sh
+$ sh install-gprbuild.sh remove
+```
+
 
 ## Install Gtkada
 
