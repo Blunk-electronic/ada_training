@@ -1,7 +1,11 @@
-#ada stuff
+# ada stuff
 *.ali
 *.o
 
-*.odp#
+# kate editor
 *~
 *.kate-swp
+
+# temporarily stuff
+gtkada/
+
