@@ -1,148 +1,23 @@
-# HOWTO INSTALL GTKADA ON OpenSuSE TUMBLEWEED
-
-## Prepare a directory for the installation
-
-- Create a directory 'gtkada' in your non-root home directory:
-
-```sh
-$ mkdir gtkada
-```
-
-- change into gtkada:
-
-```sh
-$ cd gtkada
-```
-
-## Install Xmlada
-
-- Download xmlada:
-
-```sh
-$ wget --no-netrc https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
-```
-
-Unpack xmlada:
-```sh
-$ tar -xf xmlada-16.1.tar.gz
-```
-
-There is no need to build xmlada.
-
+# How TO Install GTKADA ON OpenSuSE Tumbleweed
 
 ## Install Gprbuild
+To install Gprbuild this script [here] (install-gprbuild.sh) is provided.
+It does the following:
+- creates in the current working directory a folder "gtkada" where stuff gets unpacked and built
+- downloads xmlada 16.1 from https://github.com/AdaCore/
+- unpacks xmlada
+- clones gprbuild from https://github.com/AdaCore/
+- builds gprbuild
+- installs the gprbuild stuff in /usr/local (You must be root.)
+- Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
 
-Clone gprbuild:
+WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
+Make sure you have a backup of /usr/local !!
 
-```sh
-$ git clone https://github.com/AdaCore/gprbuild.git
-```
-
-Change into directory gprbuild:
-
-```sh
-$ cd gprbuild
-```
-
-Build gprbuild via command:
-
-```sh
-$ ./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./bootstrap
-```
-
-## Edit file compilers.xml
-
-Edit in bootstrap/share/gprconfig file compilers.xml section "GNAT":
-The section starts with:
-
-```code
-   <compiler_description>
-    <name>GNAT</name> ...
-```
-    
-Section 'runtimes' should read in its initial form:
-
-```xml
-    <runtimes default="default,kernel,native">
-       <directory group="default" >\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/adalib/</directory>
-       <directory group="default" contents="^rts-">\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/ada_object_path</directory>
-       <directory group="2" >\.\./lib/gcc(-lib)?/$TARGET/$gcc_version/rts-(.*)/adalib/</directory>
-       <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
-    </runtimes>
-```
-    
-### Prepare building on a 64 bit machine
-
-If you want to build on a 64bit machine:
-- replace $gcc_version by just 9 (or older gnat version)
-- replace \.\./lib by \.\./lib64
-
-Section 'runtimes' should read now:
-
-```xml
-    <runtimes default="default,kernel,native">
-       <directory group="default" >\.\./lib64/gcc(-lib)?/$TARGET/9/adalib/</directory>
-       <directory group="default" contents="^rts-">\.\./lib64/gcc(-lib)?/$TARGET/9/ada_object_path</directory>
-       <directory group="2" >\.\./lib64/gcc(-lib)?/$TARGET/9/rts-(.*)/adalib/</directory>
-       <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
-    </runtimes>
-```
-
-### Prepare building on a 32 bit machine
-
-If you want to build on a 32bit machine (they are still around):
-- replace $gcc_version by just 9 (or older gnat version)
-
-Section 'runtimes' should read now:
-
-```xml
-    <runtimes default="default,kernel,native">
-       <directory group="default" >\.\./lib/gcc(-lib)?/$TARGET/9/adalib/</directory>
-       <directory group="default" contents="^rts-">\.\./lib/gcc(-lib)?/$TARGET/9/ada_object_path</directory>
-       <directory group="2" >\.\./lib/gcc(-lib)?/$TARGET/9/rts-(.*)/adalib/</directory>
-       <directory group="1" >\.\./$TARGET/lib/gnat/(.*)/adalib/</directory>
-    </runtimes>
-```
-
-## Install Gprbuild
-- log in as root
-- install via command
+To launch the install script run this command in your terminal:
 
 ```sh
-$ make install
-```
-
-- If that fails do the work manually: 
-
-```sh
-$ cp bootstrap/bin/* /usr/local/bin/
-$ cp -R bootstrap/share/gpr /usr/local/share/
-$ cp -R bootstrap/share/gprconfig/ /usr/local/share/
-$ cp -R bootstrap/libexec/gprbuild/ /usr/local/libexec/
-```
-
-## Test Gprbuild
-
-type command
-
-```sh
-$ gprconfig 
-```
-
-It should output this. Most important is the first point in the list. It
-indicates, that gprconfig has detected your GNAT compiler properly. No need
-to select or save anything here. Just press CTRL-C :
-
-```code
-gprconfig has found the following compilers on your PATH.
-Only those matching the target and the selected compilers are displayed.
-   1. GNAT for Ada in /usr/bin/ version 9.2 (default runtime)
-   2. GCC-ASM for Asm in /usr/bin/ version 9.2.1
-   3. GCC-ASM for Asm2 in /usr/bin/ version 9.2.1
-   4. GCC-ASM for Asm_Cpp in /usr/bin/ version 9.2.1
-   5. GCC for C in /usr/bin/ version 9.2.1
-   6. G++ for C++ in /usr/bin/ version 9.2.1
-Select or unselect the following compiler (or "s" to save): 
+$ sh install-gprbuild.sh
 ```
 
 ## Install Gtkada
