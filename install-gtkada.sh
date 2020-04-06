@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 # --                                                                          --
-# --                           GTKADA INSTALLER                               --
+# --                           GPRBUILD iNSTALLER                             --
 # --                                                                          --
 # --         Copyright (C) 2020 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
@@ -34,33 +34,19 @@
 # --
 
 
-set -e
+#set -e
 
 install_dir=gtkada
 patch_dir=gprbuild-patch
 target_dir=/usr/local
 download_required=no
 
-echo "installation directory for gprbuild: " $target_dir
-echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
-echo "Make sure you have a backup of" $target_dir "!!"
-read -p "Press ENTER to continue. Otherwise press CTRL-C to abort. "
-
-# Test argument. If argument is "no-download", then no downloading will take place.
-if [ $# -eq 0 ]; then
+proc_confimation()
 	{
-    download_required=yes
-    }
-else
-	{
-	if [ "$1" = "no-download" ]; then
-		{
-		download_required=no
-		}
-	fi
+	read -p "Press ENTER to continue. Otherwise press CTRL-C to abort. "
 	}
-fi
 
+	
 proc_make_install_dir()
 	{
 	if [ -e $install_dir ]; then
@@ -74,6 +60,7 @@ proc_make_install_dir()
 	mkdir $install_dir
 	}
 
+	
 proc_dowload_xmlada()
 	{
 	echo "downloading and unpacking xmlada ..."
@@ -82,20 +69,21 @@ proc_dowload_xmlada()
 	# There is no need to build xmlada.
 	}
 
+	
 proc_download_gprbuild()
 	{
 	echo "downloading gprbuild ..."
 	git clone https://github.com/AdaCore/gprbuild.git
 	}
 
-build_dir=bootstrap
-
+	
 proc_build_gprbuild()
 	{
 	echo "building gprbuild ..."
 	./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./$build_dir
 	}
 
+	
 proc_install()
 	{
 	echo "installing in" $target_dir
@@ -110,6 +98,7 @@ proc_install()
 	# CS: Test whether directory "libexec" exists.
 	cp -R $build_dir/libexec/gprbuild/ $target_dir/libexec/
 	}
+	
 	
 proc_patch()
 	{
@@ -134,6 +123,65 @@ proc_patch()
 	}
 
 	
+proc_install_warning()
+	{
+	echo "installation directory for gprbuild: " $target_dir
+	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
+	echo "Make sure you have a backup of" $target_dir "!!"
+	proc_confimation
+	}
+
+	
+proc_remove ()
+	{
+	echo "removing gprbuild stuff from $target_dir"
+	proc_confimation
+	
+	echo "removing stuff in $target_dir/bin ..."
+	rm $target_dir/bin/gprbuild
+	rm $target_dir/bin/gprclean
+	rm $target_dir/bin/gprconfig
+	rm $target_dir/bin/gprinstall
+	rm $target_dir/bin/gprls
+	rm $target_dir/bin/gprname
+	
+	echo "removing stuff in $target_dir/share ..."
+	rm -rf $target_dir/share/gpr
+	rm -rf $target_dir/share/gprconfig
+	
+	echo "removing stuff in $target_dir/libexec ..."
+	rm -rf $target_dir/libexec/gprbuild
+	}
+
+	
+	
+############ MAIN BEGIN #####################################################################
+
+# Test arguments. If argument is "no-download", then no downloading will take place.
+if [ $# -eq 0 ]; then
+	{
+    download_required=yes
+    }
+else
+	{
+	case "$1" in
+		no-download) 
+			download_required=no
+			;;
+			
+		remove) 
+			proc_remove
+			exit
+			;;
+			
+		*) echo "ERROR: invalid argument:" $1 ;;
+	esac
+	}
+fi
+
+	
+proc_install_warning
+
 if [ "$download_required" = "yes" ]; then
 	{
 	proc_make_install_dir
@@ -148,6 +196,7 @@ else
 fi
 
 cd gprbuild
+build_dir=bootstrap
 proc_build_gprbuild
 proc_install
 
