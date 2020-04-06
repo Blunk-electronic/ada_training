@@ -44,23 +44,17 @@ Make sure package gtk3-devel is installed.
 
 Login as non-root user:
 
-Change back to directory 'gtkada':
+Change into to directory 'gtkada' (It has been created by the script install-gprbuild.sh (see above):
 
 ```sh
-$ cd ..
-```
-
-To make sure the current directory is correct type:
-
-```sh
-$ pwd
+$ cd gtkada
 ```
 
 
 Download gtkada (currently version 17.0)
 
 ```sh
-$ wget https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
+$ wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
 ```
 
 Unpack:
