@@ -4,11 +4,11 @@
 To install Gprbuild the shell script [install-gprbuild.sh](install-gprbuild.sh) is provided.
 It does the following:
 - creates in the current working directory a folder "gtkada" where stuff gets unpacked and built
-- downloads xmlada 16.1 from https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
-- unpacks xmlada
-- clones gprbuild from https://github.com/AdaCore/gprbuild.git
-- builds gprbuild
-- installs the gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
+- downloads Xmlada 16.1 from https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
+- unpacks Xmlada
+- clones Gprbuild from https://github.com/AdaCore/gprbuild.git
+- builds Gprbuild
+- installs Gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
 - Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
 
 WARNING: 
@@ -18,13 +18,13 @@ WARNING:
 
 If the script is launched without any arguments, then it downloads required stuff (see above) in
 directory "gtkada" and installs as described. 
-To start the intallation launch the script in your terminal as follows:
+To start the installation launch the script in your terminal as follows:
 
 ```sh
 $ sh install-gprbuild.sh
 ```
 
-If something goes wrong (in case you are not root for example) and you don't 
+If something goes wrong (in case you were not root for example) and you don't 
 want to download again then type:
 
 ```sh
