@@ -48,6 +48,8 @@ gcc_version=$(gcc -dumpversion)
 target_dir_32bit=/usr/lib/gcc/i586-suse-linux/$gcc_version
 target_dir_64bit=/usr/lib64/gcc/x86_64-suse-linux/$gcc_version
 
+profile_file=/etc/profile.local
+
 
 proc_confimation()
 	{
@@ -128,6 +130,60 @@ proc_install_warning()
 	}
 
 
+proc_setup_profile()
+	{
+	echo "setting up" $profile_file "..."
+
+	ada_prj="ADA_PROJECT_PATH="
+	gnat_dir=/lib/gnat/
+	
+	# If $profile_file exists, append the ada project path to the file.
+	# If $profile_file not exists, create it and write the ada project path in it:
+	
+	if [ -e $profile_file ]; then
+		{
+		# profile file exists -> append
+		case "$cpu" in
+			i686) 
+ 				echo $ada_prj$target_dir_32bit$gnat_dir >> $profile_file
+ 				export $ada_prj$target_dir_32bit$gnat_dir
+				;;
+				
+			x86_64) 
+ 				echo $ada_prj$target_dir_64bit$gnat_dir >> $profile_file
+ 				export $ada_prj$target_dir_64bit$gnat_dir
+ 				;;
+				
+			*) 
+				echo "ERROR: unkown architecture. Configure failed."
+				exit 1
+				;;
+		esac
+		}
+	else
+		{
+		# profile file does not exist -> create it
+		case "$cpu" in
+			i686) 
+ 				echo $ada_prj$target_dir_32bit$gnat_dir > $profile_file
+				export $ada_prj$target_dir_32bit$gnat_dir
+				;;
+				
+			x86_64) 
+ 				echo $ada_prj$target_dir_64bit$gnat_dir > $profile_file
+				export $ada_prj$target_dir_64bit$gnat_dir
+				;;
+				
+			*) 
+				echo "ERROR: unkown architecture. Configure failed."
+				exit 1
+				;;
+		esac
+		}
+	fi
+	
+	echo "the ada project path is now:" $ADA_PROJECT_PATH
+	}
 	
 	
 ############ MAIN BEGIN #####################################################################
@@ -181,6 +237,8 @@ cd gtkada-gtkada-17.0
 proc_configure
 make
 make install
+
+proc_setup_profile
 
 echo "gtkada installation complete."
 exit
