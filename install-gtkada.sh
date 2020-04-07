@@ -37,8 +37,16 @@
 #set -e
 
 install_dir=gtkada
-target_dir=/usr/local
 download_required=no
+
+# get the architecture:
+cpu=$(lscpu | grep -oP 'Architecture:\s*\K.+')
+	
+# get the gcc version:
+gcc_version=$(gcc -dumpversion)
+
+target_dir_32bit=/usr/lib/gcc/i586-suse-linux/$gcc_version
+target_dir_64bit=/usr/lib64/gcc/x86_64-suse-linux/$gcc_version
 
 
 proc_confimation()
@@ -75,57 +83,50 @@ proc_configure()
 	{
 	echo "configuring according to machine architecture ..."
 	
-	# get the architecture:
-	cpu=$(lscpu | grep -oP 'Architecture:\s*\K.+')
-	
 	case "$cpu" in
 		i686) 
 			echo "32 bit machine"
-			./configure --prefix=/usr/lib/gcc/i586-suse-linux/9
-			#./configure --prefix=/usr/lib/gcc/i586-suse-linux/8 --without-GL
+			./configure --prefix=$target_dir_32bit
+			#./configure --prefix=$target_dir_32bit --without-GL
 			;;
 			
 		x86_64) 
 			echo "64 bit machine"
-			./configure --prefix=/usr/lib64/gcc/x86_64-suse-linux/9
-			#./configure --prefix=/usr/lib/gcc/x86_64-suse-linux/9 --without-GL
+			./configure --prefix=$target_dir_64bit
+			#./configure --prefix=$target_dir_64bit --without-GL
 			;;
 			
-		*) echo "ERROR: unkown architecture. Configure failed.";;
+		*)
+			echo "ERROR: unkown architecture. Configure failed."
+			exit 1
+			;;
 	esac
 	}
 
 	
-# proc_install_warning()
-# 	{
-# 	echo "installation directory for gtkada: " $target_dir
-# 	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
-# 	echo "Make sure you have a backup of" $target_dir "!!"
-# 	proc_confimation
-# 	}
+proc_install_warning()
+	{
+	echo "gtkada will be installed in target directory:"
+	case "$cpu" in
+		i686) 
+			echo $target_dir_32bit
+			;;
+			
+		x86_64) 
+			echo $target_dir_64bit
+			;;
+			
+		*) 
+			echo "ERROR: unkown architecture. Configure failed."
+			exit 1
+			;;
+	esac
 
+	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
+ 	echo "Make sure you have a backup of the target directory !!"
+	proc_confimation
+	}
 
-	
-# proc_remove ()
-# 	{
-# 	echo "removing gprbuild stuff from $target_dir"
-# 	proc_confimation
-# 	
-# 	echo "removing stuff in $target_dir/bin ..."
-# 	rm $target_dir/bin/gprbuild
-# 	rm $target_dir/bin/gprclean
-# 	rm $target_dir/bin/gprconfig
-# 	rm $target_dir/bin/gprinstall
-# 	rm $target_dir/bin/gprls
-# 	rm $target_dir/bin/gprname
-# 	
-# 	echo "removing stuff in $target_dir/share ..."
-# 	rm -rf $target_dir/share/gpr
-# 	rm -rf $target_dir/share/gprconfig
-# 	
-# 	echo "removing stuff in $target_dir/libexec ..."
-# 	rm -rf $target_dir/libexec/gprbuild
-# 	}
 
 	
 	
@@ -146,7 +147,7 @@ else
 			
 		remove) 
 #			proc_remove CS
-			exit
+			exit 1
 			;;
 			
 		*) echo "ERROR: invalid argument:" $1 ;;
@@ -155,7 +156,7 @@ else
 fi
 
 
-# proc_install_warning
+proc_install_warning
 
 # install gtk3-devel.
 # If this package is missing, configure will abort with message:
@@ -178,15 +179,10 @@ fi
 
 cd gtkada-gtkada-17.0
 proc_configure
-#make
-#make install
+make
+make install
 
-
-# 
-# echo "gprbuild installation complete."
-# echo "run command 'gprconfig' to see if gprbuild works."
-# echo "Exit gprconfig with CTRL-C."
-
+echo "gtkada installation complete."
 exit
 
 

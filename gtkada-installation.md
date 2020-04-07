@@ -41,6 +41,8 @@ $ sh install-gprbuild.sh remove
 ## Install Gtkada
 
 Make sure package gtk3-devel is installed.
+If this package is missing, configure will abort with message:
+"checking for GTK - version >= 3.14.0... configure: error: old version detected".
 
 Login as non-root user:
 
