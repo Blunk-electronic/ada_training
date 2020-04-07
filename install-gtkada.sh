@@ -38,6 +38,8 @@
 
 install_dir=gtkada
 target_dir=/usr/local
+download_required=no
+
 
 proc_confimation()
 	{
@@ -65,7 +67,6 @@ proc_download_gtkada()
 	echo "downloading and unpacking gtkada ..."
 	wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
 	tar -xf gtkada-17.0.tar.gz
-	cd gtkada-gtkada-17.0
 	}
 
 	
@@ -97,7 +98,7 @@ proc_configure()
 	
 # proc_install_warning()
 # 	{
-# 	echo "installation directory for gprbuild: " $target_dir
+# 	echo "installation directory for gtkada: " $target_dir
 # 	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
 # 	echo "Make sure you have a backup of" $target_dir "!!"
 # 	proc_confimation
@@ -130,12 +131,52 @@ proc_configure()
 	
 ############ MAIN BEGIN #####################################################################
 
-	
+
+# Test arguments. If argument is "no-download", then no downloading will take place.
+if [ $# -eq 0 ]; then
+	{
+    download_required=yes
+    }
+else
+	{
+	case "$1" in
+		no-download) 
+			download_required=no
+			;;
+			
+		remove) 
+#			proc_remove CS
+			exit
+			;;
+			
+		*) echo "ERROR: invalid argument:" $1 ;;
+	esac
+	}
+fi
+
+
 # proc_install_warning
 
-proc_make_install_dir
-cd $install_dir
-proc_download_gtkada
+# install gtk3-devel.
+# If this package is missing, configure will abort with message:
+# "checking for GTK - version >= 3.14.0... configure: error: old version detected".
+# If gtk3-devel is alread installed, nothing happens:
+zypper install gtk3-devel
+
+
+if [ "$download_required" = "yes" ]; then
+	{
+	proc_make_install_dir
+	cd $install_dir
+	proc_download_gtkada
+	}
+else
+	{
+	cd $install_dir	
+	}
+fi
+
+cd gtkada-gtkada-17.0
 proc_configure
 #make
 #make install
