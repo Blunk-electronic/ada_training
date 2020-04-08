@@ -1,5 +1,11 @@
 # How To Install GTKADA ON OpenSuSE Tumbleweed
 
+The installation procedure consists of two steps:
+- installation of package Gprbuild
+- installation of package Gtkada itself
+
+For both steps two separate bash scripts are provided.
+
 ## Install Gprbuild
 To install Gprbuild the shell script [install-gprbuild.sh](install-gprbuild.sh) is provided.
 It does the following:
