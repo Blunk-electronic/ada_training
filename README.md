@@ -10,7 +10,7 @@ with the standard make program. Examples which demonstrate graphical user interf
 of package gtkada.
 
 ## Gtkada installation
-See [gtkada-installation.md](gtkada-intallation.md) for details.
+See [gtkada-installation.md](gtkada-installation.md) for details.
 
 ## Contact
 Training and consulting: <http://www.blunk-electronic.de>
