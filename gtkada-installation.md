@@ -11,7 +11,7 @@ It does the following:
 - installs Gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
 - Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
 
-WARNING: 
+**WARNING:**
 - YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
 - You must be Root !
 - Make sure you have a backup of /usr/local !!
@@ -42,22 +42,20 @@ $ sh install-gprbuild.sh remove
 To install Gtkada the shell script [install-gtkada.sh](install-gtkada.sh) is provided.
 It does the following:
 - Creates in the current working directory a folder "gtkada" where stuff gets unpacked and built.
-  This directory should have been created by the script install-gprbuild.sh (see above).
+  This directory should already have been created by the script install-gprbuild.sh (see above).
 - clones Gtkada 17.0 from https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
 - builds Gtkada
+- installs gtk3-devel (If this package were missing, configure would abort with message:
+  "checking for GTK - version >= 3.14.0... configure: error: old version detected").
 - installs Gtkada stuff in /usr/lib/gcc/i586-suse-linux/9/... (for 32bit machines) or
   /usr/lib64/gcc/x86_64-suse-linux/9/... (for 64bit machines)
 - Sets the environment variable ADA_PROJECT_PATH in /etc/profile.local .
 - If /etc/profile.local does not exist, it will be created.
 
-WARNING: 
+**WARNING:** 
 - YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
 - You must be Root !
 - Make sure you have a backup of the target directories mentioned above !!
-
-Make sure package gtk3-devel is installed.
-If this package is missing, configure will abort with message:
-"checking for GTK - version >= 3.14.0... configure: error: old version detected".
 
 The script must be launched in the same directory where install-gprbuild.sh has been executed (see above).
 If the script is launched without any arguments, then it downloads required stuff (see above) in
@@ -74,6 +72,7 @@ want to download again then type:
 ```sh
 $ sh install-gtkada.sh no-download
 ```
+NOTE: After the installation you must reboot. See section issues below.
 
 ### Uninstalling Gprbuild
 If you want to get grid of Gprbuild run this command:
