@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 # --                                                                          --
-# --                           GTKADA iNSTALLER                               --
+# --                           GTKADA INSTALLER                               --
 # --                                                                          --
 # --         Copyright (C) 2020 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
@@ -134,7 +134,7 @@ proc_setup_profile()
 	{
 	echo "setting up" $profile_file "..."
 
-	ada_prj="ADA_PROJECT_PATH="
+	ada_prj="export ADA_PROJECT_PATH="
 	gnat_dir=/lib/gnat/
 	
 	# If $profile_file exists, append the ada project path to the file.
@@ -146,12 +146,12 @@ proc_setup_profile()
 		case "$cpu" in
 			i686) 
  				echo $ada_prj$target_dir_32bit$gnat_dir >> $profile_file
- 				export $ada_prj$target_dir_32bit$gnat_dir
+ 				#export $ada_prj$target_dir_32bit$gnat_dir
 				;;
 				
 			x86_64) 
  				echo $ada_prj$target_dir_64bit$gnat_dir >> $profile_file
- 				export $ada_prj$target_dir_64bit$gnat_dir
+ 				#export $ada_prj$target_dir_64bit$gnat_dir
  				;;
 				
 			*) 
@@ -214,12 +214,14 @@ fi
 
 proc_install_warning
 
-# install gtk3-devel.
+# Install gtk3-devel.
 # If this package is missing, configure will abort with message:
 # "checking for GTK - version >= 3.14.0... configure: error: old version detected".
 # If gtk3-devel is alread installed, nothing happens:
 zypper install gtk3-devel
 
+# Install Open_GL
+# CS
 
 if [ "$download_required" = "yes" ]; then
 	{
@@ -242,5 +244,3 @@ proc_setup_profile
 
 echo "gtkada installation complete."
 exit
-
-
