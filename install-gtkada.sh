@@ -206,7 +206,9 @@ else
 			exit 1
 			;;
 			
-		*) echo "ERROR: invalid argument:" $1 ;;
+		*) 
+			echo "ERROR: invalid argument:" $1
+			exit 1;;
 	esac
 	}
 fi
