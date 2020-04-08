@@ -10,12 +10,12 @@ It does the following:
 - builds Gprbuild
 - installs Gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
 - Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
-<br>
+
 WARNING: 
 - YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
 - You must be Root !
 - Make sure you have a backup of /usr/local !!
-<br>
+
 If the script is launched without any arguments, then it downloads required stuff (see above) in
 directory "gtkada" and installs as described. 
 To start the installation launch the script in your terminal as follows:
