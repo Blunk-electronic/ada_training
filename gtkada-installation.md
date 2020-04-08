@@ -49,16 +49,16 @@ It does the following:
   /usr/lib64/gcc/x86_64-suse-linux/9/... (for 64bit machines)
 - Sets the environment variable ADA_PROJECT_PATH in /etc/profile.local .
 - If /etc/profile.local does not exist, it will be created.
-<br>
+
 WARNING: 
 - YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!
 - You must be Root !
 - Make sure you have a backup of the target directories mentioned above !!
-<br>
+
 Make sure package gtk3-devel is installed.
 If this package is missing, configure will abort with message:
 "checking for GTK - version >= 3.14.0... configure: error: old version detected".
-<br>
+
 The script must be launched in the same directory where install-gprbuild.sh has been executed (see above).
 If the script is launched without any arguments, then it downloads required stuff (see above) in
 directory "gtkada" and installs as described. 
