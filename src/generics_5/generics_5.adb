@@ -1,3 +1,5 @@
+-- This demo shows how to use explicit package parameters.
+
 -- with ada.text_io;			use ada.text_io;
 with ada.strings.unbounded; use ada.strings.unbounded;
 
