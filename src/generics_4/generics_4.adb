@@ -35,6 +35,7 @@ procedure generics_4 is
 		type type_text is record content : unbounded_string; size : type_size; end record;
 		use pac_shapes.pac_geometry;
 		type type_line is record start_point, end_point : type_distance; end record;
+		l : pac_shapes.type_line;
 	end generic_pac_text;
 	---------------------------
 
@@ -61,7 +62,8 @@ procedure generics_4 is
 -- 	l2 : pac_geometry.type_distance;
 begin
 -- 	pac_geometry.move (d);
-	sl := tl;
+	
+-- 	sl := tl; -- does not compile
 	
 	null;
 end generics_4;
