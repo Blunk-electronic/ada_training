@@ -1,4 +1,4 @@
--- A simple generic child package.
+-- The specfication of a simple generic child package.
 
 -- You may compile it separately by running 
 -- this command: gnatmake generic_pac_text-generic_child_pac_fonts
