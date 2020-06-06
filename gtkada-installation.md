@@ -53,8 +53,8 @@ It does the following:
 - builds Gtkada
 - installs gtk3-devel (If this package were missing, configure would abort with message:
   "checking for GTK - version >= 3.14.0... configure: error: old version detected").
-- installs Gtkada stuff in /usr/lib/gcc/i586-suse-linux/9/... (for 32bit machines) or
-  /usr/lib64/gcc/x86_64-suse-linux/9/... (for 64bit machines)
+- installs Gtkada stuff in /usr/lib/gcc/i586-suse-linux/10/... (for 32bit machines) or
+  /usr/lib64/gcc/x86_64-suse-linux/10/... (for 64bit machines)
 - Sets the environment variable ADA_PROJECT_PATH in /etc/profile.local .
 - If /etc/profile.local does not exist, it will be created.
 
@@ -97,7 +97,9 @@ CS: Currently the uninstall procedure is not implemented. Nothing will happen.
 - After the installation you must reboot your machine. 
   The file /etc/profile.local is read only once on boot. Some nice commands in the 
   install script install-gtkada.sh should fix that so that rebooting is no longer required.
-
+- If gtkada has to be compiled anew (because GNAT has been updated from version 10 to 11)
+  then /etc/profile.local requires updaitng of the ADA_PROJECT_PATH entry. The old entry
+  is still there and must be removed manually.
 
 ## Feedback
 Any feedback his highly welcome ! Thanks.

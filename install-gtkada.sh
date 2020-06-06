@@ -181,8 +181,6 @@ proc_setup_profile()
 		esac
 		}
 	fi
-	
-	echo "the ada project path is now:" $ADA_PROJECT_PATH
 	}
 	
 	
