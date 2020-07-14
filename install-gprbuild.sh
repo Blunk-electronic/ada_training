@@ -36,12 +36,12 @@
 
 #set -e
 
-install_dir=gtkada
+install_dir=gtkada_tmp
 patch_dir=gprbuild-patch
 target_dir=/usr/local
 download_required=no
 
-proc_confimation()
+proc_confirmation()
 	{
 	read -p "Press ENTER to continue. Otherwise press CTRL-C to abort. "
 	}
@@ -65,15 +65,27 @@ proc_dowload_xmlada()
 	{
 	echo "downloading and unpacking xmlada ..."
 	wget --no-netrc https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
+	# CS: wget --no-netrc https://github.com/AdaCore/xmlada/archive/community-2019.tar.gz
 	tar -xf xmlada-16.1.tar.gz
+	# CS: tar -xf community-2019.tar.gz
+	
 	# There is no need to build xmlada.
 	}
+
+# CS
+# proc_download_gprconfig_kb()
+# 	{
+# 	echo "downloading gprconfig_kb ..."
+# 	git clone https://github.com/AdaCore/gprconfig_kb.git
+# 	}
 
 	
 proc_download_gprbuild()
 	{
 	echo "downloading gprbuild ..."
-	git clone https://github.com/AdaCore/gprbuild.git
+	#git clone https://github.com/AdaCore/gprbuild.git
+	wget --no-netrc https://github.com/AdaCore/gprbuild/archive/community-2019.tar.gz
+	tar -xf community-2019.tar.gz
 	}
 
 	
@@ -81,6 +93,7 @@ proc_build_gprbuild()
 	{
 	echo "building gprbuild ..."
 	./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./$build_dir
+	# CS: ./bootstrap.sh --with-xmlada=../xmlada --prefix=./$build_dir
 	}
 
 	
@@ -128,14 +141,19 @@ proc_install_warning()
 	echo "installation directory for gprbuild: " $target_dir
 	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
 	echo "Make sure you have a backup of" $target_dir "!!"
-	proc_confimation
+	proc_confirmation
 	}
 
+proc_clean_up ()
+	{
+	echo "removing $install_dir"
+	rm -rf $install_dir
+	}
 	
 proc_remove ()
 	{
 	echo "removing gprbuild stuff from $target_dir"
-	proc_confimation
+	proc_confirmation
 	
 	echo "removing stuff in $target_dir/bin ..."
 	rm $target_dir/bin/gprbuild
@@ -173,6 +191,11 @@ else
 			proc_remove
 			exit
 			;;
+
+		clean-up) 
+			proc_clean_up
+			exit
+			;;
 			
 		*) echo "ERROR: invalid argument:" $1 ;;
 	esac
@@ -187,6 +210,7 @@ if [ "$download_required" = "yes" ]; then
 	proc_make_install_dir
 	cd $install_dir
 	proc_dowload_xmlada
+	# CS: proc_download_gprconfig_kb
 	proc_download_gprbuild
 	}
 else
@@ -195,13 +219,16 @@ else
 	}
 fi
 
-cd gprbuild
+#cd gprbuild
+cd gprbuild-community-2019
 build_dir=bootstrap
 proc_build_gprbuild
 proc_install
 
 # change back to base directory
 cd ../../
+
+# CS: if clean up required, call proc_clean_up
 
 # install the patch
 proc_patch
