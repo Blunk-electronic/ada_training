@@ -95,7 +95,7 @@ proc_build_gprbuild()
 	./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./$build_dir
 	# CS: ./bootstrap.sh --with-xmlada=../xmlada --prefix=./$build_dir
 	}
-
+	
 	
 proc_install()
 	{
@@ -134,7 +134,7 @@ proc_patch()
 		*) echo "ERROR: unkown architecture. No patch installed.";;
 	esac
 	}
-
+	
 	
 proc_install_warning()
 	{
@@ -144,11 +144,13 @@ proc_install_warning()
 	proc_confirmation
 	}
 
+	
 proc_clean_up ()
 	{
 	echo "removing $install_dir"
 	rm -rf $install_dir
 	}
+	
 	
 proc_remove ()
 	{
@@ -227,8 +229,6 @@ proc_install
 
 # change back to base directory
 cd ../../
-
-# CS: if clean up required, call proc_clean_up
 
 # install the patch
 proc_patch

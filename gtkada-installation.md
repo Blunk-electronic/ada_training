@@ -9,10 +9,10 @@ For both steps two separate bash scripts are provided.
 ## Install Gprbuild
 To install Gprbuild the shell script [install-gprbuild.sh](install-gprbuild.sh) is provided.
 It does the following:
-- creates in the current working directory a folder "gtkada" where stuff gets unpacked and built
+- creates in the current working directory a folder "gtkada_tmp" where stuff gets unpacked and built
 - downloads Xmlada 16.1 from https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
 - unpacks Xmlada
-- clones Gprbuild from https://github.com/AdaCore/gprbuild.git
+- downloads Gprbuild from https://github.com/AdaCore/gprbuild/releases/tag/community-2019
 - builds Gprbuild
 - installs Gprbuild stuff in /usr/local/bin, /usr/local/share and /usr/local/libexec
 - Overwrites in /usr/local/share/gprconfig the file compilers.xml with a patched version.
@@ -23,7 +23,7 @@ It does the following:
 - Make sure you have a backup of /usr/local !!
 
 If the script is launched without any arguments, then it downloads required stuff (see above) in
-directory "gtkada" and installs as described. 
+directory "gtkada_tmp" and installs as described. 
 To start the installation launch the script in your terminal as follows:
 
 ```sh
@@ -35,6 +35,12 @@ want to download again then type:
 
 ```sh
 $ sh install-gprbuild.sh no-download
+```
+
+### Cleaning up after installing Gprbuild
+You installed as root which created a directory "gtkada_tmp". To remove it run:
+```sh
+$ sh install-gprbuild.sh clean-up
 ```
 
 ### Uninstalling Gprbuild
@@ -98,8 +104,8 @@ CS: Currently the uninstall procedure is not implemented. Nothing will happen.
   The file /etc/profile.local is read only once on boot. Some nice commands in the 
   install script install-gtkada.sh should fix that so that rebooting is no longer required.
 - If gtkada has to be compiled anew (because GNAT has been updated from version 10 to 11)
-  then /etc/profile.local requires updaitng of the ADA_PROJECT_PATH entry. The old entry
-  is still there and must be removed manually.
+  then /etc/profile.local requires updatng of the ADA_PROJECT_PATH entry. The old entry
+  is still there and must be removed or put in comments manually.
 
 ## Feedback
 Any feedback his highly welcome ! Thanks.
