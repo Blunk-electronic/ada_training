@@ -74,9 +74,12 @@ proc_make_install_dir()
 
 proc_download_gtkada()
 	{
-	echo "downloading and unpacking gtkada ..."
-	wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
-	tar -xf gtkada-17.0.tar.gz
+	#echo "downloading and unpacking gtkada ..."
+	#wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
+	#tar -xf gtkada-17.0.tar.gz
+	
+	echo "cloning gtkada ..."
+	git clone https://github.com/AdaCore/gtkada.git
 	}
 
 	
@@ -235,12 +238,14 @@ else
 	}
 fi
 
-cd gtkada-gtkada-17.0
+#cd gtkada-gtkada-17.0
+cd gtkada
 proc_configure
+
 make
 make install
 
-proc_setup_profile
+#proc_setup_profile
 
 echo "gtkada installation complete."
 exit
