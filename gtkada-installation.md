@@ -55,7 +55,10 @@ To install Gtkada the shell script [install-gtkada.sh](install-gtkada.sh) is pro
 It does the following:
 - Creates in the current working directory a folder "gtkada" where stuff gets unpacked and built.
   This directory should already have been created by the script install-gprbuild.sh (see above).
-- clones Gtkada 17.0 from https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
+<!-- - clones Gtkada 17.0 from https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz -->
+- clones Gtkada from https://github.com/AdaCore/gtkada.git
+  NOTE: Release 17.0 does not compile any more with Linux kernels equal or later than 5.8.0.
+  However after cloning the current master branch of Gtkada seems to solve the issue.
 - builds Gtkada
 - installs gtk3-devel (If this package were missing, configure would abort with message:
   "checking for GTK - version >= 3.14.0... configure: error: old version detected").
