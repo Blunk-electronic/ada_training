@@ -91,14 +91,14 @@ proc_configure()
 	case "$cpu" in
 		i686) 
 			echo "32 bit machine"
-			./configure --prefix=$target_dir_32bit
-			#./configure --prefix=$target_dir_32bit --without-GL
+			#./configure --prefix=$target_dir_32bit
+			./configure --prefix=$target_dir_32bit --without-GL
 			;;
 			
 		x86_64) 
 			echo "64 bit machine"
-			./configure --prefix=$target_dir_64bit
-			#./configure --prefix=$target_dir_64bit --without-GL
+			#./configure --prefix=$target_dir_64bit
+			./configure --prefix=$target_dir_64bit --without-GL
 			;;
 			
 		*)
