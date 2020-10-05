@@ -1,5 +1,3 @@
---with gtk.widget;
-
 with gtk.menu_item;			use gtk.menu_item;
 with gtk.menu_shell;		use gtk.menu_shell;
 
