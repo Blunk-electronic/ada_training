@@ -52,7 +52,7 @@ $ sh install-gprbuild.sh remove
 ```
 
 
-### Install Gtkada
+### Install GtkAda
 To install Gtkada the shell script [install-gtkada.sh](install-gtkada.sh) is provided.
 It does the following:
 - Creates in the current working directory a folder "gtkada" where stuff gets unpacked and built.
@@ -115,22 +115,68 @@ CS: Currently the uninstall procedure is not implemented. Nothing will happen.
   
 ## On Ubuntu
 
-sudo apt install gprbuild
+### Install Gprbuild
+On Ubuntu the installation of Gprbuild is quite simple:
+```sh
+$ sudo apt install gprbuild
+```
 
+### Install GtkAda
+First install the Gtk3 development package
 
-- Install Gtk3 development package
-sudo apt-get install libgtk-3-dev
+```sh
+$ sudo apt-get install libgtk-3-dev
+```
 
+Then create a temporarily install directory and change into it right away:
+```sh
+$ mkdir gtkada
+```
+
+```sh
+$ cd gtkada
+```
+
+Clone the GtkAda repository:
+
+```sh
 git clone https://github.com/AdaCore/gtkada.git
+```
 
+```sh
 ./configure
-make
-make install
-export GPR_PROJECT_PATH=/usr/local/lib/gnat
+```
 
-sudo touch profile.local
-paste in profile.local this line
+```sh
+make
+```
+
+```sh
+sudo make install
+```
+
+Create a temporarily environment variable that directs to the 
+gtkada.grp file:
+```sh
 export GPR_PROJECT_PATH=/usr/local/lib/gnat
+```
+
+For a permanent setup create a profile file:
+
+```sh
+cd /etc
+```
+
+```sh
+sudo touch profile.local
+```
+
+Open a text editor and paste this line in profile.local:
+```sh
+export GPR_PROJECT_PATH=/usr/local/lib/gnat
+```
+
+
   
 ## Feedback
 Any feedback his highly welcome ! Thanks.
