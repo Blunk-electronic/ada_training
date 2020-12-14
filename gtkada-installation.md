@@ -1,4 +1,6 @@
-# How To Install GTKADA ON OpenSuSE Tumbleweed
+# How To Install GtkAda
+
+## On OpenSuSE Tumbleweed
 
 The installation procedure consists of two steps:
 - installation of package Gprbuild
@@ -6,7 +8,7 @@ The installation procedure consists of two steps:
 
 For both steps two separate bash scripts are provided.
 
-## Install Gprbuild
+### Install Gprbuild
 To install Gprbuild the shell script [install-gprbuild.sh](install-gprbuild.sh) is provided.
 It does the following:
 - creates in the current working directory a folder "gtkada_tmp" where stuff gets unpacked and built
@@ -37,20 +39,20 @@ want to download again then type:
 $ sh install-gprbuild.sh no-download
 ```
 
-### Cleaning up after installing Gprbuild
+#### Cleaning up after installing Gprbuild
 You installed as root which created a directory "gtkada_tmp". To remove it run:
 ```sh
 $ sh install-gprbuild.sh clean-up
 ```
 
-### Uninstalling Gprbuild
+#### Uninstalling Gprbuild
 If you want to get grid of Gprbuild run this command:
 ```sh
 $ sh install-gprbuild.sh remove
 ```
 
 
-## Install Gtkada
+### Install Gtkada
 To install Gtkada the shell script [install-gtkada.sh](install-gtkada.sh) is provided.
 It does the following:
 - Creates in the current working directory a folder "gtkada" where stuff gets unpacked and built.
@@ -89,7 +91,7 @@ $ sh install-gtkada.sh no-download
 ```
 NOTE: After the installation you must reboot. See section issues below.
 
-### Uninstalling Gprbuild
+#### Uninstalling Gprbuild
 If you want to get grid of Gprbuild run this command:
 
 ```sh
@@ -99,7 +101,7 @@ $ sh install-gprbuild.sh remove
 CS: Currently the uninstall procedure is not implemented. Nothing will happen.
 
 
-### Issues
+#### Issues
 - For unknown reason configure does not detect Open_GL. 
 - In case make fails, configure anew with option GL turned off. The relevant lines
   in the install script install-gtkada.sh are commented.
@@ -110,6 +112,12 @@ CS: Currently the uninstall procedure is not implemented. Nothing will happen.
   then /etc/profile.local requires updatng of the ADA_PROJECT_PATH entry. The old entry
   is still there and must be removed or put in comments manually.
 
+  
+## On Ubuntu
+
+
+
+  
 ## Feedback
 Any feedback his highly welcome ! Thanks.
 
