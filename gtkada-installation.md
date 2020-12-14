@@ -115,8 +115,22 @@ CS: Currently the uninstall procedure is not implemented. Nothing will happen.
   
 ## On Ubuntu
 
+sudo apt install gprbuild
 
 
+- Install Gtk3 development package
+sudo apt-get install libgtk-3-dev
+
+git clone https://github.com/AdaCore/gtkada.git
+
+./configure
+make
+make install
+export GPR_PROJECT_PATH=/usr/local/lib/gnat
+
+sudo touch profile.local
+paste in profile.local this line
+export GPR_PROJECT_PATH=/usr/local/lib/gnat
   
 ## Feedback
 Any feedback his highly welcome ! Thanks.
