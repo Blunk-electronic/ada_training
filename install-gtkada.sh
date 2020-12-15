@@ -220,7 +220,7 @@ proc_install_warning
 # Install gtk3-devel.
 # If this package is missing, configure will abort with message:
 # "checking for GTK - version >= 3.14.0... configure: error: old version detected".
-# If gtk3-devel is alread installed, nothing happens:
+# If gtk3-devel is already installed, nothing happens:
 zypper install gtk3-devel
 
 # Install Open_GL
