@@ -77,6 +77,7 @@ begin
 	-- Set the item to be selected per default
 	combo.set_active (0);
 
+	combo.on_changed (callbacks_combo_box.selection_changed'access);
 	
 	-- Put the combo box in the main box:
 	pack_start (box, combo, expand => false);
