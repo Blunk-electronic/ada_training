@@ -56,16 +56,17 @@ begin
 	gtk_new (list_store => storage_model, types => (entry_structure));
 	
 	-- Insert the entries in the storage model:
+	-- NOTE: The entries are numbered from 0 to N.
 	for choice in 1 .. 3 loop
 		storage_model.append (iter);
-		set (storage_model, iter, column_0, "item" & integer'image (choice));
+		gtk.list_store.set (storage_model, iter, column_0, "item" & integer'image (choice));
 	end loop;
 
 	storage_model.append (iter);
-	set (storage_model, iter, column_0, "dummy item A");
+	gtk.list_store.set (storage_model, iter, column_0, "dummy item A");
 
 	storage_model.append (iter);
-	set (storage_model, iter, column_0, "another useless item");
+	gtk.list_store.set (storage_model, iter, column_0, "another useless item");
 
 	
 
@@ -83,7 +84,8 @@ begin
 	pack_start (box, combo, expand => false);
 
 
-	
+	-- The purpose of this stuff is unclear, but it
+	-- is required to make the entries visible:
 	gtk_new (render);
 	pack_start (combo, render, expand => true);
 	add_attribute (combo, render, "markup", column_0);
