@@ -1,15 +1,15 @@
 with "gtkada.gpr";
 
- project gtkada_3 is
+ project text_view_1 is
 
 	--for exec_dir use external ("HOME") & "/bin";
 	for exec_dir use ".";
  	for object_dir use "obj";
- 	for source_dirs use ("." , "../lib");
-	--for source_dirs use (".");
+	for source_dirs use ("." , "../lib");
 
- 	for main use ("gtkada_3");
- end gtkada_3;
+
+ 	for main use ("text_view_1");
+ end text_view_1;
 
 -- build with command "gprbuild"
 -- clean up with command "gprclean"

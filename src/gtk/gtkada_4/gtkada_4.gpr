@@ -4,7 +4,7 @@ with "gtkada.gpr";
 
 	for exec_dir use ".";
  	for object_dir use "obj";
- 	for source_dirs use ("." , "../lib");
+ 	for source_dirs use ("." , "../../lib");
 
  	for main use ("gtkada_4");
  end gtkada_4;
