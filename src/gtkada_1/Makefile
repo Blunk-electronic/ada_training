@@ -9,12 +9,12 @@ LDFLAGS = -R $(LIB_DIR)
 
 # compile
 .adb.o:
-	gcc -c -gnat2012 $<
+	gcc -c -gnat2012 $< -I${GTKADA_DIR}/src -I${GTKADA_DIR}/src/generated
 .SUFFIXES: .adb .o
 
 # link
 $(TARGET): $(OBJS)
-	gnatbind -x $(TARGET).ali; gnatlink $(TARGET).ali $(LDFLAGS)
+	gnatbind -x $(TARGET).ali -I${GTKADA_DIR}/src/obj/gtkada/static; gnatlink $(TARGET).ali $(LDFLAGS)
 
 install:
 	install -D $(TARGET) $(BINDIR)/$(TARGET)
