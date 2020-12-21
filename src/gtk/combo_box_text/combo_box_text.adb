@@ -30,7 +30,7 @@ begin
 	window.set_default_size (300, 100);
 	window.on_destroy (callbacks_combo_box_text.terminate_main'access);
 
-	gtk_new_vbox (box, homogeneous => false);
+	gtk_new_vbox (box);
 	window.add (box);
 
 
@@ -40,10 +40,24 @@ begin
 	gtk.combo_box_text.gtk_new_with_entry (combo);
 	pack_start (box, combo, expand => false);
 
+	-- Try these statements in order to set the width
+	-- of the entry. Find more in the specs of package gtk.gentry:
+
+	-- To set a maximim of ten characters to be entered:
+	--gtk_entry (combo.get_child).set_max_length (10);
+
+	-- To set a minimum width for five characters to be visible.
+	-- NOTE; The effect is visible when you try to adjust the
+	-- width of the main window to a minimum.
+	--gtk_entry (combo.get_child).set_width_chars (5);
+
+
+
+	
 	-- Connect the child of combo (which is a gentry) with
 	-- the procedure that outputs the entered text:
 	gtk_entry (combo.get_child).on_activate (callbacks_combo_box_text.some_text_entered'access);	
-	
+
 
 	
 	-- show the window
