@@ -21,7 +21,7 @@ with ada.text_io;				use ada.text_io;
 with callbacks_combo_box;	--use callbacks_combo_box;
 
 
-procedure gtkada_combo_box is
+procedure combo_box is
 
 	window	: gtk.window.gtk_window;
 	box		: gtk_vbox;
@@ -101,4 +101,4 @@ begin
 	-- until Gtk.Main.Main_Quit is called.
 	gtk.main.main;
 	
-end gtkada_combo_box;
+end combo_box;
