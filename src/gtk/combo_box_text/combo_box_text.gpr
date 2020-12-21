@@ -1,0 +1,15 @@
+with "gtkada.gpr";
+
+ project combo_box_text is
+
+	--for exec_dir use external ("HOME") & "/bin";
+	for exec_dir use ".";
+ 	for object_dir use "obj";
+	for source_dirs use ("." , "../lib");
+
+
+ 	for main use ("combo_box_text");
+ end combo_box_text;
+
+-- build with command "gprbuild"
+-- clean up with command "gprclean"
