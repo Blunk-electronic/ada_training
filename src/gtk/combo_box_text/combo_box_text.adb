@@ -41,9 +41,13 @@ begin
 	pack_start (box, combo, expand => false);
 
 	-- Try these statements in order to set the width
-	-- of the entry. Find more in the specs of package gtk.gentry:
+	-- of the entry. 
+	-- Since the field, where you enter the text, is a gentry
+	-- and a child of combo, the size settings must be applied
+	-- to the gentry (not on the combo box).
+	--Find more in the specs of package gtk.gentry:
 
-	-- To set a maximim of ten characters to be entered:
+	-- To set a maximum of ten characters to be entered:
 	--gtk_entry (combo.get_child).set_max_length (10);
 
 	-- To set a minimum width for five characters to be visible.
