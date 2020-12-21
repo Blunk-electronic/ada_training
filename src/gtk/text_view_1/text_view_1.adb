@@ -1,97 +1,58 @@
 -- This is a simple ada program, that demonstrates gtkada
--- It shows a window with a combo box.
+-- It shows a window with a text view.
 -- It requires to have package gtkada installed.
 
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
 
-with glib;						--use glib;
-
 with gtk.main;					use gtk.main;
 with gtk.window;				use gtk.window;
 with gtk.box;					use gtk.box;
-with gtk.combo_box;				use gtk.combo_box;
-with gtk.cell_renderer_text;	use gtk.cell_renderer_text;
-with gtk.cell_layout;        	use gtk.cell_layout;
-with gtk.list_store;			use gtk.list_store;
-with gtk.tree_model;			use gtk.tree_model;
+with gtk.text_view;				use gtk.text_view;
+with gtk.button;				use gtk.button;
 
 with ada.text_io;				use ada.text_io;
 
-with callbacks_combo_box;	--use callbacks_combo_box;
+with callbacks_text_view;
 
 
 procedure text_view_1 is
 
-	window	: gtk.window.gtk_window;
-	box		: gtk_vbox;
-	combo	: gtk_combo_box;
+	window		: gtk.window.gtk_window;
+	box			: gtk_vbox;
+	button		: gtk_button;
 
-	storage_model : gtk_list_store;
-
-	-- An entry consists of just a single column:
-	column_0 : constant := 0;
-
-	-- The single column is to contain strings:
-	entry_structure : glib.gtype_array := (column_0 => glib.gtype_string);
-
-	iter : gtk_tree_iter;
-	
-	render : gtk_cell_renderer_text;
 begin
 	init;
 
 	gtk_new (window);
-	window.set_title ("Combo Box Demo");
+	window.set_title ("Text View Demo");
 	window.set_default_size (300, 100);
+	window.on_destroy (callbacks_text_view.terminate_main'access);
 
-	window.on_destroy (callbacks_combo_box.terminate_main'access);
-
-	gtk_new_vbox (box, homogeneous => false);
+	gtk_new_vbox (box);
 	window.add (box);
 
 
 	
-	-- Create the storage model:
-	gtk_new (list_store => storage_model, types => (entry_structure));
-	
-	-- Insert the entries in the storage model:
-	-- NOTE: The entries are numbered from 0 to N.
-	for choice in 1 .. 3 loop
-		storage_model.append (iter);
-		gtk.list_store.set (storage_model, iter, column_0, "item" & integer'image (choice));
-	end loop;
+	-- Create the text view.
+	-- NOTE: The variable my_text_view is declared in callbacks_text_view
+	-- so that it is visible from here and from the sub-programs 
+	-- in callbacks_text_view. This way the procedure "button_clicked"
+	-- (see below) can read the text that is shown in the text_view.
+	gtk_new (callbacks_text_view.my_text_view);
 
-	storage_model.append (iter);
-	gtk.list_store.set (storage_model, iter, column_0, "dummy item A");
-
-	storage_model.append (iter);
-	gtk.list_store.set (storage_model, iter, column_0, "another useless item");
-
-	
-
-	-- Create the combo box:
-	gtk.combo_box.gtk_new_with_model (
-		combo_box	=> combo,
-		model		=> +storage_model); -- ?
-
-	-- Set the item to be selected per default
-	combo.set_active (0);
-
-	combo.on_changed (callbacks_combo_box.selection_changed'access);
-	
-	-- Put the combo box in the main box:
-	pack_start (box, combo, expand => false);
+	-- Put the text view in the box:
+	pack_start (box, callbacks_text_view.my_text_view);
 
 
-	-- The purpose of this stuff is unclear, but it
-	-- is required to make the entries visible:
-	gtk_new (render);
-	pack_start (combo, render, expand => true);
-	add_attribute (combo, render, "markup", column_0);
-
-	
-
+	-- Create a button "apply" and put it in the box below the
+	-- text view.
+	-- On clicking the button, the text, typed in the text view,
+	-- is output on the console.
+	gtk_new (button, "Apply");
+	pack_start (box, button);
+	button.on_clicked (callbacks_text_view.button_clicked'access);
 	
 	-- show the window
 	window.show_all;
