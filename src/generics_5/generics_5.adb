@@ -22,6 +22,11 @@ procedure generics_5 is
 		with package pac_geometry is new generic_pac_geometry (<>);
 	package generic_pac_shapes is
 		use pac_geometry;
+		-- NOTE: This use clause does not always work properly. 
+		-- In that case, the prefix "pac_geometry" must be explicitely provided
+		-- for types that stem from generic_pac_geometry.
+		-- Otherwise the linker reports lots of "undefined references" ...
+		
 		type type_line is abstract tagged record start_point, end_point : type_distance; end record;
 	end generic_pac_shapes;
 	---------------------------
@@ -31,7 +36,13 @@ procedure generics_5 is
 		with package pac_shapes is new generic_pac_shapes (<>);
 	package generic_pac_text is
 		type type_text is record content : unbounded_string; size : type_size; end record;
+
 		use pac_shapes.pac_geometry;
+		-- NOTE: This use clause does not always work properly. 
+		-- In that case, the prefix "pac_geometry" must be explicitely provided
+		-- for types that stem from generic_pac_geometry.
+		-- Otherwise the linker reports lots of "undefined references" ...
+
 		type type_line is new pac_shapes.type_line with null record;
 	end generic_pac_text;
 	---------------------------
