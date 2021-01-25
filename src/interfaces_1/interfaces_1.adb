@@ -5,10 +5,17 @@
 procedure interfaces_1 is
 
 	type type_enum is (LOW, MIDDLE, HIGH);
+
+	type type_C is record
+		p2 : type_enum := MIDDLE;
+	end record;
+
+	
 	
 	type type_base is tagged record
 		p0 : natural := 0;
 	end record;
+
 
 	
 	type type_A1 is new type_base with record
