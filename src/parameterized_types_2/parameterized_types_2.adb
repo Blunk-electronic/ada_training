@@ -1,4 +1,5 @@
--- Here we demonstrate a simple parameterized type.
+-- Here we demonstrate a simple parameterized type
+-- with a variant part.
 
 with ada.text_io; use ada.text_io;
 with ada.strings.unbounded; use ada.strings.unbounded;
