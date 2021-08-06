@@ -15,10 +15,10 @@ procedure types_fixed_point_6 is
 		digits digit_count 
 		range range_min .. range_max;
 
-	step_width_coarse : constant := step_width * 10.0;
+	step_width_coarse : constant := type_distance'small * 10.0;
 	type type_distance_coarse is delta step_width_coarse 
-		digits digit_count - 1
-		range range_min .. range_max;
+		digits type_distance'digits - 1
+		range type_distance'first .. type_distance'last;
 
 	
 	function round (d_fine : in type_distance) return type_distance_coarse is
@@ -43,7 +43,9 @@ procedure types_fixed_point_6 is
 	--F : float := 0.055;
 	--F : float := 0.0714;
 begin
-
+	--put_line ("small  " & type_distance'image (type_distance'small));
+	--put_line ("digits " & natural'image (type_distance'digits));
+	
 	--put_line (float'image (F));
 
 	--C := type_distance (F);
@@ -53,13 +55,13 @@ begin
 	put_line ("R " & type_distance_coarse'image (round (C)));
 
 	
-	--for i in 1..40 loop
-		--new_line;
+	for i in 1..40 loop
+		new_line;
 
-		--A := A + step_width;
+		A := A + step_width;
 
-		--put_line ("A " & type_distance'image (A)); 
-		--put_line ("R " & type_distance_coarse'image (round (A)));
-	--end loop;
+		put_line ("A " & type_distance'image (A)); 
+		put_line ("R " & type_distance_coarse'image (round (A)));
+	end loop;
 	
 end types_fixed_point_6;
