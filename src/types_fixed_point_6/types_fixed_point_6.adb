@@ -1,5 +1,6 @@
 -- This is a simple ada program,
--- that demonstrates an issue with decimal fixed point types.
+-- that shows an approach on how to round
+-- decimal fixed point types.
 
 with ada.text_io;	use ada.text_io;
 
