@@ -15,6 +15,15 @@ procedure vehicles_1 is
 	
 	car : type_car;
 	lorry : type_lorry;
+
+	function special_make (
+		s : in positive;
+		w : in positive)
+		return type_car
+	is begin
+		return (s, w);
+	end special_make;
+
 	
 begin
 	
@@ -26,6 +35,8 @@ begin
 
 	car := type_car (make (s => 3, w => 4));
 
+	car := special_make (5, 6);
+	
 -- LORRY:
 	lorry.make_default;
 	put_line (float'image (lorry.loading_area));
