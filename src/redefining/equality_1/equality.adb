@@ -14,7 +14,11 @@ procedure equality is
 	end;
 
 
+	-- In order to have access to the predefined "=" function
+	-- we rename it:
+	function equal (left, right : in type_float) return boolean renames "=";
 
+	
 	-- This function is overloading the predefined equals function
 	-- inherited from type "float". It considers the operands "left" and "right"
 	-- as equal if their distance is less or equal a certain threshold:
@@ -27,7 +31,8 @@ procedure equality is
 		put_line ("right    : " & to_string (right));
 		put_line ("delta    : " & to_string (d));
 		put_line ("threshold: " & to_string (threshold));
-		
+
+	
 		if d <= threshold then
 			--put_line ("equal");
 			return true;
@@ -86,14 +91,15 @@ procedure equality is
 begin
 	--put_line ("equality test");
 
-	--X := 1.0;
-	--Y := 1.01;
+	X := 1.0;
+	Y := 1.01;
 
-	--if X = Y then
-		--put_line ("X equals Y");
-	--else
-		--put_line ("X does not equal Y");
-	--end if;
+	--if X = Y then -- uses the predefined equality test
+	if equal (X, Y) then -- uses the original equality test
+		put_line ("X equals Y");
+	else
+		put_line ("X does not equal Y");
+	end if;
 	
 -------------------
 
@@ -108,14 +114,14 @@ begin
 	
 -------------------
 	
-	line_1 := ((0.0, 0.0), (1.0, 1.0));
-	--line_2 := ((0.11, 0.0), (1.0, 1.0)); -- not equal line_1
-	line_2 := ((0.1, 0.0), (1.0, 1.0)); -- equals line_1
+	--line_1 := ((0.0, 0.0), (1.0, 1.0));
+	----line_2 := ((0.11, 0.0), (1.0, 1.0)); -- not equal line_1
+	--line_2 := ((0.1, 0.0), (1.0, 1.0)); -- equals line_1
 
-	if line_1 = line_2 then
-		put_line ("line 1 equals line 2");
-	else
-		put_line ("line 1 does not equal line 2");
-	end if;
+	--if line_1 = line_2 then
+		--put_line ("line 1 equals line 2");
+	--else
+		--put_line ("line 1 does not equal line 2");
+	--end if;
 	
 end equality;
