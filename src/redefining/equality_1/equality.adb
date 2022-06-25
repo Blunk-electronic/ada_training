@@ -95,7 +95,8 @@ begin
 	Y := 1.01;
 
 	--if X = Y then -- uses the predefined equality test
-	if equal (X, Y) then -- uses the original equality test
+	--if equal (X, Y) then -- uses the original equality test
+	if standard."=" (X, Y) then
 		put_line ("X equals Y");
 	else
 		put_line ("X does not equal Y");
