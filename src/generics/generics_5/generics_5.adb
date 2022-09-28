@@ -22,12 +22,8 @@ procedure generics_5 is
 		with package pac_geometry is new generic_pac_geometry (<>);
 	package generic_pac_shapes is
 		use pac_geometry;
-		-- NOTE: This use clause does not always work properly. 
-		-- In that case, the prefix "pac_geometry" must be explicitely provided
-		-- for types that stem from generic_pac_geometry.
-		-- Otherwise the linker reports lots of "undefined references" ...
-		
-		type type_line is abstract tagged record start_point, end_point : type_distance; end record;
+		type type_rectangle is record height, width : type_distance := 1.0; end record;
+		type type_line is tagged record start_point, end_point : type_distance; end record;
 	end generic_pac_shapes;
 	---------------------------
 
@@ -37,11 +33,8 @@ procedure generics_5 is
 	package generic_pac_text is
 		type type_text is record content : unbounded_string; size : type_size; end record;
 
-		use pac_shapes.pac_geometry;
-		-- NOTE: This use clause does not always work properly. 
-		-- In that case, the prefix "pac_geometry" must be explicitely provided
-		-- for types that stem from generic_pac_geometry.
-		-- Otherwise the linker reports lots of "undefined references" ...
+		use pac_shapes;
+		bounding_box : type_rectangle;
 
 		type type_line is new pac_shapes.type_line with null record;
 	end generic_pac_text;
@@ -55,20 +48,30 @@ procedure generics_5 is
 	---------------------------
 
 	generic
-		with package pac_geometry is new generic_pac_geometry (<>);
-		with package pac_shapes is new generic_pac_shapes (<>);
-
 		-- no explicit parameters:
--- 		with package pac_text is new generic_pac_text (<>);
+		--with package pac_text is new generic_pac_text (<>);
 
 		-- with explicit parameters:
 		with package pac_text is new generic_pac_text (type_size => float, pac_shapes => pac_shapes);
+		-- NOTE: This also allows access to the stuff that comes along with pac_shapes
+		-- such as pac_geometry and pac_shapes.
 		
 	package generic_pac_draw is
+		-- Declare a distance of type_distance taken from imported pac_shapes:
+		dx : pac_geometry.type_distance := 0.0;
+		
+		-- Get visibilty of stuff from geometry package (inside pac_shapes):
+		use pac_geometry;
+		dy : type_distance := 0.0;
+
+		line_shapes : pac_shapes.type_line;
+		line_text   : pac_text.type_line;
+		
 		type type_object is null record;
 		procedure draw (l : in pac_shapes.type_line);
 	end generic_pac_draw;
 
+	
 	package body generic_pac_draw is
 		procedure draw (l : in pac_shapes.type_line) is begin null; end;
 		procedure paint (l : in pac_text.type_line) is begin
@@ -84,9 +87,19 @@ procedure generics_5 is
 
 	---------------------------
 
-	-- Instantiate draw package:
-	package pac_draw is new generic_pac_draw (pac_geometry, pac_shapes, pac_text);
-		
+	-- Instantiate the draw package:
+	package pac_draw is new generic_pac_draw (pac_text);
+	--use pac_draw;
+	
+	dummy : pac_draw.type_object;
+	
+	f1 : float := 1.0;
+	f2 : float := 2.0;
+	ls : pac_shapes.type_line := (f1, f2);
+	lt : pac_text.type_line := (f1, f2);
+
+	box : pac_shapes.type_rectangle;
 begin
-	null;
+	pac_draw.draw (ls);
+	
 end generics_5;

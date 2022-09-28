@@ -1,6 +1,6 @@
-TARGET = generics_4a
+TARGET = generics_6
 
-VPATH = include
+VPATH = ../lib
 OBJS = $(TARGET).o
 PREFIX = $(HOME)
 BINDIR = $(PREFIX)/bin

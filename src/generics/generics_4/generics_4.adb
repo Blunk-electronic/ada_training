@@ -1,9 +1,9 @@
 -- This is a simple ada program, that
--- demonstrates the usage of a generic subprogram.
+-- demonstrates the usage of package parameters.
 
 -- with ada.text_io;			use ada.text_io;
 with ada.strings.unbounded; use ada.strings.unbounded;
--- with library_with_generic;
+
 
 procedure generics_4 is
 
@@ -39,31 +39,36 @@ procedure generics_4 is
 	end generic_pac_text;
 	---------------------------
 
--- 	generic
--- 		with package pac_geometry is new generic_pac_geometry (<>);
--- 		with package pac_shapes is new generic_pac_shapes (<>);
--- 		with package pac_text is new generic_pac_text (<>);
--- 	package generic_pac_draw is
--- 		type type_object is null record;
--- 	end generic_pac_draw;
--- 	
+	-- Declare a distance of 1m:
 	d : float := 1.0;
-	
-	package pac_geometry is new generic_pac_geometry (float);
-	
-	package pac_shapes is new generic_pac_shapes (pac_geometry);
-	sl : pac_shapes.type_line := (10.0, 20.0);
 
-	package pac_text is new generic_pac_text (float, pac_shapes);
+	
+	-- Instantiate the geometry package:
+	package pac_geometry is new generic_pac_geometry (float);
+
+	-- Instantiate the shapes package with the (instantiated) geometry package:	
+	package pac_shapes is new generic_pac_shapes (pac_geometry);
+
+	-- Declare a line taken from the shapes package:
+	sl : pac_shapes.type_line := (10.0, 20.0);
+	------------------------------------------------
+	
+	-- Instantiate the text package with a size parameter and the 
+	-- (instantiated) shapes package:
+	package pac_text is new generic_pac_text (type_size => float, pac_shapes => pac_shapes);
+
+	-- Declare a text:
 	t : pac_text.type_text := (content => to_unbounded_string ("abc"), size => 1.0);
+
+	-- Declare a line taken from the text package:
 	tl : pac_text.type_line := (1.0, 2.0);
+
 	
--- 	package pac_draw is new generic_pac_draw (pac_geometry, pac_shapes, pac_text);
--- 	l2 : pac_geometry.type_distance;
+	-- l2 : pac_geometry.type_distance;
 begin
--- 	pac_geometry.move (d);
+	pac_geometry.move (d);
 	
--- 	sl := tl; -- does not compile
+	-- sl := tl; -- does not compile because the lines stem from different packages !
 	
 	null;
 end generics_4;

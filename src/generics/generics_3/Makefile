@@ -1,7 +1,7 @@
-TARGET = generics_7
+TARGET = generics_3
 
-VPATH = ../generic_libs
-OBJS = $(TARGET).o pac_text.o generic_pac_text.o generic_pac_text-generic_child_pac_fonts.o
+VPATH = ../lib
+OBJS = $(TARGET).o library_with_generic.o
 PREFIX = $(HOME)
 BINDIR = $(PREFIX)/bin
 

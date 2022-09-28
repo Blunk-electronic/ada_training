@@ -1,9 +1,8 @@
 -- This is a simple ada program, that
--- demonstrates the usage of a generic subprogram.
+-- demonstrates the usage of a package parameters.
 
 with ada.text_io;			use ada.text_io;
 with ada.strings.unbounded; use ada.strings.unbounded;
--- with library_with_generic;
 
 procedure generics_4a is
 
