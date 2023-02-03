@@ -4,7 +4,7 @@
 # --                                                                          --
 # --                           GTKADA INSTALLER                               --
 # --                                                                          --
-# --         Copyright (C) 2021 Mario Blunk, Blunk electronic                 --
+# --         Copyright (C) 2023 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
 # --    This program is free software: you can redistribute it and/or modify  --
 # --    it under the terms of the GNU General Public License as published by  --
@@ -74,12 +74,13 @@ proc_make_install_dir()
 
 proc_download_gtkada()
 	{
-	#echo "downloading and unpacking gtkada ..."
+	echo "downloading and unpacking gtkada ..."
 	#wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
-	#tar -xf gtkada-17.0.tar.gz
+	wget --no-netrc https://github.com/AdaCore/gtkada/archive/refs/tags/v23.0.0.tar.gz
+	tar -xf v23.0.0.tar.gz
 	
-	echo "cloning gtkada ..."
-	git clone https://github.com/AdaCore/gtkada.git
+# 	echo "cloning gtkada ..."
+# 	git clone https://github.com/AdaCore/gtkada.git
 	}
 
 	
@@ -91,14 +92,14 @@ proc_configure()
 	case "$cpu" in
 		i686) 
 			echo "32 bit machine"
-			#./configure --prefix=$target_dir_32bit
-			./configure --prefix=$target_dir_32bit --without-GL
+			./configure --prefix=$target_dir_32bit
+# 			./configure --prefix=$target_dir_32bit --without-GL
 			;;
 			
 		x86_64) 
 			echo "64 bit machine"
-			#./configure --prefix=$target_dir_64bit
-			./configure --prefix=$target_dir_64bit --without-GL
+			./configure --prefix=$target_dir_64bit
+# 			./configure --prefix=$target_dir_64bit --without-GL
 			;;
 			
 		*)
@@ -223,8 +224,7 @@ proc_install_warning
 # If gtk3-devel is alread installed, nothing happens:
 zypper install gtk3-devel
 
-# Install Open_GL
-# CS
+
 
 if [ "$download_required" = "yes" ]; then
 	{
@@ -238,8 +238,7 @@ else
 	}
 fi
 
-#cd gtkada-gtkada-17.0
-cd gtkada
+cd gtkada-23.0.0
 proc_configure
 
 make
