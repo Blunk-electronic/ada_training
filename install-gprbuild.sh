@@ -4,7 +4,7 @@
 # --                                                                          --
 # --                           GPRBUILD iNSTALLER                             --
 # --                                                                          --
-# --         Copyright (C) 2021 Mario Blunk, Blunk electronic                 --
+# --         Copyright (C) 2023 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
 # --    This program is free software: you can redistribute it and/or modify  --
 # --    it under the terms of the GNU General Public License as published by  --
@@ -28,17 +28,16 @@
 # --   Please send your questions and comments to:
 # --
 # --   info@blunk-electronic.de
-# --   or visit <http://www.blunk-electronic.de> for more contact data
+# --   or visit <http://www.blunk-electronic.de> for more contact information
 # --
 # --   history of changes:
 # --
 
 
-#set -e
+# exit this script on error:
+set -e
 
-install_dir=gtkada_tmp
-patch_dir=gprbuild-patch
-target_dir=/usr/local
+install_dir=gprbuild_tmp
 download_required=no
 
 proc_confirmation()
@@ -64,78 +63,63 @@ proc_make_install_dir()
 proc_dowload_xmlada()
 	{
 	echo "downloading and unpacking xmlada ..."
-	wget --no-netrc https://github.com/AdaCore/xmlada/archive/xmlada-16.1.tar.gz
-	# CS: wget --no-netrc https://github.com/AdaCore/xmlada/archive/community-2019.tar.gz
-	tar -xf xmlada-16.1.tar.gz
-	# CS: tar -xf community-2019.tar.gz
-	
+	wget --no-netrc https://github.com/AdaCore/xmlada/archive/refs/tags/v23.0.0.tar.gz
+	tar -xf v23.0.0.tar.gz
+	rm v23.0.0.tar.gz
 	# There is no need to build xmlada.
 	}
 
-# CS
-# proc_download_gprconfig_kb()
-# 	{
-# 	echo "downloading gprconfig_kb ..."
-# 	git clone https://github.com/AdaCore/gprconfig_kb.git
-# 	}
+
+proc_download_gprconfig_kb()
+	{
+	echo "downloading gprconfig_kb ..."
+	git clone https://github.com/AdaCore/gprconfig_kb.git
+	}
 
 	
 proc_download_gprbuild()
 	{
 	echo "downloading gprbuild ..."
 	#git clone https://github.com/AdaCore/gprbuild.git
-	wget --no-netrc https://github.com/AdaCore/gprbuild/archive/community-2019.tar.gz
-	tar -xf community-2019.tar.gz
+	wget --no-netrc https://github.com/AdaCore/gprbuild/archive/refs/tags/v23.0.0.tar.gz
+	tar -xf v23.0.0.tar.gz
+	rm v23.0.0.tar.gz
 	}
 
 	
+proc_bootstrap_gprbuild()
+	{
+	echo "bootstrapping gprbuild ..."
+	cd gprbuild-23.0.0
+	./bootstrap.sh --with-xmlada=../xmlada-23.0.0 --with-kb=../gprconfig_kb --prefix=./bootstrap
+	export PATH=$PATH:$PWD/bootstrap/bin/
+	cd ..
+	}
+
+
+proc_build_xmlada()
+	{
+	echo "building xmlada ..."
+	cd xmlada-23.0.0
+	./configure --prefix=$PWD/install
+	make all
+	make install
+	export GPR_PROJECT_PATH=$PWD/install/share/gpr/
+	cd ..
+	}
+
+
 proc_build_gprbuild()
 	{
 	echo "building gprbuild ..."
-	./bootstrap.sh --with-xmlada=../xmlada-xmlada-16.1 --prefix=./$build_dir
-	# CS: ./bootstrap.sh --with-xmlada=../xmlada --prefix=./$build_dir
+	cd gprbuild-23.0.0
+	make all
+	make install
+	cd ..
 	}
-	
-	
-proc_install()
-	{
-	echo "installing in" $target_dir
-	
-	# CS: Test whether directory "bin" exists.
-	cp $build_dir/bin/* $target_dir/bin/
-	
-	# CS: Test whether directory "share" exists.
-	cp -R $build_dir/share/gpr $target_dir/share/
-	cp -R $build_dir/share/gprconfig/ $target_dir/share/
-	
-	# CS: Test whether directory "libexec" exists.
-	cp -R $build_dir/libexec/gprbuild/ $target_dir/libexec/
-	}
-	
-	
-proc_patch()
-	{
-	echo "copying the patch according to machine architecture ..."
-	
-	# get the architecture:
-	cpu=$(lscpu | grep -oP 'Architecture:\s*\K.+')
-	
-	case "$cpu" in
-		i686) 
-			echo "32 bit machine"
-			cp $patch_dir/compilers_x686.xml $target_dir/share/gprconfig/compilers.xml
-			;;
-			
-		x86_64) 
-			echo "64 bit machine"
-			cp $patch_dir/compilers_x86_64.xml $target_dir/share/gprconfig/compilers.xml
-			;;
-			
-		*) echo "ERROR: unkown architecture. No patch installed.";;
-	esac
-	}
-	
-	
+
+
+
 proc_install_warning()
 	{
 	echo "installation directory for gprbuild: " $target_dir
@@ -151,29 +135,7 @@ proc_clean_up ()
 	rm -rf $install_dir
 	}
 	
-	
-proc_remove ()
-	{
-	echo "removing gprbuild stuff from $target_dir"
-	proc_confirmation
-	
-	echo "removing stuff in $target_dir/bin ..."
-	rm $target_dir/bin/gprbuild
-	rm $target_dir/bin/gprclean
-	rm $target_dir/bin/gprconfig
-	rm $target_dir/bin/gprinstall
-	rm $target_dir/bin/gprls
-	rm $target_dir/bin/gprname
-	
-	echo "removing stuff in $target_dir/share ..."
-	rm -rf $target_dir/share/gpr
-	rm -rf $target_dir/share/gprconfig
-	
-	echo "removing stuff in $target_dir/libexec ..."
-	rm -rf $target_dir/libexec/gprbuild
-	}
 
-	
 	
 ############ MAIN BEGIN #####################################################################
 
@@ -189,10 +151,10 @@ else
 			download_required=no
 			;;
 			
-		remove) 
-			proc_remove
-			exit
-			;;
+# 		remove)
+# 			proc_remove
+# 			exit
+# 			;;
 
 		clean-up) 
 			proc_clean_up
@@ -205,15 +167,15 @@ else
 fi
 
 	
-proc_install_warning
+# proc_install_warning
 
 if [ "$download_required" = "yes" ]; then
 	{
 	proc_make_install_dir
 	cd $install_dir
 	proc_dowload_xmlada
-	# CS: proc_download_gprconfig_kb
-	proc_download_gprbuild
+	proc_download_gprconfig_kb
+ 	proc_download_gprbuild
 	}
 else
 	{
@@ -221,21 +183,17 @@ else
 	}
 fi
 
-#cd gprbuild
-cd gprbuild-community-2019
-build_dir=bootstrap
+proc_bootstrap_gprbuild
+proc_build_xmlada
 proc_build_gprbuild
-proc_install
 
 # change back to base directory
 cd ../../
 
-# install the patch
-proc_patch
 
-echo "gprbuild installation complete."
-echo "run command 'gprconfig' to see if gprbuild works."
-echo "Exit gprconfig with CTRL-C."
+# echo "gprbuild installation complete."
+# echo "run command 'gprconfig' to see if gprbuild works."
+# echo "Exit gprconfig with CTRL-C."
 
 exit
 
