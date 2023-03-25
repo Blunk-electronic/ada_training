@@ -122,9 +122,8 @@ proc_build_gprbuild()
 
 proc_install_warning()
 	{
-	echo "installation directory for gprbuild: " $target_dir
 	echo "WARNING: YOU LAUNCH THIS SCRIPT ON YOUR OWN RISK !!"
-	echo "Make sure you have a backup of" $target_dir "!!"
+	echo "Make sure you have a backup of your system !!"
 	proc_confirmation
 	}
 
@@ -167,7 +166,7 @@ else
 fi
 
 	
-# proc_install_warning
+proc_install_warning
 
 if [ "$download_required" = "yes" ]; then
 	{
@@ -191,9 +190,9 @@ proc_build_gprbuild
 cd ../../
 
 
-# echo "gprbuild installation complete."
-# echo "run command 'gprconfig' to see if gprbuild works."
-# echo "Exit gprconfig with CTRL-C."
+echo "gprbuild installation complete."
+echo "run command 'gprconfig' to see if gprbuild works."
+echo "Exit gprconfig with CTRL-C."
 
 exit
 
