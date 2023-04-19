@@ -1,13 +1,12 @@
-# TARGET = demo_1
+TARGET = nest_1
 
-# VPATH = include
 OBJS = $(TARGET).o
 PREFIX = $(HOME)
 BINDIR = $(PREFIX)/bin
 
 # compile
 .adb.o:
-	gcc -c -gnat2012 $< -I include
+	gcc -c -gnat2012 $<
 .SUFFIXES: .adb .o
 
 # link
