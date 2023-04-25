@@ -1,6 +1,5 @@
 -- This program demonstrates how to search items
 -- in nested containers.
--- It also demonstrates a "dangling cursor" and its side effects.
 
 with ada.text_io; 			use ada.text_io;
 with ada.containers;		use ada.containers;
@@ -8,7 +7,7 @@ with ada.containers.ordered_maps;
 with ada.containers.doubly_linked_lists;
 with ada.strings.bounded;	use ada.strings.bounded;
 
-procedure nest_1 is
+procedure nest_2 is
 	
 	type type_line is record
 		S, E : float := 0.0;
@@ -44,11 +43,12 @@ procedure nest_1 is
 	-- The result is a cursor to the affected line.
 	procedure get_line is 
 		result : pac_lines.cursor;
+
 		
-		procedure query_net (n : in pac_nets.cursor) is
-			-- This creates a local copy of the candidate net
-			-- each time procedure query_net is called:
-			net : type_net renames element (n);
+		procedure query_net (
+			net_name	: in pac_net_name.bounded_string;
+			net			: in type_net)
+		is
 
 			procedure query_line (l : in pac_lines.cursor) is begin
 				-- Test the start point of the candidate line.
@@ -58,25 +58,26 @@ procedure nest_1 is
 					put_line ("L1 " & to_string (element (result)));
 				end if;
 			end query_line;
-			
+
 		begin
 			-- iterate the lines of the candidate net:
-			put_line ("net: " & to_string (key (n)));
+			put_line ("net: " & to_string (net_name));
 			iterate (net.lines, query_line'access);
 
 			-- Output the result:
-			-- "result" may point to a list that does not exist any more
-			-- and becomes a "dangling cursor". So the output may be garbage:
 			put_line ("L2 " & to_string (element (result)));
 		end query_net;
+
 		
+		net_cursor : pac_nets.cursor := nets.first;
 	begin
 		-- iterate the nets:
-		nets.iterate (query_net'access);
+		while net_cursor /= pac_nets.no_element loop
+			query_element (net_cursor, query_net'access);
+			next (net_cursor);
+		end loop;
 
-		-- Output the result:
-		-- "result" may point to a list that does not exist any more
-		-- and becomes a "dangling cursor". So the output may be garbage:
+		-- Output the result. 
 		put_line ("L3 " & to_string (element (result)));
 	end get_line;
 		
@@ -104,7 +105,7 @@ begin
 	-- L1 S: 2.00000E+00 E: 3.00000E+00
 	-- L2 S: 2.00000E+00 E: 3.00000E+00
 	-- net: B
-	-- L2 S: 1.20000E+01 E: 1.30000E+01 -- garbage
-	-- L3 S: 1.69147E-38 E: 0.00000E+00 -- garbage
+	-- L2 S: 2.00000E+00 E: 3.00000E+00 -- correct
+	-- L3 S: 2.00000E+00 E: 3.00000E+00 -- correct
 	
-end nest_1;
+end nest_2;
