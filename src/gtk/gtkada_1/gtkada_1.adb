@@ -15,7 +15,8 @@ procedure gtkada_1 is
 	window : gtk.window.gtk_window;
 	
 begin
-
+	-- THIS IS ALL PREPARATION STUFF:
+	
 	put_line ("init gtkada");
 
 	-- initialize gtkada
@@ -27,9 +28,22 @@ begin
 	-- show the window
 	window.show_all;
 
-	-- All GTK applications must have a Gtk.Main.Main. Control ends here
-	-- and waits for an event to occur (like a key press or a mouse event),
-	-- until Gtk.Main.Main_Quit is called.
+	-- PREPARATION END ------------------------
+
+
+	
+	-- Now the actual drawing of the window starts in the gtk main loop.
+	-- The loop goes on until CTRL-C is pressed.
+	-- There is no other way to terminate the loop because no
+	-- monitoring of any signals takes place. Hence the 
+	-- "destroy signal" (emitted by the window) is not evaluated in this simple
+	-- example.
+
+	-- NOTE: Clicking the "X" in the upper right corner of the window causes
+	-- the window do disappear, but the program gtkada_1 keeps running until
+	-- CTRL-C is pressed.
+	
+	-- All GTK applications must have a Gtk.Main.Main.
 	gtk.main.main;
 	
 end;
