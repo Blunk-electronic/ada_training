@@ -1,4 +1,5 @@
--- This program demonstrates a scrolled window.
+-- This program demonstrates a scrolled window as shown by 
+-- file scrolled.jpg.
 -- The code is based on the program scrolledwindows.c
 -- written by Andrew Krause in his book "Foundations of GTK+ development".
 
@@ -19,7 +20,7 @@ with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
 
-with callbacks;			use callbacks;
+with callbacks;					use callbacks;
 
 
 procedure scrolled is
@@ -34,7 +35,7 @@ procedure scrolled is
 
 	type type_buttons is array (0 .. 9, 0 .. 9) of gtk_button;
 	buttons_1 : type_buttons;
-	img_1 : utf8_string := "BUTTON"; -- CS ?
+	img_1 : utf8_string := "BUTTON";
 
 begin
 	init;
@@ -53,7 +54,7 @@ begin
 	table_1.set_row_spacings (5);
 	table_1.set_col_spacings (5);
 
-	-- Fill the table with buttons:
+	-- Fill the table with buttons (the indexes must start with zero):
 	for i in 0 .. 9 loop
 		for j in 0 .. 9 loop
 			buttons_1 (i,j) := gtk_button_new_from_stock (img_1);
