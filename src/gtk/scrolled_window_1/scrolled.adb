@@ -19,10 +19,10 @@ with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
 
-with callbacks_text_view_2;		use callbacks_text_view_2;
+with callbacks;			use callbacks;
 
 
-procedure text_view_2 is
+procedure scrolled is
 
 	window		: gtk_window;
 	table_1		: gtk_table;
@@ -87,5 +87,5 @@ begin
 
 	window.show_all;
 	gtk.main.main;
-end text_view_2;
+end scrolled;
 

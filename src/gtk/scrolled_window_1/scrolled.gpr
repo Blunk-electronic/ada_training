@@ -1,15 +1,15 @@
 with "gtkada.gpr";
 
- project text_view_2 is
+ project scrolled is
 
 	--for exec_dir use external ("HOME") & "/bin";
 	for exec_dir use ".";
  	for object_dir use "obj";
-	for source_dirs use ("." , "../lib");
+	for source_dirs use ("." , "lib");
 
 
- 	for main use ("text_view_2");
- end text_view_2;
+ 	for main use ("scrolled");
+ end scrolled;
 
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
