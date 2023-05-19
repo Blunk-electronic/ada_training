@@ -19,7 +19,6 @@ with gtk.viewport;				use gtk.viewport;
 with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
-
 with callbacks;					use callbacks;
 
 
@@ -30,7 +29,7 @@ procedure scrolled is
 	swin		: gtk_scrolled_window;
 	vbox		: gtk_vbox;
 
-	horizonal, vertical : gtk_adjustment;
+	horizontal, vertical : gtk_adjustment;
 
 
 	type type_buttons is array (0 .. 9, 0 .. 9) of gtk_button;
@@ -65,9 +64,15 @@ begin
 
 	-- Create a scrolled window:
 	swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
-	horizonal := swin.get_hadjustment;
+	horizontal := swin.get_hadjustment;
 	vertical := swin.get_vadjustment;
 
+	-- Connect the signal "value-changed" of the scrollbars with 
+	-- procedures vertical_moved and horizontal_moved. So the user
+	-- can watch how the signal are emitted:
+	vertical.on_value_changed (vertical_moved'access);
+	horizontal.on_value_changed (horizontal_moved'access);
+	
 	swin.set_border_width (5);
 
 	swin.set_policy ( -- for scrollbars
