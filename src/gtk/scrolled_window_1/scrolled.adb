@@ -15,7 +15,6 @@ with gtk.enums;					--use gtk.enums;
 with gtk.table;					use gtk.table;
 with gtk.button;				use gtk.button;
 with gtk.scrolled_window;		use gtk.scrolled_window;
-with gtk.viewport;				use gtk.viewport;
 with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
@@ -69,7 +68,7 @@ begin
 
 	-- Connect the signal "value-changed" of the scrollbars with 
 	-- procedures vertical_moved and horizontal_moved. So the user
-	-- can watch how the signal are emitted:
+	-- can watch how the signals are emitted:
 	vertical.on_value_changed (vertical_moved'access);
 	horizontal.on_value_changed (horizontal_moved'access);
 	
