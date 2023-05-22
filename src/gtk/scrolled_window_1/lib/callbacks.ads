@@ -5,15 +5,15 @@ with gtk.adjustment;			use gtk.adjustment;
 package callbacks is
 
 	
-	procedure terminate_main (
+	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
 	
 	-- procedure button_clicked (button : access gtk_button_record'class);
 
-	procedure horizontal_moved (
+	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class);
 	
-	procedure vertical_moved (
+	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
 	
 end callbacks;

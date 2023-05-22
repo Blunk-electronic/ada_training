@@ -15,7 +15,6 @@ with gtk.enums;					--use gtk.enums;
 with gtk.table;					use gtk.table;
 with gtk.button;				use gtk.button;
 with gtk.scrolled_window;		use gtk.scrolled_window;
-with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
@@ -26,7 +25,6 @@ procedure scrolled is
 	window		: gtk_window;
 	table_1		: gtk_table;
 	swin		: gtk_scrolled_window;
-	vbox		: gtk_vbox;
 
 	horizontal, vertical : gtk_adjustment;
 
@@ -42,14 +40,14 @@ begin
 	window := gtk_window_new (gtk.enums.WINDOW_TOPLEVEL);
 	
 	window.set_title ("Scrolled Window");
-	window.set_border_width (10);
-	window.set_size_request (400, 300);
+	window.set_border_width (10); -- unit is pixels
+	window.set_size_request (400, 300); -- unit is pixels
 	-- window.set_default_size (300, 200);
-	window.on_destroy (terminate_main'access);
+	window.on_destroy (cb_terminate'access);
 
 	-- Set up a table:
 	table_1 := gtk_table_new (rows => 10, columns => 10, homogeneous => true);
-	table_1.set_row_spacings (5);
+	table_1.set_row_spacings (5); -- unit is pixels
 	table_1.set_col_spacings (5);
 
 	-- Fill the table with buttons (the indexes must start with zero):
@@ -67,10 +65,10 @@ begin
 	vertical := swin.get_vadjustment;
 
 	-- Connect the signal "value-changed" of the scrollbars with 
-	-- procedures vertical_moved and horizontal_moved. So the user
+	-- callback procedures cb_vertical_moved and cb_horizontal_moved. So the user
 	-- can watch how the signals are emitted:
-	vertical.on_value_changed (vertical_moved'access);
-	horizontal.on_value_changed (horizontal_moved'access);
+	vertical.on_value_changed (cb_vertical_moved'access);
+	horizontal.on_value_changed (cb_horizontal_moved'access);
 	
 	swin.set_border_width (5);
 
@@ -83,12 +81,8 @@ begin
 	-- Add table_1 as child to the scrolled window swin:
 	swin.add_with_viewport (table_1); 
 	
-	-- Create a vbox with the scrolled window swin as child:
-	vbox := gtk_vbox_new (homogeneous => true, spacing => 5);
-	vbox.pack_start (child => swin); -- use defaults for the rest
-
-	-- Add the vbox as child to the main window:
-	window.add (vbox);
+	-- Add the scrolled window swin as child to the main window:
+	window.add (swin);
 
 	window.show_all;
 	gtk.main.main;
