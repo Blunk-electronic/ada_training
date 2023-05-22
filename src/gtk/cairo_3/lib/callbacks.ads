@@ -37,6 +37,12 @@ package callbacks is
 		event	: gdk_event_key)
 		return boolean;
 
+
+	function cb_mouse_wheel_rolled (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_scroll)
+		return boolean;
+
 	
 	function cb_draw (
 		canvas	: access gtk_widget_record'class;

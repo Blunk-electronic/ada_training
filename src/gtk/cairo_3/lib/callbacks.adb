@@ -41,6 +41,7 @@ package body callbacks is
 		-- The given event provides a lot of information like
 		-- the button id, x/y position (see the specs of gdk_event_button
 		-- in package gdk.event for more).
+		
 		use glib;
 		event_handled : boolean := true;
 	begin
@@ -95,6 +96,29 @@ package body callbacks is
 		
 		return event_handled;
 	end cb_key_pressed;
+
+
+
+	function cb_mouse_wheel_rolled (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_scroll)
+		return boolean
+	is
+		-- The given event provides a lot of information like
+		-- the direction of rotation, x/y position (see the specs of gdk_event_scroll
+		-- in package gdk.event for more).
+		
+		use glib;		
+		event_handled : boolean := true;
+	begin
+		-- Output the time and the gdk_key_type (which is
+		-- just a number (see gdk.types und gdk.types.keysyms)):
+		put_line ("cb_mouse_wheel_rolled " & image (clock)
+			& " x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y)
+			& " direction " & gdk_scroll_direction'image (event.direction));
+		
+		return event_handled;
+	end cb_mouse_wheel_rolled;
 
 
 	

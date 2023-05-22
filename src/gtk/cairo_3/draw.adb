@@ -88,6 +88,10 @@ begin
 	-- Make the canvas responding to mouse movement:
 	canvas.add_events (gdk.event.pointer_motion_mask);
 	canvas.on_motion_notify_event (cb_mouse_moved'access);
+
+	-- Make the canvas responding to the mouse wheel:
+	canvas.add_events (gdk.event.scroll_mask);
+	canvas.on_scroll_event (cb_mouse_wheel_rolled'access);
 	
 	-- Make the canvas responding to the keyboard:
 	canvas.set_can_focus (true);
