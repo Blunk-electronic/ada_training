@@ -28,7 +28,7 @@ procedure draw is
 
 	window		: gtk_window;
 	swin		: gtk_scrolled_window;
-	canvas		: gtk_drawing_area;
+
 
 	horizontal, vertical : gtk_adjustment;
 
@@ -40,7 +40,7 @@ begin
 	window.set_title ("Canvas");
 	window.set_border_width (10);
 	-- window.set_size_request (300, 200);
-	window.set_default_size (300, 200);
+	window.set_default_size (400, 200);
 	window.on_destroy (cb_terminate'access);
 
 
@@ -64,17 +64,18 @@ begin
 		vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
 
 
-	
+	-- https://stackoverflow.com/questions/11132177/cairo-in-scrollable-drawing-area?rq=1
 	
 	-- Set up the drawing area:
 	gtk_new (canvas);
 
-	-- Set the size of the area required for all the objects
-	-- to be drawn. This is the so called "bounding rectangle"
-	-- around everything to be drawn. The size of the bounding
+	-- Set the minimum size of the canvas (in pixels).
+	-- It is like the wooden frame around a real-world canvas. 
+	-- The size of the bounding
 	-- rectangle MUST be known beforehand of calling the
 	-- callback procedure cb_draw (see below):
-	canvas.set_size_request (600, 200); -- unit is pixels
+	-- canvas.set_size_request (200, 100); -- unit is pixels
+	canvas.set_size_request (4000, 3000); -- unit is pixels
 	
 	canvas.on_draw (cb_draw'access);
 	-- NOTE: No context is declared here, because the canvas widget

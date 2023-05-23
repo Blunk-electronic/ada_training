@@ -8,6 +8,11 @@ with cairo;						use cairo;
 
 package callbacks is
 
+	canvas		: gtk_drawing_area;
+
+	procedure refresh (
+		canvas	: access gtk_widget_record'class);
+	
 	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);

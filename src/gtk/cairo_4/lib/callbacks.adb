@@ -11,6 +11,15 @@ with gtk.main;					use gtk.main;
 
 package body callbacks is
 
+	procedure refresh (
+		canvas	: access gtk_widget_record'class)
+	is
+		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
+	begin
+		drawing_area.queue_draw;
+	end refresh;
+
+	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class) 
 	is begin
@@ -40,8 +49,8 @@ package body callbacks is
 		return boolean
 	is
 		-- The given event provides a lot of information like
-		-- the button id, x/y position (see the specs of gdk_event_button
-		-- in package gdk.event for more).
+		-- the button id, logical pixel x/y position (
+		-- see the specs of gdk_event_button in package gdk.event for more).
 		
 		use glib;
 		event_handled : boolean := true;
@@ -49,7 +58,7 @@ package body callbacks is
 		-- Output the time, button id, x and y position:
 		put_line ("cb_button_pressed " & image (clock) 
 			& " button " & guint'image (event.button)
-			& " x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y));
+			& " logical pixel x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y));
 
 		return event_handled;
 	end cb_button_pressed;
@@ -62,15 +71,19 @@ package body callbacks is
 		return boolean
 	is
 		-- The given event provides a lot of information like
-		-- the x/y position (see the specs of gdk_event_motion
+		-- the logical pixel x/y position (see the specs of gdk_event_motion
 		-- in package gdk.event for more).
 
 		use glib;
 		event_handled : boolean := true;
 	begin
-		-- Output the time and x/y position of the pointer:
-		put_line ("cb_mouse_moved " & image (clock)
-			& " x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y));
+		-- Output the x/y position of the pointer
+		-- in logical an model coordinates:
+		put_line ("cb_mouse_moved "
+			& "logical pixel x/y " 
+			& gdouble'image (event.x) & "/" & gdouble'image (event.y)
+			& " model x/y " 
+			& gdouble'image (event.x/scale_factor) & "/" & gdouble'image (event.y/scale_factor));
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -106,8 +119,8 @@ package body callbacks is
 		return boolean
 	is
 		-- The given event provides a lot of information like
-		-- the direction of rotation, x/y position (see the specs of gdk_event_scroll
-		-- in package gdk.event for more).
+		-- the direction of rotation, logical pixel x/y position
+		-- (see the specs of gdk_event_scroll in package gdk.event for more).
 		
 		use glib;		
 		use gdk.types;
@@ -120,20 +133,22 @@ package body callbacks is
 		-- Output the time and the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
 		put_line ("cb_mouse_wheel_rolled " & image (clock)
-			& " x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y)
+			& " logical pixel x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y)
 			& " direction " & gdk_scroll_direction'image (direction));
 
 
-		-- If CTRL is being pressed, zoom in our out:
+		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 			case direction is
 				when SCROLL_UP => 
 					scale_factor := scale_factor * 2.0;
-					put_line ("zoom in " & gdouble'image (scale_factor));
+					put_line ("zoom in.  scale " & gdouble'image (scale_factor));
+					refresh (canvas);
 
 				when SCROLL_DOWN => 
 					scale_factor := scale_factor * 0.5;
-					put_line ("zoom out" & gdouble'image (scale_factor));
+					put_line ("zoom out. scale " & gdouble'image (scale_factor));
+					refresh (canvas);
 					
 				when others => null;
 			end case;
@@ -158,7 +173,7 @@ package body callbacks is
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 
 		scale (context, scale_factor, scale_factor);
-		rectangle (context, 1.0, 1.0, 500.0, 100.0);
+		rectangle (context, 1.0, 1.0, 400.0, 200.0);
 		stroke (context);
 
 		return event_handled;
