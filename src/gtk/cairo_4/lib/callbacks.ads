@@ -44,8 +44,7 @@ package callbacks is
 		return boolean;
 
 
-	scale_factor : gdouble := 1.0;
-
+	
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)

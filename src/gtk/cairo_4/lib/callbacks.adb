@@ -64,6 +64,46 @@ package body callbacks is
 	end cb_button_pressed;
 
 
+
+	scale_x : gdouble := 1.0;
+	scale_y : gdouble := -1.0; -- because y increases upwards in this world
+	offset_x : constant gdouble := 0.0;
+	offset_y : constant gdouble := 1000.0;
+
+	
+	procedure increase_scale is 
+		m : constant gdouble := 2.0;
+	begin
+		scale_x := scale_x * m;
+		scale_y := scale_y * m;
+	end increase_scale;
+
+	
+	procedure decrease_scale is 
+		m : constant gdouble := 2.0;
+	begin
+		scale_x := scale_x / m;
+		scale_y := scale_y / m;
+	end decrease_scale;
+	
+
+	-- Translates from canvas x-coordinate to model coordinate:
+	function x_to_model (
+		x : in gdouble)
+		return gdouble
+	is begin
+		return (x - offset_x) / scale_x;
+	end x_to_model;
+
+
+	-- Translates from canvas y-coordinate to model coordinate:	
+	function y_to_model (
+		y : in gdouble)
+		return gdouble
+	is begin
+		return (y - offset_y) / scale_y;
+	end y_to_model;
+
 	
 	function cb_mouse_moved (
 		canvas	: access gtk_widget_record'class;
@@ -78,13 +118,17 @@ package body callbacks is
 		event_handled : boolean := true;
 	begin
 		-- Output the x/y position of the pointer
-		-- in logical an model coordinates:
+		-- in logical and model coordinates:
 		put_line ("cb_mouse_moved "
 			& "logical pixel x/y " 
 			& gdouble'image (event.x) & "/" & gdouble'image (event.y)
-			& " model x/y " 
-			& gdouble'image (event.x/scale_factor) & "/" & gdouble'image (event.y/scale_factor));
-		
+
+			-- The model-coordinates must be reverse-calculated
+			-- from the logical pixel coordinates:
+			& " model x/y "
+			& gdouble'image (x_to_model (event.x)) & "/" 
+			& gdouble'image (y_to_model (event.y)));
+											  
 		return event_handled;
 	end cb_mouse_moved;
 
@@ -141,13 +185,13 @@ package body callbacks is
 		if (event.state and accel_mask) = control_mask then
 			case direction is
 				when SCROLL_UP => 
-					scale_factor := scale_factor * 2.0;
-					put_line ("zoom in.  scale " & gdouble'image (scale_factor));
+					increase_scale;
+					put_line ("zoom in.  scale " & gdouble'image (scale_x));
 					refresh (canvas);
 
 				when SCROLL_DOWN => 
-					scale_factor := scale_factor * 0.5;
-					put_line ("zoom out. scale " & gdouble'image (scale_factor));
+					decrease_scale;
+					put_line ("zoom out. scale " & gdouble'image (scale_x));
 					refresh (canvas);
 					
 				when others => null;
@@ -158,7 +202,6 @@ package body callbacks is
 	end cb_mouse_wheel_rolled;
 
 
-	
 	
 	function cb_draw (
 		canvas	: access gtk_widget_record'class;
@@ -172,10 +215,19 @@ package body callbacks is
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 
-		scale (context, scale_factor, scale_factor);
-		rectangle (context, 1.0, 1.0, 400.0, 200.0);
+		-- Offset the origin of the drawing:
+		translate (context, offset_x, offset_y);
+		
+		-- All scaling operations have the new origin
+		-- as its center:
+		scale (context, scale_x, scale_y);
+
+		-- The rectangle is specified in real-world model coordinates
+		-- where y increases upwards:
+		rectangle (context, 0.0, 0.0, 400.0, 200.0);
 		stroke (context);
 
+		-- destroy (context); -- exception assertion failed ...
 		return event_handled;
 	end cb_draw;
 
