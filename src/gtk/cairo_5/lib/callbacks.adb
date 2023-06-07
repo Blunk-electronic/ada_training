@@ -8,6 +8,8 @@ with ada.calendar.formatting;	use ada.calendar.formatting;
 
 with gtk.main;					use gtk.main;
 
+with geometry;					use geometry;
+
 
 package body callbacks is
 
@@ -54,106 +56,16 @@ package body callbacks is
 		
 		use glib;
 		event_handled : boolean := true;
+		point : constant type_point_canvas := (event.x, event.y);
 	begin
-		-- Output the time, button id, x and y position:
-		put_line ("cb_button_pressed " & image (clock) 
+		-- Output the button id, x and y position:
+		put_line ("cb_button_pressed "
 			& " button " & guint'image (event.button)
-			& " logical pixel x/y " & gdouble'image (event.x) & "/" & gdouble'image (event.y));
+			& to_string (point));
 
 		return event_handled;
 	end cb_button_pressed;
 
-
-
-	scale : gdouble := 1.0;
-	scale_old : gdouble := 1.0;
-	
-	offset_x : constant gdouble :=    10.0;
-	offset_y : constant gdouble := -1000.0;
-
-	zoom_center_x_m : gdouble := 0.0;
-	zoom_center_y_m : gdouble := 0.0;
-
-	zoom_center_x_c : gdouble := 0.0;
-	zoom_center_y_c : gdouble := 0.0;
-
-	translate_x : gdouble := 0.0;
-	translate_y : gdouble := 0.0;
-
-	
-	procedure increase_scale is 
-		m : constant gdouble := 2.0;
-	begin
-		scale_old := scale;
-		scale := scale * m;
-	end increase_scale;
-	
-	procedure decrease_scale is 
-		m : constant gdouble := 2.0;
-	begin
-		scale_old := scale;
-		scale := scale / m;
-	end decrease_scale;
-
-	
-
-
-
-	-- Translates from model x-coordinate to canvas coordinate:	
-	function x_to_canvas (
-		x : in gdouble)
-		return gdouble
-	is
-		result : gdouble;
-	begin
-		--result := x + (offset_x * scale_x);
-		--result := (x + offset_x) * scale;
-		result := (x * scale + offset_x);
-		--result := (x * scale + offset_x) + translate_x;
-		return result;
-	end x_to_canvas;
-		
-	-- Translates from model y-coordinate to canvas coordinate:	
-	function y_to_canvas (
-		y : in gdouble)
-		return gdouble
-	is
-		result : gdouble;
-	begin
-		-- result := - (y + (offset_y * scale_y));
-		-- result := -(y + offset_y) * scale;
-		result := -(y * scale + offset_y);
-		-- result := -(y * scale + offset_y) + translate_y;
-		return result;
-	end y_to_canvas;
-
-
-
-	-- Translates from canvas x-coordinate to model coordinate:
-	function x_to_model (
-		x : in gdouble)
-		return gdouble
-	is
-		result : gdouble;
-	begin
-		--result := x - (offset_x * scale_x);
-		-- result := x / scale - offset_x;
-		result := (x - translate_x - offset_x) / scale;
-		return result;
-	end x_to_model;
-
-	-- Translates from canvas y-coordinate to model coordinate:	
-	function y_to_model (
-		y : in gdouble)
-		return gdouble
-	is 
-		result : gdouble;
-	begin
-		--result := -y - (offset_y * scale_y);
-		-- result := -y / scale - offset_y;
-		result := ( -(y - translate_y) - offset_y) / scale;
-		return result;
-	end y_to_model;
 
 
 	
@@ -163,34 +75,22 @@ package body callbacks is
 		event	: gdk_event_motion)
 		return boolean
 	is
-		-- The given event provides a lot of information like
-		-- the logical pixel x/y position (see the specs of gdk_event_motion
-		-- in package gdk.event for more).
-
 		use glib;
 		event_handled : boolean := true;
 
-		model_x : constant gdouble := x_to_model (event.x);
-		model_y : constant gdouble := y_to_model (event.y);
+		cp : constant type_point_canvas := (event.x, event.y);
+		mp : constant type_point_model := to_model (cp, geometry.scale, translate_offset);
 	begin
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
 		put_line (
-			"logical pixel x/y " 
-			& gdouble'image (event.x) & "/" & gdouble'image (event.y)
-
-			-- The model-coordinates must be reverse-calculated
-			-- from the logical pixel coordinates:
-			& " model x/y "
-			& gdouble'image (model_x) & "/" 
-			& gdouble'image (model_y)
+			to_string (cp)
+			& " " & to_string (mp)
 
 			-- TEST:
 			-- The canvas-coordinates must match
 			-- the original logical pixel coordinates:
-			-- & " canvas x/y "
-			-- & gdouble'image (x_to_canvas (model_x)) & "/" 
-			-- & gdouble'image (y_to_canvas (model_y))
+			-- & to_string (to_canvas (mp, geometry.scale, translate_offset))
 			);
 		
 		return event_handled;
@@ -267,13 +167,13 @@ package body callbacks is
 				when SCROLL_UP => 
 					increase_scale;
 					set_zoom_center_model;
-					put_line ("zoom in.  scale " & gdouble'image (scale));
+					put_line ("zoom in.  scale " & gdouble'image (geometry.scale));
 					refresh (canvas);
 
 				when SCROLL_DOWN => 
 					decrease_scale;
 					set_zoom_center_model;
-					put_line ("zoom out. scale " & gdouble'image (scale));
+					put_line ("zoom out. scale " & gdouble'image (geometry.scale));
 					refresh (canvas);
 					
 				when others => null;
@@ -314,7 +214,7 @@ package body callbacks is
 		-- rectangle (context, 0.0 - zoom_center_x_m, 0.0 - zoom_center_y_m, 400.0, 200.0);
 
 		rectangle (context, x_to_canvas (0.0), y_to_canvas (0.0),
-			400.0 * scale, -200.0 * scale); -- ok ohne zoom
+			400.0 * geometry.scale, -200.0 * geometry.scale); -- ok ohne zoom
 
 		-- rectangle (context, 
 		-- 	x_to_canvas (0.0 - zoom_center_x_m), 
