@@ -31,56 +31,35 @@ package geometry is
 
 	function to_canvas (
 		point 		: in type_point_model;
-		scale		: in gdouble;
-		translate	: in type_point_canvas)
+		scale		: in gdouble)
 		return type_point_canvas;
 
+
+	type type_rectangle is record
+		lower_left_corner : type_point_model := (0.0, 0.0);
+		width : float := 400.0;
+		height : float := 200.0;
+	end record;
+		
 	
+	scale_factor : gdouble := 1.0;
+
 	
-	scale : gdouble := 1.0;
-	scale_old : gdouble := 1.0;
+	function to_string (
+		scale : in gdouble)
+		return string;
+
 	
-	offset_x : constant gdouble :=    10.0;
-	offset_y : constant gdouble := -1000.0;
 	offset : constant type_point_canvas := (10.0, -1000.0);
 											   
-	zoom_center_x_m : gdouble := 0.0;
-	zoom_center_y_m : gdouble := 0.0;
-
-	zoom_center_x_c : gdouble := 0.0;
-	zoom_center_y_c : gdouble := 0.0;
-
-	translate_x : gdouble := 0.0;
-	translate_y : gdouble := 0.0;
 	translate_offset : type_point_canvas;
 
+
+	scale_increment : constant gdouble := 2.0;
+	
 	procedure increase_scale;
 	procedure decrease_scale;
 
-
-	-- Translates from model x-coordinate to canvas coordinate:	
-	function x_to_canvas (
-		x : in gdouble)
-		return gdouble;
-
-	
-	-- Translates from model y-coordinate to canvas coordinate:	
-	function y_to_canvas (
-		y : in gdouble)
-		return gdouble;
-	
-
-
-	-- Translates from canvas x-coordinate to model coordinate:
-	function x_to_model (
-		x : in gdouble)
-		return gdouble;
-	
-
-	-- Translates from canvas y-coordinate to model coordinate:	
-	function y_to_model (
-		y : in gdouble)
-		return gdouble;
 
 	
 end geometry;
