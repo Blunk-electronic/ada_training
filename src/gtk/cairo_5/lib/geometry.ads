@@ -49,7 +49,7 @@ package geometry is
 
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin:
-	offset : constant type_point_canvas := (10.0, -1000.0);
+	offset : constant type_point_canvas := (100.0, -300.0);
 
 	-- The offset by which all draw operations on the canvas
 	-- are translated when the operator zooms to the mouse pointer:

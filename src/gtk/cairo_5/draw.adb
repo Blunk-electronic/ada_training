@@ -40,7 +40,7 @@ begin
 	window.set_title ("Canvas");
 	window.set_border_width (10);
 	-- window.set_size_request (300, 200);
-	window.set_default_size (400, 200);
+	window.set_default_size (1000, 500);
 	window.on_destroy (cb_terminate'access);
 
 
@@ -64,8 +64,6 @@ begin
 		vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
 
 
-	-- https://stackoverflow.com/questions/11132177/cairo-in-scrollable-drawing-area?rq=1
-	
 	-- Set up the drawing area:
 	gtk_new (canvas);
 
