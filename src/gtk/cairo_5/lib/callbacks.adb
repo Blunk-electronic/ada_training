@@ -204,8 +204,8 @@ package body callbacks is
 		
 		rectangle (context, 
 			cp.x, cp.y,	-- lower left corner
-			gdouble (R.width)  *   scale_factor,   -- width
-			gdouble (R.height) * (-scale_factor)); -- height
+			gdouble (R.width)  * gdouble  (scale_factor),  -- width
+			gdouble (R.height) * gdouble (-scale_factor)); -- height
 
 
 		
