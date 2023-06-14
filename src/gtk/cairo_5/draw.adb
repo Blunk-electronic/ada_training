@@ -1,7 +1,12 @@
 -- This program demonstrates a drawing area - a so called 
 -- canvas (german: Leinwand) inside a scrolled window.
--- It draws a red rectangle in the upper left corner
--- as shown in image file draw.jpg.
+-- In this example we distinguish between canvas-coordinates
+-- and real-world-model-coordinates.
+
+-- A simple zoom-in/out-at-mouse-pointer solution is provided here.
+
+-- In this world the real-world coordinates have the y-axis going
+-- upwards !
 
 -- Signals emitted by the canvas are output on the 
 -- console so that the user can watch how callback
