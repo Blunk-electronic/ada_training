@@ -44,8 +44,8 @@ begin
 	window := gtk_window_new (WINDOW_TOPLEVEL);
 	window.set_title ("Canvas");
 	window.set_border_width (10);
-	-- window.set_size_request (300, 200);
-	window.set_default_size (1000, 500);
+	window.set_size_request (500, 300);
+	-- window.set_default_size (1000, 500);
 	window.on_destroy (cb_terminate'access);
 
 
@@ -77,8 +77,8 @@ begin
 	-- The size of the bounding
 	-- rectangle MUST be known beforehand of calling the
 	-- callback procedure cb_draw (see below):
-	-- canvas.set_size_request (200, 100); -- unit is pixels
-	canvas.set_size_request (4000, 3000); -- unit is pixels
+	-- canvas.set_size_request (400, 200); -- unit is pixels
+	canvas.set_size_request (800, 400); -- unit is pixels
 	
 	canvas.on_draw (cb_draw'access);
 	-- NOTE: No context is declared here, because the canvas widget
