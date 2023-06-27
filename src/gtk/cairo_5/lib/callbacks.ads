@@ -10,6 +10,11 @@ package callbacks is
 
 	canvas		: gtk_drawing_area;
 
+	horizontal, vertical : gtk_adjustment;
+	
+	procedure adjust_canvas_size;
+	
+	
 	procedure refresh (
 		canvas	: access gtk_widget_record'class);
 	

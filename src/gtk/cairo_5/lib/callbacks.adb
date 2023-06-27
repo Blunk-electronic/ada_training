@@ -13,6 +13,42 @@ with geometry;					use geometry;
 
 package body callbacks is
 
+
+	procedure show_adjustments is 
+		v_lower : gdouble := vertical.get_lower;
+		v_value : gdouble := vertical.get_value;
+		v_upper : gdouble := vertical.get_upper;
+		v_page  : gdouble := vertical.get_page_size;
+	begin
+		put_line ("v adjustments");
+		put_line ("lower" & gdouble'image (v_lower));
+		put_line ("upper" & gdouble'image (v_upper));
+		put_line ("page " & gdouble'image (v_page));
+		put_line ("value" & gdouble'image (v_value));
+	end;
+				  
+	
+	procedure adjust_canvas_size is 
+		width, height : gint;
+	begin
+		canvas.get_size_request (width, height);
+		put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+		
+		-- canvas.set_size_request (
+		-- 	gint (gdouble (width)  * gdouble (scale_factor)),
+		-- 	gint (gdouble (height) * gdouble (scale_factor)));
+
+		canvas.set_size_request (
+			gint (800.0 * gdouble (scale_factor)),
+			gint (400.0 * gdouble (scale_factor)));
+
+		
+		canvas.get_size_request (width, height);
+		put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
+	end adjust_canvas_size;
+
+
+	
 	procedure refresh (
 		canvas	: access gtk_widget_record'class)
 	is
@@ -41,6 +77,7 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
+		show_adjustments;
 	end cb_vertical_moved;
 
 	
@@ -75,7 +112,7 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		cp : constant type_point_canvas := (event.x, event.y);
-		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset);
+		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
 	begin
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
@@ -131,9 +168,9 @@ package body callbacks is
 
 		-- The corresponding real-world point (in the model)
 		-- according to the CURRENT (old) scale_factor and translate_offset:
-		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset);
+		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
 
-
+		
 		-- After changing the scale_factor, the translate_offset must
 		-- be calculated anew. When the actual drawing takes place (see function cb_draw)
 		-- then the drawing will be dragged back by the translate_offset
@@ -142,24 +179,50 @@ package body callbacks is
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		procedure compute_translate_offset is 
 			cp_after_scale : type_point_canvas;
-		begin
+		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			cp_after_scale := to_canvas (mp, scale_factor);
-			put_line ("cp after scale " & to_string (cp_after_scale));
+			cp_after_scale := to_canvas (mp, scale_factor, base_offset);
+			put_line ("cp after scale   " & to_string (cp_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
 			-- drawing must be dragged-back to the given pointer position:
 			translate_offset.x := -(cp_after_scale.x - cp.x);
 			translate_offset.y := -(cp_after_scale.y - cp.y);
+			
+			--put_line ("translate offset " & to_string (translate_offset));
 
-			put_line ("translate offset " & to_string (translate_offset));
+			-- show_adjustments;
+			adjust_canvas_size;
 		end compute_translate_offset;
+
+
+		procedure set_offset_and_h_adjustment is
+			tr : type_point_canvas;
+			v_corr : gdouble := 0.0;
+		begin
+			tr := to_canvas (top_right, scale_factor, base_offset_default);
+			if tr.y < 0.0 then
+				put_line ("top right excess " & to_string (tr));
+				base_offset.y := base_offset_default.y + tr.y;
+				put_line ("base offset y    " & gdouble'image (base_offset.y));
+
+				v_corr := -tr.y;
+				put_line ("v_corr " & gdouble'image (v_corr));
+				
+			else
+				base_offset := base_offset_default;
+				v_corr := 0.0;
+			end if;
+			
+			vertical.set_value (v_corr);
+		end set_offset_and_h_adjustment;
 
 		
 	begin
 		-- Output the time and the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
+		new_line;
 		put_line ("mouse_wheel_rolled "
 			& to_string (cp)
 			& " direction " & gdk_scroll_direction'image (direction));
@@ -173,12 +236,14 @@ package body callbacks is
 					increase_scale; -- increases the scale_factor
 					put_line ("zoom in  " & to_string (scale_factor));
 					compute_translate_offset;
+					set_offset_and_h_adjustment;
 					refresh (canvas);
 
 				when SCROLL_DOWN => 
 					decrease_scale; -- decrease the scale_factor
 					put_line ("zoom out " & to_string (scale_factor));
 					compute_translate_offset;
+					set_offset_and_h_adjustment;
 					refresh (canvas);
 					
 				when others => null;
@@ -200,32 +265,42 @@ package body callbacks is
 
 		-- NOTE: The rectangle is specified in real-world model coordinates
 		-- where y increases upwards.
-		R : type_rectangle;
+		-- R : type_rectangle;
 
 		
 		cp : type_point_canvas;
 	begin
 		put_line ("cb_draw " & image (clock));
 
+		-- show_adjustments;
+
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 
-		-- Offset the origin of the drawing:
+		-- Drag the drawing by the current translate_offset.
+		-- The translate_offset has been calculated earlier by 
+		-- procedure cb_mouse_wheel_rolled:
 		translate (context, translate_offset.x, translate_offset.y);
 		
-		
-		cp := to_canvas (R.lower_left_corner, scale_factor);
-		
+		-- Compute the canvas-point where the lower-left corner
+		-- of the rectangle is:
+		cp := to_canvas (object.lower_left_corner, scale_factor, base_offset);
+
+		-- Draw the rectangle:
 		rectangle (context, 
 			cp.x, cp.y,	-- lower left corner
-			gdouble (R.width)  * gdouble  (scale_factor),  -- width
-			gdouble (R.height) * gdouble (-scale_factor)); -- height
-
+			gdouble (object.width)  * gdouble  (scale_factor),  -- width
+			gdouble (object.height) * gdouble (-scale_factor)); -- height
 
 		
 		stroke (context);
 
 		-- destroy (context); -- exception assertion failed ...
+
+		-- if v_corr_required then
+		-- 	vertical.set_value (v_corr);
+		-- end if;
+		
 		return event_handled;
 	end cb_draw;
 

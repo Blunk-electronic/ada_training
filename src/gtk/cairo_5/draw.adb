@@ -35,15 +35,13 @@ procedure draw is
 	swin		: gtk_scrolled_window;
 
 
-	horizontal, vertical : gtk_adjustment;
-
 begin
 	init;
 
 	-- Set up the main window::
 	window := gtk_window_new (WINDOW_TOPLEVEL);
 	window.set_title ("Canvas");
-	window.set_border_width (10);
+	-- window.set_border_width (10);
 	window.set_size_request (500, 300);
 	-- window.set_default_size (1000, 500);
 	window.on_destroy (cb_terminate'access);
@@ -62,7 +60,7 @@ begin
 	vertical.on_value_changed (cb_vertical_moved'access);
 	horizontal.on_value_changed (cb_horizontal_moved'access);
 	
-	swin.set_border_width (5);
+	-- swin.set_border_width (5);
 
 	swin.set_policy ( -- for scrollbars
 		hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 

@@ -13,16 +13,17 @@ package body geometry is
 	
 	procedure increase_scale is begin
 		scale_factor := scale_factor * scale_increment;
-
+		
 		exception 
 			when constraint_error =>
 				put_line ("upper scale limit reached");
 			when others => null;
 	end increase_scale;
+
 	
 	procedure decrease_scale is begin
 		scale_factor := scale_factor / scale_increment;
-
+		
 		exception 
 			when constraint_error => 
 				put_line ("lower scale limit reached");
@@ -48,10 +49,12 @@ package body geometry is
 	end to_string;
 
 
+
 	function to_model (
 		point		: in type_point_canvas;
 		scale		: in type_scale_factor;
-		translate	: in type_point_canvas)
+		translate	: in type_point_canvas;
+		offset		: in type_point_canvas)
 		return type_point_model
 	is 
 		result : type_point_model;
@@ -64,7 +67,8 @@ package body geometry is
 
 	function to_canvas (
 		point 		: in type_point_model;
-		scale		: in type_scale_factor)
+		scale		: in type_scale_factor;
+		offset		: in type_point_canvas)
 		return type_point_canvas
 	is
 		result : type_point_canvas;
