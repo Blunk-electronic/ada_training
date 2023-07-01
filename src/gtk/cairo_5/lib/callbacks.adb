@@ -197,7 +197,7 @@ package body callbacks is
 		end compute_translate_offset;
 
 
-		procedure set_offset_and_h_adjustment is
+		procedure set_offset_and_v_adjustment is
 			tr : type_point_canvas;
 			v_corr : gdouble := 0.0;
 		begin
@@ -207,7 +207,10 @@ package body callbacks is
 				base_offset.y := base_offset_default.y + tr.y;
 				put_line ("base offset y    " & gdouble'image (base_offset.y));
 
-				v_corr := -tr.y;
+				--v_corr := -tr.y;
+				show_adjustments;
+				v_corr := vertical.get_value + (-tr.y);
+				show_adjustments;
 				put_line ("v_corr " & gdouble'image (v_corr));
 				
 			else
@@ -216,7 +219,7 @@ package body callbacks is
 			end if;
 			
 			vertical.set_value (v_corr);
-		end set_offset_and_h_adjustment;
+		end set_offset_and_v_adjustment;
 
 		
 	begin
@@ -236,14 +239,14 @@ package body callbacks is
 					increase_scale; -- increases the scale_factor
 					put_line ("zoom in  " & to_string (scale_factor));
 					compute_translate_offset;
-					set_offset_and_h_adjustment;
+					set_offset_and_v_adjustment;
 					refresh (canvas);
 
 				when SCROLL_DOWN => 
 					decrease_scale; -- decrease the scale_factor
 					put_line ("zoom out " & to_string (scale_factor));
 					compute_translate_offset;
-					set_offset_and_h_adjustment;
+					set_offset_and_v_adjustment;
 					refresh (canvas);
 					
 				when others => null;
