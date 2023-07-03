@@ -10,7 +10,10 @@ package callbacks is
 
 	canvas		: gtk_drawing_area;
 
-	horizontal, vertical : gtk_adjustment;
+	horizontal, vertical : gtk_adjustment; -- CS rename to scrollbar_h and scrollbar_v
+	v_user : gdouble := 0.0;
+	keep_v_user : boolean := false;
+
 	
 	procedure adjust_canvas_size;
 	

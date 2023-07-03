@@ -32,7 +32,7 @@ package body callbacks is
 		width, height : gint;
 	begin
 		canvas.get_size_request (width, height);
-		put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+		-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
 		
 		-- canvas.set_size_request (
 		-- 	gint (gdouble (width)  * gdouble (scale_factor)),
@@ -44,7 +44,7 @@ package body callbacks is
 
 		
 		canvas.get_size_request (width, height);
-		put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
+		-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
 	end adjust_canvas_size;
 
 
@@ -77,6 +77,12 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
+
+		if not keep_v_user then
+			v_user := vertical.get_value;
+		end if;
+		keep_v_user := false;
+		
 		show_adjustments;
 	end cb_vertical_moved;
 
@@ -182,7 +188,7 @@ package body callbacks is
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
 			cp_after_scale := to_canvas (mp, scale_factor, base_offset);
-			put_line ("cp after scale   " & to_string (cp_after_scale));
+			-- put_line ("cp after scale   " & to_string (cp_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
@@ -200,25 +206,33 @@ package body callbacks is
 		procedure set_offset_and_v_adjustment is
 			tr : type_point_canvas;
 			v_corr : gdouble := 0.0;
+			canvas_height : gint;
+			canvas_width : gint;
 		begin
 			tr := to_canvas (top_right, scale_factor, base_offset_default);
 			if tr.y < 0.0 then
-				put_line ("top right excess " & to_string (tr));
+				-- put_line ("top right excess " & to_string (tr));
 				base_offset.y := base_offset_default.y + tr.y;
-				put_line ("base offset y    " & gdouble'image (base_offset.y));
+				-- put_line ("base offset y    " & gdouble'image (base_offset.y));
 
-				--v_corr := -tr.y;
-				show_adjustments;
-				v_corr := vertical.get_value + (-tr.y);
-				show_adjustments;
+				v_corr := -tr.y; -- ok
+				v_corr := v_user + v_corr;
 				put_line ("v_corr " & gdouble'image (v_corr));
+				put_line ("v_user " & gdouble'image (v_user));
+				-- show_adjustments;
+
+				canvas.get_size_request (canvas_width, canvas_height);
+				vertical.set_upper (gdouble (canvas_height));
+				show_adjustments;
 				
 			else
 				base_offset := base_offset_default;
 				v_corr := 0.0;
 			end if;
-			
+
+			keep_v_user := true;
 			vertical.set_value (v_corr);
+			-- show_adjustments;
 		end set_offset_and_v_adjustment;
 
 		
@@ -253,7 +267,8 @@ package body callbacks is
 			end case;
 
 		end if;
-		
+
+		-- show_adjustments;
 		return event_handled;
 	end cb_mouse_wheel_rolled;
 
@@ -265,16 +280,10 @@ package body callbacks is
 		return boolean
 	is
 		event_handled : boolean := true;
-
-		-- NOTE: The rectangle is specified in real-world model coordinates
-		-- where y increases upwards.
-		-- R : type_rectangle;
-
-		
 		cp : type_point_canvas;
 	begin
 		put_line ("cb_draw " & image (clock));
-
+		
 		-- show_adjustments;
 
 		set_line_width (context, 1.0);
@@ -299,10 +308,6 @@ package body callbacks is
 		stroke (context);
 
 		-- destroy (context); -- exception assertion failed ...
-
-		-- if v_corr_required then
-		-- 	vertical.set_value (v_corr);
-		-- end if;
 		
 		return event_handled;
 	end cb_draw;
