@@ -31,20 +31,22 @@ package body callbacks is
 	procedure adjust_canvas_size is 
 		width, height : gint;
 	begin
-		canvas.get_size_request (width, height);
-		-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
-		
-		-- canvas.set_size_request (
-		-- 	gint (gdouble (width)  * gdouble (scale_factor)),
-		-- 	gint (gdouble (height) * gdouble (scale_factor)));
+		if scale_factor >= 1.0 then
+			canvas.get_size_request (width, height);
+			-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+			
+			-- canvas.set_size_request (
+			-- 	gint (gdouble (width)  * gdouble (scale_factor)),
+			-- 	gint (gdouble (height) * gdouble (scale_factor)));
 
-		canvas.set_size_request (
-			gint (800.0 * gdouble (scale_factor)),
-			gint (400.0 * gdouble (scale_factor)));
+			canvas.set_size_request (
+				gint (800.0 * gdouble (scale_factor)),
+				gint (400.0 * gdouble (scale_factor)));
 
-		
-		canvas.get_size_request (width, height);
-		-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
+			
+			canvas.get_size_request (width, height);
+			-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
+		end if;
 	end adjust_canvas_size;
 
 
@@ -75,11 +77,15 @@ package body callbacks is
 	
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class)
-	is begin
+	is 
+		-- v_delta : gdouble := vertical.get_value - v_user;
+	begin
 		put_line ("vertical moved " & image (clock));
 
 		if not keep_v_user then
 			v_user := vertical.get_value;
+			-- v_user := v_delta;
+			put_line ("v_user set to " & gdouble'image (v_user));
 		end if;
 		keep_v_user := false;
 		
@@ -211,7 +217,8 @@ package body callbacks is
 		begin
 			tr := to_canvas (top_right, scale_factor, base_offset_default);
 			if tr.y < 0.0 then
-				-- put_line ("top right excess " & to_string (tr));
+				-- put_line ("top excess");
+				put_line ("top right excess " & to_string (tr));
 				base_offset.y := base_offset_default.y + tr.y;
 				-- put_line ("base offset y    " & gdouble'image (base_offset.y));
 
@@ -223,16 +230,18 @@ package body callbacks is
 
 				canvas.get_size_request (canvas_width, canvas_height);
 				vertical.set_upper (gdouble (canvas_height));
-				show_adjustments;
+				-- show_adjustments;
 				
 			else
+				put_line ("NO top excess");
 				base_offset := base_offset_default;
-				v_corr := 0.0;
+				-- v_corr := 0.0;
+				v_corr := v_user;
 			end if;
 
 			keep_v_user := true;
 			vertical.set_value (v_corr);
-			-- show_adjustments;
+			show_adjustments;
 		end set_offset_and_v_adjustment;
 
 		
