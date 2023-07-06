@@ -77,20 +77,44 @@ package body callbacks is
 	
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class)
-	is 
-		-- v_delta : gdouble := vertical.get_value - v_user;
-	begin
+	is begin
 		put_line ("vertical moved " & image (clock));
-
-		if not keep_v_user then
-			v_user := vertical.get_value;
-			-- v_user := v_delta;
-			put_line ("v_user set to " & gdouble'image (v_user));
-		end if;
-		keep_v_user := false;
-		
 		show_adjustments;
 	end cb_vertical_moved;
+
+
+	function cb_scrollbar_v_pressed (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+	begin
+		new_line;
+		put_line ("cb_scrollbar_v_pressed");
+		v_user_old := vertical.get_value;
+
+		return event_handled;
+	end cb_scrollbar_v_pressed;
+
+
+	function cb_scrollbar_v_released (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+		v_delta : gdouble := vertical.get_value - v_user_old;
+	begin
+		new_line;
+		put_line ("cb_scrollbar_v_released");
+		v_user := v_user + v_delta;
+		put_line ("v_user set to " & gdouble'image (v_user));
+		-- show_adjustments;
+		
+		return event_handled;
+	end cb_scrollbar_v_released;
+
 
 	
 
@@ -126,17 +150,18 @@ package body callbacks is
 		cp : constant type_point_canvas := (event.x, event.y);
 		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
 	begin
+		null;
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
-		put_line (
-			to_string (cp)
-			& " " & to_string (mp)
+		-- put_line (
+		-- 	to_string (cp)
+		-- 	& " " & to_string (mp)
 
 			-- TEST:
 			-- The canvas-coordinates must match
 			-- the original logical pixel coordinates:
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
-			);
+			-- );
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -239,7 +264,7 @@ package body callbacks is
 				v_corr := v_user;
 			end if;
 
-			keep_v_user := true;
+			-- keep_v_user := true;
 			vertical.set_value (v_corr);
 			show_adjustments;
 		end set_offset_and_v_adjustment;

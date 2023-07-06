@@ -59,6 +59,11 @@ begin
 	-- can watch how the signals are emitted:
 	vertical.on_value_changed (cb_vertical_moved'access);
 	horizontal.on_value_changed (cb_horizontal_moved'access);
+
+	scrollbar_v := swin.get_vscrollbar;
+	scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
+	scrollbar_v.on_button_release_event (cb_scrollbar_v_released'access);
+
 	
 	-- swin.set_border_width (5);
 

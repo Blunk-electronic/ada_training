@@ -3,6 +3,7 @@ with gdk.event;					use gdk.event;
 with gtk.widget;				use gtk.widget;
 with gtk.button;				use gtk.button;
 with gtk.adjustment;			use gtk.adjustment;
+with gtk.scrollbar;				use gtk.scrollbar;
 with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
@@ -10,9 +11,10 @@ package callbacks is
 
 	canvas		: gtk_drawing_area;
 
-	horizontal, vertical : gtk_adjustment; -- CS rename to scrollbar_h and scrollbar_v
-	v_user : gdouble := 0.0;
-	keep_v_user : boolean := false;
+	horizontal, vertical : gtk_adjustment; -- CS rename to scrollbar_h_adj and scrollbar_v_adj
+	scrollbar_v : gtk_scrollbar;
+	
+	v_user, v_user_old : gdouble := 0.0;
 
 	
 	procedure adjust_canvas_size;
@@ -32,6 +34,18 @@ package callbacks is
 	
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
+
+
+	function cb_scrollbar_v_pressed (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+										
+	function cb_scrollbar_v_released (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+
 
 	
 	function cb_button_pressed (
