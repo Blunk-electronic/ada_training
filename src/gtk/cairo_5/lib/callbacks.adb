@@ -15,10 +15,10 @@ package body callbacks is
 
 
 	procedure show_adjustments is 
-		v_lower : gdouble := vertical.get_lower;
-		v_value : gdouble := vertical.get_value;
-		v_upper : gdouble := vertical.get_upper;
-		v_page  : gdouble := vertical.get_page_size;
+		v_lower : gdouble := scrollbar_v_adj.get_lower;
+		v_value : gdouble := scrollbar_v_adj.get_value;
+		v_upper : gdouble := scrollbar_v_adj.get_upper;
+		v_page  : gdouble := scrollbar_v_adj.get_page_size;
 	begin
 		put_line ("v adjustments");
 		put_line ("lower" & gdouble'image (v_lower));
@@ -92,7 +92,7 @@ package body callbacks is
 	begin
 		new_line;
 		put_line ("cb_scrollbar_v_pressed");
-		v_user_old := vertical.get_value;
+		v_user_old := scrollbar_v_adj.get_value;
 
 		return event_handled;
 	end cb_scrollbar_v_pressed;
@@ -104,7 +104,7 @@ package body callbacks is
 		return boolean
 	is
 		event_handled : boolean := false;
-		v_delta : gdouble := vertical.get_value - v_user_old;
+		v_delta : gdouble := scrollbar_v_adj.get_value - v_user_old;
 	begin
 		new_line;
 		put_line ("cb_scrollbar_v_released");
@@ -153,15 +153,15 @@ package body callbacks is
 		null;
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
-		-- put_line (
-		-- 	to_string (cp)
-		-- 	& " " & to_string (mp)
+		put_line (
+			to_string (cp)
+			& " " & to_string (mp)
 
 			-- TEST:
 			-- The canvas-coordinates must match
 			-- the original logical pixel coordinates:
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
-			-- );
+			);
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -254,7 +254,7 @@ package body callbacks is
 				-- show_adjustments;
 
 				canvas.get_size_request (canvas_width, canvas_height);
-				vertical.set_upper (gdouble (canvas_height));
+				scrollbar_v_adj.set_upper (gdouble (canvas_height));
 				-- show_adjustments;
 				
 			else
@@ -265,7 +265,7 @@ package body callbacks is
 			end if;
 
 			-- keep_v_user := true;
-			vertical.set_value (v_corr);
+			scrollbar_v_adj.set_value (v_corr);
 			show_adjustments;
 		end set_offset_and_v_adjustment;
 
@@ -316,10 +316,9 @@ package body callbacks is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
 	begin
+		new_line;
 		put_line ("cb_draw " & image (clock));
 		
-		-- show_adjustments;
-
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 

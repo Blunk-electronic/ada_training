@@ -11,7 +11,7 @@ package callbacks is
 
 	canvas		: gtk_drawing_area;
 
-	horizontal, vertical : gtk_adjustment; -- CS rename to scrollbar_h_adj and scrollbar_v_adj
+	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 	
 	v_user, v_user_old : gdouble := 0.0;

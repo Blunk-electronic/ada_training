@@ -51,14 +51,14 @@ begin
 	
 	-- Create a scrolled window:
 	swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
-	horizontal := swin.get_hadjustment;
-	vertical := swin.get_vadjustment;
+	scrollbar_h_adj := swin.get_hadjustment;
+	scrollbar_v_adj := swin.get_vadjustment;
 
 	-- Connect the signal "value-changed" of the scrollbars with 
 	-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
 	-- can watch how the signals are emitted:
-	vertical.on_value_changed (cb_vertical_moved'access);
-	horizontal.on_value_changed (cb_horizontal_moved'access);
+	scrollbar_v_adj.on_value_changed (cb_vertical_moved'access);
+	scrollbar_h_adj.on_value_changed (cb_horizontal_moved'access);
 
 	scrollbar_v := swin.get_vscrollbar;
 	scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
