@@ -79,7 +79,7 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
-		show_adjustments;
+		-- show_adjustments;
 	end cb_vertical_moved;
 
 
@@ -153,15 +153,15 @@ package body callbacks is
 		null;
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
-		put_line (
-			to_string (cp)
-			& " " & to_string (mp)
+		-- put_line (
+		-- 	to_string (cp)
+		-- 	& " " & to_string (mp)
 
 			-- TEST:
 			-- The canvas-coordinates must match
 			-- the original logical pixel coordinates:
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
-			);
+			-- );
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -237,6 +237,8 @@ package body callbacks is
 		procedure set_offset_and_v_adjustment is
 			tr : type_point_canvas;
 			v_corr : gdouble := 0.0;
+			-- v_tmp : gdouble;
+			-- v_space_left : gdouble;
 			canvas_height : gint;
 			canvas_width : gint;
 		begin
@@ -251,22 +253,41 @@ package body callbacks is
 				v_corr := v_user + v_corr;
 				put_line ("v_corr " & gdouble'image (v_corr));
 				put_line ("v_user " & gdouble'image (v_user));
-				-- show_adjustments;
 
 				canvas.get_size_request (canvas_width, canvas_height);
-				scrollbar_v_adj.set_upper (gdouble (canvas_height));
-				-- show_adjustments;
+				scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
+
+				scrollbar_v_adj.set_value (v_corr);
 				
 			else
 				put_line ("NO top excess");
 				base_offset := base_offset_default;
-				-- v_corr := 0.0;
-				v_corr := v_user;
+				v_corr := v_user; -- ok
+
+				-- canvas.get_size_request (canvas_width, canvas_height);
+				-- scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page size
+				-- scrollbar_v_adj.set_upper (400.0); -- does not affect page size
+				-- show_adjustments;
+
+				--scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_corr);
+				-- scrollbar_v_adj.set_page_size (50.0);
+				-- scrollbar_v_adj.set_value (50.0);
+				
+				-- v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
+				-- put_line ("v_space_left " & gdouble'image (v_space_left));
+				-- if v_corr > v_space_left then
+				-- 	put_line ("page size too small");
+				-- 	v_tmp := v_corr - v_space_left;
+				-- 	scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_page_size - v_tmp);
+				-- -- else
+				-- 	-- v_corr := v_user;
+				-- end if;
+				scrollbar_v_adj.set_value (v_corr);
+				show_adjustments;
 			end if;
 
 			-- keep_v_user := true;
-			scrollbar_v_adj.set_value (v_corr);
-			show_adjustments;
+			-- scrollbar_v_adj.set_value (v_corr);
 		end set_offset_and_v_adjustment;
 
 		
@@ -318,6 +339,7 @@ package body callbacks is
 	begin
 		new_line;
 		put_line ("cb_draw " & image (clock));
+		show_adjustments;
 		
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
