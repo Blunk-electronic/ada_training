@@ -2,6 +2,7 @@ with glib;						use glib;
 with gdk.event;					use gdk.event;
 with gtk.widget;				use gtk.widget;
 with gtk.button;				use gtk.button;
+with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.scrollbar;				use gtk.scrollbar;
 with gtk.drawing_area;			use gtk.drawing_area;
@@ -10,7 +11,7 @@ with cairo;						use cairo;
 package callbacks is
 
 	canvas		: gtk_drawing_area;
-	
+	swin		: gtk_scrolled_window;
 	
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
@@ -50,6 +51,10 @@ package callbacks is
 		return boolean;
 
 
+	procedure cb_size_allocate (
+		canvas		: access gtk_widget_record'class;
+		allocation	: gtk_allocation);
+	
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;

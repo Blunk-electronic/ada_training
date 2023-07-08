@@ -120,6 +120,20 @@ package body callbacks is
 	end cb_scrollbar_v_released;
 
 
+
+	procedure cb_size_allocate (
+		canvas		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is
+	begin
+		new_line;
+		put_line ("cb_size_allocate");
+		put_line ("pos: " & gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
+	end cb_size_allocate;
+
 	
 
 	function cb_button_pressed (
@@ -263,14 +277,16 @@ package body callbacks is
 				show_adjustments;
 
 				---
--- 				v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
--- 				if v_space_left < 0.0 then 
--- 					v_space_left := 0.0;
--- 				end if;
--- 				put_line ("v_space_left " & gdouble'image (v_space_left));
--- 				if v_corr > v_space_left then
--- 					put_line ("page size too small");
--- 					v_tmp := v_corr - v_space_left;
+				v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
+				if v_space_left < 0.0 then 
+					v_space_left := 0.0;
+				end if;
+				put_line ("v_space_left " & gdouble'image (v_space_left));
+				if v_corr > v_space_left then
+					put_line ("page size too small");
+					v_tmp := v_corr - v_space_left;
+					-- swin.set_max_content_height (gint (v_tmp));
+					-- swin.set_min_content_height (500);
 -- 
 -- 					put_line ("old canvas height " & gint'image (canvas_height));
 -- 					canvas_height := canvas_height + gint (v_tmp);
@@ -284,7 +300,7 @@ package body callbacks is
 -- 
 -- 					scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
 -- 					scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
--- 				end if;
+				end if;
 				---
 
 				scrollbar_v_adj.set_value (v_corr);

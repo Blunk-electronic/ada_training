@@ -33,7 +33,7 @@ with geometry;					use geometry;
 procedure draw is
 
 	window		: gtk_window;
-	swin		: gtk_scrolled_window;
+	-- swin		: gtk_scrolled_window;
 
 
 begin
@@ -44,8 +44,8 @@ begin
 	window.set_title ("Canvas");
 	-- window.set_border_width (10);
 	--window.set_size_request (500, 300);
-	window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
-	-- window.set_default_size (1000, 500);
+	-- window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
+	window.set_default_size (gint (canvas_default_width), gint (canvas_default_height));
 	window.on_destroy (cb_terminate'access);
 
 
@@ -108,12 +108,14 @@ begin
 	canvas.add_events (key_press_mask);
 	canvas.on_key_press_event (cb_key_pressed'access);
 
-
+	canvas.on_size_allocate (cb_size_allocate'access);
 
 	
 	-- Add the canvas as a child to the scrolled window:
-	swin.add_with_viewport (canvas); 
-
+	--swin.add_with_viewport (canvas);
+	swin.add (canvas); 
+	swin.set_propagate_natural_height (true);
+	
 	-- Add the scrolled window as a child to the main window:
 	window.add (swin);
 
