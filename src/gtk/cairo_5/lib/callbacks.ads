@@ -10,12 +10,15 @@ with cairo;						use cairo;
 package callbacks is
 
 	canvas		: gtk_drawing_area;
-
+	
+	
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 	
 	v_user, v_user_old : gdouble := 0.0;
 
+
+	procedure show_canvas_size;
 	
 	procedure adjust_canvas_size;
 	

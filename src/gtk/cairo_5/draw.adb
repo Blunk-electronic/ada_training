@@ -15,6 +15,7 @@
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
 
+with glib;						use glib;
 with gdk.event;					use gdk.event;
 with gtk.main;					use gtk.main;
 with gtk.widget;				use gtk.widget;
@@ -27,7 +28,7 @@ with gtk.box;					use gtk.box;
 
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
-
+with geometry;					use geometry;
 
 procedure draw is
 
@@ -42,7 +43,8 @@ begin
 	window := gtk_window_new (WINDOW_TOPLEVEL);
 	window.set_title ("Canvas");
 	-- window.set_border_width (10);
-	window.set_size_request (500, 300);
+	--window.set_size_request (500, 300);
+	window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
 	-- window.set_default_size (1000, 500);
 	window.on_destroy (cb_terminate'access);
 
@@ -81,7 +83,7 @@ begin
 	-- rectangle MUST be known beforehand of calling the
 	-- callback procedure cb_draw (see below):
 	-- canvas.set_size_request (400, 200); -- unit is pixels
-	canvas.set_size_request (800, 400); -- unit is pixels
+	canvas.set_size_request (gint (canvas_default_width), gint (canvas_default_height)); -- unit is pixels
 	
 	canvas.on_draw (cb_draw'access);
 	-- NOTE: No context is declared here, because the canvas widget

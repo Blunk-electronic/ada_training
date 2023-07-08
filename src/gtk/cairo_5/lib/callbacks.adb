@@ -27,6 +27,14 @@ package body callbacks is
 		put_line ("value" & gdouble'image (v_value));
 	end;
 				  
+
+	procedure show_canvas_size is 
+		width, height : gint;
+	begin
+		canvas.get_size_request (width, height);
+		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
+	end show_canvas_size;
+
 	
 	procedure adjust_canvas_size is 
 		width, height : gint;
@@ -34,14 +42,10 @@ package body callbacks is
 		if scale_factor >= 1.0 then
 			canvas.get_size_request (width, height);
 			-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
-			
-			-- canvas.set_size_request (
-			-- 	gint (gdouble (width)  * gdouble (scale_factor)),
-			-- 	gint (gdouble (height) * gdouble (scale_factor)));
 
 			canvas.set_size_request (
-				gint (800.0 * gdouble (scale_factor)),
-				gint (400.0 * gdouble (scale_factor)));
+				gint (canvas_default_width  * gdouble (scale_factor)),
+				gint (canvas_default_height * gdouble (scale_factor)));
 
 			
 			canvas.get_size_request (width, height);
@@ -237,8 +241,8 @@ package body callbacks is
 		procedure set_offset_and_v_adjustment is
 			tr : type_point_canvas;
 			v_corr : gdouble := 0.0;
-			-- v_tmp : gdouble;
-			-- v_space_left : gdouble;
+			v_tmp : gdouble;
+			v_space_left : gdouble;
 			canvas_height : gint;
 			canvas_width : gint;
 		begin
@@ -252,12 +256,39 @@ package body callbacks is
 				v_corr := -tr.y; -- ok
 				v_corr := v_user + v_corr;
 				put_line ("v_corr " & gdouble'image (v_corr));
-				put_line ("v_user " & gdouble'image (v_user));
+				-- put_line ("v_user " & gdouble'image (v_user));
 
 				canvas.get_size_request (canvas_width, canvas_height);
 				scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
+				show_adjustments;
+
+				---
+-- 				v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
+-- 				if v_space_left < 0.0 then 
+-- 					v_space_left := 0.0;
+-- 				end if;
+-- 				put_line ("v_space_left " & gdouble'image (v_space_left));
+-- 				if v_corr > v_space_left then
+-- 					put_line ("page size too small");
+-- 					v_tmp := v_corr - v_space_left;
+-- 
+-- 					put_line ("old canvas height " & gint'image (canvas_height));
+-- 					canvas_height := canvas_height + gint (v_tmp);
+-- 					put_line ("new canvas height " & gint'image (canvas_height));
+-- 					
+-- 					canvas.set_size_request (
+-- 						canvas_width,
+-- 						canvas_height);
+-- 
+-- 					show_canvas_size;
+-- 
+-- 					scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
+-- 					scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
+-- 				end if;
+				---
 
 				scrollbar_v_adj.set_value (v_corr);
+				show_adjustments;
 				
 			else
 				put_line ("NO top excess");
@@ -339,7 +370,9 @@ package body callbacks is
 	begin
 		new_line;
 		put_line ("cb_draw " & image (clock));
+		show_canvas_size;
 		show_adjustments;
+		
 		
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
