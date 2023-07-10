@@ -17,7 +17,7 @@ package callbacks is
 	scrollbar_v : gtk_scrollbar;
 	
 	v_user, v_user_old : gdouble := 0.0;
-
+	v_corr : gdouble := 0.0;
 
 	procedure show_canvas_size;
 	

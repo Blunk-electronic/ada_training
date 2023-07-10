@@ -125,13 +125,42 @@ package body callbacks is
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is
+		-- v_tmp : gdouble;
+		-- v_space_left : gdouble;
+
 	begin
-		new_line;
-		put_line ("cb_size_allocate");
-		put_line ("pos: " & gint'image (allocation.x) 
+		-- new_line;
+		-- put_line ("cb_size_allocate");
+		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
 			& " /" & gint'image (allocation.y)
 			& "    width/height:" & gint'image (allocation.width)
 			& " /" & gint'image (allocation.height));
+
+
+-- 		v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
+-- 		if v_space_left < 0.0 then 
+-- 			v_space_left := 0.0;
+-- 		end if;
+-- 		put_line ("v_space_left " & gdouble'image (v_space_left));
+-- 
+-- 		if v_corr > v_space_left then
+-- 			put_line ("page size too small");
+-- 			v_tmp := v_corr - v_space_left;
+-- 			
+-- 			canvas.set_size_request (
+-- 				allocation.width,
+-- 				allocation.height + gint (v_tmp));
+-- 
+-- 			show_canvas_size;
+-- 
+-- 			scrollbar_v_adj.set_upper (gdouble (allocation.height) + v_tmp);
+-- 			scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
+-- 		else
+-- 			scrollbar_v_adj.set_upper (gdouble (allocation.height));
+-- 		end if;
+-- 		
+-- 		scrollbar_v_adj.set_value (v_corr);
+		
 	end cb_size_allocate;
 
 	
@@ -254,12 +283,13 @@ package body callbacks is
 
 		procedure set_offset_and_v_adjustment is
 			tr : type_point_canvas;
-			v_corr : gdouble := 0.0;
-			v_tmp : gdouble;
-			v_space_left : gdouble;
+			-- v_corr : gdouble := 0.0;
+			-- v_tmp : gdouble;
+			-- v_space_left : gdouble;
 			canvas_height : gint;
 			canvas_width : gint;
 		begin
+			v_corr := 0.0;
 			tr := to_canvas (top_right, scale_factor, base_offset_default);
 			if tr.y < 0.0 then
 				-- put_line ("top excess");
@@ -274,19 +304,18 @@ package body callbacks is
 
 				canvas.get_size_request (canvas_width, canvas_height);
 				scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
-				show_adjustments;
+				-- show_adjustments;
 
 				---
-				v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
-				if v_space_left < 0.0 then 
-					v_space_left := 0.0;
-				end if;
-				put_line ("v_space_left " & gdouble'image (v_space_left));
-				if v_corr > v_space_left then
-					put_line ("page size too small");
-					v_tmp := v_corr - v_space_left;
-					-- swin.set_max_content_height (gint (v_tmp));
-					-- swin.set_min_content_height (500);
+				-- v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
+				-- if v_space_left < 0.0 then 
+				-- 	v_space_left := 0.0;
+				-- end if;
+				-- put_line ("v_space_left " & gdouble'image (v_space_left));
+				-- if v_corr > v_space_left then
+				-- 	put_line ("page size too small");
+				-- 	v_tmp := v_corr - v_space_left;
+
 -- 
 -- 					put_line ("old canvas height " & gint'image (canvas_height));
 -- 					canvas_height := canvas_height + gint (v_tmp);
@@ -300,11 +329,11 @@ package body callbacks is
 -- 
 -- 					scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
 -- 					scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
-				end if;
+				-- end if;
 				---
 
-				scrollbar_v_adj.set_value (v_corr);
-				show_adjustments;
+				-- scrollbar_v_adj.set_value (v_corr);
+				-- show_adjustments;
 				
 			else
 				put_line ("NO top excess");
@@ -329,12 +358,12 @@ package body callbacks is
 				-- -- else
 				-- 	-- v_corr := v_user;
 				-- end if;
-				scrollbar_v_adj.set_value (v_corr);
-				show_adjustments;
+				-- scrollbar_v_adj.set_value (v_corr);
+				-- show_adjustments;
 			end if;
 
 			-- keep_v_user := true;
-			-- scrollbar_v_adj.set_value (v_corr);
+			scrollbar_v_adj.set_value (v_corr);
 		end set_offset_and_v_adjustment;
 
 		
@@ -384,10 +413,10 @@ package body callbacks is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
 	begin
-		new_line;
+		-- new_line;
 		put_line ("cb_draw " & image (clock));
-		show_canvas_size;
-		show_adjustments;
+		-- show_canvas_size;
+		-- show_adjustments;
 		
 		
 		set_line_width (context, 1.0);
