@@ -45,8 +45,9 @@ package body callbacks is
 
 			canvas.set_size_request (
 				gint (canvas_default_width  * gdouble (scale_factor)),
-				gint (canvas_default_height * gdouble (scale_factor)));
-
+				500 + gint (canvas_default_height * gdouble (scale_factor)));
+			-- NOTE: for the moment we apply a fixed extra height to the canvas.
+			-- This extra height allows later adjustments of the vertical scrollbar.
 			
 			canvas.get_size_request (width, height);
 			-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
@@ -364,6 +365,7 @@ package body callbacks is
 
 			-- keep_v_user := true;
 			scrollbar_v_adj.set_value (v_corr);
+			show_adjustments;
 		end set_offset_and_v_adjustment;
 
 		
