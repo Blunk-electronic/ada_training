@@ -421,7 +421,7 @@ package body callbacks is
 					decrease_scale; -- decrease the scale_factor
 					put_line ("zoom out " & to_string (scale_factor));
 					top_excess := - (to_canvas (top_right, scale_factor, base_offset_default).y);
-					adjust_canvas_size (500.0);
+					adjust_canvas_size (top_excess);
 					
 					compute_translate_offset;
 					set_offset_and_v_adjustment;
