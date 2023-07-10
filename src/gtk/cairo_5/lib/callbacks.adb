@@ -40,12 +40,29 @@ package body callbacks is
 		extra_height : in gdouble)
 	is 
 		width, height : gint;
-		h1 : gint;
+		h_init, h_scaled, h_final : gint;
 	begin
 		if scale_factor >= 1.0 then
-			canvas.get_size_request (width, height);
--- 			put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
--- 
+			canvas.get_size_request (width, h_init);
+			-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+			put_line ("h_init " & gint'image (h_init));
+
+			h_scaled := gint (canvas_default_height * gdouble (scale_factor));
+			put_line ("h_scaled " & gint'image (h_scaled));
+			
+			if h_init > h_scaled then
+				h_final := h_init + gint (extra_height);
+			else
+				h_final := h_scaled + gint (extra_height);
+			end if;
+			
+			canvas.set_size_request (
+				gint (canvas_default_width  * gdouble (scale_factor)),
+				h_final);
+
+
+
+			-- 
 -- 			if extra_height > 0.0 then
 -- 				h1 := gint (canvas_default_height * gdouble (scale_factor));
 -- 				put_line ("h1 " & gint'image (h1));
@@ -67,9 +84,9 @@ package body callbacks is
 -- 				-- NOTE:
 -- 				-- This extra height allows later adjustments of the vertical scrollbar.
 -- 			else
-				canvas.set_size_request (
-					gint (canvas_default_width  * gdouble (scale_factor)),
-					gint (canvas_default_height * gdouble (scale_factor)));
+				-- canvas.set_size_request (
+				-- 	gint (canvas_default_width  * gdouble (scale_factor)),
+				-- 	gint (canvas_default_height * gdouble (scale_factor)));
 			-- end if;
 			
 			-- canvas.get_size_request (width, height);
@@ -299,24 +316,16 @@ package body callbacks is
 			translate_offset.y := -(cp_after_scale.y - cp.y);
 			
 			--put_line ("translate offset " & to_string (translate_offset));
-
-			-- show_adjustments;
-			-- adjust_canvas_size;
 		end compute_translate_offset;
 
 
 		top_excess : gdouble;
 		
 		procedure set_offset_and_v_adjustment is
-			-- tr : type_point_canvas;
-			-- v_corr : gdouble := 0.0;
-			-- v_tmp : gdouble;
-			-- v_space_left : gdouble;
 			canvas_height : gint;
 			canvas_width : gint;
 		begin
 			v_corr := 0.0;
-			-- tr := to_canvas (top_right, scale_factor, base_offset_default);
 			if top_excess > 0.0 then
 				-- put_line ("top excess");
 				put_line ("top excess " & gdouble'image (top_excess));
@@ -331,66 +340,15 @@ package body callbacks is
 				canvas.get_size_request (canvas_width, canvas_height);
 				scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
 				-- show_adjustments;
-
-				---
-				-- v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
-				-- if v_space_left < 0.0 then 
-				-- 	v_space_left := 0.0;
-				-- end if;
-				-- put_line ("v_space_left " & gdouble'image (v_space_left));
-				-- if v_corr > v_space_left then
-				-- 	put_line ("page size too small");
-				-- 	v_tmp := v_corr - v_space_left;
-
--- 
--- 					put_line ("old canvas height " & gint'image (canvas_height));
--- 					canvas_height := canvas_height + gint (v_tmp);
--- 					put_line ("new canvas height " & gint'image (canvas_height));
--- 					
--- 					canvas.set_size_request (
--- 						canvas_width,
--- 						canvas_height);
--- 
--- 					show_canvas_size;
--- 
--- 					scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
--- 					scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
-				-- end if;
-				---
-
-				-- scrollbar_v_adj.set_value (v_corr);
-				-- show_adjustments;
-				
+			
 			else
 				put_line ("NO top excess");
 				base_offset := base_offset_default;
 				v_corr := v_user; -- ok
-
-				-- canvas.get_size_request (canvas_width, canvas_height);
-				-- scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page size
-				-- scrollbar_v_adj.set_upper (400.0); -- does not affect page size
-				-- show_adjustments;
-
-				--scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_corr);
-				-- scrollbar_v_adj.set_page_size (50.0);
-				-- scrollbar_v_adj.set_value (50.0);
-				
-				-- v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
-				-- put_line ("v_space_left " & gdouble'image (v_space_left));
-				-- if v_corr > v_space_left then
-				-- 	put_line ("page size too small");
-				-- 	v_tmp := v_corr - v_space_left;
-				-- 	scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_page_size - v_tmp);
-				-- -- else
-				-- 	-- v_corr := v_user;
-				-- end if;
-				-- scrollbar_v_adj.set_value (v_corr);
-				-- show_adjustments;
 			end if;
 
-			-- keep_v_user := true;
 			scrollbar_v_adj.set_value (v_corr);
-			show_adjustments;
+			-- show_adjustments;
 		end set_offset_and_v_adjustment;
 
 		
