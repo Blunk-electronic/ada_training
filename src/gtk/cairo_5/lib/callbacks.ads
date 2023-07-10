@@ -19,6 +19,9 @@ package callbacks is
 	v_user, v_user_old : gdouble := 0.0;
 	v_corr : gdouble := 0.0;
 
+	canvas_height : gint;
+	
+
 	procedure show_canvas_size;
 	
 	procedure adjust_canvas_size (

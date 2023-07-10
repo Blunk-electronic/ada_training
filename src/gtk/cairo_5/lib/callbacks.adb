@@ -39,12 +39,10 @@ package body callbacks is
 	procedure adjust_canvas_size (
 		extra_height : in gdouble)
 	is 
-		width, height : gint;
 		h_init, h_scaled, h_final : gint;
 	begin
 		if scale_factor >= 1.0 then
-			canvas.get_size_request (width, h_init);
-			-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+			h_init := canvas_height;
 			put_line ("h_init " & gint'image (h_init));
 
 			h_scaled := gint (canvas_default_height * gdouble (scale_factor));
@@ -60,37 +58,6 @@ package body callbacks is
 				gint (canvas_default_width  * gdouble (scale_factor)),
 				h_final);
 
-
-
-			-- 
--- 			if extra_height > 0.0 then
--- 				h1 := gint (canvas_default_height * gdouble (scale_factor));
--- 				put_line ("h1 " & gint'image (h1));
--- 				if height > h1 then
--- 					put_line ("A");
--- 					h1 := height + gint (extra_height);
--- 				else
--- 					put_line ("B");
--- 					h1 := h1 + gint (extra_height);
--- 				end if;
--- 
--- 				put_line ("h1 " & gint'image (h1));
--- 
--- 				
--- 				canvas.set_size_request (
--- 					gint (canvas_default_width  * gdouble (scale_factor)),
--- 					-- gint (extra_height) + gint (canvas_default_height * gdouble (scale_factor)));
--- 					h1);
--- 				-- NOTE:
--- 				-- This extra height allows later adjustments of the vertical scrollbar.
--- 			else
-				-- canvas.set_size_request (
-				-- 	gint (canvas_default_width  * gdouble (scale_factor)),
-				-- 	gint (canvas_default_height * gdouble (scale_factor)));
-			-- end if;
-			
-			-- canvas.get_size_request (width, height);
-			-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
 		end if;
 	end adjust_canvas_size;
 
@@ -177,6 +144,7 @@ package body callbacks is
 			& "    width/height:" & gint'image (allocation.width)
 			& " /" & gint'image (allocation.height));
 
+		canvas_height := allocation.height;
 
 -- 		v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
 -- 		if v_space_left < 0.0 then 
