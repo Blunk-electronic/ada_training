@@ -36,20 +36,43 @@ package body callbacks is
 	end show_canvas_size;
 
 	
-	procedure adjust_canvas_size is 
+	procedure adjust_canvas_size (
+		extra_height : in gdouble)
+	is 
 		width, height : gint;
+		h1 : gint;
 	begin
 		if scale_factor >= 1.0 then
 			canvas.get_size_request (width, height);
-			-- put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
-
-			canvas.set_size_request (
-				gint (canvas_default_width  * gdouble (scale_factor)),
-				500 + gint (canvas_default_height * gdouble (scale_factor)));
-			-- NOTE: for the moment we apply a fixed extra height to the canvas.
-			-- This extra height allows later adjustments of the vertical scrollbar.
+-- 			put_line ("canvas size old" & gint'image (width) & "/" & gint'image (height));
+-- 
+-- 			if extra_height > 0.0 then
+-- 				h1 := gint (canvas_default_height * gdouble (scale_factor));
+-- 				put_line ("h1 " & gint'image (h1));
+-- 				if height > h1 then
+-- 					put_line ("A");
+-- 					h1 := height + gint (extra_height);
+-- 				else
+-- 					put_line ("B");
+-- 					h1 := h1 + gint (extra_height);
+-- 				end if;
+-- 
+-- 				put_line ("h1 " & gint'image (h1));
+-- 
+-- 				
+-- 				canvas.set_size_request (
+-- 					gint (canvas_default_width  * gdouble (scale_factor)),
+-- 					-- gint (extra_height) + gint (canvas_default_height * gdouble (scale_factor)));
+-- 					h1);
+-- 				-- NOTE:
+-- 				-- This extra height allows later adjustments of the vertical scrollbar.
+-- 			else
+				canvas.set_size_request (
+					gint (canvas_default_width  * gdouble (scale_factor)),
+					gint (canvas_default_height * gdouble (scale_factor)));
+			-- end if;
 			
-			canvas.get_size_request (width, height);
+			-- canvas.get_size_request (width, height);
 			-- put_line ("canvas size new" & gint'image (width) & "/" & gint'image (height));
 		end if;
 	end adjust_canvas_size;
@@ -278,12 +301,14 @@ package body callbacks is
 			--put_line ("translate offset " & to_string (translate_offset));
 
 			-- show_adjustments;
-			adjust_canvas_size;
+			-- adjust_canvas_size;
 		end compute_translate_offset;
 
 
+		top_excess : gdouble;
+		
 		procedure set_offset_and_v_adjustment is
-			tr : type_point_canvas;
+			-- tr : type_point_canvas;
 			-- v_corr : gdouble := 0.0;
 			-- v_tmp : gdouble;
 			-- v_space_left : gdouble;
@@ -291,14 +316,14 @@ package body callbacks is
 			canvas_width : gint;
 		begin
 			v_corr := 0.0;
-			tr := to_canvas (top_right, scale_factor, base_offset_default);
-			if tr.y < 0.0 then
+			-- tr := to_canvas (top_right, scale_factor, base_offset_default);
+			if top_excess > 0.0 then
 				-- put_line ("top excess");
-				put_line ("top right excess " & to_string (tr));
-				base_offset.y := base_offset_default.y + tr.y;
+				put_line ("top excess " & gdouble'image (top_excess));
+				base_offset.y := base_offset_default.y - top_excess;
 				-- put_line ("base offset y    " & gdouble'image (base_offset.y));
 
-				v_corr := -tr.y; -- ok
+				v_corr := top_excess;
 				v_corr := v_user + v_corr;
 				put_line ("v_corr " & gdouble'image (v_corr));
 				-- put_line ("v_user " & gdouble'image (v_user));
@@ -385,6 +410,9 @@ package body callbacks is
 				when SCROLL_UP => 
 					increase_scale; -- increases the scale_factor
 					put_line ("zoom in  " & to_string (scale_factor));
+					top_excess := - (to_canvas (top_right, scale_factor, base_offset_default).y);
+					adjust_canvas_size (top_excess);
+					
 					compute_translate_offset;
 					set_offset_and_v_adjustment;
 					refresh (canvas);
@@ -392,6 +420,9 @@ package body callbacks is
 				when SCROLL_DOWN => 
 					decrease_scale; -- decrease the scale_factor
 					put_line ("zoom out " & to_string (scale_factor));
+					top_excess := - (to_canvas (top_right, scale_factor, base_offset_default).y);
+					adjust_canvas_size (500.0);
+					
 					compute_translate_offset;
 					set_offset_and_v_adjustment;
 					refresh (canvas);

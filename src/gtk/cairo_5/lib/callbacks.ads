@@ -21,7 +21,8 @@ package callbacks is
 
 	procedure show_canvas_size;
 	
-	procedure adjust_canvas_size;
+	procedure adjust_canvas_size (
+		extra_height : in gdouble);
 	
 	
 	procedure refresh (
