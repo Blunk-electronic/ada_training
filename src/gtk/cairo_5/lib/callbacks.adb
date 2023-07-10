@@ -133,9 +133,6 @@ package body callbacks is
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is
-		-- v_tmp : gdouble;
-		-- v_space_left : gdouble;
-
 	begin
 		-- new_line;
 		-- put_line ("cb_size_allocate");
@@ -145,31 +142,6 @@ package body callbacks is
 			& " /" & gint'image (allocation.height));
 
 		canvas_height := allocation.height;
-
--- 		v_space_left := scrollbar_v_adj.get_upper - scrollbar_v_adj.get_page_size;
--- 		if v_space_left < 0.0 then 
--- 			v_space_left := 0.0;
--- 		end if;
--- 		put_line ("v_space_left " & gdouble'image (v_space_left));
--- 
--- 		if v_corr > v_space_left then
--- 			put_line ("page size too small");
--- 			v_tmp := v_corr - v_space_left;
--- 			
--- 			canvas.set_size_request (
--- 				allocation.width,
--- 				allocation.height + gint (v_tmp));
--- 
--- 			show_canvas_size;
--- 
--- 			scrollbar_v_adj.set_upper (gdouble (allocation.height) + v_tmp);
--- 			scrollbar_v_adj.set_page_size (scrollbar_v_adj.get_upper - v_tmp);
--- 		else
--- 			scrollbar_v_adj.set_upper (gdouble (allocation.height));
--- 		end if;
--- 		
--- 		scrollbar_v_adj.set_value (v_corr);
-		
 	end cb_size_allocate;
 
 	
