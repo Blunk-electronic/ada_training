@@ -58,6 +58,7 @@ package body callbacks is
 				gint (canvas_default_width  * gdouble (scale_factor)),
 				h_final);
 
+			scrollbar_v_adj.set_upper (gdouble (h_final));
 		end if;
 	end adjust_canvas_size;
 
@@ -276,10 +277,6 @@ package body callbacks is
 				v_corr := v_user + v_corr;
 				put_line ("v_corr " & gdouble'image (v_corr));
 				-- put_line ("v_user " & gdouble'image (v_user));
-
-				canvas.get_size_request (canvas_width, canvas_height);
-				scrollbar_v_adj.set_upper (gdouble (canvas_height)); -- does not affect page_size
-				-- show_adjustments;
 			
 			else
 				put_line ("NO top excess");
@@ -288,7 +285,6 @@ package body callbacks is
 			end if;
 
 			scrollbar_v_adj.set_value (v_corr);
-			-- show_adjustments;
 		end set_offset_and_v_adjustment;
 
 		
