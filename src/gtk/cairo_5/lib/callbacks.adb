@@ -35,6 +35,7 @@ package body callbacks is
 		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
 	end show_canvas_size;
 
+
 	
 	procedure adjust_canvas_size (
 		extra_height : in gdouble)
@@ -49,8 +50,10 @@ package body callbacks is
 			put_line ("h_scaled " & gint'image (h_scaled));
 			
 			if h_init > h_scaled then
+				put_line ("A");
 				h_final := h_init + gint (extra_height);
 			else
+				put_line ("B");
 				h_final := h_scaled + gint (extra_height);
 			end if;
 			
@@ -58,7 +61,15 @@ package body callbacks is
 				gint (canvas_default_width  * gdouble (scale_factor)),
 				h_final);
 
+			put_line ("h_final " & gint'image (h_final));
+			
 			scrollbar_v_adj.set_upper (gdouble (h_final));
+		else
+
+			canvas.set_size_request (
+				gint (canvas_default_width  * gdouble (scale_factor)),
+				gint (canvas_default_height * gdouble (scale_factor)));
+			
 		end if;
 	end adjust_canvas_size;
 
