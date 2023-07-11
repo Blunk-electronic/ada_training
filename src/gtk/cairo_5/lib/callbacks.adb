@@ -36,6 +36,8 @@ package body callbacks is
 	end show_canvas_size;
 
 
+	block : boolean := false;
+	
 	
 	procedure adjust_canvas_size (
 		extra_height : in gdouble)
@@ -56,6 +58,7 @@ package body callbacks is
 				put_line ("B");
 				h_final := h_scaled + gint (extra_height);
 			end if;
+
 			
 			canvas.set_size_request (
 				gint (canvas_default_width  * gdouble (scale_factor)),
@@ -64,6 +67,7 @@ package body callbacks is
 			put_line ("h_final " & gint'image (h_final));
 			
 			scrollbar_v_adj.set_upper (gdouble (h_final));
+
 		else
 
 			canvas.set_size_request (
@@ -140,7 +144,22 @@ package body callbacks is
 	end cb_scrollbar_v_released;
 
 
+	procedure cb_size_allocate_main (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is
+	begin
+		-- new_line;
+		-- put_line ("cb_size_allocate");
+		put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
 
+		canvas_height := allocation.height;
+	end cb_size_allocate_main;
+
+	
 	procedure cb_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
@@ -153,7 +172,6 @@ package body callbacks is
 			& "    width/height:" & gint'image (allocation.width)
 			& " /" & gint'image (allocation.height));
 
-		canvas_height := allocation.height;
 	end cb_size_allocate;
 
 	

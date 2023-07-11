@@ -47,7 +47,7 @@ begin
 	-- window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
 	window.set_default_size (gint (canvas_default_width), gint (canvas_default_height));
 	window.on_destroy (cb_terminate'access);
-
+	window.on_size_allocate (cb_size_allocate_main'access);
 
 	
 	
@@ -114,7 +114,7 @@ begin
 	-- Add the canvas as a child to the scrolled window:
 	--swin.add_with_viewport (canvas);
 	swin.add (canvas); 
-	swin.set_propagate_natural_height (true);
+	-- swin.set_propagate_natural_height (true);
 	
 	-- Add the scrolled window as a child to the main window:
 	window.add (swin);

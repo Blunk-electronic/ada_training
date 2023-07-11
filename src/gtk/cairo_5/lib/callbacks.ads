@@ -55,6 +55,11 @@ package callbacks is
 		return boolean;
 
 
+	procedure cb_size_allocate_main (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation);
+
+	
 	procedure cb_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
