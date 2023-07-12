@@ -2,6 +2,7 @@ with glib;
 with gdk.types;
 with gdk.types.keysyms;
 with gtk.accel_group;
+with gtk.enums;					use gtk.enums;
 with ada.text_io;				use ada.text_io;
 with ada.calendar;				use ada.calendar;
 with ada.calendar.formatting;	use ada.calendar.formatting;
@@ -52,11 +53,23 @@ package body callbacks is
 			put_line ("h_scaled " & gint'image (h_scaled));
 			
 			if h_init > h_scaled then
-				put_line ("A");
+				put_line ("canvas fits in window");
 				h_final := h_init + gint (extra_height);
+				-- h_final := h_init;
+
+				swin.set_policy ( -- for scrollbars
+					hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
+					vscrollbar_policy => gtk.enums.POLICY_NEVER);
+
+				
 			else
-				put_line ("B");
+				put_line ("canvas greater than window");
 				h_final := h_scaled + gint (extra_height);
+
+				swin.set_policy ( -- for scrollbars
+					hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
+					vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
+
 			end if;
 
 			
@@ -150,11 +163,10 @@ package body callbacks is
 	is
 	begin
 		-- new_line;
-		-- put_line ("cb_size_allocate");
-		put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
-			& " /" & gint'image (allocation.y)
-			& "    width/height:" & gint'image (allocation.width)
-			& " /" & gint'image (allocation.height));
+		-- put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& "    width/height:" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
 
 		canvas_height := allocation.height;
 	end cb_size_allocate_main;
@@ -165,6 +177,7 @@ package body callbacks is
 		allocation	: gtk_allocation)
 	is
 	begin
+		null;
 		-- new_line;
 		-- put_line ("cb_size_allocate");
 		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
