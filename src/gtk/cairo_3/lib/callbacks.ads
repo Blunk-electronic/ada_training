@@ -1,11 +1,17 @@
 with gdk.event;					use gdk.event;
 with gtk.widget;				use gtk.widget;
+with gtk.window;				use gtk.window;
+with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.button;				use gtk.button;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
 package callbacks is
+
+	window		: gtk_window;
+	swin		: gtk_scrolled_window;
+	canvas		: gtk_drawing_area;
 
 	
 	procedure cb_terminate (
@@ -38,6 +44,11 @@ package callbacks is
 		return boolean;
 
 
+	procedure cb_size_allocate (
+		canvas		: access gtk_widget_record'class;
+		allocation	: gtk_allocation);
+
+	
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)

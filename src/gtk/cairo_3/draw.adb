@@ -25,11 +25,6 @@ with callbacks;					use callbacks;
 
 
 procedure draw is
-
-	window		: gtk_window;
-	swin		: gtk_scrolled_window;
-	canvas		: gtk_drawing_area;
-
 	horizontal, vertical : gtk_adjustment;
 begin
 	init;
@@ -56,7 +51,7 @@ begin
 	vertical.on_value_changed (cb_vertical_moved'access);
 	horizontal.on_value_changed (cb_horizontal_moved'access);
 	
-	swin.set_border_width (5);
+	-- swin.set_border_width (5);
 
 	swin.set_policy ( -- for scrollbars
 		hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
@@ -98,7 +93,7 @@ begin
 	canvas.add_events (key_press_mask);
 	canvas.on_key_press_event (cb_key_pressed'access);
 
-
+	canvas.on_size_allocate (cb_size_allocate'access);
 
 	
 	-- Add the canvas as a child to the scrolled window:

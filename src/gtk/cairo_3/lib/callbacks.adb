@@ -1,4 +1,4 @@
-with glib;
+with glib;						use glib;
 with gdk.types;
 with gdk.types.keysyms;
 with ada.text_io;				use ada.text_io;
@@ -10,6 +10,7 @@ with gtk.main;					use gtk.main;
 
 package body callbacks is
 
+	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class) 
 	is begin
@@ -98,6 +99,39 @@ package body callbacks is
 	end cb_key_pressed;
 
 
+	procedure cb_size_allocate (
+		canvas		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is
+		d : gint;
+		ca : gtk_allocation := allocation;
+		wa : gtk_allocation;
+	begin
+		-- new_line;
+		-- put_line ("cb_size_allocate");
+		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
+
+		put_line ("canvas height: " & gint'image (ca.height));
+
+		window.get_allocation (wa);
+		put_line ("window height: " & gint'image (wa.height));
+
+		d := ca.height - wa.height;
+		put_line ("d: " & gint'image (d)); 
+
+		-- ca.y := d;
+		-- ca.y := -10;
+		-- canvas.set_allocation (ca);
+		-- canvas.size_allocate (ca);
+
+		-- canvas.get_allocation (ca);
+		-- put_line ("canvas position: " & gint'image (ca.y));
+	end cb_size_allocate;
+
+	
 
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
