@@ -36,58 +36,17 @@ package body callbacks is
 		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
 	end show_canvas_size;
 
-
-	block : boolean := false;
 	
 	
-	procedure adjust_canvas_size (
-		extra_height : in gdouble)
-	is 
-		h_init, h_scaled, h_final : gint;
-	begin
-		if scale_factor >= 1.0 then
-			h_init := canvas_height;
-			put_line ("h_init " & gint'image (h_init));
+	procedure adjust_canvas_size
+	is begin
+		null;
 
-			h_scaled := gint (canvas_default_height * gdouble (scale_factor));
-			put_line ("h_scaled " & gint'image (h_scaled));
-			
-			if h_init > h_scaled then
-				put_line ("canvas fits in window");
-				h_final := h_init + gint (extra_height);
-				-- h_final := h_init;
+		canvas.set_size_request (
+			gint (1000.0 * gdouble (scale_factor)),
+			gint (1000.0 * gdouble (scale_factor)));
 
-				swin.set_policy ( -- for scrollbars
-					hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
-					vscrollbar_policy => gtk.enums.POLICY_NEVER);
-
-				
-			else
-				put_line ("canvas greater than window");
-				h_final := h_scaled + gint (extra_height);
-
-				swin.set_policy ( -- for scrollbars
-					hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
-					vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
-
-			end if;
-
-			
-			canvas.set_size_request (
-				gint (canvas_default_width  * gdouble (scale_factor)),
-				h_final);
-
-			put_line ("h_final " & gint'image (h_final));
-			
-			scrollbar_v_adj.set_upper (gdouble (h_final));
-
-		else
-
-			canvas.set_size_request (
-				gint (canvas_default_width  * gdouble (scale_factor)),
-				gint (canvas_default_height * gdouble (scale_factor)));
-			
-		end if;
+		-- show_adjustments;
 	end adjust_canvas_size;
 
 
@@ -120,7 +79,7 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
-		-- show_adjustments;
+		show_adjustments;
 	end cb_vertical_moved;
 
 
@@ -131,9 +90,9 @@ package body callbacks is
 	is
 		event_handled : boolean := false;
 	begin
-		new_line;
-		put_line ("cb_scrollbar_v_pressed");
-		v_user_old := scrollbar_v_adj.get_value;
+		-- new_line;
+		-- put_line ("cb_scrollbar_v_pressed");
+		-- v_user_old := scrollbar_v_adj.get_value;
 
 		return event_handled;
 	end cb_scrollbar_v_pressed;
@@ -145,12 +104,12 @@ package body callbacks is
 		return boolean
 	is
 		event_handled : boolean := false;
-		v_delta : gdouble := scrollbar_v_adj.get_value - v_user_old;
+		-- v_delta : gdouble := scrollbar_v_adj.get_value - v_user_old;
 	begin
-		new_line;
-		put_line ("cb_scrollbar_v_released");
-		v_user := v_user + v_delta;
-		put_line ("v_user set to " & gdouble'image (v_user));
+		-- new_line;
+		-- put_line ("cb_scrollbar_v_released");
+		-- v_user := v_user + v_delta;
+		-- put_line ("v_user set to " & gdouble'image (v_user));
 		-- show_adjustments;
 		
 		return event_handled;
@@ -162,13 +121,13 @@ package body callbacks is
 		allocation	: gtk_allocation)
 	is
 	begin
+		null;
 		-- new_line;
 		-- put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& "    width/height:" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
 
-		canvas_height := allocation.height;
 	end cb_size_allocate_main;
 
 	
@@ -180,10 +139,10 @@ package body callbacks is
 		null;
 		-- new_line;
 		-- put_line ("cb_size_allocate");
-		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
-			& " /" & gint'image (allocation.y)
-			& "    width/height:" & gint'image (allocation.width)
-			& " /" & gint'image (allocation.height));
+		-- put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& "    width/height:" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
 
 	end cb_size_allocate;
 
@@ -302,32 +261,8 @@ package body callbacks is
 		end compute_translate_offset;
 
 
-		top_excess : gdouble;
-		
-		procedure set_offset_and_v_adjustment is
-			canvas_height : gint;
-			canvas_width : gint;
-		begin
-			v_corr := 0.0;
-			if top_excess > 0.0 then
-				-- put_line ("top excess");
-				put_line ("top excess " & gdouble'image (top_excess));
-				base_offset.y := base_offset_default.y - top_excess;
-				-- put_line ("base offset y    " & gdouble'image (base_offset.y));
 
-				v_corr := top_excess;
-				v_corr := v_user + v_corr;
-				put_line ("v_corr " & gdouble'image (v_corr));
-				-- put_line ("v_user " & gdouble'image (v_user));
-			
-			else
-				put_line ("NO top excess");
-				base_offset := base_offset_default;
-				v_corr := v_user; -- ok
-			end if;
-
-			scrollbar_v_adj.set_value (v_corr);
-		end set_offset_and_v_adjustment;
+		-- scrollbar_v_adj.set_value (v_corr);
 
 		
 	begin
@@ -344,23 +279,19 @@ package body callbacks is
 			
 			case direction is
 				when SCROLL_UP => 
-					increase_scale; -- increases the scale_factor
+					increase_scale;
 					put_line ("zoom in  " & to_string (scale_factor));
-					top_excess := - (to_canvas (top_right, scale_factor, base_offset_default).y);
-					adjust_canvas_size (top_excess);
+					adjust_canvas_size;
 					
 					compute_translate_offset;
-					set_offset_and_v_adjustment;
 					refresh (canvas);
 
 				when SCROLL_DOWN => 
-					decrease_scale; -- decrease the scale_factor
+					decrease_scale;
 					put_line ("zoom out " & to_string (scale_factor));
-					top_excess := - (to_canvas (top_right, scale_factor, base_offset_default).y);
-					adjust_canvas_size (top_excess);
+					adjust_canvas_size;
 					
 					compute_translate_offset;
-					set_offset_and_v_adjustment;
 					refresh (canvas);
 					
 				when others => null;

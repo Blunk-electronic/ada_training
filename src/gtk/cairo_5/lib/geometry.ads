@@ -50,22 +50,24 @@ package geometry is
 
 
 
-	-- canvas_default_width  : constant gdouble := 800.0;
-	-- canvas_default_height : constant gdouble := 400.0;
 	bounding_box_width  : constant type_distance_model := 400.0;
 	bounding_box_height : constant type_distance_model := 200.0;
+
 	
-	margin : constant gdouble := 10.0;
-	canvas_default_width  : constant gdouble := gdouble (bounding_box_width)  + margin;
-	canvas_default_height : constant gdouble := gdouble (bounding_box_height) + margin;
+	-- margin : constant gdouble := 10.0;
+	-- canvas_default_width  : constant gdouble := gdouble (bounding_box_width)  + margin;
+	-- canvas_default_height : constant gdouble := gdouble (bounding_box_height) + margin;
 
 	
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin:
-	--base_offset : type_point_canvas := (0.0, -200.0);
 	base_offset_default : constant type_point_canvas := (
-		margin * 0.5,
-		- gdouble (bounding_box_height) - margin * 0.5);
+		x => 10.0, 
+		y => -500.0 - gdouble (bounding_box_height / 2.0));
+		
+	-- base_offset_default : constant type_point_canvas := (
+	-- 	x => margin * 0.5,
+	-- 	y => -2.0 * (gdouble (bounding_box_height) - margin * 0.5));
 	
 	-- base_offset_default : constant type_point_canvas := (0.0, - canvas_default_height);
 	base_offset : type_point_canvas := base_offset_default;
@@ -108,7 +110,9 @@ package geometry is
 
 	object : type_rectangle;
 
-	top_right : constant type_point_model := (bounding_box_width, bounding_box_height);
+	-- top_right : constant type_point_model := (
+	-- 	type_distance_model (canvas_default_width),
+	-- 	type_distance_model (canvas_default_height));
 
 	
 end geometry;

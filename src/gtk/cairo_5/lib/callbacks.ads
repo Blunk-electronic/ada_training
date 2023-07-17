@@ -16,16 +16,11 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 	
-	v_user, v_user_old : gdouble := 0.0;
-	v_corr : gdouble := 0.0;
-
-	canvas_height : gint;
 	
 
 	procedure show_canvas_size;
 	
-	procedure adjust_canvas_size (
-		extra_height : in gdouble);
+	procedure adjust_canvas_size;
 	
 	
 	procedure refresh (
