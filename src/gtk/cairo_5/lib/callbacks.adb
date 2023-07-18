@@ -40,12 +40,20 @@ package body callbacks is
 	
 	procedure adjust_canvas_size
 	is begin
-		null;
+		-- Expand the canvas if scale is greater or equal 1.
+		-- Otherwise the canvas assumes default size:
+		if scale_factor >= 1.0 then
 
-		canvas.set_size_request (
-			gint (1000.0 * gdouble (scale_factor)),
-			gint (1000.0 * gdouble (scale_factor)));
+			canvas.set_size_request (
+				gint (1000.0 * gdouble (scale_factor)),
+				gint (1000.0 * gdouble (scale_factor)));
 
+		else
+			canvas.set_size_request (
+				gint (1000.0),
+				gint (1000.0));
+
+		end if;
 		-- show_adjustments;
 	end adjust_canvas_size;
 
@@ -139,10 +147,10 @@ package body callbacks is
 		null;
 		-- new_line;
 		-- put_line ("cb_size_allocate");
-		-- put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
-		-- 	& " /" & gint'image (allocation.y)
-		-- 	& "    width/height:" & gint'image (allocation.width)
-		-- 	& " /" & gint'image (allocation.height));
+		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
 
 	end cb_size_allocate;
 
