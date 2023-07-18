@@ -216,6 +216,14 @@ package body callbacks is
 	end cb_key_pressed;
 
 
+	procedure cb_realized (
+		canvas	: access gtk_widget_record'class)
+	is
+	begin
+		put_line ("canvas realized");
+	end cb_realized;
+
+	
 
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
@@ -305,6 +313,7 @@ package body callbacks is
 
 
 	
+	
 	function cb_draw (
 		canvas	: access gtk_widget_record'class;
 		context	: in cairo_context)
@@ -317,6 +326,12 @@ package body callbacks is
 		put_line ("cb_draw " & image (clock));
 		-- show_canvas_size;
 		-- show_adjustments;
+
+		-- Adjust the scollbars on first call of this function:
+		if init_scrollbars then
+			scrollbar_v_adj.set_value (250.0);
+			init_scrollbars := false;
+		end if;
 		
 		
 		set_line_width (context, 1.0);

@@ -44,6 +44,7 @@ begin
 	window.set_title ("Canvas");
 	-- window.set_border_width (10);
 	window.set_size_request (500, 500);
+	-- window.set_size_request (400, 200);
 	-- window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
 	-- window.set_default_size (gint (canvas_default_width), gint (canvas_default_height));
 	window.on_destroy (cb_terminate'access);
@@ -77,6 +78,10 @@ begin
 	-- Set up the drawing area:
 	gtk_new (canvas);
 
+	canvas.on_realize (cb_realized'access );
+	canvas.on_size_allocate (cb_size_allocate'access);
+
+	
 	-- Set the minimum size of the canvas (in pixels).
 	-- It is like the wooden frame around a real-world canvas. 
 	-- The size of the bounding
@@ -109,7 +114,6 @@ begin
 	canvas.add_events (key_press_mask);
 	canvas.on_key_press_event (cb_key_pressed'access);
 
-	canvas.on_size_allocate (cb_size_allocate'access);
 
 	
 	-- Add the canvas as a child to the scrolled window:

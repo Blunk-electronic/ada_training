@@ -16,6 +16,7 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 	
+	init_scrollbars : boolean := true;
 	
 
 	procedure show_canvas_size;
@@ -78,6 +79,9 @@ package callbacks is
 		return boolean;
 
 
+	procedure cb_realized (
+		canvas	: access gtk_widget_record'class);
+	
 	
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
