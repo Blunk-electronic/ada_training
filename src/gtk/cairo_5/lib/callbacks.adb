@@ -58,6 +58,25 @@ package body callbacks is
 	end adjust_canvas_size;
 
 
+	G_old, H_old : gdouble;
+	init_GH_old : boolean := true;
+	
+
+	procedure init_limits is
+		upper_limit, lower_limit : gdouble;
+	begin
+		lower_limit := -base_offset_default.y - gdouble (bounding_box_height);
+		scrollbar_v_adj.set_lower (lower_limit);
+
+		upper_limit := 3800.0 - lower_limit;
+		scrollbar_v_adj.set_upper (upper_limit);
+
+		scrollbar_v_adj.set_page_size (gdouble (bounding_box_height));
+		scrollbar_v_adj.set_value (1800.0);
+	end init_limits;
+	
+	
+	
 	
 	procedure refresh (
 		canvas	: access gtk_widget_record'class)
@@ -98,10 +117,7 @@ package body callbacks is
 	is
 		event_handled : boolean := false;
 	begin
-		-- new_line;
 		-- put_line ("cb_scrollbar_v_pressed");
-		-- v_user_old := scrollbar_v_adj.get_value;
-
 		return event_handled;
 	end cb_scrollbar_v_pressed;
 
@@ -112,14 +128,8 @@ package body callbacks is
 		return boolean
 	is
 		event_handled : boolean := false;
-		-- v_delta : gdouble := scrollbar_v_adj.get_value - v_user_old;
 	begin
-		-- new_line;
 		-- put_line ("cb_scrollbar_v_released");
-		-- v_user := v_user + v_delta;
-		-- put_line ("v_user set to " & gdouble'image (v_user));
-		-- show_adjustments;
-		
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -156,13 +166,34 @@ package body callbacks is
 
 	
 
+	function cb_button_pressed_win (
+		swin	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		use glib;
+		event_handled : boolean := true;
+		point : constant type_point_canvas := (event.x, event.y);
+	begin
+		null;
+		
+		-- -- Output the button id, x and y position:
+		-- put_line ("cb_button_pressed_win "
+		-- 	& " button " & guint'image (event.button)
+		-- 	& to_string (point));
+
+		return event_handled;
+	end cb_button_pressed_win;
+
+	
+	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean
 	is
 		use glib;
-		event_handled : boolean := true;
+		event_handled : boolean := false;
 		point : constant type_point_canvas := (event.x, event.y);
 	begin
 		-- Output the button id, x and y position:
@@ -200,6 +231,8 @@ package body callbacks is
 			-- the original logical pixel coordinates:
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
 			-- );
+
+		init_GH_old := true;
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -219,7 +252,8 @@ package body callbacks is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
 		put_line ("cb_key_pressed "
 			& " key " & gdk_key_type'image (event.keyval));
-		
+
+		-- init_GH_old := true;
 		return event_handled;
 	end cb_key_pressed;
 
@@ -231,8 +265,11 @@ package body callbacks is
 		put_line ("canvas realized");
 	end cb_realized;
 
-	
 
+	-- last_zoom_point : type_point_canvas;
+	-- zoom_point_changed : boolean := true;
+
+	
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)
@@ -253,6 +290,17 @@ package body callbacks is
 		-- according to the CURRENT (old) scale_factor and translate_offset:
 		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
 
+		
+		-- procedure set_zoom_point_changed is begin
+		-- 	if cp /= last_zoom_point then
+		-- 		put_line ("zoom point changed. " & to_string (cp));
+		-- 		zoom_point_changed := true;
+		-- 		last_zoom_point := cp;
+		-- 	else
+		-- 		zoom_point_changed := false;
+		-- 	end if;
+		-- end set_zoom_point_changed;
+	
 		
 		-- After changing the scale_factor, the translate_offset must
 		-- be calculated anew. When the actual drawing takes place (see function cb_draw)
@@ -277,8 +325,67 @@ package body callbacks is
 		end compute_translate_offset;
 
 
+		relative_y : gdouble;
 
-		-- scrollbar_v_adj.set_value (v_corr);
+		procedure compute_relative_y is
+			offset : gdouble := scrollbar_v_adj.get_lower;
+			y_max : gdouble;
+			y_rel : gdouble;
+		begin
+			y_max := scrollbar_v_adj.get_upper - offset;
+			y_rel := cp.y - offset;
+
+			relative_y := y_rel / y_max;
+			put_line ("r" & gdouble'image (relative_y));
+		end compute_relative_y;
+
+
+		procedure set_v_limits is
+			span : gdouble;
+			E, F, G, H : gdouble;
+			delta_lower, delta_upper : gdouble;
+			lower_new, upper_new : gdouble;
+		begin
+			if scale_factor >= 1.0 then
+				-- page := gdouble (bounding_box_height) / gdouble (scale_factor);
+				-- scrollbar_v_adj.set_page_size (page);
+				
+				E := gdouble (bounding_box_height) * relative_y;
+				F := gdouble (bounding_box_height) - E;
+				-- put_line ("E" & gdouble'image (E));
+				-- put_line ("F" & gdouble'image (F));
+
+				if init_GH_old then
+					-- if zoom_point_changed then
+					put_line ("init GH");
+					G_old := E;
+					H_old := F;
+					init_GH_old := false;
+				end if;
+
+					
+				span := gdouble (bounding_box_height) * gdouble (scale_factor);
+				G := span * relative_y;
+				H := span - G;
+				put_line ("G" & gdouble'image (G));
+				put_line ("H" & gdouble'image (H));
+
+				delta_lower := G - G_old;
+				delta_upper := H - H_old;
+				put_line ("dl" & gdouble'image (delta_lower));
+				put_line ("du" & gdouble'image (delta_upper));
+				G_old := G;
+				H_old := H;
+
+				lower_new := scrollbar_v_adj.get_lower - delta_lower;
+				upper_new := scrollbar_v_adj.get_upper + delta_upper;
+				
+				scrollbar_v_adj.set_lower (lower_new);
+				scrollbar_v_adj.set_upper (upper_new);
+			end if;
+
+			show_adjustments;
+		end set_v_limits;
 
 		
 	begin
@@ -292,30 +399,31 @@ package body callbacks is
 
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
+
+			compute_relative_y;
 			
 			case direction is
 				when SCROLL_UP => 
+					-- set_zoom_point_changed;
 					increase_scale;
 					put_line ("zoom in  " & to_string (scale_factor));
-					adjust_canvas_size;
-					
 					compute_translate_offset;
 					refresh (canvas);
-
+					set_v_limits;
+					
 				when SCROLL_DOWN => 
+					-- set_zoom_point_changed;
 					decrease_scale;
 					put_line ("zoom out " & to_string (scale_factor));
-					adjust_canvas_size;
-					
 					compute_translate_offset;
 					refresh (canvas);
+					set_v_limits;
 					
 				when others => null;
 			end case;
-
 		end if;
 
-		-- show_adjustments;
+		
 		return event_handled;
 	end cb_mouse_wheel_rolled;
 
@@ -331,16 +439,7 @@ package body callbacks is
 		cp : type_point_canvas;
 	begin
 		-- new_line;
-		put_line ("cb_draw " & image (clock));
-		-- show_canvas_size;
-		-- show_adjustments;
-
-		-- Adjust the scollbars on first call of this function:
-		if init_scrollbars then
-			scrollbar_v_adj.set_value (250.0);
-			init_scrollbars := false;
-		end if;
-		
+		-- put_line ("cb_draw " & image (clock));
 		
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
@@ -360,6 +459,16 @@ package body callbacks is
 			gdouble (object.width)  * gdouble  (scale_factor),  -- width
 			gdouble (object.height) * gdouble (-scale_factor)); -- height
 
+		stroke (context);
+		
+		set_source_rgb (context, 0.0, 1.0, 0.0);
+		
+		move_to (context,
+			cp.x, cp.y + gdouble (object.height) * gdouble (-scale_factor) * 0.5);
+
+		line_to (context,
+			cp.x + gdouble (object.width) * gdouble (scale_factor), 
+			cp.y + gdouble (object.height) * gdouble (-scale_factor) * 0.5);
 		
 		stroke (context);
 

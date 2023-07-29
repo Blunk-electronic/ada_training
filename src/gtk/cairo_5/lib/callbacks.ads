@@ -16,12 +16,14 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 	
-	init_scrollbars : boolean := true;
-	
 
 	procedure show_canvas_size;
 	
 	procedure adjust_canvas_size;
+
+	type type_zoom is (ZOOM_IN, ZOOM_OUT);
+
+	procedure init_limits;
 	
 	
 	procedure refresh (
@@ -60,6 +62,12 @@ package callbacks is
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 	
+
+	function cb_button_pressed_win (
+		swin	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;

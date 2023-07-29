@@ -45,17 +45,20 @@ begin
 	-- window.set_border_width (10);
 
 	-- Set the minimum size of the main window:
-	window.set_size_request (500, 500);
-	-- window.set_size_request (400, 200);
+	-- window.set_size_request (500, 500);
+	window.set_size_request (400, 200);
 	-- window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
 	-- window.set_default_size (gint (canvas_default_width), gint (canvas_default_height));
 	window.on_destroy (cb_terminate'access);
 	window.on_size_allocate (cb_size_allocate_main'access);
+	window.on_button_press_event (cb_button_pressed_win'access);
 
 	
 	
 	-- Create a scrolled window:
 	swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
+
+	
 	scrollbar_h_adj := swin.get_hadjustment;
 	scrollbar_v_adj := swin.get_vadjustment;
 
@@ -73,8 +76,10 @@ begin
 	-- swin.set_border_width (5);
 
 	swin.set_policy ( -- for scrollbars
-		hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC, 
-		vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
+						--hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
+		hscrollbar_policy => gtk.enums.POLICY_NEVER, 
+		-- vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
+		vscrollbar_policy => gtk.enums.POLICY_ALWAYS);
 
 
 	-- Set up the drawing area:
@@ -89,8 +94,9 @@ begin
 	-- The size of the bounding
 	-- rectangle MUST be known beforehand of calling the
 	-- callback procedure cb_draw (see below):
-	canvas.set_size_request (1000, 1000); -- unit is pixels
+	canvas.set_size_request (1000, 3800); -- unit is pixels
 	-- canvas.set_size_request (gint (canvas_default_width), gint (canvas_default_height)); -- unit is pixels
+
 
 	
 	canvas.on_draw (cb_draw'access);
@@ -116,10 +122,8 @@ begin
 	canvas.add_events (key_press_mask);
 	canvas.on_key_press_event (cb_key_pressed'access);
 
-
 	
 	-- Add the canvas as a child to the scrolled window:
-	--swin.add_with_viewport (canvas);
 	swin.add (canvas); 
 	-- swin.set_propagate_natural_height (true);
 	
@@ -127,6 +131,19 @@ begin
 	window.add (swin);
 
 	window.show_all;
+
+	put_line ("init scrollbar");
+	-- scrollbar_v_adj.set_lower (1800.0);
+	-- scrollbar_v_adj.set_upper (2000.0);
+	-- set_v_limits (init => true, y_rel => 0.5, zoom => ZOOM_IN);
+	init_limits;
+
+	-- scrollbar_v_adj.set_lower (1700.0);
+	-- scrollbar_v_adj.set_upper (2100.0);
+
+	
+	-- scrollbar_v_adj.set_value (1800.0);
+	
 	gtk.main.main;
 end draw;
 

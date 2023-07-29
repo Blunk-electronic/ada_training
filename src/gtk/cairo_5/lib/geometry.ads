@@ -5,8 +5,8 @@ package geometry is
 
 
 -- SCALE:
-	
-	type type_scale_factor is digits 4 range 0.1 .. 100.0;
+
+	type type_scale_factor is digits 4 range 0.1 .. 10.0;
 	scale_factor : type_scale_factor := 1.0;
 	scale_increment : constant type_scale_factor := 1.2;
 
@@ -63,7 +63,8 @@ package geometry is
 	-- coordinates system has its origin:
 	base_offset_default : constant type_point_canvas := (
 		x => 10.0, 
-		y => -500.0 - gdouble (bounding_box_height / 2.0));
+		--y => -500.0 - gdouble (bounding_box_height / 2.0));
+		y => -2000.0);
 		
 	-- base_offset_default : constant type_point_canvas := (
 	-- 	x => margin * 0.5,
