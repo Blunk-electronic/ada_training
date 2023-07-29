@@ -58,9 +58,6 @@ package body callbacks is
 	end adjust_canvas_size;
 
 
-	G_old, H_old : gdouble;
-	init_GH_old : boolean := true;
-	
 
 	procedure init_limits is
 		upper_limit, lower_limit : gdouble;
@@ -232,7 +229,7 @@ package body callbacks is
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
 			-- );
 
-		init_GH_old := true;
+		-- init_GH_old := true;
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -291,17 +288,6 @@ package body callbacks is
 		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
 
 		
-		-- procedure set_zoom_point_changed is begin
-		-- 	if cp /= last_zoom_point then
-		-- 		put_line ("zoom point changed. " & to_string (cp));
-		-- 		zoom_point_changed := true;
-		-- 		last_zoom_point := cp;
-		-- 	else
-		-- 		zoom_point_changed := false;
-		-- 	end if;
-		-- end set_zoom_point_changed;
-	
-		
 		-- After changing the scale_factor, the translate_offset must
 		-- be calculated anew. When the actual drawing takes place (see function cb_draw)
 		-- then the drawing will be dragged back by the translate_offset
@@ -340,45 +326,38 @@ package body callbacks is
 		end compute_relative_y;
 
 
+		G1, G2, H1, H2 : gdouble;
+
+		procedure compute_G1_H1 is
+			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
+		begin
+			G1 := SP * relative_y;
+			H1 := SP - G1;
+		end;
+
+		
+		procedure compute_G2_H2 is
+			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
+		begin
+			G2 := SP * relative_y;
+			H2 := SP - G2;
+		end;
+
+		
 		procedure set_v_limits is
-			span : gdouble;
-			E, F, G, H : gdouble;
 			delta_lower, delta_upper : gdouble;
 			lower_new, upper_new : gdouble;
 		begin
 			if scale_factor >= 1.0 then
-				-- page := gdouble (bounding_box_height) / gdouble (scale_factor);
-				-- scrollbar_v_adj.set_page_size (page);
-				
-				E := gdouble (bounding_box_height) * relative_y;
-				F := gdouble (bounding_box_height) - E;
-				-- put_line ("E" & gdouble'image (E));
-				-- put_line ("F" & gdouble'image (F));
 
-				if init_GH_old then
-					-- if zoom_point_changed then
-					put_line ("init GH");
-					G_old := E;
-					H_old := F;
-					init_GH_old := false;
-				end if;
-
-					
-				span := gdouble (bounding_box_height) * gdouble (scale_factor);
-				G := span * relative_y;
-				H := span - G;
-				put_line ("G" & gdouble'image (G));
-				put_line ("H" & gdouble'image (H));
-
-				delta_lower := G - G_old;
-				delta_upper := H - H_old;
+				delta_lower := G2 - G1;
+				delta_upper := H2 - H1;
 				put_line ("dl" & gdouble'image (delta_lower));
 				put_line ("du" & gdouble'image (delta_upper));
-				G_old := G;
-				H_old := H;
 
 				lower_new := scrollbar_v_adj.get_lower - delta_lower;
 				upper_new := scrollbar_v_adj.get_upper + delta_upper;
+				-- CS clip negative values ?
 				
 				scrollbar_v_adj.set_lower (lower_new);
 				scrollbar_v_adj.set_upper (upper_new);
@@ -404,19 +383,21 @@ package body callbacks is
 			
 			case direction is
 				when SCROLL_UP => 
-					-- set_zoom_point_changed;
+					compute_G1_H1;
 					increase_scale;
 					put_line ("zoom in  " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);
+					compute_G2_H2;
 					set_v_limits;
 					
 				when SCROLL_DOWN => 
-					-- set_zoom_point_changed;
+					compute_G1_H1;
 					decrease_scale;
 					put_line ("zoom out " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);
+					compute_G2_H2;
 					set_v_limits;
 					
 				when others => null;
