@@ -60,13 +60,12 @@ package body callbacks is
 
 
 	procedure init_limits is
-		upper_limit, lower_limit : gdouble;
 	begin
-		lower_limit := -base_offset_default.y - gdouble (bounding_box_height);
-		scrollbar_v_adj.set_lower (lower_limit);
+		scrollbar_v_initial_lower := -base_offset_default.y - gdouble (bounding_box_height);
+		scrollbar_v_adj.set_lower (scrollbar_v_initial_lower);
 
-		upper_limit := 3800.0 - lower_limit;
-		scrollbar_v_adj.set_upper (upper_limit);
+		scrollbar_v_initial_upper := 3800.0 - scrollbar_v_initial_lower;
+		scrollbar_v_adj.set_upper (scrollbar_v_initial_upper);
 
 		scrollbar_v_adj.set_page_size (gdouble (bounding_box_height));
 		scrollbar_v_adj.set_value (1800.0);
@@ -358,6 +357,8 @@ package body callbacks is
 				lower_new := scrollbar_v_adj.get_lower - delta_lower;
 				upper_new := scrollbar_v_adj.get_upper + delta_upper;
 				-- CS clip negative values ?
+				-- CS lower_new must not be greater than scrollbar_v_initial_lower ?
+				-- CS upper_new must not be less than scrollbar_v_initial_upper ?
 				
 				scrollbar_v_adj.set_lower (lower_new);
 				scrollbar_v_adj.set_upper (upper_new);

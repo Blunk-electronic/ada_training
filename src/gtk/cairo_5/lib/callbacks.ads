@@ -15,7 +15,9 @@ package callbacks is
 	
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
-	
+
+	scrollbar_v_initial_lower : gdouble;
+	scrollbar_v_initial_upper : gdouble;
 
 	procedure show_canvas_size;
 	
