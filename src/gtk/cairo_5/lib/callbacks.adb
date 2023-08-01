@@ -191,12 +191,16 @@ package body callbacks is
 		use glib;
 		event_handled : boolean := false;
 		point : constant type_point_canvas := (event.x, event.y);
+
+		mp : constant type_point_model := to_model (point, scale_factor, translate_offset, base_offset);
 	begin
 		-- Output the button id, x and y position:
 		put_line ("cb_button_pressed "
 			& " button " & guint'image (event.button)
 			& to_string (point));
 
+		-- put_line (to_string (mp));
+		
 		return event_handled;
 	end cb_button_pressed;
 
@@ -219,16 +223,14 @@ package body callbacks is
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
 		-- put_line (
-		-- 	to_string (cp)
-		-- 	& " " & to_string (mp)
+			-- to_string (cp)
+			-- & " " & to_string (mp)
 
 			-- TEST:
 			-- The canvas-coordinates must match
 			-- the original logical pixel coordinates:
 			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
 			-- );
-
-		-- init_GH_old := true;
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -281,6 +283,7 @@ package body callbacks is
 
 		-- The given point on the canvas where the operator is zooming in or out:
 		cp : constant type_point_canvas := (event.x, event.y);
+		-- CS rename to zoom_point or ZP
 
 		-- The corresponding real-world point (in the model)
 		-- according to the CURRENT (old) scale_factor and translate_offset:
@@ -310,27 +313,32 @@ package body callbacks is
 		end compute_translate_offset;
 
 
-		relative_y : gdouble;
+		y_ratio : gdouble;
 
-		procedure compute_relative_y is
-			offset : gdouble := scrollbar_v_adj.get_lower;
-			y_max : gdouble;
-			y_rel : gdouble;
+		procedure compute_y_ratio is
+			y : gdouble;
 		begin
-			y_max := scrollbar_v_adj.get_upper - offset;
-			y_rel := cp.y - offset;
+			-- Here the visible area in y begins downwards:
+			y := cp.y - scrollbar_v_adj.get_value;
+			put_line ("y " & gdouble'image (y));
 
-			relative_y := y_rel / y_max;
-			put_line ("r" & gdouble'image (relative_y));
-		end compute_relative_y;
+			y_ratio := y / gdouble (bounding_box_height);
+			put_line ("r " & gdouble'image (y_ratio));
+		end compute_y_ratio;
 
 
+		Z : type_zoom;
+		S1 : constant type_scale_factor := scale_factor;
+		S2 : type_scale_factor;
+		
 		G1, G2, H1, H2 : gdouble;
 
+		
+		
 		procedure compute_G1_H1 is
 			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
 		begin
-			G1 := SP * relative_y;
+			G1 := SP * y_ratio;
 			H1 := SP - G1;
 		end;
 
@@ -338,7 +346,7 @@ package body callbacks is
 		procedure compute_G2_H2 is
 			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
 		begin
-			G2 := SP * relative_y;
+			G2 := SP * y_ratio;
 			H2 := SP - G2;
 		end;
 
@@ -348,6 +356,7 @@ package body callbacks is
 			lower_new, upper_new : gdouble;
 		begin
 			if scale_factor >= 1.0 then
+			-- if scale_factor > 1.0 then
 
 				delta_lower := G2 - G1;
 				delta_upper := H2 - H1;
@@ -358,13 +367,24 @@ package body callbacks is
 				upper_new := scrollbar_v_adj.get_upper + delta_upper;
 				-- CS clip negative values ?
 				-- CS lower_new must not be greater than scrollbar_v_initial_lower ?
+				-- if lower_new > scrollbar_v_initial_lower then
+				-- 	lower_new := scrollbar_v_initial_lower;
+				-- end if;
+				
 				-- CS upper_new must not be less than scrollbar_v_initial_upper ?
+				-- if upper_new < scrollbar_v_initial_upper then
+				-- 	upper_new := scrollbar_v_initial_upper;
+				-- end if;
+
+				-- if scale_factor < 1.0 then
+				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
+				-- end if;
 				
 				scrollbar_v_adj.set_lower (lower_new);
 				scrollbar_v_adj.set_upper (upper_new);
-			end if;
 
-			show_adjustments;
+				show_adjustments;
+			end if;
 		end set_v_limits;
 
 		
@@ -380,12 +400,14 @@ package body callbacks is
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
-			compute_relative_y;
+			compute_y_ratio;
 			
 			case direction is
-				when SCROLL_UP => 
+				when SCROLL_UP =>
+					Z := ZOOM_IN;
 					compute_G1_H1;
 					increase_scale;
+					S2 := scale_factor;
 					put_line ("zoom in  " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);
@@ -393,8 +415,10 @@ package body callbacks is
 					set_v_limits;
 					
 				when SCROLL_DOWN => 
+					Z := ZOOM_OUT;
 					compute_G1_H1;
 					decrease_scale;
+					S2 := scale_factor;
 					put_line ("zoom out " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);

@@ -1,5 +1,6 @@
 with glib;						use glib;
 with gdk.event;					use gdk.event;
+with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
 with gtk.button;				use gtk.button;
 with gtk.scrolled_window;		use gtk.scrolled_window;
@@ -10,8 +11,9 @@ with cairo;						use cairo;
 
 package callbacks is
 
-	canvas		: gtk_drawing_area;
+	main_window	: gtk_window;
 	swin		: gtk_scrolled_window;
+	canvas		: gtk_drawing_area;
 	
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
