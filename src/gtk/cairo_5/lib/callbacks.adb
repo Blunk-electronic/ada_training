@@ -199,7 +199,7 @@ package body callbacks is
 			& " button " & guint'image (event.button)
 			& to_string (point));
 
-		-- put_line (to_string (mp));
+		put_line (to_string (mp));
 		
 		return event_handled;
 	end cb_button_pressed;
@@ -355,7 +355,7 @@ package body callbacks is
 			delta_lower, delta_upper : gdouble;
 			lower_new, upper_new : gdouble;
 		begin
-			if scale_factor >= 1.0 then
+			-- if scale_factor >= 1.0 then
 			-- if scale_factor > 1.0 then
 
 				delta_lower := G2 - G1;
@@ -367,14 +367,14 @@ package body callbacks is
 				upper_new := scrollbar_v_adj.get_upper + delta_upper;
 				-- CS clip negative values ?
 				-- CS lower_new must not be greater than scrollbar_v_initial_lower ?
-				-- if lower_new > scrollbar_v_initial_lower then
-				-- 	lower_new := scrollbar_v_initial_lower;
-				-- end if;
+				if lower_new > scrollbar_v_initial_lower then
+					lower_new := scrollbar_v_initial_lower;
+				end if;
 				
 				-- CS upper_new must not be less than scrollbar_v_initial_upper ?
-				-- if upper_new < scrollbar_v_initial_upper then
-				-- 	upper_new := scrollbar_v_initial_upper;
-				-- end if;
+				if upper_new < scrollbar_v_initial_upper then
+					upper_new := scrollbar_v_initial_upper;
+				end if;
 
 				-- if scale_factor < 1.0 then
 				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
@@ -384,7 +384,7 @@ package body callbacks is
 				scrollbar_v_adj.set_upper (upper_new);
 
 				show_adjustments;
-			end if;
+			-- end if;
 		end set_v_limits;
 
 		
