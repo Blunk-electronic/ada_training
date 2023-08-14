@@ -118,6 +118,17 @@ package body callbacks is
 	end cb_scrollbar_v_pressed;
 
 
+	UM, LM : gdouble := 0.0;
+	
+	procedure compute_LM_UM is begin
+		LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
+		UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
+
+		put_line ("LM" & gdouble'image (LM));
+		put_line ("UM" & gdouble'image (UM));
+	end compute_LM_UM;
+
+	
 	function cb_scrollbar_v_released (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
@@ -126,6 +137,7 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_v_released");
+		compute_LM_UM;
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -332,7 +344,6 @@ package body callbacks is
 		S2 : type_scale_factor;
 		
 		G1, G2, H1, H2 : gdouble;
-		UM, LM : gdouble := 0.0;
 		
 		
 		procedure compute_G1_H1 is
@@ -351,6 +362,7 @@ package body callbacks is
 		end;
 
 		
+		
 		procedure set_v_limits is
 			dl, du : gdouble;
 			L, U : gdouble;
@@ -364,21 +376,25 @@ package body callbacks is
 			case Z is
 				when ZOOM_OUT =>
 					-- du is negative or equal zero
-					if UM < abs (du)  then
-						U := scrollbar_v_adj.get_upper + abs (du) - UM;
-						scrollbar_v_adj.set_upper (U); -- U moves downwards
+					if UM < abs (du) then
+						put_line ("A");
+						U := scrollbar_v_adj.get_upper - UM; -- U moves upwards by the available margin
+						scrollbar_v_adj.set_upper (U);
 					else
-						U := scrollbar_v_adj.get_upper + du;
-						scrollbar_v_adj.set_upper (U); -- U moves upwards
+						put_line ("B");
+						U := scrollbar_v_adj.get_upper - abs (du);
+						scrollbar_v_adj.set_upper (U); -- U moves upwards by du
 					end if;
 
 					-- dl is negative or equal zero
-					if LM < abs (dl)  then
-						L := scrollbar_v_adj.get_lower - abs (dl) - LM;
-						scrollbar_v_adj.set_lower (L); -- L moves upwards
+					if LM < abs (dl) then
+						put_line ("C");
+						L := scrollbar_v_adj.get_lower + LM;  -- L moves downwards by the available margin
+						scrollbar_v_adj.set_lower (L);
 					else
-						L := scrollbar_v_adj.get_lower + dl;
-						scrollbar_v_adj.set_lower (L); -- L moves downwards
+						put_line ("D");
+						L := scrollbar_v_adj.get_lower + abs (dl);
+						scrollbar_v_adj.set_lower (L); -- L moves downwards by dl
 					end if;
 
 
@@ -413,11 +429,7 @@ package body callbacks is
 				
 			show_adjustments;
 
-			LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
-			UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
-
-			put_line ("LM" & gdouble'image (LM));
-			put_line ("UM" & gdouble'image (UM));
+			compute_LM_UM;
 		end set_v_limits;
 
 		
