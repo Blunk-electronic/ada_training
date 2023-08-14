@@ -332,7 +332,7 @@ package body callbacks is
 		S2 : type_scale_factor;
 		
 		G1, G2, H1, H2 : gdouble;
-
+		UM, LM : gdouble := 0.0;
 		
 		
 		procedure compute_G1_H1 is
@@ -352,39 +352,72 @@ package body callbacks is
 
 		
 		procedure set_v_limits is
-			delta_lower, delta_upper : gdouble;
-			lower_new, upper_new : gdouble;
+			dl, du : gdouble;
+			L, U : gdouble;
 		begin
-			-- if scale_factor >= 1.0 then
-			-- if scale_factor > 1.0 then
+			dl := G2 - G1;
+			du := H2 - H1;
 
-				delta_lower := G2 - G1;
-				delta_upper := H2 - H1;
-				put_line ("dl" & gdouble'image (delta_lower));
-				put_line ("du" & gdouble'image (delta_upper));
+			put_line ("dl" & gdouble'image (dl));
+			put_line ("du" & gdouble'image (du));
 
-				lower_new := scrollbar_v_adj.get_lower - delta_lower;
-				upper_new := scrollbar_v_adj.get_upper + delta_upper;
+			case Z is
+				when ZOOM_OUT =>
+					-- du is negative or equal zero
+					if UM < abs (du)  then
+						U := scrollbar_v_adj.get_upper + abs (du) - UM;
+						scrollbar_v_adj.set_upper (U); -- U moves downwards
+					else
+						U := scrollbar_v_adj.get_upper + du;
+						scrollbar_v_adj.set_upper (U); -- U moves upwards
+					end if;
+
+					-- dl is negative or equal zero
+					if LM < abs (dl)  then
+						L := scrollbar_v_adj.get_lower - abs (dl) - LM;
+						scrollbar_v_adj.set_lower (L); -- L moves upwards
+					else
+						L := scrollbar_v_adj.get_lower + dl;
+						scrollbar_v_adj.set_lower (L); -- L moves downwards
+					end if;
+
+
+					
+				when ZOOM_IN =>
+					-- du is greater or equal zero
+					U := scrollbar_v_adj.get_upper + du;
+					scrollbar_v_adj.set_upper (U); -- U moves downwards
+
+					-- dl is greater or equal zero
+					L := scrollbar_v_adj.get_lower - dl;
+					scrollbar_v_adj.set_lower (L); -- L moves upwards
+
+			end case;
+			
 				-- CS clip negative values ?
-				-- CS lower_new must not be greater than scrollbar_v_initial_lower ?
-				if lower_new > scrollbar_v_initial_lower then
-					lower_new := scrollbar_v_initial_lower;
-				end if;
+				-- CS L must not be greater than scrollbar_v_initial_lower ?
+				-- if L > scrollbar_v_initial_lower then
+				-- 	L := scrollbar_v_initial_lower;
+				-- end if;
+				-- NO !
 				
-				-- CS upper_new must not be less than scrollbar_v_initial_upper ?
-				if upper_new < scrollbar_v_initial_upper then
-					upper_new := scrollbar_v_initial_upper;
-				end if;
+				-- CS U must not be less than scrollbar_v_initial_upper ?
+				-- if U < scrollbar_v_initial_upper then
+				-- 	U := scrollbar_v_initial_upper;
+				-- end if;
+				-- NO !
 
 				-- if scale_factor < 1.0 then
 				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
 				-- end if;
 				
-				scrollbar_v_adj.set_lower (lower_new);
-				scrollbar_v_adj.set_upper (upper_new);
+			show_adjustments;
 
-				show_adjustments;
-			-- end if;
+			LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
+			UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
+
+			put_line ("LM" & gdouble'image (LM));
+			put_line ("UM" & gdouble'image (UM));
 		end set_v_limits;
 
 		
