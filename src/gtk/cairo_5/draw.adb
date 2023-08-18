@@ -32,27 +32,14 @@ with geometry;					use geometry;
 
 procedure draw is
 
-	-- window		: gtk_window;
-	-- swin		: gtk_scrolled_window;
-
-
 begin
-	init;
+	make_object;
+	compute_bounding_box;
 
-	-- Set up the main window::
-	main_window := gtk_window_new (WINDOW_TOPLEVEL);
-	main_window.set_title ("Canvas");
-	-- window.set_border_width (10);
+	
+	init; -- inits the GTK-stuff
 
-	-- Set the minimum size of the main window:
-	-- window.set_size_request (500, 500);
-	main_window.set_size_request (400, 200);
-	-- window.set_size_request (gint (canvas_default_width), gint (canvas_default_height));
-	-- window.set_default_size (gint (canvas_default_width), gint (canvas_default_height));
-	main_window.on_destroy (cb_terminate'access);
-	main_window.on_size_allocate (cb_size_allocate_main'access);
-	main_window.on_button_press_event (cb_button_pressed_win'access);
-
+	set_up_main_window;
 	
 	
 	-- Create a scrolled window:

@@ -15,6 +15,30 @@ with geometry;					use geometry;
 package body callbacks is
 
 
+	procedure set_up_main_window is
+	begin
+		main_window := gtk_window_new (WINDOW_TOPLEVEL);
+		main_window.set_title ("Canvas");
+		-- window.set_border_width (10);
+
+		-- Set the minimum size of the main window basing on the 
+		-- bounding-box:
+		--main_window.set_size_request (400, 200);
+		
+		main_window.set_size_request (
+			gint (bounding_box.width),
+			gint (bounding_box.height));
+
+
+		-- connect signals:
+		main_window.on_destroy (cb_terminate'access);
+		main_window.on_size_allocate (cb_size_allocate_main'access);
+		main_window.on_button_press_event (cb_button_pressed_win'access);
+
+	end set_up_main_window;
+	
+	
+
 	procedure show_adjustments is 
 		v_lower : gdouble := scrollbar_v_adj.get_lower;
 		v_value : gdouble := scrollbar_v_adj.get_value;
@@ -61,13 +85,13 @@ package body callbacks is
 
 	procedure init_limits is
 	begin
-		scrollbar_v_initial_lower := -base_offset_default.y - gdouble (bounding_box_height);
+		scrollbar_v_initial_lower := -base_offset_default.y - gdouble (bounding_box.height);
 		scrollbar_v_adj.set_lower (scrollbar_v_initial_lower);
 
 		scrollbar_v_initial_upper := 3800.0 - scrollbar_v_initial_lower;
 		scrollbar_v_adj.set_upper (scrollbar_v_initial_upper);
 
-		scrollbar_v_adj.set_page_size (gdouble (bounding_box_height));
+		scrollbar_v_adj.set_page_size (gdouble (bounding_box.height));
 		scrollbar_v_adj.set_value (1800.0);
 	end init_limits;
 	
@@ -334,7 +358,7 @@ package body callbacks is
 			y := cp.y - scrollbar_v_adj.get_value;
 			put_line ("y " & gdouble'image (y));
 
-			y_ratio := y / gdouble (bounding_box_height);
+			y_ratio := y / gdouble (bounding_box.height);
 			put_line ("r " & gdouble'image (y_ratio));
 		end compute_y_ratio;
 
@@ -347,7 +371,7 @@ package body callbacks is
 		
 		
 		procedure compute_G1_H1 is
-			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
+			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
 		begin
 			G1 := SP * y_ratio;
 			H1 := SP - G1;
@@ -355,7 +379,7 @@ package body callbacks is
 
 		
 		procedure compute_G2_H2 is
-			SP : constant gdouble := gdouble (bounding_box_height) * gdouble (scale_factor);
+			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
 		begin
 			G2 := SP * y_ratio;
 			H2 := SP - G2;

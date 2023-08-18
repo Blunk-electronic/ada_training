@@ -49,6 +49,12 @@ package body geometry is
 	end to_string;
 
 
+	procedure compute_bounding_box is
+	begin
+		bounding_box.width  := object.width;
+		bounding_box.height := object.height;
+	end compute_bounding_box;
+	
 
 	function to_model (
 		point		: in type_point_canvas;
@@ -77,6 +83,14 @@ package body geometry is
 		result.y := -(gdouble (point.y) * gdouble (scale) + offset.y);
 		return result;
 	end to_canvas;
+
+
+	procedure make_object is
+	begin
+		object.lower_left_corner := (0.0, 0.0);
+		object.width  := 400.0;
+		object.height := 200.0;
+	end make_object;
 	
 end geometry;
 

@@ -12,6 +12,10 @@ with cairo;						use cairo;
 package callbacks is
 
 	main_window	: gtk_window;
+
+	procedure set_up_main_window;
+
+	
 	swin		: gtk_scrolled_window;
 	canvas		: gtk_drawing_area;
 	

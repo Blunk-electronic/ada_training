@@ -49,10 +49,20 @@ package geometry is
 		return string;
 
 
+	type type_bounding_box is record
+		width	: type_distance_model;
+		height	: type_distance_model;
+	end record;
 
-	bounding_box_width  : constant type_distance_model := 400.0;
-	bounding_box_height : constant type_distance_model := 200.0;
+	-- This is the bounding-box of the model. It is a rectange
+	-- that encloses all objects of the model:
+	bounding_box : type_bounding_box;
+	
 
+	-- Detects the smalles and greatest x and y values used by the model.
+	-- Sets the global variable bounding_box:
+	procedure compute_bounding_box;
+	
 	
 	-- margin : constant gdouble := 10.0;
 	-- canvas_default_width  : constant gdouble := gdouble (bounding_box_width)  + margin;
@@ -100,21 +110,18 @@ package geometry is
 
 
 		
--- DUMMY OBJECTS TO BE DRAWN ON THE CANVAS:
+-- DUMMY OBJECT TO BE DRAWN ON THE CANVAS:
 
 	type type_rectangle is record
-		lower_left_corner : type_point_model := (0.0, 0.0);
-		width  : type_distance_model := bounding_box_width;
-		height : type_distance_model := bounding_box_height;
+		lower_left_corner : type_point_model;
+		width  : type_distance_model := bounding_box.width;
+		height : type_distance_model := bounding_box.height;
 	end record;
 	
 
 	object : type_rectangle;
 
-	-- top_right : constant type_point_model := (
-	-- 	type_distance_model (canvas_default_width),
-	-- 	type_distance_model (canvas_default_height));
-
+	procedure make_object;
 	
 end geometry;
 
