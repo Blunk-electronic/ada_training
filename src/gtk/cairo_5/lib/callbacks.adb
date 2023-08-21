@@ -88,16 +88,10 @@ package body callbacks is
 		put_line ("init scrollbars");
 		put_line ("vertical:");
 
-		scrollbar_v_initial_upper := - base_offset.y;
-		scrollbar_v_adj.set_upper (scrollbar_v_initial_upper);
-
-		scrollbar_v_initial_lower := scrollbar_v_initial_upper - gdouble (bounding_box.height);
-		scrollbar_v_adj.set_lower (scrollbar_v_initial_lower);
-
-		
+		scrollbar_v_adj.set_upper (- base_offset.y);
+		scrollbar_v_adj.set_lower (- base_offset.y - gdouble (bounding_box.height));
 		scrollbar_v_adj.set_page_size (gdouble (bounding_box.height));
-
-		scrollbar_v_adj.set_value (scrollbar_v_initial_lower);
+		scrollbar_v_adj.set_value (scrollbar_v_adj.get_lower);
 
 
 		-- put_line ("horizontal:");
@@ -443,18 +437,8 @@ package body callbacks is
 
 			end case;
 			
-				-- CS clip negative values ?
-				-- CS L must not be greater than scrollbar_v_initial_lower ?
-				-- if L > scrollbar_v_initial_lower then
-				-- 	L := scrollbar_v_initial_lower;
-				-- end if;
-				-- NO !
+				-- CS clip negative values of U and L ?
 				
-				-- CS U must not be less than scrollbar_v_initial_upper ?
-				-- if U < scrollbar_v_initial_upper then
-				-- 	U := scrollbar_v_initial_upper;
-				-- end if;
-				-- NO !
 
 				-- if scale_factor < 1.0 then
 				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
