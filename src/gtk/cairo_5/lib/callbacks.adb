@@ -23,8 +23,6 @@ package body callbacks is
 
 		-- Set the minimum size of the main window basing on the 
 		-- bounding-box:
-		--main_window.set_size_request (400, 200);
-		
 		main_window.set_size_request (
 			gint (bounding_box.width),
 			gint (bounding_box.height));
@@ -37,8 +35,84 @@ package body callbacks is
 
 	end set_up_main_window;
 	
+
+
+	procedure set_up_scrollbars is
+	begin
+		-- Create a scrolled window:
+		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
+		-- swin.set_border_width (5);
+
+		
+		scrollbar_h_adj := swin.get_hadjustment;
+		scrollbar_v_adj := swin.get_vadjustment;
+
+		-- Connect the signal "value-changed" of the scrollbars with 
+		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
+		-- can watch how the signals are emitted:
+		scrollbar_v_adj.on_value_changed (cb_vertical_moved'access);
+		scrollbar_h_adj.on_value_changed (cb_horizontal_moved'access);
+
+		scrollbar_v := swin.get_vscrollbar;
+		scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
+		scrollbar_v.on_button_release_event (cb_scrollbar_v_released'access);
+
+		-- behaviour:
+		swin.set_policy ( -- for scrollbars
+			hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
+			-- hscrollbar_policy => gtk.enums.POLICY_NEVER, 
+			vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
+			-- vscrollbar_policy => gtk.enums.POLICY_ALWAYS);
+
+	end set_up_scrollbars;
+
 	
 
+	procedure set_up_canvas is
+	begin
+		-- Set up the drawing area:
+		gtk_new (canvas);
+
+		canvas.on_realize (cb_realized'access );
+		canvas.on_size_allocate (cb_size_allocate'access);
+
+		
+		-- Set the minimum size of the canvas (in pixels).
+		-- It is like the wooden frame around a real-world canvas. 
+		-- The size of the bounding
+		-- rectangle MUST be known beforehand of calling the
+		-- callback procedure cb_draw (see below):
+		canvas.set_size_request (1000, 3800); -- unit is pixels
+		-- canvas.set_size_request (gint (canvas_default_width), gint (canvas_default_height)); -- unit is pixels
+
+
+		
+		canvas.on_draw (cb_draw'access);
+		-- NOTE: No context is declared here, because the canvas widget
+		-- passes its own context to the callback procedure cb_draw.
+
+
+		
+		-- Make the canvas responding to mouse button clicks:
+		canvas.add_events (gdk.event.button_press_mask);
+		canvas.on_button_press_event (cb_button_pressed'access);
+
+		-- Make the canvas responding to mouse movement:
+		canvas.add_events (gdk.event.pointer_motion_mask);
+		canvas.on_motion_notify_event (cb_mouse_moved'access);
+
+		-- Make the canvas responding to the mouse wheel:
+		canvas.add_events (gdk.event.scroll_mask);
+		canvas.on_scroll_event (cb_mouse_wheel_rolled'access);
+		
+		-- Make the canvas responding to the keyboard:
+		canvas.set_can_focus (true);
+		canvas.add_events (key_press_mask);
+		canvas.on_key_press_event (cb_key_pressed'access);
+
+	end set_up_canvas;
+
+	
 	procedure show_adjustments is 
 		v_lower : gdouble := scrollbar_v_adj.get_lower;
 		v_value : gdouble := scrollbar_v_adj.get_value;
@@ -62,43 +136,38 @@ package body callbacks is
 
 	
 	
-	procedure adjust_canvas_size
-	is begin
-		-- Expand the canvas if scale is greater or equal 1.
-		-- Otherwise the canvas assumes default size:
-		if scale_factor >= 1.0 then
-
-			canvas.set_size_request (
-				gint (1000.0 * gdouble (scale_factor)),
-				gint (1000.0 * gdouble (scale_factor)));
-
-		else
-			canvas.set_size_request (
-				gint (1000.0),
-				gint (1000.0));
-
-		end if;
-		-- show_adjustments;
-	end adjust_canvas_size;
 
 
 
-	procedure init_scrollbars is
+	procedure prepare_initial_scrollbar_settings is
 	begin
-		put_line ("init scrollbars");
+		put_line ("prepare initial scrollbar settings");
 		put_line ("vertical:");
 
-		scrollbar_v_adj.set_upper (- base_offset.y);
-		scrollbar_v_adj.set_lower (- base_offset.y - gdouble (bounding_box.height));
-		scrollbar_v_adj.set_page_size (gdouble (bounding_box.height));
-		scrollbar_v_adj.set_value (scrollbar_v_adj.get_lower);
+		scrollbar_v_init.upper := - base_offset.y;			
+		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
+		scrollbar_v_init.page_size := gdouble (bounding_box.height);
+		scrollbar_v_init.value := scrollbar_v_init.lower;
+
+		-- put_line ("horizontal:");
+		-- CS
+	end prepare_initial_scrollbar_settings;
+	
+	
+	procedure apply_initial_scrollbar_settings is
+	begin
+		put_line ("apply initial scrollbar settings");
+		put_line ("vertical:");
+
+		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
+		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
+		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
+		scrollbar_v_adj.set_value (scrollbar_v_init.value);
 
 
 		-- put_line ("horizontal:");
 		-- CS
-	end init_scrollbars;
-	
-	
+	end apply_initial_scrollbar_settings;
 	
 	
 	procedure refresh (

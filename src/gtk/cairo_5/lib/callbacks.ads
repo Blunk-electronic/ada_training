@@ -22,14 +22,27 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v : gtk_scrollbar;
 
+	type type_scrollbar_settings is record
+		lower		: gdouble;
+		upper		: gdouble;
+		value		: gdouble;
+		page_size	: gdouble;
+	end record;
 
+	scrollbar_v_init : type_scrollbar_settings;
+
+	procedure set_up_scrollbars;
+	
+	procedure set_up_canvas;
+		
 	procedure show_canvas_size;
 	
-	procedure adjust_canvas_size;
 
 	type type_zoom is (ZOOM_IN, ZOOM_OUT);
 
-	procedure init_scrollbars;
+	procedure prepare_initial_scrollbar_settings;
+	
+	procedure apply_initial_scrollbar_settings;
 	
 	
 	procedure refresh (
