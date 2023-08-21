@@ -14,7 +14,32 @@ with geometry;					use geometry;
 
 package body callbacks is
 
+-- MAIN WINDOW:
+	
+	procedure cb_terminate (
+		main_window : access gtk_widget_record'class) 
+	is begin
+		put_line ("exiting ...");
+		gtk.main.main_quit;
+	end cb_terminate;
 
+
+	procedure cb_size_allocate_main (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is
+	begin
+		null;
+		-- new_line;
+		-- put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& "    width/height:" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
+
+	end cb_size_allocate_main;
+
+	
+	
 	procedure set_up_main_window is
 	begin
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
@@ -35,8 +60,88 @@ package body callbacks is
 		main_window.on_button_press_event (cb_button_pressed_win'access);
 
 	end set_up_main_window;
+
+
 	
 
+-- SCROLLED WINDOW:
+
+	function cb_button_pressed_win (
+		swin	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		use glib;
+		event_handled : boolean := true;
+		point : constant type_point_canvas := (event.x, event.y);
+	begin
+		null;
+		
+		-- -- Output the button id, x and y position:
+		-- put_line ("cb_button_pressed_win "
+		-- 	& " button " & guint'image (event.button)
+		-- 	& to_string (point));
+
+		return event_handled;
+	end cb_button_pressed_win;
+
+
+
+	
+-- SCROLLBARS:
+
+
+	procedure compute_LM_UM is begin
+		LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
+		UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
+
+		put_line ("LM" & gdouble'image (LM));
+		put_line ("UM" & gdouble'image (UM));
+	end compute_LM_UM;
+
+	
+	procedure cb_horizontal_moved (
+		scrollbar : access gtk_adjustment_record'class)
+	is begin
+		put_line ("horizontal moved " & image (clock));
+	end cb_horizontal_moved;
+
+	
+	procedure cb_vertical_moved (
+		scrollbar : access gtk_adjustment_record'class)
+	is begin
+		put_line ("vertical moved " & image (clock));
+		show_adjustments;
+	end cb_vertical_moved;
+
+
+	function cb_scrollbar_v_pressed (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+	begin
+		-- put_line ("cb_scrollbar_v_pressed");
+		return event_handled;
+	end cb_scrollbar_v_pressed;
+
+	
+
+	
+	function cb_scrollbar_v_released (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+	begin
+		-- put_line ("cb_scrollbar_v_released");
+		compute_LM_UM;
+		return event_handled;
+	end cb_scrollbar_v_released;
+
+	
 
 	procedure set_up_scrollbars is
 	begin
@@ -67,6 +172,90 @@ package body callbacks is
 
 	end set_up_scrollbars;
 
+
+
+	
+	procedure show_adjustments is 
+		v_lower : gdouble := scrollbar_v_adj.get_lower;
+		v_value : gdouble := scrollbar_v_adj.get_value;
+		v_upper : gdouble := scrollbar_v_adj.get_upper;
+		v_page  : gdouble := scrollbar_v_adj.get_page_size;
+	begin
+		put_line ("v adjustments");
+		put_line ("lower" & gdouble'image (v_lower));
+		put_line ("upper" & gdouble'image (v_upper));
+		put_line ("page " & gdouble'image (v_page));
+		put_line ("value" & gdouble'image (v_value));
+
+		-- CS horizontal
+	end show_adjustments;
+				  
+
+
+	
+	procedure prepare_initial_scrollbar_settings is
+	begin
+		put_line ("prepare initial scrollbar settings");
+		put_line ("vertical:");
+
+		scrollbar_v_init.upper := - base_offset.y;			
+		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
+		scrollbar_v_init.page_size := gdouble (bounding_box.height);
+		scrollbar_v_init.value := scrollbar_v_init.lower;
+
+		-- put_line ("horizontal:");
+		-- CS
+	end prepare_initial_scrollbar_settings;
+
+
+	
+	
+	procedure apply_initial_scrollbar_settings is
+	begin
+		put_line ("apply initial scrollbar settings");
+		put_line ("vertical:");
+
+		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
+		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
+		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
+		scrollbar_v_adj.set_value (scrollbar_v_init.value);
+
+
+		-- put_line ("horizontal:");
+		-- CS
+	end apply_initial_scrollbar_settings;
+	
+
+	
+
+	
+-- CANVAS:
+	
+	procedure refresh (
+		canvas	: access gtk_widget_record'class)
+	is
+		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
+	begin
+		drawing_area.queue_draw;
+	end refresh;
+
+
+	procedure cb_size_allocate (
+		canvas		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is begin
+		null;
+		-- new_line;
+		-- put_line ("cb_size_allocate");
+		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
+
+	end cb_size_allocate;
+
+
+	
 	
 
 	procedure show_canvas_size is 
@@ -128,181 +317,10 @@ package body callbacks is
 	end set_up_canvas;
 
 
-	
-	procedure show_adjustments is 
-		v_lower : gdouble := scrollbar_v_adj.get_lower;
-		v_value : gdouble := scrollbar_v_adj.get_value;
-		v_upper : gdouble := scrollbar_v_adj.get_upper;
-		v_page  : gdouble := scrollbar_v_adj.get_page_size;
-	begin
-		put_line ("v adjustments");
-		put_line ("lower" & gdouble'image (v_lower));
-		put_line ("upper" & gdouble'image (v_upper));
-		put_line ("page " & gdouble'image (v_page));
-		put_line ("value" & gdouble'image (v_value));
-
-		-- CS horizontal
-	end show_adjustments;
-				  
-
-
-	
-	
-
-
-
-	procedure prepare_initial_scrollbar_settings is
-	begin
-		put_line ("prepare initial scrollbar settings");
-		put_line ("vertical:");
-
-		scrollbar_v_init.upper := - base_offset.y;			
-		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
-		scrollbar_v_init.page_size := gdouble (bounding_box.height);
-		scrollbar_v_init.value := scrollbar_v_init.lower;
-
-		-- put_line ("horizontal:");
-		-- CS
-	end prepare_initial_scrollbar_settings;
-	
-	
-	procedure apply_initial_scrollbar_settings is
-	begin
-		put_line ("apply initial scrollbar settings");
-		put_line ("vertical:");
-
-		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
-		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
-		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
-		scrollbar_v_adj.set_value (scrollbar_v_init.value);
-
-
-		-- put_line ("horizontal:");
-		-- CS
-	end apply_initial_scrollbar_settings;
-	
-
-	
-	procedure refresh (
-		canvas	: access gtk_widget_record'class)
-	is
-		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
-	begin
-		drawing_area.queue_draw;
-	end refresh;
-
-	
-	procedure cb_terminate (
-		main_window : access gtk_widget_record'class) 
-	is begin
-		put_line ("exiting ...");
-		gtk.main.main_quit;
-	end cb_terminate;
-
-
-	procedure cb_horizontal_moved (
-		scrollbar : access gtk_adjustment_record'class)
-	is begin
-		put_line ("horizontal moved " & image (clock));
-	end cb_horizontal_moved;
-
-	
-	procedure cb_vertical_moved (
-		scrollbar : access gtk_adjustment_record'class)
-	is begin
-		put_line ("vertical moved " & image (clock));
-		show_adjustments;
-	end cb_vertical_moved;
-
-
-	function cb_scrollbar_v_pressed (
-		bar		: access gtk_widget_record'class;
-		event	: gdk_event_button)
-		return boolean
-	is
-		event_handled : boolean := false;
-	begin
-		-- put_line ("cb_scrollbar_v_pressed");
-		return event_handled;
-	end cb_scrollbar_v_pressed;
-
-
-	UM, LM : gdouble := 0.0;
-	
-	procedure compute_LM_UM is begin
-		LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
-		UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
-
-		put_line ("LM" & gdouble'image (LM));
-		put_line ("UM" & gdouble'image (UM));
-	end compute_LM_UM;
-
-	
-	function cb_scrollbar_v_released (
-		bar		: access gtk_widget_record'class;
-		event	: gdk_event_button)
-		return boolean
-	is
-		event_handled : boolean := false;
-	begin
-		-- put_line ("cb_scrollbar_v_released");
-		compute_LM_UM;
-		return event_handled;
-	end cb_scrollbar_v_released;
-
-
-	procedure cb_size_allocate_main (
-		window		: access gtk_widget_record'class;
-		allocation	: gtk_allocation)
-	is
-	begin
-		null;
-		-- new_line;
-		-- put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
-		-- 	& " /" & gint'image (allocation.y)
-		-- 	& "    width/height:" & gint'image (allocation.width)
-		-- 	& " /" & gint'image (allocation.height));
-
-	end cb_size_allocate_main;
-
-	
-	procedure cb_size_allocate (
-		canvas		: access gtk_widget_record'class;
-		allocation	: gtk_allocation)
-	is
-	begin
-		null;
-		-- new_line;
-		-- put_line ("cb_size_allocate");
-		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
-			& " /" & gint'image (allocation.y)
-			& "    width/height:" & gint'image (allocation.width)
-			& " /" & gint'image (allocation.height));
-
-	end cb_size_allocate;
 
 	
 
-	function cb_button_pressed_win (
-		swin	: access gtk_widget_record'class;
-		event	: gdk_event_button)
-		return boolean
-	is
-		use glib;
-		event_handled : boolean := true;
-		point : constant type_point_canvas := (event.x, event.y);
-	begin
-		null;
-		
-		-- -- Output the button id, x and y position:
-		-- put_line ("cb_button_pressed_win "
-		-- 	& " button " & guint'image (event.button)
-		-- 	& to_string (point));
 
-		return event_handled;
-	end cb_button_pressed_win;
-
-	
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;
