@@ -31,7 +31,7 @@ package callbacks is
 
 	type type_zoom is (ZOOM_IN, ZOOM_OUT);
 
-	procedure init_limits;
+	procedure init_scrollbars;
 	
 	
 	procedure refresh (

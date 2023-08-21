@@ -53,9 +53,31 @@ package body geometry is
 	begin
 		bounding_box.width  := object.width;
 		bounding_box.height := object.height;
+
+		-- CS
+		-- put_line ("bounding box (width/height) " 
+		-- 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
 	end compute_bounding_box;
 	
 
+	procedure compute_base_offset is
+		x, y : gdouble;
+	begin
+		x := 10.0; -- CS add formula
+		
+		y := - gdouble (bounding_box.height) * gdouble (type_scale_factor'last);
+
+		-- base_offset := (
+		-- x => 10.0, 
+		-- y => -2000.0);
+
+		base_offset := (x, y);
+
+		put_line ("base offset: " & to_string (base_offset));
+	end compute_base_offset;
+
+	
+	
 	function to_model (
 		point		: in type_point_canvas;
 		scale		: in type_scale_factor;

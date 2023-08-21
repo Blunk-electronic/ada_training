@@ -71,18 +71,16 @@ package geometry is
 	
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin:
-	base_offset_default : constant type_point_canvas := (
-		x => 10.0, 
-		--y => -500.0 - gdouble (bounding_box_height / 2.0));
-		y => -2000.0);
+	base_offset : type_point_canvas;
 		
 	-- base_offset_default : constant type_point_canvas := (
 	-- 	x => margin * 0.5,
 	-- 	y => -2.0 * (gdouble (bounding_box_height) - margin * 0.5));
 	
 	-- base_offset_default : constant type_point_canvas := (0.0, - canvas_default_height);
-	base_offset : type_point_canvas := base_offset_default;
-	
+	-- base_offset : type_point_canvas := base_offset_default;
+
+	procedure compute_base_offset;
 
 	-- The offset by which all draw operations on the canvas
 	-- are translated when the operator zooms to the mouse pointer:

@@ -35,6 +35,7 @@ procedure draw is
 begin
 	make_object;
 	compute_bounding_box;
+	compute_base_offset;
 
 	
 	init; -- inits the GTK-stuff
@@ -63,10 +64,10 @@ begin
 	-- swin.set_border_width (5);
 
 	swin.set_policy ( -- for scrollbars
-						--hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
-		hscrollbar_policy => gtk.enums.POLICY_NEVER, 
-		-- vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
-		vscrollbar_policy => gtk.enums.POLICY_ALWAYS);
+		hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
+		-- hscrollbar_policy => gtk.enums.POLICY_NEVER, 
+		vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
+		-- vscrollbar_policy => gtk.enums.POLICY_ALWAYS);
 
 
 	-- Set up the drawing area:
@@ -119,17 +120,8 @@ begin
 
 	main_window.show_all;
 
-	put_line ("init scrollbar");
-	-- scrollbar_v_adj.set_lower (1800.0);
-	-- scrollbar_v_adj.set_upper (2000.0);
-	-- set_v_limits (init => true, y_rel => 0.5, zoom => ZOOM_IN);
-	init_limits;
+	init_scrollbars;
 
-	-- scrollbar_v_adj.set_lower (1700.0);
-	-- scrollbar_v_adj.set_upper (2100.0);
-
-	
-	-- scrollbar_v_adj.set_value (1800.0);
 	
 	gtk.main.main;
 end draw;

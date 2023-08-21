@@ -83,17 +83,26 @@ package body callbacks is
 
 
 
-	procedure init_limits is
+	procedure init_scrollbars is
 	begin
-		scrollbar_v_initial_lower := -base_offset_default.y - gdouble (bounding_box.height);
-		scrollbar_v_adj.set_lower (scrollbar_v_initial_lower);
+		put_line ("init scrollbars");
+		put_line ("vertical:");
 
-		scrollbar_v_initial_upper := 3800.0 - scrollbar_v_initial_lower;
+		scrollbar_v_initial_upper := - base_offset.y;
 		scrollbar_v_adj.set_upper (scrollbar_v_initial_upper);
 
+		scrollbar_v_initial_lower := scrollbar_v_initial_upper - gdouble (bounding_box.height);
+		scrollbar_v_adj.set_lower (scrollbar_v_initial_lower);
+
+		
 		scrollbar_v_adj.set_page_size (gdouble (bounding_box.height));
-		scrollbar_v_adj.set_value (1800.0);
-	end init_limits;
+
+		scrollbar_v_adj.set_value (scrollbar_v_initial_lower);
+
+
+		-- put_line ("horizontal:");
+		-- CS
+	end init_scrollbars;
 	
 	
 	
