@@ -27,7 +27,8 @@ package body callbacks is
 			gint (bounding_box.width),
 			gint (bounding_box.height));
 
-
+		-- CS show main window size
+		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_size_allocate_main'access);
@@ -68,7 +69,17 @@ package body callbacks is
 
 	
 
+	procedure show_canvas_size is 
+		width, height : gint;
+	begin
+		canvas.get_size_request (width, height);
+		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
+	end show_canvas_size;
+
+	
+	
 	procedure set_up_canvas is
+		size_x, size_y : gint;
 	begin
 		-- Set up the drawing area:
 		gtk_new (canvas);
@@ -82,15 +93,19 @@ package body callbacks is
 		-- The size of the bounding
 		-- rectangle MUST be known beforehand of calling the
 		-- callback procedure cb_draw (see below):
-		canvas.set_size_request (1000, 3800); -- unit is pixels
-		-- canvas.set_size_request (gint (canvas_default_width), gint (canvas_default_height)); -- unit is pixels
+		size_x := 1000; -- CS
+		
+		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
 
+		canvas.set_size_request (size_x, size_y); -- unit is pixels
 
+		show_canvas_size;
+
+		
 		
 		canvas.on_draw (cb_draw'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
-
 
 		
 		-- Make the canvas responding to mouse button clicks:
@@ -112,6 +127,7 @@ package body callbacks is
 
 	end set_up_canvas;
 
+
 	
 	procedure show_adjustments is 
 		v_lower : gdouble := scrollbar_v_adj.get_lower;
@@ -124,15 +140,11 @@ package body callbacks is
 		put_line ("upper" & gdouble'image (v_upper));
 		put_line ("page " & gdouble'image (v_page));
 		put_line ("value" & gdouble'image (v_value));
-	end;
+
+		-- CS horizontal
+	end show_adjustments;
 				  
 
-	procedure show_canvas_size is 
-		width, height : gint;
-	begin
-		canvas.get_size_request (width, height);
-		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
-	end show_canvas_size;
 
 	
 	
@@ -169,6 +181,7 @@ package body callbacks is
 		-- CS
 	end apply_initial_scrollbar_settings;
 	
+
 	
 	procedure refresh (
 		canvas	: access gtk_widget_record'class)

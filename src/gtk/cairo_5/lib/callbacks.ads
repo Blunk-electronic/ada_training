@@ -33,9 +33,12 @@ package callbacks is
 
 	procedure set_up_scrollbars;
 	
+	procedure show_canvas_size;
+	
 	procedure set_up_canvas;
 		
-	procedure show_canvas_size;
+	procedure show_adjustments;
+
 	
 
 	type type_zoom is (ZOOM_IN, ZOOM_OUT);
