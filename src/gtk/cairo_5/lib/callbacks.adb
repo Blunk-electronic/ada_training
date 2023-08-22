@@ -476,12 +476,11 @@ package body callbacks is
 		direction : constant gdk_scroll_direction := event.direction;
 
 		-- The given point on the canvas where the operator is zooming in or out:
-		cp : constant type_point_canvas := (event.x, event.y);
-		-- CS rename to zoom_point or ZP
+		ZP : constant type_point_canvas := (event.x, event.y);
 
 		-- The corresponding real-world point (in the model)
 		-- according to the CURRENT (old) scale_factor and translate_offset:
-		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
+		mp : constant type_point_model := to_model (ZP, scale_factor, translate_offset, base_offset);
 
 		
 		-- After changing the scale_factor, the translate_offset must
@@ -491,34 +490,34 @@ package body callbacks is
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		procedure compute_translate_offset is 
-			cp_after_scale : type_point_canvas;
+			ZP_after_scale : type_point_canvas;
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			cp_after_scale := to_canvas (mp, scale_factor, base_offset);
-			-- put_line ("cp after scale   " & to_string (cp_after_scale));
+			ZP_after_scale := to_canvas (mp, scale_factor, base_offset);
+			-- put_line ("ZP after scale   " & to_string (ZP_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
 			-- drawing must be dragged-back to the given pointer position:
-			translate_offset.x := -(cp_after_scale.x - cp.x);
-			translate_offset.y := -(cp_after_scale.y - cp.y);
+			translate_offset.x := -(ZP_after_scale.x - ZP.x);
+			translate_offset.y := -(ZP_after_scale.y - ZP.y);
 			
 			--put_line ("translate offset " & to_string (translate_offset));
 		end compute_translate_offset;
 
 
-		y_ratio : gdouble;
+		YR : gdouble;
 
-		procedure compute_y_ratio is
-			y : gdouble;
+		procedure compute_YR is
+			YF : gdouble;
 		begin
 			-- Here the visible area in y begins downwards:
-			y := cp.y - scrollbar_v_adj.get_value;
-			put_line ("y " & gdouble'image (y));
+			YF := ZP.y - scrollbar_v_adj.get_value;
+			put_line ("YF " & gdouble'image (YF));
 
-			y_ratio := y / gdouble (bounding_box.height);
-			put_line ("r " & gdouble'image (y_ratio));
-		end compute_y_ratio;
+			YR := YF / gdouble (bounding_box.height);
+			put_line ("YR " & gdouble'image (YR));
+		end compute_YR;
 
 
 		Z : type_zoom;
@@ -531,7 +530,7 @@ package body callbacks is
 		procedure compute_G1_H1 is
 			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
 		begin
-			G1 := SP * y_ratio;
+			G1 := SP * YR;
 			H1 := SP - G1;
 		end;
 
@@ -539,7 +538,7 @@ package body callbacks is
 		procedure compute_G2_H2 is
 			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
 		begin
-			G2 := SP * y_ratio;
+			G2 := SP * YR;
 			H2 := SP - G2;
 		end;
 
@@ -610,14 +609,14 @@ package body callbacks is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
 		new_line;
 		put_line ("mouse_wheel_rolled "
-			& to_string (cp)
+			& to_string (ZP)
 			& " direction " & gdk_scroll_direction'image (direction));
 
 
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
-			compute_y_ratio;
+			compute_YR;
 			
 			case direction is
 				when SCROLL_UP =>
