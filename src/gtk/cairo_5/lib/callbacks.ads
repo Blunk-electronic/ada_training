@@ -42,9 +42,10 @@ package callbacks is
 -- SCROLLBARS:
 	
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
-	scrollbar_v : gtk_scrollbar;
+	scrollbar_v, scrollbar_h : gtk_scrollbar;
 
-	UM, LM : gdouble := 0.0;
+	V_UM, V_LM : gdouble := 0.0;
+	H_UM, H_LM : gdouble := 0.0;
 	
 	procedure compute_LM_UM;
 	
@@ -61,10 +62,21 @@ package callbacks is
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
-
 	
 	
 	function cb_scrollbar_v_released (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+
+
+	function cb_scrollbar_h_pressed (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+	
+	
+	function cb_scrollbar_h_released (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
@@ -78,10 +90,12 @@ package callbacks is
 	end record;
 
 	scrollbar_v_init : type_scrollbar_settings;
+	scrollbar_h_init : type_scrollbar_settings;
 
 	procedure set_up_scrollbars;
 
-	procedure show_adjustments;
+	procedure show_adjustments_v;
+	procedure show_adjustments_h;
 
 	procedure prepare_initial_scrollbar_settings;
 	

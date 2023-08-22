@@ -92,11 +92,11 @@ package body callbacks is
 
 
 	procedure compute_LM_UM is begin
-		LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
-		UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
+		V_LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
+		V_UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 
-		put_line ("LM" & gdouble'image (LM));
-		put_line ("UM" & gdouble'image (UM));
+		put_line ("V_LM" & gdouble'image (V_LM));
+		put_line ("V_UM" & gdouble'image (V_UM));
 	end compute_LM_UM;
 
 	
@@ -111,7 +111,7 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
-		show_adjustments;
+		show_adjustments_v;
 	end cb_vertical_moved;
 
 
@@ -127,8 +127,6 @@ package body callbacks is
 	end cb_scrollbar_v_pressed;
 
 	
-
-	
 	function cb_scrollbar_v_released (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
@@ -140,6 +138,32 @@ package body callbacks is
 		compute_LM_UM;
 		return event_handled;
 	end cb_scrollbar_v_released;
+
+
+
+	function cb_scrollbar_h_pressed (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+	begin
+		-- put_line ("cb_scrollbar_h_pressed");
+		return event_handled;
+	end cb_scrollbar_h_pressed;
+
+	
+	function cb_scrollbar_h_released (
+		bar		: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		event_handled : boolean := false;
+	begin
+		-- put_line ("cb_scrollbar_h_released");
+		compute_LM_UM;
+		return event_handled;
+	end cb_scrollbar_h_released;
 
 	
 
@@ -163,6 +187,11 @@ package body callbacks is
 		scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
 		scrollbar_v.on_button_release_event (cb_scrollbar_v_released'access);
 
+		scrollbar_h := swin.get_hscrollbar;
+		scrollbar_h.on_button_press_event (cb_scrollbar_h_pressed'access);
+		scrollbar_h.on_button_release_event (cb_scrollbar_h_released'access);
+
+
 		-- behaviour:
 		swin.set_policy ( -- for scrollbars
 			hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
@@ -175,36 +204,61 @@ package body callbacks is
 
 
 	
-	procedure show_adjustments is 
+	procedure show_adjustments_v is 
 		v_lower : gdouble := scrollbar_v_adj.get_lower;
 		v_value : gdouble := scrollbar_v_adj.get_value;
 		v_upper : gdouble := scrollbar_v_adj.get_upper;
 		v_page  : gdouble := scrollbar_v_adj.get_page_size;
 	begin
-		put_line ("v adjustments");
-		put_line ("lower" & gdouble'image (v_lower));
-		put_line ("upper" & gdouble'image (v_upper));
-		put_line ("page " & gdouble'image (v_page));
-		put_line ("value" & gdouble'image (v_value));
-
-		-- CS horizontal
-	end show_adjustments;
+		put_line ("vertical scrollbar adjustments:");
+		put_line (" lower" & gdouble'image (v_lower));
+		put_line (" upper" & gdouble'image (v_upper));
+		put_line (" page " & gdouble'image (v_page));
+		put_line (" value" & gdouble'image (v_value));
+	end show_adjustments_v;
 				  
 
+	procedure show_adjustments_h is 
+		h_lower : gdouble := scrollbar_h_adj.get_lower;
+		h_value : gdouble := scrollbar_h_adj.get_value;
+		h_upper : gdouble := scrollbar_h_adj.get_upper;
+		h_page  : gdouble := scrollbar_h_adj.get_page_size;
+	begin
+		put_line ("horizontal scrollbar adjustments:");
+		put_line (" lower" & gdouble'image (h_lower));
+		put_line (" upper" & gdouble'image (h_upper));
+		put_line (" page " & gdouble'image (h_page));
+		put_line (" value" & gdouble'image (h_value));
+	end show_adjustments_h;
 
+	
 	
 	procedure prepare_initial_scrollbar_settings is
 	begin
 		put_line ("prepare initial scrollbar settings");
-		put_line ("vertical:");
-
+		
 		scrollbar_v_init.upper := - base_offset.y;			
 		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
 		scrollbar_v_init.page_size := gdouble (bounding_box.height);
 		scrollbar_v_init.value := scrollbar_v_init.lower;
 
-		-- put_line ("horizontal:");
-		-- CS
+		put_line (" vertical:");
+		put_line ("  lower" & gdouble'image (scrollbar_v_init.lower));
+		put_line ("  upper" & gdouble'image (scrollbar_v_init.upper));
+		put_line ("  page " & gdouble'image (scrollbar_v_init.page_size));
+		put_line ("  value" & gdouble'image (scrollbar_v_init.value));
+
+		
+		scrollbar_h_init.lower := base_offset.x;
+		scrollbar_h_init.upper := scrollbar_h_init.lower + gdouble (bounding_box.width);
+		scrollbar_h_init.page_size := gdouble (bounding_box.width);
+		scrollbar_h_init.value := scrollbar_h_init.lower;
+
+		put_line (" horizontal:");
+		put_line ("  lower" & gdouble'image (scrollbar_h_init.lower));
+		put_line ("  upper" & gdouble'image (scrollbar_h_init.upper));
+		put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
+		put_line ("  value" & gdouble'image (scrollbar_h_init.value));
 	end prepare_initial_scrollbar_settings;
 
 
@@ -213,16 +267,18 @@ package body callbacks is
 	procedure apply_initial_scrollbar_settings is
 	begin
 		put_line ("apply initial scrollbar settings");
-		put_line ("vertical:");
 
+		-- put_line ("vertical:");
 		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
 		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
 		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
 		scrollbar_v_adj.set_value (scrollbar_v_init.value);
 
-
 		-- put_line ("horizontal:");
-		-- CS
+		scrollbar_h_adj.set_upper (scrollbar_h_init.upper);			
+		scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
+		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
+		scrollbar_h_adj.set_value (scrollbar_h_init.value);
 	end apply_initial_scrollbar_settings;
 	
 
@@ -282,7 +338,8 @@ package body callbacks is
 		-- The size of the bounding
 		-- rectangle MUST be known beforehand of calling the
 		-- callback procedure cb_draw (see below):
-		size_x := 1000; -- CS
+		-- size_x := 1000; -- CS
+		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
 		
 		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
 
@@ -403,8 +460,6 @@ package body callbacks is
 	end cb_realized;
 
 
-	-- last_zoom_point : type_point_canvas;
-	-- zoom_point_changed : boolean := true;
 
 	
 	function cb_mouse_wheel_rolled (
@@ -503,9 +558,9 @@ package body callbacks is
 			case Z is
 				when ZOOM_OUT =>
 					-- du is negative or equal zero
-					if UM < abs (du) then
+					if V_UM < abs (du) then
 						put_line ("A");
-						U := scrollbar_v_adj.get_upper - UM; -- U moves upwards by the available margin
+						U := scrollbar_v_adj.get_upper - V_UM; -- U moves upwards by the available margin
 						scrollbar_v_adj.set_upper (U);
 					else
 						put_line ("B");
@@ -514,9 +569,9 @@ package body callbacks is
 					end if;
 
 					-- dl is negative or equal zero
-					if LM < abs (dl) then
+					if V_LM < abs (dl) then
 						put_line ("C");
-						L := scrollbar_v_adj.get_lower + LM;  -- L moves downwards by the available margin
+						L := scrollbar_v_adj.get_lower + V_LM;  -- L moves downwards by the available margin
 						scrollbar_v_adj.set_lower (L);
 					else
 						put_line ("D");
@@ -544,7 +599,7 @@ package body callbacks is
 				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
 				-- end if;
 				
-			show_adjustments;
+			show_adjustments_v;
 
 			compute_LM_UM;
 		end set_v_limits;

@@ -62,10 +62,15 @@ package body geometry is
 
 	procedure compute_base_offset is
 		x, y : gdouble;
+
+		-- The maximum scale factor:
+		S : constant gdouble := gdouble (type_scale_factor'last);
+		By : constant gdouble := gdouble (bounding_box.height);
+		Bx : constant gdouble := gdouble (bounding_box.width);
 	begin
-		x := 10.0; -- CS add formula
-		
-		y := - gdouble (bounding_box.height) * gdouble (type_scale_factor'last);
+		-- x := 10.0; -- CS add formula
+		x := Bx * S - Bx;
+		y := - By * S;
 
 		-- base_offset := (
 		-- x => 10.0, 
