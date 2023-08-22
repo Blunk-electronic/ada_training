@@ -47,7 +47,10 @@ package callbacks is
 	V_UM, V_LM : gdouble := 0.0;
 	H_UM, H_LM : gdouble := 0.0;
 	
-	procedure compute_LM_UM;
+	procedure compute_V_LM_UM;
+
+	procedure compute_H_LM_UM;
+	
 	
 
 	procedure cb_horizontal_moved (

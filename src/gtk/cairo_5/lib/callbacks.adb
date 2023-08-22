@@ -91,13 +91,22 @@ package body callbacks is
 -- SCROLLBARS:
 
 
-	procedure compute_LM_UM is begin
+	procedure compute_V_LM_UM is begin
 		V_LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
 		V_UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 
 		put_line ("V_LM" & gdouble'image (V_LM));
 		put_line ("V_UM" & gdouble'image (V_UM));
-	end compute_LM_UM;
+	end compute_V_LM_UM;
+
+	
+	procedure compute_H_LM_UM is begin
+		H_LM := scrollbar_h_adj.get_value - scrollbar_h_adj.get_lower;
+		H_UM := scrollbar_h_adj.get_upper - (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
+
+		put_line ("H_LM" & gdouble'image (H_LM));
+		put_line ("H_UM" & gdouble'image (H_UM));
+	end compute_H_LM_UM;
 
 	
 	procedure cb_horizontal_moved (
@@ -135,7 +144,7 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_v_released");
-		compute_LM_UM;
+		compute_V_LM_UM;
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -161,7 +170,7 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_h_released");
-		compute_LM_UM;
+		compute_H_LM_UM;
 		return event_handled;
 	end cb_scrollbar_h_released;
 
@@ -507,25 +516,53 @@ package body callbacks is
 
 
 		YR : gdouble;
+		XR : gdouble;
 
-		procedure compute_YR is
-			YF : gdouble;
+		procedure compute_XR_YR is
+			XF, YF : gdouble;
 		begin
+			-- Here the visible area in x begins toward right:
+			XF := ZP.x - scrollbar_h_adj.get_value;
+			put_line ("XF " & gdouble'image (XF));
+
+			XR := XF / gdouble (bounding_box.width);
+			put_line ("XR " & gdouble'image (XR));
+
+			
 			-- Here the visible area in y begins downwards:
 			YF := ZP.y - scrollbar_v_adj.get_value;
 			put_line ("YF " & gdouble'image (YF));
 
 			YR := YF / gdouble (bounding_box.height);
 			put_line ("YR " & gdouble'image (YR));
-		end compute_YR;
+		end compute_XR_YR;
 
 
 		Z : type_zoom;
 		S1 : constant type_scale_factor := scale_factor;
 		S2 : type_scale_factor;
+
+		-- x-axis
+		K1, K2, L1, L2 : gdouble;
 		
+		procedure compute_K1_L1 is
+			SP : constant gdouble := gdouble (bounding_box.width) * gdouble (scale_factor);
+		begin
+			K1 := SP * XR;
+			L1 := SP - K1;
+		end;
+
+		
+		procedure compute_K2_L2 is
+			SP : constant gdouble := gdouble (bounding_box.width) * gdouble (scale_factor);
+		begin
+			K2 := SP * XR;
+			L2 := SP - K2;
+		end;
+
+		
+		-- y-axis
 		G1, G2, H1, H2 : gdouble;
-		
 		
 		procedure compute_G1_H1 is
 			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
@@ -544,6 +581,68 @@ package body callbacks is
 
 		
 		
+		procedure set_h_limits is
+			dl, du : gdouble;
+			L, U : gdouble;
+		begin
+			dl := K2 - K1;
+			du := L2 - L1;
+
+			put_line ("set H limits");
+			put_line (" dl" & gdouble'image (dl));
+			put_line (" du" & gdouble'image (du));
+
+			case Z is
+				when ZOOM_OUT =>
+					-- du is negative or equal zero
+					if H_UM < abs (du) then
+						put_line ("A");
+						U := scrollbar_h_adj.get_upper - H_UM; -- U moves to the left by the available margin
+						scrollbar_h_adj.set_upper (U);
+					else
+						put_line ("B");
+						U := scrollbar_h_adj.get_upper - abs (du);
+						scrollbar_h_adj.set_upper (U); -- U moves to the left by du
+					end if;
+
+					-- dl is negative or equal zero
+					if H_LM < abs (dl) then
+						put_line ("C");
+						L := scrollbar_h_adj.get_lower + H_LM;  -- L moves to the right by the available margin
+						scrollbar_h_adj.set_lower (L);
+					else
+						put_line ("D");
+						L := scrollbar_h_adj.get_lower + abs (dl);
+						scrollbar_h_adj.set_lower (L); -- L moves to the right by dl
+					end if;
+
+
+					
+				when ZOOM_IN =>
+					-- du is greater or equal zero
+					U := scrollbar_h_adj.get_upper + du;
+					scrollbar_h_adj.set_upper (U); -- U moves to the right by du
+
+					-- dl is greater or equal zero
+					L := scrollbar_h_adj.get_lower - dl;
+					scrollbar_h_adj.set_lower (L); -- L moves to the left by dl
+
+			end case;
+			
+				-- CS clip negative values of U and L ?
+				
+
+				-- if scale_factor < 1.0 then
+				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
+				-- end if;
+				
+			show_adjustments_h;
+
+			compute_H_LM_UM;
+		end set_h_limits;
+
+
+		
 		procedure set_v_limits is
 			dl, du : gdouble;
 			L, U : gdouble;
@@ -551,8 +650,9 @@ package body callbacks is
 			dl := G2 - G1;
 			du := H2 - H1;
 
-			put_line ("dl" & gdouble'image (dl));
-			put_line ("du" & gdouble'image (du));
+			put_line ("set V limits");
+			put_line (" dl" & gdouble'image (dl));
+			put_line (" du" & gdouble'image (du));
 
 			case Z is
 				when ZOOM_OUT =>
@@ -600,7 +700,7 @@ package body callbacks is
 				
 			show_adjustments_v;
 
-			compute_LM_UM;
+			compute_V_LM_UM;
 		end set_v_limits;
 
 		
@@ -616,30 +716,36 @@ package body callbacks is
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
-			compute_YR;
+			compute_XR_YR;
 			
 			case direction is
 				when SCROLL_UP =>
 					Z := ZOOM_IN;
 					compute_G1_H1;
+					compute_K1_L1;
 					increase_scale;
 					S2 := scale_factor;
 					put_line ("zoom in  " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);
 					compute_G2_H2;
+					compute_K2_L2;
 					set_v_limits;
+					set_h_limits;
 					
 				when SCROLL_DOWN => 
 					Z := ZOOM_OUT;
 					compute_G1_H1;
+					compute_K1_L1;
 					decrease_scale;
 					S2 := scale_factor;
 					put_line ("zoom out " & to_string (scale_factor));
 					compute_translate_offset;
 					refresh (canvas);
 					compute_G2_H2;
+					compute_K2_L2;
 					set_v_limits;
+					set_h_limits;
 					
 				when others => null;
 			end case;
