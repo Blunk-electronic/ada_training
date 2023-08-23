@@ -59,7 +59,7 @@ package geometry is
 	bounding_box : type_bounding_box;
 	
 
-	-- Detects the smalles and greatest x and y values used by the model.
+	-- Detects the smallest and greatest x and y values used by the model.
 	-- Sets the global variable bounding_box:
 	procedure compute_bounding_box;
 	

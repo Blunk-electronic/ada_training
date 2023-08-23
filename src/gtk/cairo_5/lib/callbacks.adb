@@ -101,7 +101,10 @@ package body callbacks is
 
 	
 	procedure compute_H_LM_UM is begin
+		-- left:
 		H_LM := scrollbar_h_adj.get_value - scrollbar_h_adj.get_lower;
+
+		-- right:
 		H_UM := scrollbar_h_adj.get_upper - (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
 
 		put_line ("H_LM" & gdouble'image (H_LM));
@@ -113,6 +116,7 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("horizontal moved " & image (clock));
+		show_adjustments_h;
 	end cb_horizontal_moved;
 
 	
@@ -596,22 +600,22 @@ package body callbacks is
 				when ZOOM_OUT =>
 					-- du is negative or equal zero
 					if H_UM < abs (du) then
-						put_line ("A");
+						-- put_line ("A");
 						U := scrollbar_h_adj.get_upper - H_UM; -- U moves to the left by the available margin
 						scrollbar_h_adj.set_upper (U);
 					else
-						put_line ("B");
+						-- put_line ("B");
 						U := scrollbar_h_adj.get_upper - abs (du);
 						scrollbar_h_adj.set_upper (U); -- U moves to the left by du
 					end if;
 
 					-- dl is negative or equal zero
 					if H_LM < abs (dl) then
-						put_line ("C");
+						-- put_line ("C");
 						L := scrollbar_h_adj.get_lower + H_LM;  -- L moves to the right by the available margin
 						scrollbar_h_adj.set_lower (L);
 					else
-						put_line ("D");
+						-- put_line ("D");
 						L := scrollbar_h_adj.get_lower + abs (dl);
 						scrollbar_h_adj.set_lower (L); -- L moves to the right by dl
 					end if;
@@ -658,22 +662,22 @@ package body callbacks is
 				when ZOOM_OUT =>
 					-- du is negative or equal zero
 					if V_UM < abs (du) then
-						put_line ("A");
+						-- put_line ("A");
 						U := scrollbar_v_adj.get_upper - V_UM; -- U moves upwards by the available margin
 						scrollbar_v_adj.set_upper (U);
 					else
-						put_line ("B");
+						-- put_line ("B");
 						U := scrollbar_v_adj.get_upper - abs (du);
 						scrollbar_v_adj.set_upper (U); -- U moves upwards by du
 					end if;
 
 					-- dl is negative or equal zero
 					if V_LM < abs (dl) then
-						put_line ("C");
+						-- put_line ("C");
 						L := scrollbar_v_adj.get_lower + V_LM;  -- L moves downwards by the available margin
 						scrollbar_v_adj.set_lower (L);
 					else
-						put_line ("D");
+						-- put_line ("D");
 						L := scrollbar_v_adj.get_lower + abs (dl);
 						scrollbar_v_adj.set_lower (L); -- L moves downwards by dl
 					end if;
