@@ -44,7 +44,7 @@ package body callbacks is
 	begin
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
 		main_window.set_title ("Canvas");
-		-- window.set_border_width (10);
+		-- main_window.set_border_width (10);
 
 		-- Set the minimum size of the main window basing on the 
 		-- bounding-box:
@@ -184,7 +184,7 @@ package body callbacks is
 	begin
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
-		-- swin.set_border_width (5);
+		-- swin.set_border_width (10);
 
 		
 		scrollbar_h_adj := swin.get_hadjustment;
