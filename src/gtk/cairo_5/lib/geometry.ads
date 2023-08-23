@@ -30,6 +30,11 @@ package geometry is
 
 
 	function to_string (
+		distance : in type_distance_model)
+		return string;
+
+	
+	function to_string (
 		point	: in type_point_model)
 		return string;
 
@@ -59,12 +64,13 @@ package geometry is
 	bounding_box : type_bounding_box;
 	
 
+	margin : constant gdouble := 10.0;
+	
 	-- Detects the smallest and greatest x and y values used by the model.
 	-- Sets the global variable bounding_box:
 	procedure compute_bounding_box;
 	
 	
-	-- margin : constant gdouble := 10.0;
 	-- canvas_default_width  : constant gdouble := gdouble (bounding_box_width)  + margin;
 	-- canvas_default_height : constant gdouble := gdouble (bounding_box_height) + margin;
 

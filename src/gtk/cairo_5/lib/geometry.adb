@@ -31,13 +31,19 @@ package body geometry is
 	end decrease_scale;
 
 
+	function to_string (
+		distance : in type_distance_model)
+		return string
+	is begin
+		return type_distance_model'image (distance);
+	end to_string;
+
 	
 	function to_string (
 		point	: in type_point_model)
 		return string
 	is begin
-		return "model x/y: " & type_distance_model'image (point.x) 
-			& "/" & type_distance_model'image (point.y);
+		return "model x/y: " & to_string (point.x) & "/" & to_string (point.y);
 	end to_string;
 
 
@@ -54,9 +60,11 @@ package body geometry is
 		bounding_box.width  := object.width;
 		bounding_box.height := object.height;
 
-		-- CS
-		-- put_line ("bounding box (width/height) " 
-		-- 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
+		-- bounding_box.width  := object.width  + type_distance_model (margin);
+		-- bounding_box.height := object.height + type_distance_model (margin);
+		
+		put_line ("bounding box (width/height) " 
+		 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
 	end compute_bounding_box;
 	
 
@@ -68,13 +76,8 @@ package body geometry is
 		By : constant gdouble := gdouble (bounding_box.height);
 		Bx : constant gdouble := gdouble (bounding_box.width);
 	begin
-		-- x := 10.0; -- CS add formula
-		x := Bx * S - Bx;
+		x :=   Bx * S - Bx;
 		y := - By * S;
-
-		-- base_offset := (
-		-- x => 10.0, 
-		-- y => -2000.0);
 
 		base_offset := (x, y);
 
@@ -117,6 +120,10 @@ package body geometry is
 		object.lower_left_corner := (0.0, 0.0);
 		object.width  := 400.0;
 		object.height := 200.0;
+		
+		-- object.lower_left_corner := (5.0, 5.0);
+		-- object.width  := 390.0;
+		-- object.height := 190.0;
 	end make_object;
 	
 end geometry;
