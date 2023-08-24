@@ -47,6 +47,25 @@ package body geometry is
 	end to_string;
 
 
+	function invert (
+		point	: in type_point_model)
+		return type_point_model
+	is begin
+		return (- point.x, - point.y);
+	end invert;
+
+	
+
+	procedure move_by (
+		point	: in out type_point_model;
+		offset	: in type_point_model)
+	is begin
+		point.x := point.x + offset.x;
+		point.y := point.y + offset.y;
+	end move_by;
+
+	
+
 	function to_string (
 		point	: in type_point_canvas)
 		return string
@@ -57,11 +76,14 @@ package body geometry is
 
 	procedure compute_bounding_box is
 	begin
-		bounding_box.width  := object.width;
-		bounding_box.height := object.height;
-
-		-- bounding_box.width  := object.width  + type_distance_model (margin);
-		-- bounding_box.height := object.height + type_distance_model (margin);
+		-- bounding_box.width  := object.width;
+		-- bounding_box.height := object.height;
+		
+		-- Add to the object dimensions the margin. 
+		-- The margin is part of the model and thus part 
+		-- of the bounding box:
+		bounding_box.width  := object.width  + 2.0 * margin;
+		bounding_box.height := object.height + 2.0 * margin;
 		
 		put_line ("bounding box (width/height) " 
 		 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
@@ -89,14 +111,19 @@ package body geometry is
 	function to_model (
 		point		: in type_point_canvas;
 		scale		: in type_scale_factor;
-		translate	: in type_point_canvas;
-		offset		: in type_point_canvas)
+		with_margin	: in boolean := false)
 		return type_point_model
 	is 
 		result : type_point_model;
 	begin
-		result.x := type_distance_model (( (point.x - translate.x) - offset.x) / gdouble (scale));
-		result.y := type_distance_model ((-(point.y - translate.y) - offset.y) / gdouble (scale));
+		result.x := type_distance_model (( (point.x - translate_offset.x) - base_offset.x) / gdouble (scale));
+		result.y := type_distance_model ((-(point.y - translate_offset.y) - base_offset.y) / gdouble (scale));
+
+		-- If real coordinates are required, then
+		-- the result must be "moved back" by the margin offset:
+		if with_margin then
+			move_by (result, invert (margin_offset));
+		end if;
 		return result;
 	end to_model;
 	
@@ -118,12 +145,12 @@ package body geometry is
 	procedure make_object is
 	begin
 		object.lower_left_corner := (0.0, 0.0);
-		object.width  := 400.0;
-		object.height := 200.0;
+		-- object.width  := 400.0;
+		-- object.height := 200.0;
 		
 		-- object.lower_left_corner := (5.0, 5.0);
-		-- object.width  := 390.0;
-		-- object.height := 190.0;
+		object.width  := 390.0;
+		object.height := 190.0;
 	end make_object;
 	
 end geometry;

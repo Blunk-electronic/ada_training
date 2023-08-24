@@ -346,14 +346,9 @@ package body callbacks is
 		canvas.on_size_allocate (cb_size_allocate'access);
 
 		
-		-- Set the minimum size of the canvas (in pixels).
+		-- Set the size of the canvas (in pixels).
 		-- It is like the wooden frame around a real-world canvas. 
-		-- The size of the bounding
-		-- rectangle MUST be known beforehand of calling the
-		-- callback procedure cb_draw (see below):
-		-- size_x := 1000; -- CS
 		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
-		
 		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
 
 		canvas.set_size_request (size_x, size_y); -- unit is pixels
@@ -401,7 +396,10 @@ package body callbacks is
 		event_handled : boolean := false;
 		point : constant type_point_canvas := (event.x, event.y);
 
-		mp : constant type_point_model := to_model (point, scale_factor, translate_offset, base_offset);
+		mp : constant type_point_model := to_model (
+			point 		=> point,
+			scale		=> scale_factor,
+			with_margin	=> true);
 	begin
 		-- Output the button id, x and y position:
 		put_line ("cb_button_pressed "
@@ -426,7 +424,7 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		cp : constant type_point_canvas := (event.x, event.y);
-		mp : constant type_point_model := to_model (cp, scale_factor, translate_offset, base_offset);
+		mp : constant type_point_model := to_model (cp, scale_factor);
 	begin
 		null;
 		-- Output the x/y position of the pointer
@@ -460,7 +458,6 @@ package body callbacks is
 		put_line ("cb_key_pressed "
 			& " key " & gdk_key_type'image (event.keyval));
 
-		-- init_GH_old := true;
 		return event_handled;
 	end cb_key_pressed;
 
@@ -492,8 +489,8 @@ package body callbacks is
 		ZP : constant type_point_canvas := (event.x, event.y);
 
 		-- The corresponding real-world point (in the model)
-		-- according to the CURRENT (old) scale_factor and translate_offset:
-		mp : constant type_point_model := to_model (ZP, scale_factor, translate_offset, base_offset);
+		-- according to the CURRENT (old) scale_factor:
+		mp : constant type_point_model := to_model (ZP, scale_factor);
 
 		
 		-- After changing the scale_factor, the translate_offset must
@@ -769,6 +766,8 @@ package body callbacks is
 	is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
+
+		object_position : type_point_model;
 	begin
 		-- new_line;
 		-- put_line ("cb_draw " & image (clock));
@@ -780,11 +779,16 @@ package body callbacks is
 		-- The translate_offset has been calculated earlier by 
 		-- procedure cb_mouse_wheel_rolled:
 		translate (context, translate_offset.x, translate_offset.y);
-		
-		-- Compute the canvas-point where the lower-left corner
-		-- of the rectangle is:
-		cp := to_canvas (object.lower_left_corner, scale_factor, base_offset);
 
+
+		
+		-- Move the object by the margin_offset:
+		object_position := object.lower_left_corner;
+		move_by (object_position, margin_offset);
+		-- put_line ("object position " & to_string (object_position));
+		
+		cp := to_canvas (object_position, scale_factor, base_offset);
+		
 		-- Draw the rectangle:
 		rectangle (context, 
 			cp.x, cp.y,	-- lower left corner

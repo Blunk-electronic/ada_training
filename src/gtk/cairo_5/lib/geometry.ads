@@ -39,7 +39,19 @@ package geometry is
 		return string;
 
 
+	
+	function invert (
+		point	: in type_point_model)
+		return type_point_model;
+	
+						 
+	-- Moves a model point by the given offset:
+	procedure move_by (
+		point	: in out type_point_model;
+		offset	: in type_point_model);
 
+
+	
 -- CANVAS:
 
 	subtype type_distance_canvas is gdouble range 0.0 .. gdouble'last;
@@ -64,7 +76,14 @@ package geometry is
 	bounding_box : type_bounding_box;
 	
 
-	margin : constant gdouble := 10.0;
+	-- The margin around the drawing is part of the model.
+	-- The bounding box includes the margin:
+	margin : constant type_distance_model := 5.0;
+	
+	margin_offset : constant type_point_model := (
+		x	=> margin,
+		y	=> margin);
+
 	
 	-- Detects the smallest and greatest x and y values used by the model.
 	-- Sets the global variable bounding_box:
@@ -92,8 +111,7 @@ package geometry is
 	function to_model (
 		point		: in type_point_canvas;
 		scale		: in type_scale_factor;
-		translate	: in type_point_canvas;
-		offset		: in type_point_canvas)
+		with_margin	: in boolean := false) -- if real coordinates are required
 		return type_point_model;
 	
 
