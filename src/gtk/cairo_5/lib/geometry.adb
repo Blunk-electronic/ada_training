@@ -76,9 +76,6 @@ package body geometry is
 
 	procedure compute_bounding_box is
 	begin
-		-- bounding_box.width  := object.width;
-		-- bounding_box.height := object.height;
-		
 		-- Add to the object dimensions the margin. 
 		-- The margin is part of the model and thus part 
 		-- of the bounding box:
@@ -86,7 +83,11 @@ package body geometry is
 		bounding_box.height := object.height + 2.0 * margin;
 		
 		put_line ("bounding box (width/height) " 
-		 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
+			& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
+
+		-- Compute the position of the bounding-box.
+		-- This is the smallest x and y value used by the objects:
+		bounding_box.position := object.lower_left_corner;
 	end compute_bounding_box;
 	
 
@@ -123,6 +124,7 @@ package body geometry is
 		-- the result must be "moved back" by the margin offset:
 		if with_margin then
 			move_by (result, invert (margin_offset));
+			move_by (result, bounding_box.position);
 		end if;
 		return result;
 	end to_model;
@@ -144,7 +146,7 @@ package body geometry is
 
 	procedure make_object is
 	begin
-		object.lower_left_corner := (0.0, 0.0);
+		object.lower_left_corner := (-10.0, -5.0);
 		-- object.width  := 400.0;
 		-- object.height := 200.0;
 		

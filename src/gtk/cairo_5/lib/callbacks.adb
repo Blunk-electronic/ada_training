@@ -786,6 +786,9 @@ package body callbacks is
 		object_position := object.lower_left_corner;
 		move_by (object_position, margin_offset);
 		-- put_line ("object position " & to_string (object_position));
+
+		-- Move the object by the inverted bounding_box position:
+		move_by (object_position, invert (bounding_box.position));
 		
 		cp := to_canvas (object_position, scale_factor, base_offset);
 		

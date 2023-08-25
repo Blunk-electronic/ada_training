@@ -51,6 +51,33 @@ package geometry is
 		offset	: in type_point_model);
 
 
+	type type_bounding_box is record
+		width		: type_distance_model;
+		height		: type_distance_model;
+		position	: type_point_model; -- lower left corner
+	end record;
+
+	-- This is the bounding-box of the model. It is a rectangle
+	-- that encloses all objects of the model and the margins 
+	-- around the model:
+	bounding_box : type_bounding_box;
+
+
+	-- The margin around the drawing is part of the model.
+	-- The bounding box includes the margin:
+	margin : constant type_distance_model := 5.0;
+	
+	margin_offset : constant type_point_model := (
+		x	=> margin,
+		y	=> margin);
+
+	
+	-- Detects the smallest and greatest x and y values used by the model.
+	-- Sets the global variable bounding_box:
+	procedure compute_bounding_box;
+
+
+	
 	
 -- CANVAS:
 
@@ -66,28 +93,8 @@ package geometry is
 		return string;
 
 
-	type type_bounding_box is record
-		width	: type_distance_model;
-		height	: type_distance_model;
-	end record;
-
-	-- This is the bounding-box of the model. It is a rectange
-	-- that encloses all objects of the model:
-	bounding_box : type_bounding_box;
 	
 
-	-- The margin around the drawing is part of the model.
-	-- The bounding box includes the margin:
-	margin : constant type_distance_model := 5.0;
-	
-	margin_offset : constant type_point_model := (
-		x	=> margin,
-		y	=> margin);
-
-	
-	-- Detects the smallest and greatest x and y values used by the model.
-	-- Sets the global variable bounding_box:
-	procedure compute_bounding_box;
 	
 	
 
