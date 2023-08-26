@@ -125,11 +125,6 @@ package callbacks is
 	procedure set_up_canvas;
 		
 
-
-	
-
-	type type_zoom is (ZOOM_IN, ZOOM_OUT);
-
 	
 	
 	

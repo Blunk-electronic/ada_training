@@ -538,8 +538,11 @@ package body callbacks is
 			put_line ("YR " & gdouble'image (YR));
 		end compute_XR_YR;
 
-
+		
+		type type_zoom is (ZOOM_IN, ZOOM_OUT);
 		Z : type_zoom;
+
+		
 		S1 : constant type_scale_factor := scale_factor;
 		S2 : type_scale_factor;
 
@@ -718,38 +721,31 @@ package body callbacks is
 		if (event.state and accel_mask) = control_mask then
 
 			compute_XR_YR;
+			compute_G1_H1;
+			compute_K1_L1;
 			
 			case direction is
 				when SCROLL_UP =>
 					Z := ZOOM_IN;
-					compute_G1_H1;
-					compute_K1_L1;
 					increase_scale;
 					S2 := scale_factor;
 					put_line ("zoom in  " & to_string (scale_factor));
-					compute_translate_offset;
-					refresh (canvas);
-					compute_G2_H2;
-					compute_K2_L2;
-					set_v_limits;
-					set_h_limits;
 					
 				when SCROLL_DOWN => 
 					Z := ZOOM_OUT;
-					compute_G1_H1;
-					compute_K1_L1;
 					decrease_scale;
 					S2 := scale_factor;
 					put_line ("zoom out " & to_string (scale_factor));
-					compute_translate_offset;
-					refresh (canvas);
-					compute_G2_H2;
-					compute_K2_L2;
-					set_v_limits;
-					set_h_limits;
 					
 				when others => null;
 			end case;
+
+			compute_translate_offset;
+			refresh (canvas);
+			compute_G2_H2;
+			compute_K2_L2;
+			set_v_limits;
+			set_h_limits;
 		end if;
 		
 		return event_handled;
