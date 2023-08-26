@@ -110,9 +110,9 @@ package body geometry is
 	
 	
 	function to_model (
-		point		: in type_point_canvas;
-		scale		: in type_scale_factor;
-		with_margin	: in boolean := false)
+		point	: in type_point_canvas;
+		scale	: in type_scale_factor;
+		real 	: in boolean := false)
 		return type_point_model
 	is 
 		result : type_point_model;
@@ -120,9 +120,9 @@ package body geometry is
 		result.x := type_distance_model (( (point.x - translate_offset.x) - base_offset.x) / gdouble (scale));
 		result.y := type_distance_model ((-(point.y - translate_offset.y) - base_offset.y) / gdouble (scale));
 
-		-- If real coordinates are required, then
-		-- the result must be "moved back" by the margin offset:
-		if with_margin then
+		-- If real coordinates are required, then the result must be compensated
+		-- (or "moved back") by the margin_offset and the bounding-box position:
+		if real then
 			move_by (result, invert (margin_offset));
 			move_by (result, bounding_box.position);
 		end if;

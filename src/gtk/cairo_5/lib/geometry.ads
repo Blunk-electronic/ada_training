@@ -116,9 +116,9 @@ package geometry is
 -- CONVERSION BETWEEN MODEL AND CANVAS:
 
 	function to_model (
-		point		: in type_point_canvas;
-		scale		: in type_scale_factor;
-		with_margin	: in boolean := false) -- if real coordinates are required
+		point	: in type_point_canvas;
+		scale	: in type_scale_factor;
+		real 	: in boolean := false) -- if real model coordinates are required
 		return type_point_model;
 	
 

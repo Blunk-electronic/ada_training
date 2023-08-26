@@ -397,9 +397,9 @@ package body callbacks is
 		point : constant type_point_canvas := (event.x, event.y);
 
 		mp : constant type_point_model := to_model (
-			point 		=> point,
-			scale		=> scale_factor,
-			with_margin	=> true);
+			point 	=> point,
+			scale	=> scale_factor,
+			real	=> true);
 	begin
 		-- Output the button id, x and y position:
 		put_line ("cb_button_pressed "
