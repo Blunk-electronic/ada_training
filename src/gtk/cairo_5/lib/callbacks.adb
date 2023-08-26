@@ -751,7 +751,6 @@ package body callbacks is
 				when others => null;
 			end case;
 		end if;
-
 		
 		return event_handled;
 	end cb_mouse_wheel_rolled;

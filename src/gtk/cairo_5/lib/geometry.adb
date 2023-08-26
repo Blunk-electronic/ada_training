@@ -144,6 +144,24 @@ package body geometry is
 	end to_canvas;
 
 
+	function model_point_visible (
+		point 		: in type_point_model)
+		return type_model_point_visible
+	is
+		result : type_model_point_visible;
+	begin
+
+		-- put_line ("origin " & to_string (to_canvas (
+		-- 	point	=> (0.0, 0.0),
+		-- 	scale	=> scale_factor,
+		-- 	offset	=> translate_offset)));
+
+		
+		return result;
+	end model_point_visible;
+
+	
+
 	procedure make_object is
 	begin
 		object.lower_left_corner := (-10.0, -5.0);

@@ -129,8 +129,17 @@ package geometry is
 		return type_point_canvas;
 
 
+-- POINT QUERY AND TEST:
 
-		
+	type type_model_point_visible is record
+		x, y : boolean := false;
+	end record;
+	
+	function model_point_visible (
+		point 		: in type_point_model)
+		return type_model_point_visible;
+
+	
 -- DUMMY OBJECT TO BE DRAWN ON THE CANVAS:
 
 	type type_rectangle is record
