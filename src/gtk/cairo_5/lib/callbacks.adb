@@ -387,24 +387,43 @@ package body callbacks is
 		return type_model_point_visible
 	is
 		result : type_model_point_visible;
-		cp : type_point_canvas;
+		C : type_point_canvas;
 	begin
-		-- cp := to_canvas (point, scale_factor);
-		cp := to_canvas (point, scale_factor, true);
+		C := to_canvas (
+			point	=> point,
+			scale	=> scale_factor,
+			real	=> true);
 
-		put_line ("cp " & to_string (cp));
+		put_line ("C " & to_string (C));
 
-		if cp.y >= scrollbar_v_adj.get_value and
-			cp.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
-
-			result.y := true;
+		-- X-axis:
+		-- The visible area ranges from the current position
+		-- of the horizontal scrollbar (value) to the end of the
+		-- scrollbar (value + page_size). If C.x lies in that range,
+		-- then the corresponding flag in the return will be set.
+		if C.x >= scrollbar_h_adj.get_value and
+			C.x <= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
+			result.x := true;
+			put_line ("X visible");	
 		end if;
+
 		
+		-- Y-axis:
+		-- The visible area ranges from the current position
+		-- of the vertical scrollbar (value) to the end of the
+		-- scrollbar (value + page_size). If C.y lies in that range,
+		-- then the corresponding flag in the return will be set.
+		if C.y >= scrollbar_v_adj.get_value and
+			C.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+			result.y := true;
+			put_line ("Y visible");	
+		end if;
+
 		return result;
 	end model_point_visible;
 	
 
-
+	
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;
@@ -531,9 +550,22 @@ package body callbacks is
 			translate_offset.x := -(ZP_after_scale.x - ZP.x);
 			translate_offset.y := -(ZP_after_scale.y - ZP.y);
 			
-			put_line ("translate offset " & to_string (translate_offset));
+			-- put_line ("translate offset " & to_string (translate_offset));
 		end compute_translate_offset;
 
+
+		
+		-- BC_1, BC_2 : type_model_point_visible;
+  -- 
+		-- procedure set_clip_status (
+		-- 	status	: in out type_model_point_visible)
+		-- is
+		-- begin
+		-- 	status := model_point_visible
+		-- 	null;
+		-- end set_clip_status;
+		
+		
 
 		YR : gdouble;
 		XR : gdouble;
@@ -565,6 +597,8 @@ package body callbacks is
 		S1 : constant type_scale_factor := scale_factor;
 		S2 : type_scale_factor;
 
+
+		
 		-- x-axis
 		K1, K2, L1, L2 : gdouble;
 		
@@ -765,12 +799,11 @@ package body callbacks is
 			compute_K2_L2;
 			set_v_limits;
 			set_h_limits;
+
+			-- set_clip_status (BC_2);
 		end if;
 
-		--if model_point_visible (model_origin).y then
-		if model_point_visible (object.lower_left_corner).y then
-			put_line ("y visible");	
-		end if;
+
 		
 		return event_handled;
 	end cb_mouse_wheel_rolled;

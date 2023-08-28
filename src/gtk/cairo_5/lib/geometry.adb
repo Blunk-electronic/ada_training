@@ -140,7 +140,10 @@ package body geometry is
 		result : type_point_canvas;
 	begin
 		if real then
+			-- Move the given point by the inverted bounding_box position:
 			move_by (P, invert (bounding_box.position));
+
+			-- Move the given point by the margin_offset:
 			move_by (P, margin_offset);
 		end if;
 		

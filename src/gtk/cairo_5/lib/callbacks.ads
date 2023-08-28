@@ -137,9 +137,7 @@ package callbacks is
 		point 		: in type_point_model)
 		return type_model_point_visible;
 	
-	
-	
-	
+
 
 
 	
