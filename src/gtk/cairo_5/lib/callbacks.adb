@@ -9,7 +9,6 @@ with ada.calendar.formatting;	use ada.calendar.formatting;
 
 with gtk.main;					use gtk.main;
 
-with geometry;					use geometry;
 
 
 package body callbacks is
@@ -383,6 +382,25 @@ package body callbacks is
 
 
 
+	function model_point_visible (
+		point 		: in type_point_model)
+		return type_model_point_visible
+	is
+		result : type_model_point_visible;
+		cp : type_point_canvas;
+	begin
+		cp := to_canvas (point, scale_factor);
+
+		put_line ("cp " & to_string (cp));
+
+		if cp.y >= scrollbar_v_adj.get_value then
+			-- cp.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+
+			result.y := true;
+		end if;
+		
+		return result;
+	end model_point_visible;
 	
 
 
@@ -503,7 +521,7 @@ package body callbacks is
 			ZP_after_scale : type_point_canvas;
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			ZP_after_scale := to_canvas (mp, scale_factor, base_offset);
+			ZP_after_scale := to_canvas (mp, scale_factor);
 			-- put_line ("ZP after scale   " & to_string (ZP_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
@@ -512,7 +530,7 @@ package body callbacks is
 			translate_offset.x := -(ZP_after_scale.x - ZP.x);
 			translate_offset.y := -(ZP_after_scale.y - ZP.y);
 			
-			--put_line ("translate offset " & to_string (translate_offset));
+			put_line ("translate offset " & to_string (translate_offset));
 		end compute_translate_offset;
 
 
@@ -747,6 +765,10 @@ package body callbacks is
 			set_v_limits;
 			set_h_limits;
 		end if;
+
+		if model_point_visible (model_origin).y then
+			put_line ("y visible");	
+		end if;
 		
 		return event_handled;
 	end cb_mouse_wheel_rolled;
@@ -785,7 +807,7 @@ package body callbacks is
 		-- Move the object by the inverted bounding_box position:
 		move_by (object_position, invert (bounding_box.position));
 		
-		cp := to_canvas (object_position, scale_factor, base_offset);
+		cp := to_canvas (object_position, scale_factor);
 		
 		-- Draw the rectangle:
 		rectangle (context, 

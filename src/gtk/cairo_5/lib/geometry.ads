@@ -28,6 +28,8 @@ package geometry is
 		x, y : type_distance_model := 0.0;
 	end record;
 
+	model_origin : constant type_point_model := (0.0, 0.0);
+	
 
 	function to_string (
 		distance : in type_distance_model)
@@ -124,20 +126,11 @@ package geometry is
 
 	function to_canvas (
 		point 		: in type_point_model;
-		scale		: in type_scale_factor;
-		offset		: in type_point_canvas)
+		scale		: in type_scale_factor)
+		-- offset		: in type_point_canvas)
 		return type_point_canvas;
 
 
--- POINT QUERY AND TEST:
-
-	type type_model_point_visible is record
-		x, y : boolean := false;
-	end record;
-	
-	function model_point_visible (
-		point 		: in type_point_model)
-		return type_model_point_visible;
 
 	
 -- DUMMY OBJECT TO BE DRAWN ON THE CANVAS:

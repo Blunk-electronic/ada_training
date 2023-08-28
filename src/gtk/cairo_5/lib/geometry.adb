@@ -132,33 +132,16 @@ package body geometry is
 
 	function to_canvas (
 		point 		: in type_point_model;
-		scale		: in type_scale_factor;
-		offset		: in type_point_canvas)
+		scale		: in type_scale_factor)
+		-- offset		: in type_point_canvas)
 		return type_point_canvas
 	is
 		result : type_point_canvas;
 	begin
-		result.x :=  (gdouble (point.x) * gdouble (scale) + offset.x);
-		result.y := -(gdouble (point.y) * gdouble (scale) + offset.y);
+		result.x :=  (gdouble (point.x) * gdouble (scale) + base_offset.x);
+		result.y := -(gdouble (point.y) * gdouble (scale) + base_offset.y);
 		return result;
 	end to_canvas;
-
-
-	function model_point_visible (
-		point 		: in type_point_model)
-		return type_model_point_visible
-	is
-		result : type_model_point_visible;
-	begin
-
-		-- put_line ("origin " & to_string (to_canvas (
-		-- 	point	=> (0.0, 0.0),
-		-- 	scale	=> scale_factor,
-		-- 	offset	=> translate_offset)));
-
-		
-		return result;
-	end model_point_visible;
 
 	
 

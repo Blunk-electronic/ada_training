@@ -9,6 +9,8 @@ with gtk.scrollbar;				use gtk.scrollbar;
 with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
+with geometry;					use geometry;
+
 package callbacks is
 
 -- MAIN WINDOW:
@@ -125,6 +127,15 @@ package callbacks is
 	procedure set_up_canvas;
 		
 
+-- POINT QUERY AND TEST:
+
+	type type_model_point_visible is record
+		x, y : boolean := false;
+	end record;
+	
+	function model_point_visible (
+		point 		: in type_point_model)
+		return type_model_point_visible;
 	
 	
 	
@@ -153,6 +164,10 @@ package callbacks is
 	procedure cb_realized (
 		canvas	: access gtk_widget_record'class);
 	
+
+
+
+
 	
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
