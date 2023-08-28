@@ -785,8 +785,6 @@ package body callbacks is
 	is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
-
-		object_position : type_point_model;
 	begin
 		-- new_line;
 		-- put_line ("cb_draw " & image (clock));
@@ -794,22 +792,10 @@ package body callbacks is
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 
-		-- Drag the drawing by the current translate_offset.
-		-- The translate_offset has been calculated earlier by 
-		-- procedure cb_mouse_wheel_rolled:
-		translate (context, translate_offset.x, translate_offset.y);
-
-
 		
-		-- Move the object by the margin_offset:
-		object_position := object.lower_left_corner;
-		move_by (object_position, margin_offset);
-		-- put_line ("object position " & to_string (object_position));
+		-- put_line ("object position " & to_string (object.lower_left_corner));
 
-		-- Move the object by the inverted bounding_box position:
-		move_by (object_position, invert (bounding_box.position));
-		
-		cp := to_canvas (object_position, scale_factor);
+		cp := to_canvas (object.lower_left_corner, scale_factor, true);
 		
 		-- Draw the rectangle:
 		rectangle (context, 
