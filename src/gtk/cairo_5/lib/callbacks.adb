@@ -389,12 +389,13 @@ package body callbacks is
 		result : type_model_point_visible;
 		cp : type_point_canvas;
 	begin
-		cp := to_canvas (point, scale_factor);
+		-- cp := to_canvas (point, scale_factor);
+		cp := to_canvas (point, scale_factor, true);
 
 		put_line ("cp " & to_string (cp));
 
-		if cp.y >= scrollbar_v_adj.get_value then
-			-- cp.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+		if cp.y >= scrollbar_v_adj.get_value and
+			cp.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
 
 			result.y := true;
 		end if;
@@ -766,7 +767,8 @@ package body callbacks is
 			set_h_limits;
 		end if;
 
-		if model_point_visible (model_origin).y then
+		--if model_point_visible (model_origin).y then
+		if model_point_visible (object.lower_left_corner).y then
 			put_line ("y visible");	
 		end if;
 		

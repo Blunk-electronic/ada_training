@@ -131,15 +131,27 @@ package body geometry is
 	
 
 	function to_canvas (
-		point 		: in type_point_model;
-		scale		: in type_scale_factor)
-		-- offset		: in type_point_canvas)
+		point 	: in type_point_model;
+		scale	: in type_scale_factor;
+		real	: in boolean := false)
 		return type_point_canvas
 	is
+		P : type_point_model := point;
 		result : type_point_canvas;
 	begin
-		result.x :=  (gdouble (point.x) * gdouble (scale) + base_offset.x);
-		result.y := -(gdouble (point.y) * gdouble (scale) + base_offset.y);
+		if real then
+			move_by (P, invert (bounding_box.position));
+			move_by (P, margin_offset);
+		end if;
+		
+		result.x :=  (gdouble (P.x) * gdouble (scale) + base_offset.x);
+		result.y := -(gdouble (P.y) * gdouble (scale) + base_offset.y);
+
+		if real then
+			result.x := result.x + translate_offset.x;
+			result.y := result.y + translate_offset.y;
+		end if;
+		
 		return result;
 	end to_canvas;
 

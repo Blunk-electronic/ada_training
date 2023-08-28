@@ -125,9 +125,9 @@ package geometry is
 	
 
 	function to_canvas (
-		point 		: in type_point_model;
-		scale		: in type_scale_factor)
-		-- offset		: in type_point_canvas)
+		point 	: in type_point_model;
+		scale	: in type_scale_factor;
+		real	: in boolean := false) -- if real model coordinates are given
 		return type_point_canvas;
 
 
