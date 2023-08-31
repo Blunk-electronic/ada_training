@@ -140,6 +140,13 @@ package callbacks is
 
 
 
+	function get_visible_area (
+		canvas	: access gtk_widget_record'class)
+		return type_bounding_box;
+
+	
+	
+
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;

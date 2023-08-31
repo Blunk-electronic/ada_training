@@ -74,6 +74,19 @@ package body geometry is
 	end to_string;
 
 
+
+	function to_string (
+		box : in type_bounding_box)
+		return string
+	is begin
+		return "bounding box (x/y/w/h): "
+			& to_string (box.position) & "/"
+			& to_string (box.width) & "/"
+			& to_string (box.height);
+	end to_string;
+
+	
+	
 	procedure compute_bounding_box is
 	begin
 		-- Add to the object dimensions the margin. 
@@ -82,13 +95,18 @@ package body geometry is
 		bounding_box.width  := object.width  + 2.0 * margin;
 		bounding_box.height := object.height + 2.0 * margin;
 		
-		put_line ("bounding box (width/height) " 
-			& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
+		-- put_line ("bounding box (width/height) " 
+		-- 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
 
 		-- Compute the position of the bounding-box.
 		-- This is the smallest x and y value used by the objects:
 		bounding_box.position := object.lower_left_corner;
+
+		put_line (to_string (bounding_box));
 	end compute_bounding_box;
+
+	
+
 	
 
 	procedure compute_base_offset is

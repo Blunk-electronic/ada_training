@@ -94,8 +94,8 @@ package body callbacks is
 		V_LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
 		V_UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 
-		put_line ("V_LM" & gdouble'image (V_LM));
-		put_line ("V_UM" & gdouble'image (V_UM));
+		-- put_line ("V_LM" & gdouble'image (V_LM));
+		-- put_line ("V_UM" & gdouble'image (V_UM));
 	end compute_V_LM_UM;
 
 	
@@ -106,16 +106,18 @@ package body callbacks is
 		-- right:
 		H_UM := scrollbar_h_adj.get_upper - (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
 
-		put_line ("H_LM" & gdouble'image (H_LM));
-		put_line ("H_UM" & gdouble'image (H_UM));
+		-- put_line ("H_LM" & gdouble'image (H_LM));
+		-- put_line ("H_UM" & gdouble'image (H_UM));
 	end compute_H_LM_UM;
 
 	
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class)
-	is begin
+	is 
+	begin
 		put_line ("horizontal moved " & image (clock));
-		show_adjustments_h;
+		-- show_adjustments_h;
+		put_line ("visible area: " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
 	
@@ -123,7 +125,8 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		put_line ("vertical moved " & image (clock));
-		show_adjustments_v;
+		-- show_adjustments_v;
+		put_line ("visible area: " & to_string (get_visible_area (canvas)));
 	end cb_vertical_moved;
 
 
@@ -209,7 +212,7 @@ package body callbacks is
 			hscrollbar_policy => gtk.enums.POLICY_AUTOMATIC,
 			-- hscrollbar_policy => gtk.enums.POLICY_NEVER, 
 			vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
-			-- vscrollbar_policy => gtk.enums.POLICY_ALWAYS);
+			-- vscrollbar_policy => gtk.enums.POLICY_NEVER);
 
 	end set_up_scrollbars;
 
@@ -389,6 +392,8 @@ package body callbacks is
 		result : type_model_point_visible;
 		C : type_point_canvas;
 	begin
+		put_line ("M " & to_string (point));
+		
 		C := to_canvas (
 			point	=> point,
 			scale	=> scale_factor,
@@ -421,8 +426,48 @@ package body callbacks is
 
 		return result;
 	end model_point_visible;
+
 	
 
+	function get_visible_area (
+		canvas	: access gtk_widget_record'class)
+		return type_bounding_box
+	is
+		result : type_bounding_box;
+
+		h_start  : constant gdouble := scrollbar_h_adj.get_value;
+		h_length : constant gdouble := scrollbar_h_adj.get_page_size;
+		h_end    : constant gdouble := h_start + h_length;
+		
+		v_start	 : constant gdouble := scrollbar_v_adj.get_value;
+		v_length : constant gdouble := scrollbar_v_adj.get_page_size;
+		v_end	 : constant gdouble := v_start + v_length;
+
+		BL, BR, TL, TR : type_point_model;
+	begin
+		BL := to_model ((h_start, v_end), scale_factor, true);
+		result.position := BL;
+
+		BR := to_model ((h_end, v_end), scale_factor, true);
+		TL := to_model ((h_start, v_start), scale_factor, true);
+		TR := to_model ((h_end, v_start), scale_factor, true);
+
+		-- put_line ("BL " & to_string (BL));
+		-- put_line ("BR " & to_string (BR));
+		-- put_line ("TR " & to_string (TR));
+		-- put_line ("TL " & to_string (TL));
+		
+		-- result.width    := type_distance_model (h_length) * type_distance_model (scale_factor);
+		-- result.height   := type_distance_model (v_length) * type_distance_model (scale_factor);
+
+		result.width := TR.x - TL.x;
+		result.height := TL.y - BL.y;
+
+		-- put_line ("visible area " & to_string (result));
+		return result;
+	end get_visible_area;
+
+	
 	
 	
 	function cb_button_pressed (
@@ -441,7 +486,7 @@ package body callbacks is
 	begin
 		-- Output the button id, x and y position:
 		put_line ("cb_button_pressed "
-			& " button " & guint'image (event.button)
+			& " button" & guint'image (event.button) & " "
 			& to_string (point));
 
 		put_line (to_string (mp));
@@ -555,7 +600,9 @@ package body callbacks is
 
 
 		
-		-- BC_1, BC_2 : type_model_point_visible;
+		TL_1, TL_2 : type_model_point_visible;
+		BL_1, BL_2 : type_model_point_visible;
+		BR_1, BR_2 : type_model_point_visible;
   -- 
 		-- procedure set_clip_status (
 		-- 	status	: in out type_model_point_visible)
@@ -575,18 +622,18 @@ package body callbacks is
 		begin
 			-- Here the visible area in x begins toward right:
 			XF := ZP.x - scrollbar_h_adj.get_value;
-			put_line ("XF " & gdouble'image (XF));
+			-- put_line ("XF " & gdouble'image (XF));
 
 			XR := XF / gdouble (bounding_box.width);
-			put_line ("XR " & gdouble'image (XR));
+			-- put_line ("XR " & gdouble'image (XR));
 
 			
 			-- Here the visible area in y begins downwards:
 			YF := ZP.y - scrollbar_v_adj.get_value;
-			put_line ("YF " & gdouble'image (YF));
+			-- put_line ("YF " & gdouble'image (YF));
 
 			YR := YF / gdouble (bounding_box.height);
-			put_line ("YR " & gdouble'image (YR));
+			-- put_line ("YR " & gdouble'image (YR));
 		end compute_XR_YR;
 
 		
@@ -646,8 +693,8 @@ package body callbacks is
 			du := L2 - L1;
 
 			put_line ("set H limits");
-			put_line (" dl" & gdouble'image (dl));
-			put_line (" du" & gdouble'image (du));
+			-- put_line (" dl" & gdouble'image (dl));
+			-- put_line (" du" & gdouble'image (du));
 
 			case Z is
 				when ZOOM_OUT =>
@@ -708,8 +755,8 @@ package body callbacks is
 			du := H2 - H1;
 
 			put_line ("set V limits");
-			put_line (" dl" & gdouble'image (dl));
-			put_line (" du" & gdouble'image (du));
+			-- put_line (" dl" & gdouble'image (dl));
+			-- put_line (" du" & gdouble'image (du));
 
 			case Z is
 				when ZOOM_OUT =>
@@ -760,6 +807,40 @@ package body callbacks is
 			compute_V_LM_UM;
 		end set_v_limits;
 
+
+		
+		procedure get_visibilty_1 is begin
+			TL_1 := model_point_visible ((
+				x => bounding_box.position.x, 
+				y => bounding_box.position.y + bounding_box.height));
+
+			BL_1 := model_point_visible ((
+				x => bounding_box.position.x, 
+				y => bounding_box.position.y));
+
+			BR_1 := model_point_visible ((
+				x => bounding_box.position.x + bounding_box.width, 
+				y => bounding_box.position.y));			
+		end get_visibilty_1;
+
+		
+
+		procedure get_visibilty_2 is begin
+			TL_2 := model_point_visible ((
+				x => bounding_box.position.x, 
+				y => bounding_box.position.y + bounding_box.height));
+
+			BL_2 := model_point_visible ((
+				x => bounding_box.position.x, 
+				y => bounding_box.position.y));
+
+			BR_2 := model_point_visible ((
+				x => bounding_box.position.x + bounding_box.width, 
+				y => bounding_box.position.y));			
+		end get_visibilty_2;
+
+		visible_area : type_bounding_box;
+
 		
 	begin
 		-- Output the time and the gdk_key_type (which is
@@ -776,6 +857,8 @@ package body callbacks is
 			compute_XR_YR;
 			compute_G1_H1;
 			compute_K1_L1;
+
+			-- get_visibilty_1;
 			
 			case direction is
 				when SCROLL_UP =>
@@ -797,9 +880,19 @@ package body callbacks is
 			refresh (canvas);
 			compute_G2_H2;
 			compute_K2_L2;
-			set_v_limits;
+
+			-- get_visibilty_2;
+
+			-- if TL_1.y and TL_2.y and BL_1.y and BL_2.y then
+			-- 	null;
+			-- else
+				set_v_limits;
+			-- end if;
+			
 			set_h_limits;
 
+			visible_area := get_visible_area (canvas);
+			put_line ("visible area: " & to_string (visible_area));
 			-- set_clip_status (BC_2);
 		end if;
 

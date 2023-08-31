@@ -64,7 +64,12 @@ package geometry is
 	-- around the model:
 	bounding_box : type_bounding_box;
 
-
+	
+	function to_string (
+		box : in type_bounding_box)
+		return string;
+	
+	
 	-- The margin around the drawing is part of the model.
 	-- The bounding box includes the margin:
 	margin : constant type_distance_model := 5.0;
@@ -79,7 +84,6 @@ package geometry is
 	procedure compute_bounding_box;
 
 
-	
 	
 -- CANVAS:
 
