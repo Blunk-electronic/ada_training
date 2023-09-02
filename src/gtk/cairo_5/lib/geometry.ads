@@ -53,21 +53,54 @@ package geometry is
 		offset	: in type_point_model);
 
 
-	type type_bounding_box is record
+	type type_area is record
 		width		: type_distance_model;
 		height		: type_distance_model;
 		position	: type_point_model; -- lower left corner
 	end record;
 
+
+	type type_area_corners is record
+		BL, BR, TL, TR : type_point_model;
+	end record;
+
+	function get_corners (
+		area	: in type_area)
+		return type_area_corners;
+
+
+	type type_visible_corners is record
+		BL, BR, TL, TR : boolean := false;
+	end record;
+
+	
+	
+	function to_string (
+		box : in type_area)
+		return string;
+
+	
+	-- Returns true if the given point lies inside the given
+	-- area or on its border. 
+	function in_area (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean;
+
+
+	function get_visible_corners (
+		area	: in type_area;
+		corners	: in type_area_corners)							 
+		return type_visible_corners;
+
+	
+		
 	-- This is the bounding-box of the model. It is a rectangle
 	-- that encloses all objects of the model and the margins 
 	-- around the model:
-	bounding_box : type_bounding_box;
+	bounding_box : type_area;
 
 	
-	function to_string (
-		box : in type_bounding_box)
-		return string;
 	
 	
 	-- The margin around the drawing is part of the model.

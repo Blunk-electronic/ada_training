@@ -76,7 +76,7 @@ package body geometry is
 
 
 	function to_string (
-		box : in type_bounding_box)
+		box : in type_area)
 		return string
 	is begin
 		return "bounding box (x/y/w/h): "
@@ -85,7 +85,63 @@ package body geometry is
 			& to_string (box.height);
 	end to_string;
 
+
+	function get_corners (
+		area	: in type_area)
+		return type_area_corners
+	is
+		result : type_area_corners;
+	begin
+		result.BL := (area.position.x, area.position.y);
+		result.BR := (area.position.x + area.width, area.position.y);
+
+		result.TL := (area.position.x, area.position.y + area.height); 
+		result.TR := (area.position.x + area.width, area.position.y + area.height); 
+		return result;
+	end get_corners;
+
 	
+	
+	function in_area (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		-- text x-axis:
+		if point.x >= area.position.x then
+			if point.x <= area.position.x + area.width then
+
+				-- test y-axis:
+				if point.y >= area.position.y then
+					if point.y <= area.position.y + area.height then
+						result := true;
+					end if;
+				end if;
+				
+			end if;
+		end if;
+		
+		return result;
+	end in_area;
+
+
+	function get_visible_corners (
+		area	: in type_area;
+		corners	: in type_area_corners)							 
+		return type_visible_corners
+	is
+		result : type_visible_corners;
+	begin
+		result.TL := in_area (corners.TL, area);
+		result.TR := in_area (corners.TR, area);
+		result.BL := in_area (corners.BL, area);
+		result.BR := in_area (corners.BR, area);
+		return result;
+	end get_visible_corners;
+
+
 	
 	procedure compute_bounding_box is
 	begin

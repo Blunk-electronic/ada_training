@@ -392,14 +392,14 @@ package body callbacks is
 		result : type_model_point_visible;
 		C : type_point_canvas;
 	begin
-		put_line ("M " & to_string (point));
+		-- put_line ("M " & to_string (point));
 		
 		C := to_canvas (
 			point	=> point,
 			scale	=> scale_factor,
 			real	=> true);
 
-		put_line ("C " & to_string (C));
+		-- put_line ("C " & to_string (C));
 
 		-- X-axis:
 		-- The visible area ranges from the current position
@@ -409,7 +409,7 @@ package body callbacks is
 		if C.x >= scrollbar_h_adj.get_value and
 			C.x <= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
 			result.x := true;
-			put_line ("X visible");	
+			-- put_line ("X visible");	
 		end if;
 
 		
@@ -421,7 +421,7 @@ package body callbacks is
 		if C.y >= scrollbar_v_adj.get_value and
 			C.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
 			result.y := true;
-			put_line ("Y visible");	
+			-- put_line ("Y visible");	
 		end if;
 
 		return result;
@@ -431,9 +431,9 @@ package body callbacks is
 
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
-		return type_bounding_box
+		return type_area
 	is
-		result : type_bounding_box;
+		result : type_area;
 
 		h_start  : constant gdouble := scrollbar_h_adj.get_value;
 		h_length : constant gdouble := scrollbar_h_adj.get_page_size;
@@ -456,7 +456,8 @@ package body callbacks is
 		-- put_line ("BR " & to_string (BR));
 		-- put_line ("TR " & to_string (TR));
 		-- put_line ("TL " & to_string (TL));
-		
+
+		-- CS: more effective ?
 		-- result.width    := type_distance_model (h_length) * type_distance_model (scale_factor);
 		-- result.height   := type_distance_model (v_length) * type_distance_model (scale_factor);
 
@@ -600,19 +601,6 @@ package body callbacks is
 
 
 		
-		TL_1, TL_2 : type_model_point_visible;
-		BL_1, BL_2 : type_model_point_visible;
-		BR_1, BR_2 : type_model_point_visible;
-  -- 
-		-- procedure set_clip_status (
-		-- 	status	: in out type_model_point_visible)
-		-- is
-		-- begin
-		-- 	status := model_point_visible
-		-- 	null;
-		-- end set_clip_status;
-		
-		
 
 		YR : gdouble;
 		XR : gdouble;
@@ -692,7 +680,7 @@ package body callbacks is
 			dl := K2 - K1;
 			du := L2 - L1;
 
-			put_line ("set H limits");
+			-- put_line ("set H limits");
 			-- put_line (" dl" & gdouble'image (dl));
 			-- put_line (" du" & gdouble'image (du));
 
@@ -754,7 +742,7 @@ package body callbacks is
 			dl := G2 - G1;
 			du := H2 - H1;
 
-			put_line ("set V limits");
+			-- put_line ("set V limits");
 			-- put_line (" dl" & gdouble'image (dl));
 			-- put_line (" du" & gdouble'image (du));
 
@@ -808,40 +796,17 @@ package body callbacks is
 		end set_v_limits;
 
 
-		
-		procedure get_visibilty_1 is begin
-			TL_1 := model_point_visible ((
-				x => bounding_box.position.x, 
-				y => bounding_box.position.y + bounding_box.height));
 
-			BL_1 := model_point_visible ((
-				x => bounding_box.position.x, 
-				y => bounding_box.position.y));
+		-- Get the corners of the bounding-box:
+		BC : constant type_area_corners := get_corners (bounding_box);
 
-			BR_1 := model_point_visible ((
-				x => bounding_box.position.x + bounding_box.width, 
-				y => bounding_box.position.y));			
-		end get_visibilty_1;
+		-- The visible area before and after zoom:
+		VA_1, VA_2 : type_area;
 
+		-- The visible corners of the bounding-box before and after zoom:
+		VC_1, VC_2 : type_visible_corners;
 		
 
-		procedure get_visibilty_2 is begin
-			TL_2 := model_point_visible ((
-				x => bounding_box.position.x, 
-				y => bounding_box.position.y + bounding_box.height));
-
-			BL_2 := model_point_visible ((
-				x => bounding_box.position.x, 
-				y => bounding_box.position.y));
-
-			BR_2 := model_point_visible ((
-				x => bounding_box.position.x + bounding_box.width, 
-				y => bounding_box.position.y));			
-		end get_visibilty_2;
-
-		visible_area : type_bounding_box;
-
-		
 	begin
 		-- Output the time and the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
@@ -858,7 +823,8 @@ package body callbacks is
 			compute_G1_H1;
 			compute_K1_L1;
 
-			-- get_visibilty_1;
+			VA_1 := get_visible_area (canvas);
+			VC_1 := get_visible_corners (VA_1, BC);
 			
 			case direction is
 				when SCROLL_UP =>
@@ -881,9 +847,10 @@ package body callbacks is
 			compute_G2_H2;
 			compute_K2_L2;
 
-			-- get_visibilty_2;
+			VA_2 := get_visible_area (canvas);
+			VC_2 := get_visible_corners (VA_2, BC);
 
-			-- if TL_1.y and TL_2.y and BL_1.y and BL_2.y then
+			-- if VC_1.TL xor VC_2.TL and BL_1.y and BL_2.y then
 			-- 	null;
 			-- else
 				set_v_limits;
@@ -891,8 +858,8 @@ package body callbacks is
 			
 			set_h_limits;
 
-			visible_area := get_visible_area (canvas);
-			put_line ("visible area: " & to_string (visible_area));
+			-- visible_area := get_visible_area (canvas);
+			-- put_line ("visible area: " & to_string (visible_area));
 			-- set_clip_status (BC_2);
 		end if;
 

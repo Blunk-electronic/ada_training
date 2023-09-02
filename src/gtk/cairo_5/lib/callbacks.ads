@@ -129,10 +129,12 @@ package callbacks is
 
 -- POINT QUERY AND TEST:
 
+	-- CS no need anymore ?
 	type type_model_point_visible is record
 		x, y : boolean := false;
 	end record;
-	
+
+	-- CS no need anymore ? rework required. use in_area test instead ?	
 	function model_point_visible (
 		point 		: in type_point_model)
 		return type_model_point_visible;
@@ -142,7 +144,7 @@ package callbacks is
 
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
-		return type_bounding_box;
+		return type_area;
 
 	
 	
