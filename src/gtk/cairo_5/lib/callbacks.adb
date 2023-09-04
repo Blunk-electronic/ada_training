@@ -115,18 +115,18 @@ package body callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is 
 	begin
-		put_line ("horizontal moved " & image (clock));
+		-- put_line ("horizontal moved " & image (clock));
 		-- show_adjustments_h;
-		put_line ("visible area: " & to_string (get_visible_area (canvas)));
+		put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
 	
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
-		put_line ("vertical moved " & image (clock));
+		-- put_line ("vertical moved " & image (clock));
 		-- show_adjustments_v;
-		put_line ("visible area: " & to_string (get_visible_area (canvas)));
+		put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_vertical_moved;
 
 
@@ -572,7 +572,7 @@ package body callbacks is
 		-- The given point on the canvas where the operator is zooming in or out:
 		ZP : constant type_point_canvas := (event.x, event.y);
 
-		-- The corresponding real-world point (in the model)
+		-- The corresponding model-point
 		-- according to the CURRENT (old) scale_factor:
 		mp : constant type_point_model := to_model (ZP, scale_factor);
 
@@ -803,13 +803,40 @@ package body callbacks is
 		-- The visible area before and after zoom:
 		VA_1, VA_2 : type_area;
 
-		-- The visible corners of the bounding-box before and after zoom:
-		-- VC_1, VC_2 : type_visible_corners;
-		
 
-	begin
-		-- Output the time and the gdk_key_type (which is
-		-- just a number (see gdk.types und gdk.types.keysyms)):
+		-- This procedure updates the limits of the scrollbars.
+		procedure update_scrollbar_limits is begin
+			-- put_line ("TL " & to_string (BC.TL));
+			-- put_line ("BL " & to_string (BC.BL));
+			-- put_line ("VA_1 " & to_string (VA_1));
+			-- put_line ("VA_2 " & to_string (VA_2));
+			
+			if  in_height (BC.TL, VA_1) and in_height (BC.TL, VA_2)
+			and in_height (BC.BL, VA_1) and in_height (BC.BL, VA_2)
+			then
+				scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
+				scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
+				scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
+				-- scrollbar_v_adj.set_value (scrollbar_v_init.value);
+			else
+				set_v_limits;
+			end if;
+
+			
+			if  in_width (BC.BL, VA_1) and in_width (BC.BL, VA_2)
+			and in_width (BC.BR, VA_1) and in_width (BC.BR, VA_2)
+			then
+				scrollbar_h_adj.set_upper (scrollbar_h_init.upper);			
+				scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
+				scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
+				-- scrollbar_h_adj.set_value (scrollbar_h_init.value);
+			else
+				set_h_limits;
+			end if;
+		end update_scrollbar_limits;
+
+		
+	begin -- cb_mouse_wheel_rolled
 		new_line;
 		put_line ("mouse_wheel_rolled "
 			& to_string (ZP)
@@ -823,8 +850,9 @@ package body callbacks is
 			compute_G1_H1;
 			compute_K1_L1;
 
+			-- Get the visible area of the model BEFORE scaling.
+			-- The area is in real model coordinates:
 			VA_1 := get_visible_area (canvas);
-			-- VC_1 := get_visible_corners (VA_1, BC);
 			
 			case direction is
 				when SCROLL_UP =>
@@ -847,29 +875,12 @@ package body callbacks is
 			compute_G2_H2;
 			compute_K2_L2;
 
+			-- Get the visible area of the model AFTER scaling.
+			-- The area is in real model coordinates:
 			VA_2 := get_visible_area (canvas);
-			-- VC_2 := get_visible_corners (VA_2, BC);
-			-- put_line ("TL " & to_string (BC.TL));
-			-- put_line ("BL " & to_string (BC.BL));
-			-- put_line ("VA_1 " & to_string (VA_1));
-			-- put_line ("VA_2 " & to_string (VA_2));
-			
-			-- if  in_height (BC.TL, VA_1) and in_height (BC.TL, VA_2)
-			-- and in_height (BC.BL, VA_1) and in_height (BC.BL, VA_2)
-			-- then
-			-- 	apply_initial_scrollbar_settings;
-			-- else
-				set_v_limits;
-			-- end if;
-			
-			set_h_limits;
 
-			-- visible_area := get_visible_area (canvas);
-			-- put_line ("visible area: " & to_string (visible_area));
-			-- set_clip_status (BC_2);
+			update_scrollbar_limits;
 		end if;
-
-
 		
 		return event_handled;
 	end cb_mouse_wheel_rolled;

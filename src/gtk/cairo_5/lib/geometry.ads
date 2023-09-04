@@ -95,6 +95,13 @@ package geometry is
 		area	: type_area)
 		return boolean;
 
+	-- Returns true if the given point lies inside the width 
+	-- of the given area or on its left or right border. 
+	function in_width (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean;
+
 	
 	function get_visible_corners (
 		area	: in type_area;

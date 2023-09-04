@@ -79,7 +79,7 @@ package body geometry is
 		box : in type_area)
 		return string
 	is begin
-		return "bounding box (x/y/w/h): "
+		return "area (x/y/w/h): "
 			& to_string (box.position) & "/"
 			& to_string (box.width) & "/"
 			& to_string (box.height);
@@ -143,6 +143,24 @@ package body geometry is
 		return result;
 	end in_height;
 
+
+	function in_width (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		if point.x >= area.position.x then
+			if point.x <= area.position.x + area.width then
+				result := true;
+			end if;
+		end if;
+
+		return result;
+	end in_width;
+
+	
 	
 	function get_visible_corners (
 		area	: in type_area;
@@ -214,7 +232,7 @@ package body geometry is
 		result.y := type_distance_model ((-(point.y - translate_offset.y) - base_offset.y) / gdouble (scale));
 
 		-- If real model coordinates are required, then the result must be compensated
-		-- by the bounding-box position::
+		-- by the bounding-box position:
 		if real then
 			move_by (result, bounding_box.position);
 		end if;
