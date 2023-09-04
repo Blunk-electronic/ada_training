@@ -168,12 +168,14 @@ package body geometry is
 		bounding_box.width  := object.width  + 2.0 * margin;
 		bounding_box.height := object.height + 2.0 * margin;
 		
-		-- put_line ("bounding box (width/height) " 
-		-- 	& to_string (bounding_box.width) & "/" & to_string (bounding_box.height));
-
 		-- Compute the position of the bounding-box.
-		-- This is the smallest x and y value used by the objects:
+		-- First we aquire the smallest x and y value used by the objects:
 		bounding_box.position := object.lower_left_corner;
+
+		-- Since we regard the margin as inside the bounding-box,
+		-- we must move the bounding-box position towards bottom-left
+		-- by the inverted margin_offset:
+		move_by (bounding_box.position, invert (margin_offset));
 
 		put_line (to_string (bounding_box));
 	end compute_bounding_box;
@@ -211,10 +213,9 @@ package body geometry is
 		result.x := type_distance_model (( (point.x - translate_offset.x) - base_offset.x) / gdouble (scale));
 		result.y := type_distance_model ((-(point.y - translate_offset.y) - base_offset.y) / gdouble (scale));
 
-		-- If real coordinates are required, then the result must be compensated
-		-- (or "moved back") by the margin_offset and the bounding-box position:
+		-- If real model coordinates are required, then the result must be compensated
+		-- by the bounding-box position::
 		if real then
-			move_by (result, invert (margin_offset));
 			move_by (result, bounding_box.position);
 		end if;
 		return result;
@@ -230,12 +231,10 @@ package body geometry is
 		P : type_point_model := point;
 		result : type_point_canvas;
 	begin
+		-- If real model coordinates are given, then they must
+		-- be compensated by the inverted bounding-box position:
 		if real then
-			-- Move the given point by the inverted bounding_box position:
 			move_by (P, invert (bounding_box.position));
-
-			-- Move the given point by the margin_offset:
-			move_by (P, margin_offset);
 		end if;
 		
 		result.x :=  (gdouble (P.x) * gdouble (scale) + base_offset.x);

@@ -849,18 +849,18 @@ package body callbacks is
 
 			VA_2 := get_visible_area (canvas);
 			-- VC_2 := get_visible_corners (VA_2, BC);
-			put_line ("TL" & to_string (BC.TL));
-			put_line ("BL" & to_string (BC.BL));
-			put_line ("VA_1 " & to_string (VA_1));
-			put_line ("VA_2 " & to_string (VA_2));
+			-- put_line ("TL " & to_string (BC.TL));
+			-- put_line ("BL " & to_string (BC.BL));
+			-- put_line ("VA_1 " & to_string (VA_1));
+			-- put_line ("VA_2 " & to_string (VA_2));
 			
-			if  in_height (BC.TL, VA_1) and in_height (BC.TL, VA_2)
-			and in_height (BC.BL, VA_1) and in_height (BC.BL, VA_2)
-			then
-				apply_initial_scrollbar_settings;
-			else
+			-- if  in_height (BC.TL, VA_1) and in_height (BC.TL, VA_2)
+			-- and in_height (BC.BL, VA_1) and in_height (BC.BL, VA_2)
+			-- then
+			-- 	apply_initial_scrollbar_settings;
+			-- else
 				set_v_limits;
-			end if;
+			-- end if;
 			
 			set_h_limits;
 
