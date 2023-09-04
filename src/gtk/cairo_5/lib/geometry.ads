@@ -87,7 +87,15 @@ package geometry is
 		area	: type_area)
 		return boolean;
 
+	
+	-- Returns true if the given point lies inside the height 
+	-- of the given area or on its lower or upper border. 
+	function in_height (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean;
 
+	
 	function get_visible_corners (
 		area	: in type_area;
 		corners	: in type_area_corners)							 

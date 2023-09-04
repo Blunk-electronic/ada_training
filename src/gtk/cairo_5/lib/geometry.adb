@@ -127,6 +127,23 @@ package body geometry is
 	end in_area;
 
 
+	function in_height (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		if point.y >= area.position.y then
+			if point.y <= area.position.y + area.height then
+				result := true;
+			end if;
+		end if;
+
+		return result;
+	end in_height;
+
+	
 	function get_visible_corners (
 		area	: in type_area;
 		corners	: in type_area_corners)							 
