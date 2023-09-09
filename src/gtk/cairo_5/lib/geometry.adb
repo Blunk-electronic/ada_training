@@ -162,20 +162,6 @@ package body geometry is
 
 	
 	
-	function get_visible_corners (
-		area	: in type_area;
-		corners	: in type_area_corners)							 
-		return type_visible_corners
-	is
-		result : type_visible_corners;
-	begin
-		result.TL := in_area (corners.TL, area);
-		result.TR := in_area (corners.TR, area);
-		result.BL := in_area (corners.BL, area);
-		result.BR := in_area (corners.BR, area);
-		return result;
-	end get_visible_corners;
-
 
 	
 	procedure compute_bounding_box is

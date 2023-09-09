@@ -68,11 +68,6 @@ package geometry is
 		area	: in type_area)
 		return type_area_corners;
 
-
-	type type_visible_corners is record
-		BL, BR, TL, TR : boolean := false;
-	end record;
-
 	
 	
 	function to_string (
@@ -103,10 +98,6 @@ package geometry is
 		return boolean;
 
 	
-	function get_visible_corners (
-		area	: in type_area;
-		corners	: in type_area_corners)							 
-		return type_visible_corners;
 
 	
 		
