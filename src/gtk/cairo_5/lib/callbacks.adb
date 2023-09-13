@@ -116,7 +116,7 @@ package body callbacks is
 	is 
 	begin
 		-- put_line ("horizontal moved " & image (clock));
-		-- show_adjustments_h;
+		show_adjustments_h;
 		put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
@@ -610,10 +610,10 @@ package body callbacks is
 		begin
 			-- Here the visible area in x begins toward right:
 			XF := ZP.x - scrollbar_h_adj.get_value;
-			-- put_line ("XF " & gdouble'image (XF));
+			put_line ("XF " & gdouble'image (XF));
 
 			XR := XF / gdouble (bounding_box.width);
-			-- put_line ("XR " & gdouble'image (XR));
+			put_line ("XR " & gdouble'image (XR));
 
 			
 			-- Here the visible area in y begins downwards:
@@ -625,8 +625,8 @@ package body callbacks is
 		end compute_XR_YR;
 
 		
-		type type_zoom is (ZOOM_IN, ZOOM_OUT);
-		Z : type_zoom;
+		type type_zoom is (ZOOM_IN, ZOOM_OUT); -- CS rename to type_zoom_direction
+		Z : type_zoom; -- CS rename to zoom
 
 		
 		S1 : constant type_scale_factor := scale_factor;
@@ -680,9 +680,9 @@ package body callbacks is
 			dl := K2 - K1;
 			du := L2 - L1;
 
-			-- put_line ("set H limits");
-			-- put_line (" dl" & gdouble'image (dl));
-			-- put_line (" du" & gdouble'image (du));
+			put_line ("set H limits");
+			put_line (" dl" & gdouble'image (dl));
+			put_line (" du" & gdouble'image (du));
 
 			case Z is
 				when ZOOM_OUT =>
@@ -795,7 +795,9 @@ package body callbacks is
 			compute_V_LM_UM;
 		end set_v_limits;
 
+		
 
+		
 
 		-- Get the corners of the bounding-box:
 		BC : constant type_area_corners := get_corners (bounding_box);
@@ -803,7 +805,35 @@ package body callbacks is
 		-- The visible area before and after zoom:
 		VA_1, VA_2 : type_area;
 
+		
+		procedure set_h_limits_2 is
+			BL, BR : type_point_canvas;
+		begin
+			BL := to_canvas (BC.BL, scale_factor, true);
+			BR := to_canvas (BC.BR, scale_factor, true);
 
+			put_line ("BL " & to_string (BL));
+			put_line ("BR " & to_string (BR));
+
+			scrollbar_h_adj.set_lower (BL.x);
+			scrollbar_h_adj.set_upper (BR.x);
+		end set_h_limits_2;
+
+
+		procedure set_v_limits_2 is
+			BL, TL : type_point_canvas;
+		begin
+			TL := to_canvas (BC.TL, scale_factor, true);
+			BL := to_canvas (BC.BL, scale_factor, true);
+
+			put_line ("TL " & to_string (TL));
+			put_line ("BL " & to_string (BL));
+
+			scrollbar_v_adj.set_lower (TL.y);
+			scrollbar_v_adj.set_upper (BL.y);
+		end set_v_limits_2;
+
+		
 		-- This procedure updates the limits of the scrollbars.
 		procedure update_scrollbar_limits is begin
 			-- put_line ("TL " & to_string (BC.TL));
@@ -819,7 +849,7 @@ package body callbacks is
 				scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
 				-- scrollbar_v_adj.set_value (scrollbar_v_init.value);
 			else
-				set_v_limits;
+				set_v_limits_2;
 			end if;
 
 			
@@ -831,9 +861,11 @@ package body callbacks is
 				scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
 				-- scrollbar_h_adj.set_value (scrollbar_h_init.value);
 			else
-				set_h_limits;
+				set_h_limits_2;
 			end if;
 		end update_scrollbar_limits;
+
+
 
 		
 	begin -- cb_mouse_wheel_rolled
@@ -846,9 +878,9 @@ package body callbacks is
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
-			compute_XR_YR;
-			compute_G1_H1;
-			compute_K1_L1;
+			-- compute_XR_YR;
+			-- compute_G1_H1;
+			-- compute_K1_L1;
 
 			-- Get the visible area of the model BEFORE scaling.
 			-- The area is in real model coordinates:
@@ -872,8 +904,8 @@ package body callbacks is
 
 			compute_translate_offset;
 			refresh (canvas);
-			compute_G2_H2;
-			compute_K2_L2;
+			-- compute_G2_H2;
+			-- compute_K2_L2;
 
 			-- Get the visible area of the model AFTER scaling.
 			-- The area is in real model coordinates:
