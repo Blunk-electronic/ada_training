@@ -7,12 +7,12 @@ package body geometry is
 		scale : in type_scale_factor)
 		return string
 	is begin
-		return "scale: " & type_scale_factor'image (scale);
+		return type_scale_factor'image (scale);
 	end to_string;
 	
 	
 	procedure increase_scale is begin
-		scale_factor := scale_factor * scale_increment;
+		scale_factor := scale_factor * scale_multiplier;
 		
 		exception 
 			when constraint_error =>
@@ -22,7 +22,7 @@ package body geometry is
 
 	
 	procedure decrease_scale is begin
-		scale_factor := scale_factor / scale_increment;
+		scale_factor := scale_factor / scale_multiplier;
 		
 		exception 
 			when constraint_error => 

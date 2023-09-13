@@ -46,13 +46,6 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v, scrollbar_h : gtk_scrollbar;
 
-	V_UM, V_LM : gdouble := 0.0;
-	H_UM, H_LM : gdouble := 0.0;
-	
-	procedure compute_V_LM_UM;
-
-	procedure compute_H_LM_UM;
-	
 	
 
 	procedure cb_horizontal_moved (

@@ -89,27 +89,6 @@ package body callbacks is
 	
 -- SCROLLBARS:
 
-
-	procedure compute_V_LM_UM is begin
-		V_LM := scrollbar_v_adj.get_value - scrollbar_v_adj.get_lower;
-		V_UM := scrollbar_v_adj.get_upper - (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
-
-		-- put_line ("V_LM" & gdouble'image (V_LM));
-		-- put_line ("V_UM" & gdouble'image (V_UM));
-	end compute_V_LM_UM;
-
-	
-	procedure compute_H_LM_UM is begin
-		-- left:
-		H_LM := scrollbar_h_adj.get_value - scrollbar_h_adj.get_lower;
-
-		-- right:
-		H_UM := scrollbar_h_adj.get_upper - (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
-
-		-- put_line ("H_LM" & gdouble'image (H_LM));
-		-- put_line ("H_UM" & gdouble'image (H_UM));
-	end compute_H_LM_UM;
-
 	
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class)
@@ -152,7 +131,6 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_v_released");
-		compute_V_LM_UM;
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -178,7 +156,6 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_h_released");
-		compute_H_LM_UM;
 		return event_handled;
 	end cb_scrollbar_h_released;
 
@@ -576,7 +553,7 @@ package body callbacks is
 
 		-- The corresponding model-point
 		-- according to the CURRENT (old) scale_factor:
-		mp : constant type_point_model := to_model (Z, scale_factor);
+		M : constant type_point_model := to_model (Z, scale_factor);
 
 		
 		-- After changing the scale_factor, the translate_offset must
@@ -589,7 +566,7 @@ package body callbacks is
 			Z_after_scale : type_point_canvas;
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			Z_after_scale := to_canvas (mp, scale_factor);
+			Z_after_scale := to_canvas (M, scale_factor);
 			-- put_line ("Z after scale   " & to_string (Z_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
@@ -598,7 +575,7 @@ package body callbacks is
 			translate_offset.x := -(Z_after_scale.x - Z.x);
 			translate_offset.y := -(Z_after_scale.y - Z.y);
 			
-			-- put_line ("translate offset " & to_string (translate_offset));
+			put_line (" T offset    " & to_string (translate_offset));
 		end compute_translate_offset;
 
 
@@ -657,26 +634,29 @@ package body callbacks is
 	begin -- cb_mouse_wheel_rolled
 		new_line;
 		put_line ("mouse_wheel_rolled");
-		put_line (" center " & to_string (mp));
-		put_line (" center " & to_string (Z));
+		put_line (" zoom center  " & to_string (M));
+		put_line (" zoom center " & to_string (Z));
 		-- put_line (" direction " & gdk_scroll_direction'image (direction));
 
 
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
+			put_line (" scale old" & to_string (scale_factor));
+			
 			case direction is
 				when SCROLL_UP =>
 					increase_scale;
-					put_line ("zoom in  " & to_string (scale_factor));
+					put_line (" zoom in");
 					
 				when SCROLL_DOWN => 
 					decrease_scale;
-					put_line ("zoom out " & to_string (scale_factor));
+					put_line (" zoom out");
 					
 				when others => null;
 			end case;
 
+			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
 			refresh (canvas);
 

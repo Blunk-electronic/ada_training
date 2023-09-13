@@ -8,8 +8,7 @@ package geometry is
 
 	type type_scale_factor is digits 4 range 0.1 .. 10.0;
 	scale_factor : type_scale_factor := 1.0;
-	scale_increment : constant type_scale_factor := 1.2;
-	-- scale_increment : constant type_scale_factor := 2.0; -- CS rename to scale_multiplier
+	scale_multiplier : constant type_scale_factor := 1.2;
 
 
 	function to_string (
