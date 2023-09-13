@@ -96,7 +96,7 @@ package body callbacks is
 	begin
 		-- put_line ("horizontal moved " & image (clock));
 		null;
-		-- show_adjustments_h;
+		show_adjustments_h;
 		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
@@ -106,7 +106,7 @@ package body callbacks is
 	is begin		
 		-- put_line ("vertical moved " & image (clock));
 		null;
-		-- show_adjustments_v;
+		show_adjustments_v;
 		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_vertical_moved;
 
@@ -495,12 +495,6 @@ package body callbacks is
 		-- put_line (
 			-- to_string (cp)
 			-- & " " & to_string (mp)
-
-			-- TEST:
-			-- The canvas-coordinates must match
-			-- the original logical pixel coordinates:
-			-- & to_string (to_canvas (mp, scale_factor, translate_offset))
-			-- );
 		
 		return event_handled;
 	end cb_mouse_moved;
@@ -572,10 +566,10 @@ package body callbacks is
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
 			-- drawing must be dragged-back to the given pointer position:
-			translate_offset.x := -(Z_after_scale.x - Z.x);
-			translate_offset.y := -(Z_after_scale.y - Z.y);
+			T.x := -(Z_after_scale.x - Z.x);
+			T.y := -(Z_after_scale.y - Z.y);
 			
-			put_line (" T offset    " & to_string (translate_offset));
+			put_line (" T offset    " & to_string (T));
 		end compute_translate_offset;
 
 

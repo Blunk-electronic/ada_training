@@ -153,7 +153,7 @@ package geometry is
 
 	-- The offset by which all draw operations on the canvas
 	-- are translated when the operator zooms to the mouse pointer:
-	translate_offset : type_point_canvas := (0.0, 0.0);
+	T : type_point_canvas := (0.0, 0.0);
 
 
 	

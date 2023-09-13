@@ -214,8 +214,8 @@ package body geometry is
 	is 
 		result : type_point_model;
 	begin
-		result.x := type_distance_model (( (point.x - translate_offset.x) - base_offset.x) / gdouble (scale));
-		result.y := type_distance_model ((-(point.y - translate_offset.y) - base_offset.y) / gdouble (scale));
+		result.x := type_distance_model (( (point.x - T.x) - base_offset.x) / gdouble (scale));
+		result.y := type_distance_model ((-(point.y - T.y) - base_offset.y) / gdouble (scale));
 
 		-- If real model coordinates are required, then the result must be compensated
 		-- by the bounding-box position:
@@ -245,8 +245,8 @@ package body geometry is
 		result.y := -(gdouble (P.y) * gdouble (scale) + base_offset.y);
 
 		if real then
-			result.x := result.x + translate_offset.x;
-			result.y := result.y + translate_offset.y;
+			result.x := result.x + T.x;
+			result.y := result.y + T.y;
 		end if;
 		
 		return result;
