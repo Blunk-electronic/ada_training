@@ -570,11 +570,11 @@ package body callbacks is
 		direction : constant gdk_scroll_direction := event.direction;
 
 		-- The given point on the canvas where the operator is zooming in or out:
-		ZP : constant type_point_canvas := (event.x, event.y);
+		Z : constant type_point_canvas := (event.x, event.y);
 
 		-- The corresponding model-point
 		-- according to the CURRENT (old) scale_factor:
-		mp : constant type_point_model := to_model (ZP, scale_factor);
+		mp : constant type_point_model := to_model (Z, scale_factor);
 
 		
 		-- After changing the scale_factor, the translate_offset must
@@ -584,218 +584,23 @@ package body callbacks is
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		procedure compute_translate_offset is 
-			ZP_after_scale : type_point_canvas;
+			Z_after_scale : type_point_canvas;
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			ZP_after_scale := to_canvas (mp, scale_factor);
-			-- put_line ("ZP after scale   " & to_string (ZP_after_scale));
+			Z_after_scale := to_canvas (mp, scale_factor);
+			-- put_line ("Z after scale   " & to_string (Z_after_scale));
 
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
 			-- drawing must be dragged-back to the given pointer position:
-			translate_offset.x := -(ZP_after_scale.x - ZP.x);
-			translate_offset.y := -(ZP_after_scale.y - ZP.y);
+			translate_offset.x := -(Z_after_scale.x - Z.x);
+			translate_offset.y := -(Z_after_scale.y - Z.y);
 			
 			-- put_line ("translate offset " & to_string (translate_offset));
 		end compute_translate_offset;
 
 
-		
 
-		YR : gdouble;
-		XR : gdouble;
-
-		procedure compute_XR_YR is
-			XF, YF : gdouble;
-		begin
-			-- Here the visible area in x begins toward right:
-			XF := ZP.x - scrollbar_h_adj.get_value;
-			put_line ("XF " & gdouble'image (XF));
-
-			XR := XF / gdouble (bounding_box.width);
-			put_line ("XR " & gdouble'image (XR));
-
-			
-			-- Here the visible area in y begins downwards:
-			YF := ZP.y - scrollbar_v_adj.get_value;
-			-- put_line ("YF " & gdouble'image (YF));
-
-			YR := YF / gdouble (bounding_box.height);
-			-- put_line ("YR " & gdouble'image (YR));
-		end compute_XR_YR;
-
-		
-		type type_zoom is (ZOOM_IN, ZOOM_OUT); -- CS rename to type_zoom_direction
-		Z : type_zoom; -- CS rename to zoom
-
-		
-		S1 : constant type_scale_factor := scale_factor;
-		S2 : type_scale_factor;
-
-
-		
-		-- x-axis
-		K1, K2, L1, L2 : gdouble;
-		
-		procedure compute_K1_L1 is
-			SP : constant gdouble := gdouble (bounding_box.width) * gdouble (scale_factor);
-		begin
-			K1 := SP * XR;
-			L1 := SP - K1;
-		end;
-
-		
-		procedure compute_K2_L2 is
-			SP : constant gdouble := gdouble (bounding_box.width) * gdouble (scale_factor);
-		begin
-			K2 := SP * XR;
-			L2 := SP - K2;
-		end;
-
-		
-		-- y-axis
-		G1, G2, H1, H2 : gdouble;
-		
-		procedure compute_G1_H1 is
-			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
-		begin
-			G1 := SP * YR;
-			H1 := SP - G1;
-		end;
-
-		
-		procedure compute_G2_H2 is
-			SP : constant gdouble := gdouble (bounding_box.height) * gdouble (scale_factor);
-		begin
-			G2 := SP * YR;
-			H2 := SP - G2;
-		end;
-
-		
-		
-		procedure set_h_limits is
-			dl, du : gdouble;
-			L, U : gdouble;
-		begin
-			dl := K2 - K1;
-			du := L2 - L1;
-
-			put_line ("set H limits");
-			put_line (" dl" & gdouble'image (dl));
-			put_line (" du" & gdouble'image (du));
-
-			case Z is
-				when ZOOM_OUT =>
-					-- du is negative or equal zero
-					if H_UM < abs (du) then
-						-- put_line ("A");
-						U := scrollbar_h_adj.get_upper - H_UM; -- U moves to the left by the available margin
-						scrollbar_h_adj.set_upper (U);
-					else
-						-- put_line ("B");
-						U := scrollbar_h_adj.get_upper - abs (du);
-						scrollbar_h_adj.set_upper (U); -- U moves to the left by du
-					end if;
-
-					-- dl is negative or equal zero
-					if H_LM < abs (dl) then
-						-- put_line ("C");
-						L := scrollbar_h_adj.get_lower + H_LM;  -- L moves to the right by the available margin
-						scrollbar_h_adj.set_lower (L);
-					else
-						-- put_line ("D");
-						L := scrollbar_h_adj.get_lower + abs (dl);
-						scrollbar_h_adj.set_lower (L); -- L moves to the right by dl
-					end if;
-
-
-					
-				when ZOOM_IN =>
-					-- du is greater or equal zero
-					U := scrollbar_h_adj.get_upper + du;
-					scrollbar_h_adj.set_upper (U); -- U moves to the right by du
-
-					-- dl is greater or equal zero
-					L := scrollbar_h_adj.get_lower - dl;
-					scrollbar_h_adj.set_lower (L); -- L moves to the left by dl
-
-			end case;
-			
-				-- CS clip negative values of U and L ?
-				
-
-				-- if scale_factor < 1.0 then
-				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
-				-- end if;
-				
-			show_adjustments_h;
-
-			compute_H_LM_UM;
-		end set_h_limits;
-
-
-		
-		procedure set_v_limits is
-			dl, du : gdouble;
-			L, U : gdouble;
-		begin
-			dl := G2 - G1;
-			du := H2 - H1;
-
-			-- put_line ("set V limits");
-			-- put_line (" dl" & gdouble'image (dl));
-			-- put_line (" du" & gdouble'image (du));
-
-			case Z is
-				when ZOOM_OUT =>
-					-- du is negative or equal zero
-					if V_UM < abs (du) then
-						-- put_line ("A");
-						U := scrollbar_v_adj.get_upper - V_UM; -- U moves upwards by the available margin
-						scrollbar_v_adj.set_upper (U);
-					else
-						-- put_line ("B");
-						U := scrollbar_v_adj.get_upper - abs (du);
-						scrollbar_v_adj.set_upper (U); -- U moves upwards by du
-					end if;
-
-					-- dl is negative or equal zero
-					if V_LM < abs (dl) then
-						-- put_line ("C");
-						L := scrollbar_v_adj.get_lower + V_LM;  -- L moves downwards by the available margin
-						scrollbar_v_adj.set_lower (L);
-					else
-						-- put_line ("D");
-						L := scrollbar_v_adj.get_lower + abs (dl);
-						scrollbar_v_adj.set_lower (L); -- L moves downwards by dl
-					end if;
-
-
-					
-				when ZOOM_IN =>
-					-- du is greater or equal zero
-					U := scrollbar_v_adj.get_upper + du;
-					scrollbar_v_adj.set_upper (U); -- U moves downwards
-
-					-- dl is greater or equal zero
-					L := scrollbar_v_adj.get_lower - dl;
-					scrollbar_v_adj.set_lower (L); -- L moves upwards
-
-			end case;
-			
-				-- CS clip negative values of U and L ?
-				
-
-				-- if scale_factor < 1.0 then
-				-- 	scrollbar_v_adj.set_page_size (gdouble (bounding_box_height) * gdouble (scale_factor));
-				-- end if;
-				
-			show_adjustments_v;
-
-			compute_V_LM_UM;
-		end set_v_limits;
-
-		
 
 		
 
@@ -817,6 +622,7 @@ package body callbacks is
 
 			scrollbar_h_adj.set_lower (BL.x);
 			scrollbar_h_adj.set_upper (BR.x);
+			-- CS clip negative values of U and L ?
 		end set_h_limits_2;
 
 
@@ -831,6 +637,7 @@ package body callbacks is
 
 			scrollbar_v_adj.set_lower (TL.y);
 			scrollbar_v_adj.set_upper (BL.y);
+			-- CS clip negative values of U and L ?
 		end set_v_limits_2;
 
 		
@@ -871,16 +678,12 @@ package body callbacks is
 	begin -- cb_mouse_wheel_rolled
 		new_line;
 		put_line ("mouse_wheel_rolled "
-			& to_string (ZP)
+			& to_string (Z)
 			& " direction " & gdk_scroll_direction'image (direction));
 
 
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
-
-			-- compute_XR_YR;
-			-- compute_G1_H1;
-			-- compute_K1_L1;
 
 			-- Get the visible area of the model BEFORE scaling.
 			-- The area is in real model coordinates:
@@ -888,15 +691,11 @@ package body callbacks is
 			
 			case direction is
 				when SCROLL_UP =>
-					Z := ZOOM_IN;
 					increase_scale;
-					S2 := scale_factor;
 					put_line ("zoom in  " & to_string (scale_factor));
 					
 				when SCROLL_DOWN => 
-					Z := ZOOM_OUT;
 					decrease_scale;
-					S2 := scale_factor;
 					put_line ("zoom out " & to_string (scale_factor));
 					
 				when others => null;
@@ -904,8 +703,6 @@ package body callbacks is
 
 			compute_translate_offset;
 			refresh (canvas);
-			-- compute_G2_H2;
-			-- compute_K2_L2;
 
 			-- Get the visible area of the model AFTER scaling.
 			-- The area is in real model coordinates:
