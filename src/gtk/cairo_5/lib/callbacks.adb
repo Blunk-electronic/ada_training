@@ -607,11 +607,9 @@ package body callbacks is
 		-- Get the corners of the bounding-box:
 		BC : constant type_area_corners := get_corners (bounding_box);
 
-		-- The visible area before and after zoom:
-		VA_1, VA_2 : type_area;
 
 		
-		procedure set_h_limits_2 is
+		procedure set_h_limits is
 			BL, BR : type_point_canvas;
 		begin
 			BL := to_canvas (BC.BL, scale_factor, true);
@@ -620,13 +618,23 @@ package body callbacks is
 			put_line ("BL " & to_string (BL));
 			put_line ("BR " & to_string (BR));
 
-			scrollbar_h_adj.set_lower (BL.x);
-			scrollbar_h_adj.set_upper (BR.x);
 			-- CS clip negative values of U and L ?
-		end set_h_limits_2;
+
+			if BL.x <= scrollbar_h_adj.get_value then
+				scrollbar_h_adj.set_lower (BL.x);
+			else
+				scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+			end if;
+
+			if BR.x >= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
+				scrollbar_h_adj.set_upper (BR.x);
+			else
+				scrollbar_h_adj.set_upper (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
+			end if;
+		end set_h_limits;
 
 
-		procedure set_v_limits_2 is
+		procedure set_v_limits is
 			BL, TL : type_point_canvas;
 		begin
 			TL := to_canvas (BC.TL, scale_factor, true);
@@ -637,41 +645,21 @@ package body callbacks is
 
 			scrollbar_v_adj.set_lower (TL.y);
 			scrollbar_v_adj.set_upper (BL.y);
+
 			-- CS clip negative values of U and L ?
-		end set_v_limits_2;
 
-		
-		-- This procedure updates the limits of the scrollbars.
-		procedure update_scrollbar_limits is begin
-			-- put_line ("TL " & to_string (BC.TL));
-			-- put_line ("BL " & to_string (BC.BL));
-			-- put_line ("VA_1 " & to_string (VA_1));
-			-- put_line ("VA_2 " & to_string (VA_2));
-			
-			if  in_height (BC.TL, VA_1) and in_height (BC.TL, VA_2)
-			and in_height (BC.BL, VA_1) and in_height (BC.BL, VA_2)
-			then
-				scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
-				scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
-				scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
-				-- scrollbar_v_adj.set_value (scrollbar_v_init.value);
+			if TL.y <= scrollbar_v_adj.get_value then
+				scrollbar_v_adj.set_lower (TL.y);
 			else
-				set_v_limits_2;
+				scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
 			end if;
 
-			
-			if  in_width (BC.BL, VA_1) and in_width (BC.BL, VA_2)
-			and in_width (BC.BR, VA_1) and in_width (BC.BR, VA_2)
-			then
-				scrollbar_h_adj.set_upper (scrollbar_h_init.upper);			
-				scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
-				scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
-				-- scrollbar_h_adj.set_value (scrollbar_h_init.value);
+			if BL.y >= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+				scrollbar_v_adj.set_upper (BL.y);
 			else
-				set_h_limits_2;
+				scrollbar_v_adj.set_upper (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 			end if;
-		end update_scrollbar_limits;
-
+		end set_v_limits;
 
 
 		
@@ -685,10 +673,6 @@ package body callbacks is
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
-			-- Get the visible area of the model BEFORE scaling.
-			-- The area is in real model coordinates:
-			VA_1 := get_visible_area (canvas);
-			
 			case direction is
 				when SCROLL_UP =>
 					increase_scale;
@@ -704,11 +688,8 @@ package body callbacks is
 			compute_translate_offset;
 			refresh (canvas);
 
-			-- Get the visible area of the model AFTER scaling.
-			-- The area is in real model coordinates:
-			VA_2 := get_visible_area (canvas);
-
-			update_scrollbar_limits;
+			set_h_limits;
+			set_v_limits;
 		end if;
 		
 		return event_handled;
