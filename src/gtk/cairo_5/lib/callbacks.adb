@@ -116,17 +116,19 @@ package body callbacks is
 	is 
 	begin
 		-- put_line ("horizontal moved " & image (clock));
-		show_adjustments_h;
-		put_line ("visible " & to_string (get_visible_area (canvas)));
+		null;
+		-- show_adjustments_h;
+		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
 	
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class)
-	is begin
+	is begin		
 		-- put_line ("vertical moved " & image (clock));
+		null;
 		-- show_adjustments_v;
-		put_line ("visible " & to_string (get_visible_area (canvas)));
+		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_vertical_moved;
 
 
@@ -604,22 +606,25 @@ package body callbacks is
 
 		
 
-		-- Get the corners of the bounding-box:
+		-- Get the corners of the bounding-box as it is BEFORE scaling:
 		BC : constant type_area_corners := get_corners (bounding_box);
 
 
 		
-		procedure set_h_limits is
-			BL, BR : type_point_canvas;
+		procedure update_scrollbar_limits is
+			TL, BL, BR : type_point_canvas;
 		begin
+			TL := to_canvas (BC.TL, scale_factor, true);
 			BL := to_canvas (BC.BL, scale_factor, true);
 			BR := to_canvas (BC.BR, scale_factor, true);
 
-			put_line ("BL " & to_string (BL));
-			put_line ("BR " & to_string (BR));
+			-- put_line ("TL " & to_string (TL));
+			-- put_line ("BL " & to_string (BL));
+			-- put_line ("BR " & to_string (BR));
 
 			-- CS clip negative values of U and L ?
 
+			-- horizontal:
 			if BL.x <= scrollbar_h_adj.get_value then
 				scrollbar_h_adj.set_lower (BL.x);
 			else
@@ -631,23 +636,9 @@ package body callbacks is
 			else
 				scrollbar_h_adj.set_upper (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
 			end if;
-		end set_h_limits;
 
-
-		procedure set_v_limits is
-			BL, TL : type_point_canvas;
-		begin
-			TL := to_canvas (BC.TL, scale_factor, true);
-			BL := to_canvas (BC.BL, scale_factor, true);
-
-			put_line ("TL " & to_string (TL));
-			put_line ("BL " & to_string (BL));
-
-			scrollbar_v_adj.set_lower (TL.y);
-			scrollbar_v_adj.set_upper (BL.y);
-
-			-- CS clip negative values of U and L ?
-
+			
+			-- vertical:
 			if TL.y <= scrollbar_v_adj.get_value then
 				scrollbar_v_adj.set_lower (TL.y);
 			else
@@ -659,15 +650,16 @@ package body callbacks is
 			else
 				scrollbar_v_adj.set_upper (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 			end if;
-		end set_v_limits;
+		end update_scrollbar_limits;
 
 
 		
 	begin -- cb_mouse_wheel_rolled
 		new_line;
-		put_line ("mouse_wheel_rolled "
-			& to_string (Z)
-			& " direction " & gdk_scroll_direction'image (direction));
+		put_line ("mouse_wheel_rolled");
+		put_line (" center " & to_string (mp));
+		put_line (" center " & to_string (Z));
+		-- put_line (" direction " & gdk_scroll_direction'image (direction));
 
 
 		-- If CTRL is being pressed, zoom in or out:
@@ -688,8 +680,7 @@ package body callbacks is
 			compute_translate_offset;
 			refresh (canvas);
 
-			set_h_limits;
-			set_v_limits;
+			update_scrollbar_limits;
 		end if;
 		
 		return event_handled;

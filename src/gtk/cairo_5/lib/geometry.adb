@@ -70,7 +70,7 @@ package body geometry is
 		point	: in type_point_canvas)
 		return string
 	is begin
-		return "canvas  x/y: " & gdouble'image (point.x) & "/" & gdouble'image (point.y);
+		return "canvas x/y: " & gdouble'image (point.x) & "/" & gdouble'image (point.y);
 	end to_string;
 
 
