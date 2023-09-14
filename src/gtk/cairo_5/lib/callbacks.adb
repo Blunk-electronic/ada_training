@@ -652,9 +652,9 @@ package body callbacks is
 
 			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
-			refresh (canvas);
-
 			update_scrollbar_limits;
+			
+			refresh (canvas);
 		end if;
 		
 		return event_handled;
