@@ -166,6 +166,10 @@ package body geometry is
 	
 	procedure compute_bounding_box is
 	begin
+		-- NOTE: In a real project, the database that contains
+		-- all objects must be parsed here. But since this is a demo,
+		-- we have just a single object (a rectangle) do deal with.
+		
 		-- Add to the object dimensions the margin. 
 		-- The margin is part of the model and thus part 
 		-- of the bounding box:

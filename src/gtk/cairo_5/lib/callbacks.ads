@@ -90,7 +90,7 @@ package callbacks is
 	scrollbar_v_init : type_scrollbar_settings;
 	scrollbar_h_init : type_scrollbar_settings;
 
-	procedure set_up_scrollbars;
+	procedure set_up_swin_and_scrollbars;
 
 	procedure show_adjustments_v;
 	procedure show_adjustments_h;
@@ -168,14 +168,16 @@ package callbacks is
 
 
 
-	
+	-- This function is called each time the mouse wheel is
+	-- rolled by the operator:
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)
 		return boolean;
 
-	
-	function cb_draw (
+
+	-- This function is called each time the canvas is to be refreshed:
+	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;
 		context	: in cairo_context)
 		return boolean;

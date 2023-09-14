@@ -33,7 +33,11 @@ with geometry;					use geometry;
 procedure draw is
 
 begin
+	-- Create a dummy object that is to be displayed:
 	make_object;
+	-- NOTE: A real project should provide all objects in
+	-- some kind of database.
+	
 	compute_bounding_box;
 	compute_base_offset;
 	prepare_initial_scrollbar_settings;
@@ -43,7 +47,7 @@ begin
 
 	set_up_main_window;
 
-	set_up_scrollbars;
+	set_up_swin_and_scrollbars;
 
 	set_up_canvas;
 

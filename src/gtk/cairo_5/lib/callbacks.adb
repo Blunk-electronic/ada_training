@@ -161,7 +161,7 @@ package body callbacks is
 
 	
 
-	procedure set_up_scrollbars is
+	procedure set_up_swin_and_scrollbars is
 	begin
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
@@ -193,7 +193,7 @@ package body callbacks is
 			vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
 			-- vscrollbar_policy => gtk.enums.POLICY_NEVER);
 
-	end set_up_scrollbars;
+	end set_up_swin_and_scrollbars;
 
 
 
@@ -338,7 +338,7 @@ package body callbacks is
 
 		
 		
-		canvas.on_draw (cb_draw'access);
+		canvas.on_draw (cb_draw_objects'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
 
@@ -540,12 +540,12 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		accel_mask : constant gdk_modifier_type := get_default_mod_mask;
-		direction : constant gdk_scroll_direction := event.direction;
+		D : constant gdk_scroll_direction := event.direction;
 
 		-- The given point on the canvas where the operator is zooming in or out:
 		Z : constant type_point_canvas := (event.x, event.y);
 
-		-- The corresponding model-point
+		-- The corresponding virtual model-point
 		-- according to the CURRENT (old) scale_factor:
 		M : constant type_point_model := to_model (Z, scale_factor);
 
@@ -638,7 +638,7 @@ package body callbacks is
 
 			put_line (" scale old" & to_string (scale_factor));
 			
-			case direction is
+			case D is
 				when SCROLL_UP =>
 					increase_scale;
 					put_line (" zoom in");
@@ -663,7 +663,7 @@ package body callbacks is
 
 	
 	
-	function cb_draw (
+	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;
 		context	: in cairo_context)
 		return boolean
@@ -673,6 +673,12 @@ package body callbacks is
 	begin
 		-- new_line;
 		-- put_line ("cb_draw " & image (clock));
+		
+		-- NOTE: In a real project, the database that contains
+		-- all objects must be parsed here. One object after another
+		-- must be drawn. But since this is a demo,
+		-- we have just a single object (a rectangle) do deal with.
+		
 		
 		set_line_width (context, 1.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
@@ -704,7 +710,7 @@ package body callbacks is
 		-- destroy (context); -- exception assertion failed ...
 		
 		return event_handled;
-	end cb_draw;
+	end cb_draw_objects;
 
 	
 end callbacks;
