@@ -17,10 +17,21 @@ package callbacks is
 	
 	main_window	: gtk_window;
 
+	type type_window_size is record
+		width, height : positive := 1;
+	end record;
+
+	-- The current size of the main window. It gets updated
+	-- in procedure set_up_main_window and in cb_main_window_size_allocate:
+	main_window_size : type_window_size;
+	
+
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
 
 
+	-- This callback procedure is called each time the size_allocate signal
+	-- is emitted by the main window:
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);

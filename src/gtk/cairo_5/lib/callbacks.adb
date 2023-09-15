@@ -26,14 +26,32 @@ package body callbacks is
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
-	is begin
+	is 
+		-- This procedure is called on many occasions. We are interested
+		-- only in cases where the size changes. So we watch for changes
+		-- of width and height only.
+
+		-- This is the new size of the window:
+		new_size : constant type_window_size := (
+			width	=> positive (allocation.width),
+			height	=> positive (allocation.height));
+	begin
 		null;
-		-- new_line;
-		put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
-			& gint'image (allocation.x) 
-			& " /" & gint'image (allocation.y)
-			& " /" & gint'image (allocation.width)
-			& " /" & gint'image (allocation.height));
+		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+		-- 	& gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& " /" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
+
+		-- Compare the new size with the old size. If the size
+		-- has changed, update the global main_window_size variable:
+		if new_size /= main_window_size then
+			put_line ("main window size changed (w/h): " 
+				& gint'image (allocation.width)
+				& " /" & gint'image (allocation.height));
+
+			main_window_size := new_size;
+		end if;
 	end cb_main_window_size_allocate;
 
 	
@@ -50,6 +68,12 @@ package body callbacks is
 			gint (bounding_box.width),
 			gint (bounding_box.height));
 
+		
+		-- Set the global main_window_size variable:
+		main_window_size := (
+			width	=> positive (bounding_box.width),
+			height	=> positive (bounding_box.height));
+		
 		-- CS show main window size
 		
 		-- connect signals:
