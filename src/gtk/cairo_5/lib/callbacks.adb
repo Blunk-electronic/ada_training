@@ -540,14 +540,16 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		accel_mask : constant gdk_modifier_type := get_default_mod_mask;
+
+		-- The direction at which the operator is turning the wheel:
 		D : constant gdk_scroll_direction := event.direction;
 
 		-- The given point on the canvas where the operator is zooming in or out:
-		Z : constant type_point_canvas := (event.x, event.y);
+		Z1 : constant type_point_canvas := (event.x, event.y);
 
 		-- The corresponding virtual model-point
 		-- according to the CURRENT (old) scale_factor:
-		M : constant type_point_model := to_model (Z, scale_factor);
+		M : constant type_point_model := to_model (Z1, scale_factor);
 
 		
 		-- After changing the scale_factor, the translate_offset must
@@ -557,17 +559,17 @@ package body callbacks is
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		procedure compute_translate_offset is 
-			Z_after_scale : type_point_canvas;
+			Z2 : type_point_canvas;
 		begin			
 			-- Compute the prospected canvas-point according to the new scale_factor:
-			Z_after_scale := to_canvas (M, scale_factor);
-			-- put_line ("Z after scale   " & to_string (Z_after_scale));
+			Z2 := to_canvas (M, scale_factor);
+			-- put_line ("Z after scale   " & to_string (Z2));
 
 			-- This is the offset from the given canvas-point to the prospected
 			-- canvas-point. The offset must be multiplied by -1 because the
 			-- drawing must be dragged-back to the given pointer position:
-			T.x := -(Z_after_scale.x - Z.x);
-			T.y := -(Z_after_scale.y - Z.y);
+			T.x := -(Z2.x - Z1.x);
+			T.y := -(Z2.y - Z1.y);
 			
 			put_line (" T offset    " & to_string (T));
 		end compute_translate_offset;
@@ -594,6 +596,7 @@ package body callbacks is
 			-- put_line ("BR " & to_string (BR));
 
 			-- CS clip negative values of U and L ?
+			-- CS simplify code below:
 
 			-- horizontal:
 			if BL.x <= scrollbar_h_adj.get_value then
@@ -628,8 +631,8 @@ package body callbacks is
 	begin -- cb_mouse_wheel_rolled
 		new_line;
 		put_line ("mouse_wheel_rolled");
-		put_line (" zoom center  " & to_string (M));
-		put_line (" zoom center " & to_string (Z));
+		put_line (" zoom center (M)   " & to_string (M));
+		put_line (" zoom center (Z1) " & to_string (Z1));
 		-- put_line (" direction " & gdk_scroll_direction'image (direction));
 
 
