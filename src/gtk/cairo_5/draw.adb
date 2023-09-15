@@ -54,17 +54,20 @@ begin
 
 	
 	-- Add the canvas as a child to the scrolled window:
+	put_line ("add canvas to scrolled window");
 	swin.add (canvas); 
 	-- swin.set_propagate_natural_height (true);
 	
 	-- Add the scrolled window as a child to the main window:
+	put_line ("add scrolled window to main window");
 	main_window.add (swin);
 
+	put_line ("show all widgets");
 	main_window.show_all;
 
 	apply_initial_scrollbar_settings;
 
-	
+	put_line ("start gtk main loop");
 	gtk.main.main;
 end draw;
 
