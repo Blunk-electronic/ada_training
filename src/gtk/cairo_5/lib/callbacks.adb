@@ -18,31 +18,30 @@ package body callbacks is
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class) 
 	is begin
-		put_line ("exiting ...");
+		put_line ("cb_terminate");
 		gtk.main.main_quit;
 	end cb_terminate;
 
 
-	procedure cb_size_allocate_main (
+	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
-	is
-	begin
+	is begin
 		null;
 		-- new_line;
-		-- put_line ("cb_size_allocate_main. pos: " & gint'image (allocation.x) 
-		-- 	& " /" & gint'image (allocation.y)
-		-- 	& "    width/height:" & gint'image (allocation.width)
-		-- 	& " /" & gint'image (allocation.height));
-
-	end cb_size_allocate_main;
+		put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+			& gint'image (allocation.x) 
+			& " /" & gint'image (allocation.y)
+			& " /" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.height));
+	end cb_main_window_size_allocate;
 
 	
 	
 	procedure set_up_main_window is
 	begin
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
-		main_window.set_title ("Canvas");
+		main_window.set_title ("Demo Canvas");
 		-- main_window.set_border_width (10);
 
 		-- Set the minimum size of the main window basing on the 
@@ -55,7 +54,7 @@ package body callbacks is
 		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
-		main_window.on_size_allocate (cb_size_allocate_main'access);
+		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_button_pressed_win'access);
 
 	end set_up_main_window;
@@ -96,7 +95,7 @@ package body callbacks is
 	begin
 		-- put_line ("horizontal moved " & image (clock));
 		null;
-		show_adjustments_h;
+		-- show_adjustments_h;
 		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_horizontal_moved;
 
@@ -106,7 +105,7 @@ package body callbacks is
 	is begin		
 		-- put_line ("vertical moved " & image (clock));
 		null;
-		show_adjustments_v;
+		-- show_adjustments_v;
 		-- put_line ("visible " & to_string (get_visible_area (canvas)));
 	end cb_vertical_moved;
 
@@ -163,6 +162,8 @@ package body callbacks is
 
 	procedure set_up_swin_and_scrollbars is
 	begin
+		put_line ("set_up_swin_and_scrollbars");
+		
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 		-- swin.set_border_width (10);
@@ -228,6 +229,8 @@ package body callbacks is
 	
 	
 	procedure prepare_initial_scrollbar_settings is
+		debug : boolean := false;
+		-- debug : boolean := true;
 	begin
 		put_line ("prepare initial scrollbar settings");
 		
@@ -236,23 +239,26 @@ package body callbacks is
 		scrollbar_v_init.page_size := gdouble (bounding_box.height);
 		scrollbar_v_init.value := scrollbar_v_init.lower;
 
-		put_line (" vertical:");
-		put_line ("  lower" & gdouble'image (scrollbar_v_init.lower));
-		put_line ("  upper" & gdouble'image (scrollbar_v_init.upper));
-		put_line ("  page " & gdouble'image (scrollbar_v_init.page_size));
-		put_line ("  value" & gdouble'image (scrollbar_v_init.value));
-
+		if debug then
+			put_line (" vertical:");
+			put_line ("  lower" & gdouble'image (scrollbar_v_init.lower));
+			put_line ("  upper" & gdouble'image (scrollbar_v_init.upper));
+			put_line ("  page " & gdouble'image (scrollbar_v_init.page_size));
+			put_line ("  value" & gdouble'image (scrollbar_v_init.value));
+		end if;
 		
 		scrollbar_h_init.lower := base_offset.x;
 		scrollbar_h_init.upper := scrollbar_h_init.lower + gdouble (bounding_box.width);
 		scrollbar_h_init.page_size := gdouble (bounding_box.width);
 		scrollbar_h_init.value := scrollbar_h_init.lower;
 
-		put_line (" horizontal:");
-		put_line ("  lower" & gdouble'image (scrollbar_h_init.lower));
-		put_line ("  upper" & gdouble'image (scrollbar_h_init.upper));
-		put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
-		put_line ("  value" & gdouble'image (scrollbar_h_init.value));
+		if debug then
+			put_line (" horizontal:");
+			put_line ("  lower" & gdouble'image (scrollbar_h_init.lower));
+			put_line ("  upper" & gdouble'image (scrollbar_h_init.upper));
+			put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
+			put_line ("  value" & gdouble'image (scrollbar_h_init.value));
+		end if;
 	end prepare_initial_scrollbar_settings;
 
 
@@ -290,19 +296,19 @@ package body callbacks is
 	end refresh;
 
 
-	procedure cb_size_allocate (
+	procedure cb_canvas_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is begin
 		null;
 		-- new_line;
-		-- put_line ("cb_size_allocate");
-		put_line ("cb_size_allocate. pos: " & gint'image (allocation.x) 
+		-- put_line ("cb_canvas_size_allocate");
+		put_line ("cb_canvas_size_allocate. (x/y/w/h): " & gint'image (allocation.x) 
 			& " /" & gint'image (allocation.y)
-			& "    width/height:" & gint'image (allocation.width)
+			& " /" & gint'image (allocation.width)
 			& " /" & gint'image (allocation.height));
 
-	end cb_size_allocate;
+	end cb_canvas_size_allocate;
 
 
 	
@@ -312,7 +318,7 @@ package body callbacks is
 		width, height : gint;
 	begin
 		canvas.get_size_request (width, height);
-		put_line ("canvas size" & gint'image (width) & " /" & gint'image (height));
+		put_line ("canvas size (w/h):" & gint'image (width) & " /" & gint'image (height));
 	end show_canvas_size;
 
 	
@@ -320,11 +326,14 @@ package body callbacks is
 	procedure set_up_canvas is
 		size_x, size_y : gint;
 	begin
+		put_line ("set_up_canvas");
+		
 		-- Set up the drawing area:
 		gtk_new (canvas);
 
-		canvas.on_realize (cb_realized'access );
-		canvas.on_size_allocate (cb_size_allocate'access);
+		-- Connect signals:
+		canvas.on_realize (cb_canvas_realized'access );
+		canvas.on_size_allocate (cb_canvas_size_allocate'access);
 
 		
 		-- Set the size of the canvas (in pixels).
@@ -337,7 +346,7 @@ package body callbacks is
 		show_canvas_size;
 
 		
-		
+		-- Connect further signals:
 		canvas.on_draw (cb_draw_objects'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
@@ -519,12 +528,12 @@ package body callbacks is
 	end cb_key_pressed;
 
 
-	procedure cb_realized (
+	procedure cb_canvas_realized (
 		canvas	: access gtk_widget_record'class)
 	is
 	begin
-		put_line ("canvas realized");
-	end cb_realized;
+		put_line ("cb_canvas_realized");
+	end cb_canvas_realized;
 
 
 

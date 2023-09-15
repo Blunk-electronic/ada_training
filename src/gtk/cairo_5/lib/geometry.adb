@@ -185,7 +185,7 @@ package body geometry is
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
 
-		put_line (to_string (bounding_box));
+		put_line ("bounding-box: " & to_string (bounding_box));
 	end compute_bounding_box;
 
 	

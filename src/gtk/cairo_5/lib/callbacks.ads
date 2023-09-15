@@ -21,7 +21,7 @@ package callbacks is
 		main_window : access gtk_widget_record'class);
 
 
-	procedure cb_size_allocate_main (
+	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
@@ -109,7 +109,7 @@ package callbacks is
 		canvas	: access gtk_widget_record'class);
 
 
-	procedure cb_size_allocate (
+	procedure cb_canvas_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
@@ -161,7 +161,7 @@ package callbacks is
 		return boolean;
 
 
-	procedure cb_realized (
+	procedure cb_canvas_realized (
 		canvas	: access gtk_widget_record'class);
 	
 
