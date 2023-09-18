@@ -35,6 +35,34 @@ package body callbacks is
 		new_size : constant type_window_size := (
 			width	=> positive (allocation.width),
 			height	=> positive (allocation.height));
+
+		-- Computes the the scale factor S2 from the current scale factor S1,
+		-- length_old and length_new. The formula used is:
+		--
+		--      length_new * S1
+		-- S2 = ---------------
+		--        length_old
+		--
+		function to_scale_factor (
+			length_old, length_new : in positive)
+			return type_scale_factor
+		is 
+			type type_float is digits 6 range 1.0 .. 100_000.0; 
+			-- CS: Upper limit might require adjustments for very large screens.
+			
+			L1 : type_float := type_float (length_old);
+			L2 : type_float := type_float (length_new);
+		begin
+			-- put_line ("L1" & type_float'image (L1));
+			-- put_line ("L2" & type_float'image (L2));
+
+			-- The return is S2:
+			return type_scale_factor (L2 / L1) * scale_factor;
+		end to_scale_factor;
+		
+		-- These are the new scale factors. One is computed by the change
+		-- of the width, the other by the change of the height of the window:
+		S2W, S2H  : type_scale_factor;
 	begin
 		null;
 		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
@@ -50,7 +78,16 @@ package body callbacks is
 				& gint'image (allocation.width)
 				& " /" & gint'image (allocation.height));
 
+			
+			S2W := to_scale_factor (main_window_size.width, new_size.width) * scale_factor;
+			put_line ("S2W:" & to_string (S2W));
+
+			S2H := to_scale_factor (main_window_size.height, new_size.height) * scale_factor;
+			put_line ("S2H:" & to_string (S2H));
+
 			main_window_size := new_size;
+
+			
 		end if;
 	end cb_main_window_size_allocate;
 
