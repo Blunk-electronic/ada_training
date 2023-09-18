@@ -64,11 +64,18 @@ package geometry is
 		BL, BR, TL, TR : type_point_model;
 	end record;
 
+
+	-- Returns the four corners of the given area:
 	function get_corners (
 		area	: in type_area)
 		return type_area_corners;
 
 	
+	-- Returns the center of the given area:
+	function get_center (
+		area	: in type_area)
+		return type_point_model;
+
 	
 	function to_string (
 		box : in type_area)

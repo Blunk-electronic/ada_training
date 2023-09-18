@@ -101,6 +101,19 @@ package body geometry is
 	end get_corners;
 
 	
+	function get_center (
+		area	: in type_area)
+		return type_point_model
+	is
+		result : type_point_model;
+	begin
+		result.x := area.position.x + area.width  * 0.5;
+		result.y := area.position.y + area.height * 0.5;
+		return result;
+	end get_center;
+		
+
+
 	
 	function in_area (
 		point	: type_point_model;

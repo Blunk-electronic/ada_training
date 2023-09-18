@@ -146,6 +146,10 @@ package callbacks is
 
 
 
+	-- Returns the currently visible area of the canvas.
+	-- The visible area depends the current scale factor,
+	-- base-offset, translate-offset
+	-- and the settings of the scollbars.
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
 		return type_area;
