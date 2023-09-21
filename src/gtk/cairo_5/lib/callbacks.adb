@@ -807,7 +807,9 @@ package body callbacks is
 		
 		procedure update_scrollbar_limits is
 			TL, BL, BR : type_point_canvas;
+			scratch : gdouble;
 		begin
+			-- Convert the corners of the bounding-box to canvas coordinates:
 			TL := to_canvas (BC.TL, scale_factor, true);
 			BL := to_canvas (BC.BL, scale_factor, true);
 			BR := to_canvas (BC.BR, scale_factor, true);
@@ -817,7 +819,7 @@ package body callbacks is
 			-- put_line ("BR " & to_string (BR));
 
 			-- CS clip negative values of U and L ?
-			-- CS simplify code below:
+
 
 			-- horizontal:
 			if BL.x <= scrollbar_h_adj.get_value then
@@ -826,10 +828,11 @@ package body callbacks is
 				scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
 			end if;
 
-			if BR.x >= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
+			scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+			if BR.x >= scratch then
 				scrollbar_h_adj.set_upper (BR.x);
 			else
-				scrollbar_h_adj.set_upper (scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size);
+				scrollbar_h_adj.set_upper (scratch);
 			end if;
 
 			
@@ -840,23 +843,15 @@ package body callbacks is
 				scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
 			end if;
 
-			if BL.y >= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+			scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+			if BL.y >= scratch then
 				scrollbar_v_adj.set_upper (BL.y);
 			else
-				scrollbar_v_adj.set_upper (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
+				scrollbar_v_adj.set_upper (scratch);
 			end if;
 
 			
-			-- backup settings:
-			scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
-			scrollbar_h_backup.value := scrollbar_h_adj.get_value;
-			scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
-			scrollbar_h_backup.upper := scrollbar_h_adj.get_upper;
-			
-			scrollbar_v_backup.lower := scrollbar_v_adj.get_lower;
-			scrollbar_v_backup.value := scrollbar_v_adj.get_value;
-			scrollbar_v_backup.page_size := scrollbar_v_adj.get_page_size;
-			scrollbar_v_backup.upper := scrollbar_v_adj.get_upper;
+			backup_scrollbar_settings;
 		end update_scrollbar_limits;
 
 
