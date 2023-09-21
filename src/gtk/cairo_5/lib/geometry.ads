@@ -6,7 +6,8 @@ package geometry is
 
 -- SCALE:
 
-	type type_scale_factor is digits 4 range 0.1 .. 10.0;
+	--type type_scale_factor is digits 4 range 0.1 .. 10.0;
+	type type_scale_factor is digits 6 range 0.001 .. 10.0;
 	scale_factor : type_scale_factor := 1.0;
 	scale_multiplier : constant type_scale_factor := 1.2;
 
@@ -65,7 +66,8 @@ package geometry is
 	end record;
 
 
-	-- Returns the four corners of the given area:
+	-- Returns the four corners of the given area.
+	-- The area is given in model coordinates:
 	function get_corners (
 		area	: in type_area)
 		return type_area_corners;

@@ -23,6 +23,35 @@ package body callbacks is
 	end cb_terminate;
 
 
+	procedure cb_focus_win (
+		main_window : access gtk_window_record'class) 
+	is begin
+		put_line ("cb_focus_win");
+	end cb_focus_win;
+
+	
+	function cb_button_pressed_win (
+		window	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		use glib;
+		event_handled : boolean := true;
+		point : constant type_point_canvas := (event.x, event.y);
+	begin
+		null;
+		
+		-- -- Output the button id, x and y position:
+		put_line ("cb_button_pressed_win ");
+		-- 	& " button " & guint'image (event.button)
+		-- 	& to_string (point));
+
+		return event_handled;
+	end cb_button_pressed_win;
+
+	
+	
+	
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
@@ -30,6 +59,9 @@ package body callbacks is
 		-- This procedure is called on many occasions. We are interested
 		-- only in cases where the size changes. So we watch for changes
 		-- of width and height only.
+
+		-- The current scale factor:
+		S1 : constant type_scale_factor := scale_factor;
 
 		-- This is the new size of the window:
 		new_size : constant type_window_size := (
@@ -47,24 +79,43 @@ package body callbacks is
 			length_old, length_new : in positive)
 			return type_scale_factor
 		is 
-			type type_float is digits 6 range 1.0 .. 100_000.0; 
+			type type_float is digits 6 range 0.0 .. 100_000.0; 
 			-- CS: Upper limit might require adjustments for very large screens.
 			
 			L1 : type_float := type_float (length_old);
 			L2 : type_float := type_float (length_new);
 		begin
-			-- put_line ("L1" & type_float'image (L1));
-			-- put_line ("L2" & type_float'image (L2));
+			-- put_line ("L2:" & type_float'image (L2));
+			-- put_line ("L1:" & type_float'image (L1));
 
 			-- The return is S2:
-			return type_scale_factor (L2 / L1) * scale_factor;
+			return type_scale_factor (L2 / L1) * S1;
 		end to_scale_factor;
+		
 		
 		-- These are the new scale factors. One is computed by the change
 		-- of the width, the other by the change of the height of the window:
 		S2W, S2H  : type_scale_factor;
+
+		-- The effective scale factor:
+		S2 : type_scale_factor;
+
+
+		-- type type_zoom_direction is (ZOOM_IN, ZOOM_OUT, NO_ZOOM);
+		-- D : type_zoom_direction;
+		
+		-- The center of the visible area is used as the zoom center:
+		M : type_point_model;
+
+		Z1, Z2 : type_point_canvas;
+
+		-- The corners of the bounding-box:
+		BC : type_area_corners;
+
+		
 	begin
 		null;
+		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
 		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
@@ -74,20 +125,92 @@ package body callbacks is
 		-- Compare the new size with the old size. If the size
 		-- has changed, update the global main_window_size variable:
 		if new_size /= main_window_size then
-			put_line ("main window size changed (w/h): " 
-				& gint'image (allocation.width)
-				& " /" & gint'image (allocation.height));
+			put_line ("size changed");
+
+			-- show_adjustments_h;
+			-- show_adjustments_v;
+			
+			-- update_visible_area (canvas);
+			-- put_line ("visible " & to_string (visible_area));
+
+			-- Get the real model point in the center of the visible area:
+			M := get_center (visible_area);
+			-- M := visible_center;
+			put_line ("M: " & to_string (M));
+
+			-- Get the canvas point in the center of the visible area
+			-- according to the current scale factor:
+			Z1 := to_canvas (M, S1, true);
+			put_line ("Z1: " & to_string (Z1));
 
 			
-			S2W := to_scale_factor (main_window_size.width, new_size.width) * scale_factor;
-			put_line ("S2W:" & to_string (S2W));
+			-- Get the corners of the bounding-box as it is BEFORE scaling:
+			BC := get_corners (bounding_box);
 
-			S2H := to_scale_factor (main_window_size.height, new_size.height) * scale_factor;
-			put_line ("S2H:" & to_string (S2H));
+-- 			put_line ("main window size old (w/h): " 
+-- 				& positive'image (main_window_size.width)
+-- 				& " /" & positive'image (main_window_size.height));
+-- 			
+-- 			put_line ("main window size new (w/h): " 
+-- 				& positive'image (new_size.width)
+-- 				& " /" & positive'image (new_size.height));
+-- 
+-- 			put_line ("S1:" & to_string (S1));
+			
+			
+			S2W := to_scale_factor (main_window_size.width, new_size.width);
+			-- put_line ("S2W:" & to_string (S2W));
+
+			S2H := to_scale_factor (main_window_size.height, new_size.height);
+			-- put_line ("S2H:" & to_string (S2H));
+
+			-- CS
+			-- The smaller one of the two scale factors has the final say:
+			-- S2 := type_scale_factor'min (S2W, S2H);
+			S2 := S2W;
+			if S2 < 1.0 then
+				S2 := 1.0;
+			end if;
+			put_line ("S2:" & to_string (S2));
+
+			
+
+			-- Compute the prospected canvas-point according to the new scale factor:
+			Z2 := to_canvas (M, S2, true);
+			put_line ("Z2: " & to_string (Z2));
+			
+			-- T.x := -(Z2.x - Z1.x);
+			-- T.y := -(Z2.y - Z1.y);
+			-- T.x := 0.0;
+			-- T.y := 0.0;
+
+			put_line (" T offset    " & to_string (T));
+
+
+		
+-- 			if S2 > 1.0 then
+-- 				D := ZOOM_IN;
+-- 				
+-- 			elsif S2 < 1.0 then
+-- 				D := ZOOM_OUT;
+-- 				
+-- 			else
+-- 				D := NO_ZOOM;
+-- 			end if;
+-- 
+-- 
+-- 			if D /= NO_ZOOM then
+				-- put_line ("D " & type_zoom_direction'image (D));
+			
+			-- update_scrollbar_limits;
+
+			scale_factor := S2;				
+			refresh (canvas);
+				
+			-- update_visible_area (canvas);
+
 
 			main_window_size := new_size;
-
-			
 		end if;
 	end cb_main_window_size_allocate;
 
@@ -117,7 +240,7 @@ package body callbacks is
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_button_pressed_win'access);
-
+		-- main_window.on_activate_focus (cb_focus_win'access);
 	end set_up_main_window;
 
 
@@ -125,24 +248,6 @@ package body callbacks is
 
 -- SCROLLED WINDOW:
 
-	function cb_button_pressed_win (
-		swin	: access gtk_widget_record'class;
-		event	: gdk_event_button)
-		return boolean
-	is
-		use glib;
-		event_handled : boolean := true;
-		point : constant type_point_canvas := (event.x, event.y);
-	begin
-		null;
-		
-		-- -- Output the button id, x and y position:
-		-- put_line ("cb_button_pressed_win "
-		-- 	& " button " & guint'image (event.button)
-		-- 	& to_string (point));
-
-		return event_handled;
-	end cb_button_pressed_win;
 
 
 
@@ -152,12 +257,12 @@ package body callbacks is
 	
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class)
-	is 
-	begin
+	is begin
 		-- put_line ("horizontal moved " & image (clock));
 		null;
 		-- show_adjustments_h;
-		-- put_line ("visible " & to_string (get_visible_area (canvas)));
+		update_visible_area (canvas);		
+		backup_scrollbar_settings;
 	end cb_horizontal_moved;
 
 	
@@ -167,7 +272,8 @@ package body callbacks is
 		-- put_line ("vertical moved " & image (clock));
 		null;
 		-- show_adjustments_v;
-		-- put_line ("visible " & to_string (get_visible_area (canvas)));
+		update_visible_area (canvas);
+		backup_scrollbar_settings;
 	end cb_vertical_moved;
 
 
@@ -218,6 +324,33 @@ package body callbacks is
 		-- put_line ("cb_scrollbar_h_released");
 		return event_handled;
 	end cb_scrollbar_h_released;
+
+
+	procedure backup_scrollbar_settings is begin
+		scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
+		scrollbar_h_backup.value := scrollbar_h_adj.get_value;
+		scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
+		scrollbar_h_backup.upper := scrollbar_h_adj.get_upper;
+
+		scrollbar_v_backup.lower := scrollbar_v_adj.get_lower;
+		scrollbar_v_backup.value := scrollbar_v_adj.get_value;
+		scrollbar_v_backup.page_size := scrollbar_v_adj.get_page_size;
+		scrollbar_v_backup.upper := scrollbar_v_adj.get_upper;
+	end backup_scrollbar_settings;
+	
+
+	procedure restore_scrollbar_settings is begin
+		scrollbar_h_adj.set_lower (scrollbar_h_backup.lower);
+		scrollbar_h_adj.set_value (scrollbar_h_backup.value);
+		scrollbar_h_adj.set_page_size (scrollbar_h_backup.page_size);
+		scrollbar_h_adj.set_upper (scrollbar_h_backup.upper);
+
+		scrollbar_v_adj.set_lower (scrollbar_v_backup.lower);
+		scrollbar_v_adj.set_value (scrollbar_v_backup.value);
+		scrollbar_v_adj.set_page_size (scrollbar_v_backup.page_size);
+		scrollbar_v_adj.set_upper (scrollbar_v_backup.upper);
+	end restore_scrollbar_settings;
+
 
 	
 
@@ -340,6 +473,10 @@ package body callbacks is
 		scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
 		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
 		scrollbar_h_adj.set_value (scrollbar_h_init.value);
+
+		update_visible_area (canvas); -- updates visible_area and visible_center
+
+		backup_scrollbar_settings;
 	end apply_initial_scrollbar_settings;
 	
 
@@ -476,6 +613,8 @@ package body callbacks is
 		return result;
 	end model_point_visible;
 
+
+
 	
 
 	function get_visible_area (
@@ -518,6 +657,18 @@ package body callbacks is
 	end get_visible_area;
 
 	
+
+	procedure update_visible_area (
+		canvas	: access gtk_widget_record'class)
+	is begin
+		-- put_line ("update visible area");
+		visible_area := get_visible_area (canvas);
+		-- put_line (" visible area " & to_string (visible_area));
+
+		visible_center := get_center (visible_area);
+		-- put_line (" visible center " & to_string (visible_center));
+	end update_visible_area;
+
 	
 	
 	function cb_button_pressed (
@@ -694,6 +845,18 @@ package body callbacks is
 			else
 				scrollbar_v_adj.set_upper (scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size);
 			end if;
+
+			
+			-- backup settings:
+			scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
+			scrollbar_h_backup.value := scrollbar_h_adj.get_value;
+			scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
+			scrollbar_h_backup.upper := scrollbar_h_adj.get_upper;
+			
+			scrollbar_v_backup.lower := scrollbar_v_adj.get_lower;
+			scrollbar_v_backup.value := scrollbar_v_adj.get_value;
+			scrollbar_v_backup.page_size := scrollbar_v_adj.get_page_size;
+			scrollbar_v_backup.upper := scrollbar_v_adj.get_upper;
 		end update_scrollbar_limits;
 
 
@@ -728,6 +891,8 @@ package body callbacks is
 			update_scrollbar_limits;
 			
 			refresh (canvas);
+
+			update_visible_area (canvas);
 		end if;
 		
 		return event_handled;

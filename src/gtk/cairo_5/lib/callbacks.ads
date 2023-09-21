@@ -24,12 +24,25 @@ package callbacks is
 	-- The current size of the main window. It gets updated
 	-- in procedure set_up_main_window and in cb_main_window_size_allocate:
 	main_window_size : type_window_size;
+
+	
 	
 
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
 
 
+	procedure cb_focus_win (
+		main_window : access gtk_window_record'class);
+
+
+	
+	function cb_button_pressed_win (
+		window	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+
+	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window:
 	procedure cb_main_window_size_allocate (
@@ -45,10 +58,6 @@ package callbacks is
 	
 	swin		: gtk_scrolled_window;
 
-	function cb_button_pressed_win (
-		swin	: access gtk_widget_record'class;
-		event	: gdk_event_button)
-		return boolean;
 
 
 	
@@ -58,11 +67,18 @@ package callbacks is
 	scrollbar_v, scrollbar_h : gtk_scrollbar;
 
 	
-
+	-- Called whenever the horizontal scrollbar is moved, either
+	-- by the operator or by internal calls.
+	-- Variables modified: the visible_area and visible_center by
+	-- call of update_visible_area:
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
 	
+	-- Called whenever the vertical scrollbar is moved, either
+	-- by the operator or by internal calls.
+	-- Variables modified: the visible_area and visible_center by
+	-- call of update_visible_area:
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
@@ -101,6 +117,16 @@ package callbacks is
 	scrollbar_v_init : type_scrollbar_settings;
 	scrollbar_h_init : type_scrollbar_settings;
 
+
+	
+	scrollbar_h_backup, scrollbar_v_backup : type_scrollbar_settings;
+
+	procedure backup_scrollbar_settings;
+
+	procedure restore_scrollbar_settings;
+
+	
+	
 	procedure set_up_swin_and_scrollbars;
 
 	procedure show_adjustments_v;
@@ -146,17 +172,32 @@ package callbacks is
 
 
 
+	
+	
+
 	-- Returns the currently visible area of the canvas.
 	-- The visible area depends the current scale factor,
 	-- base-offset, translate-offset
-	-- and the settings of the scollbars.
+	-- and the current settings of the scollbars.
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
 		return type_area;
 
 	
+
+	
+	visible_area : type_area;
+	visible_center : type_point_model;
 	
 
+	-- Updates the visible area and its center.
+	-- Variables modified: visible_area, visible_center:
+	procedure update_visible_area (
+		canvas	: access gtk_widget_record'class);
+
+	
+	
+	
 	
 	function cb_button_pressed (
 		canvas	: access gtk_widget_record'class;
