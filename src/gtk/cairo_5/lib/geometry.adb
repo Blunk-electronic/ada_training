@@ -231,6 +231,7 @@ package body geometry is
 	is 
 		result : type_point_model;
 	begin
+		
 		result.x := type_distance_model (( (point.x - T.x) - base_offset.x) / gdouble (scale));
 		result.y := type_distance_model ((-(point.y - T.y) - base_offset.y) / gdouble (scale));
 
@@ -240,6 +241,16 @@ package body geometry is
 			move_by (result, bounding_box.position);
 		end if;
 		return result;
+
+		exception
+			when constraint_error =>
+				put_line ("ERROR: conversion from canvas point to model point failed !");
+				put_line ("point " & to_string (point));
+				put_line ("scale " & to_string (scale));
+				put_line ("T     " & to_string (T));
+				put_line ("F     " & to_string (base_offset));
+				put_line ("real  " & boolean'image (real));
+				raise;						  
 	end to_model;
 	
 

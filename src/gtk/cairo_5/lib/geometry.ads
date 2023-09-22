@@ -147,7 +147,7 @@ package geometry is
 		return string;
 
 
-	
+
 
 	
 	

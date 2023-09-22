@@ -68,6 +68,24 @@ package body callbacks is
 			width	=> positive (allocation.width),
 			height	=> positive (allocation.height));
 
+
+
+		function get_center
+			return type_point_canvas
+		is
+			result : type_point_canvas;
+		begin
+			result.x := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size * 0.5;
+			result.y := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size * 0.5;
+
+			-- result.x := gdouble (window_size.width) * 0.5;
+			-- result.y := gdouble (window_size.height) * 0.5;
+
+			
+			return result;
+		end get_center;
+		
+			
 		-- Computes the the scale factor S2 from the current scale factor S1,
 		-- length_old and length_new. The formula used is:
 		--
@@ -110,9 +128,10 @@ package body callbacks is
 		Z1, Z2 : type_point_canvas;
 
 		-- The corners of the bounding-box:
-		BC : type_area_corners;
-
+		-- BC : type_area_corners;
+		T2 : type_point_canvas;
 		
+		debug : boolean := false;
 	begin
 		null;
 		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
@@ -121,32 +140,17 @@ package body callbacks is
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
-
+		
 		-- Compare the new size with the old size. If the size
 		-- has changed, update the global main_window_size variable:
 		if new_size /= main_window_size then
+		-- if debug then
 			put_line ("size changed");
 
+			restore_scrollbar_settings;
 			-- show_adjustments_h;
 			-- show_adjustments_v;
 			
-			-- update_visible_area (canvas);
-			-- put_line ("visible " & to_string (visible_area));
-
-			-- Get the real model point in the center of the visible area:
-			M := get_center (visible_area);
-			-- M := visible_center;
-			put_line ("M: " & to_string (M));
-
-			-- Get the canvas point in the center of the visible area
-			-- according to the current scale factor:
-			Z1 := to_canvas (M, S1, true);
-			put_line ("Z1: " & to_string (Z1));
-
-			
-			-- Get the corners of the bounding-box as it is BEFORE scaling:
-			BC := get_corners (bounding_box);
-
 -- 			put_line ("main window size old (w/h): " 
 -- 				& positive'image (main_window_size.width)
 -- 				& " /" & positive'image (main_window_size.height));
@@ -157,6 +161,13 @@ package body callbacks is
 -- 
 -- 			put_line ("S1:" & to_string (S1));
 			
+			Z1 := get_center;
+			put_line ("Z1: " & to_string (Z1));
+			M := to_model (Z1, S1);
+
+			-- put_line ("M : " & to_string (M));
+
+
 			
 			S2W := to_scale_factor (main_window_size.width, new_size.width);
 			-- put_line ("S2W:" & to_string (S2W));
@@ -171,18 +182,29 @@ package body callbacks is
 			if S2 < 1.0 then
 				S2 := 1.0;
 			end if;
+			-- S2 := 1.01;
 			put_line ("S2:" & to_string (S2));
 
-			
+
 
 			-- Compute the prospected canvas-point according to the new scale factor:
-			Z2 := to_canvas (M, S2, true);
+			Z2 := to_canvas (M, S2);
+			-- Z2.x := Z1.x * gdouble (S2);
+			-- Z2.y := Z1.y * gdouble (S2);
+
 			put_line ("Z2: " & to_string (Z2));
 			
-			-- T.x := -(Z2.x - Z1.x);
-			-- T.y := -(Z2.y - Z1.y);
+			T2.x := -(Z2.x - Z1.x);
+			T2.y := -(Z2.y - Z1.y);
+
+			put_line (" T2 offset   " & to_string (T2));
+			
+			T.x := T.x + T2.x;
+			T.y := T.y + T2.y;
 			-- T.x := 0.0;
-			-- T.y := 0.0;
+			-- T.y := 100.0;
+			T.x := T2.x;
+			T.y := T2.y;
 
 			put_line (" T offset    " & to_string (T));
 
@@ -204,8 +226,8 @@ package body callbacks is
 			
 			-- update_scrollbar_limits;
 
-			scale_factor := S2;				
-			refresh (canvas);
+			scale_factor := S2;
+			-- refresh (canvas);
 				
 			-- update_visible_area (canvas);
 
@@ -214,7 +236,46 @@ package body callbacks is
 		end if;
 	end cb_main_window_size_allocate;
 
+
+
 	
+	function cb_main_window_configure (
+		window		: access gtk_widget_record'class;
+		event		: gdk.event.gdk_event_configure)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		-- put_line ("cb_main_window_configure " & image (clock)); 
+		return result;
+	end cb_main_window_configure;
+
+
+	procedure cb_main_window_realize (
+		window	: access gtk_widget_record'class)
+	is begin
+		put_line ("cb_main_window_realize " & image (clock)); 
+	end cb_main_window_realize;
+	
+
+	function cb_main_window_state_change (
+		window		: access gtk_widget_record'class;
+		event		: gdk.event.gdk_event_window_state)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		put_line ("cb_main_window_state_change " & image (clock)); 
+		return result;
+	end cb_main_window_state_change;
+
+
+	procedure cb_main_window_activate (
+		window		: access gtk_window_record'class)
+	is begin
+		put_line ("cb_main_window_activate " & image (clock)); 
+	end cb_main_window_activate;
+
 	
 	procedure set_up_main_window is
 	begin
@@ -240,7 +301,14 @@ package body callbacks is
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_button_pressed_win'access);
+
+		main_window.on_configure_event (cb_main_window_configure'access);
+		main_window.on_window_state_event (cb_main_window_state_change'access);
+		main_window.on_realize (cb_main_window_realize'access);
+		main_window.on_activate_default (cb_main_window_activate'access);
 		-- main_window.on_activate_focus (cb_focus_win'access);
+		-- main_window.set_has_window (false);
+		-- main_window.set_redraw_on_allocate (false);
 	end set_up_main_window;
 
 
@@ -361,7 +429,7 @@ package body callbacks is
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 		-- swin.set_border_width (10);
-
+		-- swin.set_redraw_on_allocate (false);
 		
 		scrollbar_h_adj := swin.get_hadjustment;
 		scrollbar_v_adj := swin.get_vadjustment;
@@ -490,6 +558,7 @@ package body callbacks is
 	is
 		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
 	begin
+		put_line ("refresh " & image (clock)); 
 		drawing_area.queue_draw;
 	end refresh;
 
@@ -530,9 +599,13 @@ package body callbacks is
 		gtk_new (canvas);
 
 		-- Connect signals:
-		canvas.on_realize (cb_canvas_realized'access );
-		canvas.on_size_allocate (cb_canvas_size_allocate'access);
+		-- canvas.on_realize (cb_canvas_realized'access);
+		-- Not required currently.
 
+		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
+		-- The canvas size never changes. So this connection is not required.
+		
+		-- canvas.set_redraw_on_allocate (false);
 		
 		-- Set the size of the canvas (in pixels).
 		-- It is like the wooden frame around a real-world canvas. 
@@ -905,7 +978,7 @@ package body callbacks is
 		cp : type_point_canvas;
 	begin
 		-- new_line;
-		-- put_line ("cb_draw " & image (clock));
+		put_line ("cb_draw " & image (clock));
 		
 		-- NOTE: In a real project, the database that contains
 		-- all objects must be parsed here. One object after another
