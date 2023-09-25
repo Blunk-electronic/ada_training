@@ -126,10 +126,6 @@ package body callbacks is
 		M : type_point_model;
 
 		Z1, Z2 : type_point_canvas;
-
-		-- The corners of the bounding-box:
-		-- BC : type_area_corners;
-		T2 : type_point_canvas;
 		
 		debug : boolean := false;
 	begin
@@ -144,7 +140,8 @@ package body callbacks is
 		-- Compare the new size with the old size. If the size
 		-- has changed, update the global main_window_size variable:
 		if new_size /= main_window_size then
-		-- if debug then
+			-- if debug then
+			new_line;
 			put_line ("size changed");
 
 			restore_scrollbar_settings;
@@ -155,17 +152,17 @@ package body callbacks is
 -- 				& positive'image (main_window_size.width)
 -- 				& " /" & positive'image (main_window_size.height));
 -- 			
--- 			put_line ("main window size new (w/h): " 
--- 				& positive'image (new_size.width)
--- 				& " /" & positive'image (new_size.height));
+			put_line ("main window size new (w/h): " 
+				& positive'image (new_size.width)
+				& " /" & positive'image (new_size.height));
 -- 
 -- 			put_line ("S1:" & to_string (S1));
 			
 			Z1 := get_center;
 			put_line ("Z1: " & to_string (Z1));
+			
 			M := to_model (Z1, S1);
-
-			-- put_line ("M : " & to_string (M));
+			put_line ("M : " & to_string (M));
 
 
 			
@@ -189,48 +186,14 @@ package body callbacks is
 
 			-- Compute the prospected canvas-point according to the new scale factor:
 			Z2 := to_canvas (M, S2);
-			-- Z2.x := Z1.x * gdouble (S2);
-			-- Z2.y := Z1.y * gdouble (S2);
-
 			put_line ("Z2: " & to_string (Z2));
 			
-			T2.x := -(Z2.x - Z1.x);
-			T2.y := -(Z2.y - Z1.y);
-
-			put_line (" T2 offset   " & to_string (T2));
-			
-			T.x := T.x + T2.x;
-			T.y := T.y + T2.y;
-			-- T.x := 0.0;
-			-- T.y := 100.0;
-			T.x := T2.x;
-			T.y := T2.y;
-
-			put_line (" T offset    " & to_string (T));
-
-
-		
--- 			if S2 > 1.0 then
--- 				D := ZOOM_IN;
--- 				
--- 			elsif S2 < 1.0 then
--- 				D := ZOOM_OUT;
--- 				
--- 			else
--- 				D := NO_ZOOM;
--- 			end if;
--- 
--- 
--- 			if D /= NO_ZOOM then
-				-- put_line ("D " & type_zoom_direction'image (D));
-			
-			-- update_scrollbar_limits;
+			T.x := -(Z2.x - Z1.x);
+			T.y := -(Z2.y - Z1.y);
+			put_line (" T: " & to_string (T));
 
 			scale_factor := S2;
 			-- refresh (canvas);
-				
-			-- update_visible_area (canvas);
-
 
 			main_window_size := new_size;
 		end if;

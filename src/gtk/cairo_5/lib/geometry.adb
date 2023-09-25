@@ -230,7 +230,12 @@ package body geometry is
 		return type_point_model
 	is 
 		result : type_point_model;
+		debug : boolean := false;
 	begin
+		if debug then
+			put_line ("to_model");
+			put_line ("T " & to_string (T));
+		end if;
 		
 		result.x := type_distance_model (( (point.x - T.x) - base_offset.x) / gdouble (scale));
 		result.y := type_distance_model ((-(point.y - T.y) - base_offset.y) / gdouble (scale));
