@@ -115,9 +115,12 @@ package body callbacks is
 		-- of the width, the other by the change of the height of the window:
 		S2W, S2H  : type_scale_factor;
 
-		-- The effective scale factor:
+		-- The new scale factor:
 		S2 : type_scale_factor;
 
+
+		-- Get the corners of the bounding-box as it is BEFORE scaling:
+		BC : constant type_area_corners := get_corners (bounding_box);
 
 		-- type type_zoom_direction is (ZOOM_IN, ZOOM_OUT, NO_ZOOM);
 		-- D : type_zoom_direction;
@@ -128,6 +131,75 @@ package body callbacks is
 		Z1, Z2 : type_point_canvas;
 		
 		debug : boolean := false;
+
+		
+		procedure update_scrollbar_limits is
+			TL, BL, BR : type_point_canvas;
+			scratch : gdouble;
+			
+			P2, D : gdouble;
+		begin
+			-- Convert the corners of the bounding-box to canvas coordinates:
+			TL := to_canvas (BC.TL, scale_factor, true);
+			BL := to_canvas (BC.BL, scale_factor, true);
+			BR := to_canvas (BC.BR, scale_factor, true);
+
+			-- put_line ("TL " & to_string (TL));
+			-- put_line ("BL " & to_string (BL));
+			-- put_line ("BR " & to_string (BR));
+
+			-- CS clip negative values of U and L ?
+
+
+			-- horizontal:
+			if BL.x <= scrollbar_h_adj.get_value then
+				scrollbar_h_adj.set_lower (BL.x);
+			else
+				scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+			end if;
+
+			scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+			if BR.x >= scratch then
+				scrollbar_h_adj.set_upper (BR.x);
+			else
+				scrollbar_h_adj.set_upper (scratch);
+			end if;
+
+			
+			-- vertical:
+			if TL.y <= scrollbar_v_adj.get_value then
+				scrollbar_v_adj.set_lower (TL.y);
+			else
+				scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+			end if;
+
+			scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+			if BL.y >= scratch then
+				scrollbar_v_adj.set_upper (BL.y);
+			else
+				scrollbar_v_adj.set_upper (scratch);
+			end if;
+
+
+			-- adjust page size and value:
+
+			-- horizontal:
+			P2 := scrollbar_h_adj.get_page_size * gdouble (S2 / S1);
+			scrollbar_h_adj.set_page_size (P2);
+			scrollbar_h_adj.set_value (Z1.x - P2 * 0.5);
+			show_adjustments_h;
+
+			-- vertical:
+			P2 := scrollbar_v_adj.get_page_size * gdouble (S2 / S1);
+			scrollbar_v_adj.set_page_size (P2);
+			scrollbar_v_adj.set_value (Z1.y - P2 * 0.5);
+			show_adjustments_v;
+
+			
+			backup_scrollbar_settings;
+		end update_scrollbar_limits;
+
+		
 	begin
 		null;
 		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
@@ -193,6 +265,7 @@ package body callbacks is
 			put_line (" T: " & to_string (T));
 
 			scale_factor := S2;
+			update_scrollbar_limits;
 			-- refresh (canvas);
 
 			main_window_size := new_size;
@@ -432,9 +505,9 @@ package body callbacks is
 	begin
 		put_line ("vertical scrollbar adjustments:");
 		put_line (" lower" & gdouble'image (v_lower));
-		put_line (" upper" & gdouble'image (v_upper));
-		put_line (" page " & gdouble'image (v_page));
 		put_line (" value" & gdouble'image (v_value));
+		put_line (" page " & gdouble'image (v_page));
+		put_line (" upper" & gdouble'image (v_upper));
 	end show_adjustments_v;
 				  
 
@@ -446,9 +519,9 @@ package body callbacks is
 	begin
 		put_line ("horizontal scrollbar adjustments:");
 		put_line (" lower" & gdouble'image (h_lower));
-		put_line (" upper" & gdouble'image (h_upper));
-		put_line (" page " & gdouble'image (h_page));
 		put_line (" value" & gdouble'image (h_value));
+		put_line (" page " & gdouble'image (h_page));
+		put_line (" upper" & gdouble'image (h_upper));
 	end show_adjustments_h;
 
 	
