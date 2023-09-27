@@ -49,27 +49,84 @@ package body callbacks is
 		return event_handled;
 	end cb_button_pressed_win;
 
+
+
 	
+	procedure update_scrollbar_limits (
+		bounding_box_corners	: in type_area_corners;
+		scale_factor			: in type_scale_factor)
+	is
+		TL, BL, BR : type_point_canvas;
+		scratch : gdouble;
+	begin
+		-- Convert the corners of the bounding-box to canvas coordinates:
+		TL := to_canvas (bounding_box_corners.TL, scale_factor, true);
+		BL := to_canvas (bounding_box_corners.BL, scale_factor, true);
+		BR := to_canvas (bounding_box_corners.BR, scale_factor, true);
+
+		-- put_line ("TL " & to_string (TL));
+		-- put_line ("BL " & to_string (BL));
+		-- put_line ("BR " & to_string (BR));
+
+		-- CS clip negative values of U and L ?
+
+
+		-- horizontal:
+		if BL.x <= scrollbar_h_adj.get_value then
+			scrollbar_h_adj.set_lower (BL.x);
+		else
+			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+		end if;
+
+		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		if BR.x >= scratch then
+			scrollbar_h_adj.set_upper (BR.x);
+		else
+			scrollbar_h_adj.set_upper (scratch);
+		end if;
+
+		
+		-- vertical:
+		if TL.y <= scrollbar_v_adj.get_value then
+			scrollbar_v_adj.set_lower (TL.y);
+		else
+			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+		end if;
+
+		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		if BL.y >= scratch then
+			scrollbar_v_adj.set_upper (BL.y);
+		else
+			scrollbar_v_adj.set_upper (scratch);
+		end if;
+
+	end update_scrollbar_limits;
+
+
+
 	
-	
+		
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
-		-- This procedure is called on many occasions. We are interested
-		-- only in cases where the size changes. So we watch for changes
-		-- of width and height only.
-
 		-- The current scale factor:
 		S1 : constant type_scale_factor := scale_factor;
 
-		-- This is the new size of the window:
+		-- Each time ths procedure is called, the argument "allocation"
+		-- provides the new size of the main window. Later this size will 
+		-- be compared with the old size (stored in global 
+		-- variable main_window_size):
 		new_size : constant type_window_size := (
 			width	=> positive (allocation.width),
 			height	=> positive (allocation.height));
 
+		-- NOTE: At the end of this procedure, a redraw is called automatically.
+		-- No need for an extra call of "refresh (canvas)".
 
-
+		-- This function computes the canvas point right in the center
+		-- of the visible area. The computation bases solely on the
+		-- current value and page size of the scrollbars:
 		function get_center
 			return type_point_canvas
 		is
@@ -77,17 +134,12 @@ package body callbacks is
 		begin
 			result.x := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size * 0.5;
 			result.y := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size * 0.5;
-
-			-- result.x := gdouble (window_size.width) * 0.5;
-			-- result.y := gdouble (window_size.height) * 0.5;
-
-			
 			return result;
 		end get_center;
 		
 			
-		-- Computes the the scale factor S2 from the current scale factor S1,
-		-- length_old and length_new. The formula used is:
+		-- This function computes the the new scale factor S2 from the current 
+		-- scale factor S1, length_old and length_new. The formula used is:
 		--
 		--      length_new * S1
 		-- S2 = ---------------
@@ -95,7 +147,7 @@ package body callbacks is
 		--
 		function to_scale_factor (
 			length_old, length_new : in positive)
-			return type_scale_factor
+			return type_scale_factor -- S2
 		is 
 			type type_float is digits 6 range 0.0 .. 100_000.0; 
 			-- CS: Upper limit might require adjustments for very large screens.
@@ -122,115 +174,92 @@ package body callbacks is
 		-- Get the corners of the bounding-box as it is BEFORE scaling:
 		BC : constant type_area_corners := get_corners (bounding_box);
 
-		-- type type_zoom_direction is (ZOOM_IN, ZOOM_OUT, NO_ZOOM);
-		-- D : type_zoom_direction;
-		
-		-- The center of the visible area is used as the zoom center:
+
+		-- The model point in the center of the visible area:
 		M : type_point_model;
 
-		Z1, Z2 : type_point_canvas;
+		-- The canvas point in the center of the visible area:
+		Z1: type_point_canvas;
+
+		-- The temporarily canvas point after scaling Z1.
+		-- It is required to compute the new translate_offset:
+		Z2 : type_point_canvas;
+
+
 		
-		debug : boolean := false;
 
-		
-		procedure update_scrollbar_limits is
-			TL, BL, BR : type_point_canvas;
-			scratch : gdouble;
-		begin
-			-- Convert the corners of the bounding-box to canvas coordinates:
-			TL := to_canvas (BC.TL, scale_factor, true);
-			BL := to_canvas (BC.BL, scale_factor, true);
-			BR := to_canvas (BC.BR, scale_factor, true);
-
-			-- put_line ("TL " & to_string (TL));
-			-- put_line ("BL " & to_string (BL));
-			-- put_line ("BR " & to_string (BR));
-
-			-- CS clip negative values of U and L ?
-
-
-			-- horizontal:
-			if BL.x <= scrollbar_h_adj.get_value then
-				scrollbar_h_adj.set_lower (BL.x);
-			else
-				scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
-			end if;
-
-			scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
-			if BR.x >= scratch then
-				scrollbar_h_adj.set_upper (BR.x);
-			else
-				scrollbar_h_adj.set_upper (scratch);
-			end if;
-
-			
-			-- vertical:
-			if TL.y <= scrollbar_v_adj.get_value then
-				scrollbar_v_adj.set_lower (TL.y);
-			else
-				scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
-			end if;
-
-			scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
-			if BL.y >= scratch then
-				scrollbar_v_adj.set_upper (BL.y);
-			else
-				scrollbar_v_adj.set_upper (scratch);
-			end if;
-
-		end update_scrollbar_limits;
-
-
+		-- This procedure adjusts the page size and value
+		-- of the scrollbars according to the old and new scale factor.
+		-- It computes page size and value so that the visible area
+		-- stays the same:
 		procedure adjust_scrollbar_page_size_and_value is 
 			P2 : gdouble; -- the new page size
+			R  : gdouble; -- the ratio of new to old scale factor
 		begin
+			R := gdouble (S2 / S1);
+			
 			-- horizontal:
-			P2 := scrollbar_h_adj.get_page_size * gdouble (S2 / S1);
+			P2 := scrollbar_h_adj.get_page_size * R;
 			scrollbar_h_adj.set_page_size (P2);
 			scrollbar_h_adj.set_value (Z1.x - P2 * 0.5);
+			-- CS clip negative values ?
 			show_adjustments_h;
 
 			-- vertical:
-			P2 := scrollbar_v_adj.get_page_size * gdouble (S2 / S1);
+			P2 := scrollbar_v_adj.get_page_size * R;
 			scrollbar_v_adj.set_page_size (P2);
 			scrollbar_v_adj.set_value (Z1.y - P2 * 0.5);
+			-- CS clip negative values ?
 			show_adjustments_v;
 		end adjust_scrollbar_page_size_and_value;
 
 		
 	begin
-		null;
 		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
 		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
-		
-		-- Compare the new size with the old size. If the size
-		-- has changed, update the global main_window_size variable:
-		if new_size /= main_window_size then
-			-- if debug then
-			new_line;
-			put_line ("size changed");
 
+		-- This procedure is called on many occasions. We are interested
+		-- only in cases where the size changes. That is when the user moves
+		-- the border of the main window or when she maximizes the window.
+		-- So we watch for changes of width and height only:
+		
+		-- Compare the new size with the old size. The global variable 
+		-- main_window_size provides the size of the window BEFORE this
+		-- procedure has been called. If the size has changed, then we start 
+		-- zooming in or out. The zoom center is ths canvas point in the 
+		-- center of the visible area:
+		if new_size /= main_window_size then
+			new_line;
+			put_line ("main window size changed");
+
+			-- Opon resizing the main window, the settings of the scrollbars 
+			-- (upper, lower and page size) adapt to the size of the canvas. 
+			-- But we do NOT want this behaviour. Instead we restore the settings
+			-- as they where BEFORE this procedure has been called:
 			restore_scrollbar_settings;
 			-- show_adjustments_h;
 			-- show_adjustments_v;
 			
--- 			put_line ("main window size old (w/h): " 
--- 				& positive'image (main_window_size.width)
--- 				& " /" & positive'image (main_window_size.height));
--- 			
+			put_line ("main window size old (w/h): " 
+				& positive'image (main_window_size.width)
+				& " /" & positive'image (main_window_size.height));
+			
 			put_line ("main window size new (w/h): " 
 				& positive'image (new_size.width)
 				& " /" & positive'image (new_size.height));
--- 
--- 			put_line ("S1:" & to_string (S1));
-			
+
+			-- put_line ("S1:" & to_string (S1));
+
+			-- Get the canvas point in the center of the visible area:
 			Z1 := get_center;
 			put_line ("Z1: " & to_string (Z1));
-			
+
+			-- Convert the zoom center to a model point according to the
+			-- current scale factor:
 			M := to_model (Z1, S1);
 			put_line ("M : " & to_string (M));
 
@@ -263,16 +292,23 @@ package body callbacks is
 			T.y := -(Z2.y - Z1.y);
 			put_line (" T: " & to_string (T));
 
-			scale_factor := S2;
 			
-			update_scrollbar_limits;
+			-- Adjust scrollbars:
+			update_scrollbar_limits (BC, S2);
 			adjust_scrollbar_page_size_and_value;			
 			backup_scrollbar_settings;
-			
-			-- refresh (canvas);
 
+			
+			-- update the global scale factor:
+			scale_factor := S2;
+
+			-- Update the main_window_size which is required
+			-- for the next time this procedure is called:
 			main_window_size := new_size;
 		end if;
+
+		-- NOTE: A redraw is called here automatically !
+		-- There is no need to schedule a redraw by calling "refresh (canvas)".
 	end cb_main_window_size_allocate;
 
 
@@ -908,61 +944,10 @@ package body callbacks is
 		end compute_translate_offset;
 
 
-
-
 		
 
 		-- Get the corners of the bounding-box as it is BEFORE scaling:
 		BC : constant type_area_corners := get_corners (bounding_box);
-
-
-		
-		procedure update_scrollbar_limits is
-			TL, BL, BR : type_point_canvas;
-			scratch : gdouble;
-		begin
-			-- Convert the corners of the bounding-box to canvas coordinates:
-			TL := to_canvas (BC.TL, scale_factor, true);
-			BL := to_canvas (BC.BL, scale_factor, true);
-			BR := to_canvas (BC.BR, scale_factor, true);
-
-			-- put_line ("TL " & to_string (TL));
-			-- put_line ("BL " & to_string (BL));
-			-- put_line ("BR " & to_string (BR));
-
-			-- CS clip negative values of U and L ?
-
-
-			-- horizontal:
-			if BL.x <= scrollbar_h_adj.get_value then
-				scrollbar_h_adj.set_lower (BL.x);
-			else
-				scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
-			end if;
-
-			scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
-			if BR.x >= scratch then
-				scrollbar_h_adj.set_upper (BR.x);
-			else
-				scrollbar_h_adj.set_upper (scratch);
-			end if;
-
-			
-			-- vertical:
-			if TL.y <= scrollbar_v_adj.get_value then
-				scrollbar_v_adj.set_lower (TL.y);
-			else
-				scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
-			end if;
-
-			scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
-			if BL.y >= scratch then
-				scrollbar_v_adj.set_upper (BL.y);
-			else
-				scrollbar_v_adj.set_upper (scratch);
-			end if;
-
-		end update_scrollbar_limits;
 
 
 		
@@ -994,9 +979,10 @@ package body callbacks is
 			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
 			
-			update_scrollbar_limits;
+			update_scrollbar_limits (BC, scale_factor);
 			backup_scrollbar_settings;
-			
+
+			-- schedule a redraw:
 			refresh (canvas);
 
 			update_visible_area (canvas);

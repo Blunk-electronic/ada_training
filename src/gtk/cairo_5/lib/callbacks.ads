@@ -42,6 +42,13 @@ package callbacks is
 		event	: gdk_event_button)
 		return boolean;
 
+
+	-- Updates the limits of the scrollbars according to
+	-- the given bounding-box area and scale factor:
+	procedure update_scrollbar_limits (
+		bounding_box_corners	: in type_area_corners;
+		scale_factor			: in type_scale_factor);
+
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window:
