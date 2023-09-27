@@ -136,8 +136,6 @@ package body callbacks is
 		procedure update_scrollbar_limits is
 			TL, BL, BR : type_point_canvas;
 			scratch : gdouble;
-			
-			P2, D : gdouble;
 		begin
 			-- Convert the corners of the bounding-box to canvas coordinates:
 			TL := to_canvas (BC.TL, scale_factor, true);
@@ -180,9 +178,12 @@ package body callbacks is
 				scrollbar_v_adj.set_upper (scratch);
 			end if;
 
+		end update_scrollbar_limits;
 
-			-- adjust page size and value:
 
+		procedure adjust_scrollbar_page_size_and_value is 
+			P2 : gdouble; -- the new page size
+		begin
 			-- horizontal:
 			P2 := scrollbar_h_adj.get_page_size * gdouble (S2 / S1);
 			scrollbar_h_adj.set_page_size (P2);
@@ -194,10 +195,7 @@ package body callbacks is
 			scrollbar_v_adj.set_page_size (P2);
 			scrollbar_v_adj.set_value (Z1.y - P2 * 0.5);
 			show_adjustments_v;
-
-			
-			backup_scrollbar_settings;
-		end update_scrollbar_limits;
+		end adjust_scrollbar_page_size_and_value;
 
 		
 	begin
@@ -259,13 +257,18 @@ package body callbacks is
 			-- Compute the prospected canvas-point according to the new scale factor:
 			Z2 := to_canvas (M, S2);
 			put_line ("Z2: " & to_string (Z2));
-			
+
+			-- Compute the new translate_offset:
 			T.x := -(Z2.x - Z1.x);
 			T.y := -(Z2.y - Z1.y);
 			put_line (" T: " & to_string (T));
 
 			scale_factor := S2;
+			
 			update_scrollbar_limits;
+			adjust_scrollbar_page_size_and_value;			
+			backup_scrollbar_settings;
+			
 			-- refresh (canvas);
 
 			main_window_size := new_size;
@@ -959,8 +962,6 @@ package body callbacks is
 				scrollbar_v_adj.set_upper (scratch);
 			end if;
 
-			
-			backup_scrollbar_settings;
 		end update_scrollbar_limits;
 
 
@@ -992,7 +993,9 @@ package body callbacks is
 
 			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
+			
 			update_scrollbar_limits;
+			backup_scrollbar_settings;
 			
 			refresh (canvas);
 
