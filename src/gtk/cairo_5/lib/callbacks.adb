@@ -64,24 +64,46 @@ package body callbacks is
 		BL := to_canvas (bounding_box_corners.BL, scale_factor, true);
 		BR := to_canvas (bounding_box_corners.BR, scale_factor, true);
 
-		-- put_line ("TL " & to_string (TL));
-		-- put_line ("BL " & to_string (BL));
-		-- put_line ("BR " & to_string (BR));
+		put_line ("TL " & to_string (TL));
+		put_line ("BL " & to_string (BL));
+		put_line ("BR " & to_string (BR));
 
 		-- CS clip negative values of U and L ?
 
 
 		-- horizontal:
+
+		-- The left end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the left edge of the bounding-box is farther to the
+		-- left than the left end of the bar, then the lower limit
+		-- moves to the left. It assumes the value of the left edge
+		-- of the bounding-box::
 		if BL.x <= scrollbar_h_adj.get_value then
 			scrollbar_h_adj.set_lower (BL.x);
 		else
+		-- If the left edge of the box is farther to the right than
+		-- the left end of the bar, then the lower limit can not be
+		-- moved further to the right. So the lower limit can at most assume
+		-- the value of the left end of the bar:
+			put_line ("x");
 			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
 		end if;
 
+		-- The right end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
 		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		-- If the right edge of the bounding-box is farther to the
+		-- rightt than the right end of the bar, then the upper limit
+		-- moves to the right. It assumes the value of the right edge
+		-- of the bounding-box::
 		if BR.x >= scratch then
 			scrollbar_h_adj.set_upper (BR.x);
 		else
+		-- If the right edge of the box is farther to the left than
+		-- the right end of the bar, then the upper limit can not be
+		-- moved further to the left. So the upper limit can at most assume
+		-- the value of the right end of the bar:
 			scrollbar_h_adj.set_upper (scratch);
 		end if;
 
@@ -160,6 +182,7 @@ package body callbacks is
 
 			-- The return is S2:
 			return type_scale_factor (L2 / L1) * S1;
+			-- return type_scale_factor (L2 / L1);
 		end to_scale_factor;
 		
 		
@@ -210,7 +233,7 @@ package body callbacks is
 			scrollbar_v_adj.set_page_size (P2);
 			scrollbar_v_adj.set_value (Z1.y - P2 * 0.5);
 			-- CS clip negative values ?
-			show_adjustments_v;
+			-- show_adjustments_v;
 		end adjust_scrollbar_page_size_and_value;
 
 		
@@ -266,7 +289,7 @@ package body callbacks is
 
 			
 			S2W := to_scale_factor (main_window_size.width, new_size.width);
-			-- put_line ("S2W:" & to_string (S2W));
+			put_line ("S2W:" & to_string (S2W));
 
 			S2H := to_scale_factor (main_window_size.height, new_size.height);
 			-- put_line ("S2H:" & to_string (S2H));
@@ -341,6 +364,7 @@ package body callbacks is
 		result : boolean := false;
 	begin
 		put_line ("cb_main_window_state_change " & image (clock)); 
+		-- restore_scrollbar_settings;
 		return result;
 	end cb_main_window_state_change;
 
@@ -976,6 +1000,7 @@ package body callbacks is
 				when others => null;
 			end case;
 
+			-- scale_factor := SM * SW;
 			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
 			
