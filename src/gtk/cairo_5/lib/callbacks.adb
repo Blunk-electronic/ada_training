@@ -78,7 +78,7 @@ package body callbacks is
 		-- If the left edge of the bounding-box is farther to the
 		-- left than the left end of the bar, then the lower limit
 		-- moves to the left. It assumes the value of the left edge
-		-- of the bounding-box::
+		-- of the bounding-box:
 		if BL.x <= scrollbar_h_adj.get_value then
 			scrollbar_h_adj.set_lower (BL.x);
 		else
@@ -94,9 +94,9 @@ package body callbacks is
 		-- and its length (page size):
 		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
 		-- If the right edge of the bounding-box is farther to the
-		-- rightt than the right end of the bar, then the upper limit
+		-- right than the right end of the bar, then the upper limit
 		-- moves to the right. It assumes the value of the right edge
-		-- of the bounding-box::
+		-- of the bounding-box:
 		if BR.x >= scratch then
 			scrollbar_h_adj.set_upper (BR.x);
 		else
@@ -109,16 +109,37 @@ package body callbacks is
 
 		
 		-- vertical:
+
+		-- The upper end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the upper edge of the bounding-box is higher
+		-- than the upper end of the bar, then the lower limit
+		-- moves upwards. It assumes the value of the upper edge
+		-- of the bounding-box:		
 		if TL.y <= scrollbar_v_adj.get_value then
 			scrollbar_v_adj.set_lower (TL.y);
 		else
+		-- If the upper edge of the box is below
+		-- the upper end of the bar, then the lower limit can not be
+		-- moved further upwards. So the lower limit can at most assume
+		-- the value of the upper end of the bar:
 			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
 		end if;
 
+		-- The lower end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
 		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		-- If the lower edge of the bounding-box is below the
+		-- lower end of the bar, then the upper limit
+		-- moves further downwards. It assumes the value of the lower edge
+		-- of the bounding-box:
 		if BL.y >= scratch then
 			scrollbar_v_adj.set_upper (BL.y);
 		else
+		-- If the lower edge of the box is above
+		-- the lower end of the bar, then the upper limit can not be
+		-- moved further downwards. So the upper limit can at most assume
+		-- the value of the lower end of the bar:
 			scrollbar_v_adj.set_upper (scratch);
 		end if;
 
