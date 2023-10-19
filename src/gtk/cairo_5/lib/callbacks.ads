@@ -26,6 +26,26 @@ package callbacks is
 	main_window_size : type_window_size;
 
 	
+
+	-- When the operator resizes the main window, then the canvas can be
+	-- adjusted in several ways. Currently there are the modes known as follows:
+	type type_main_window_zoom_mode is (
+		-- No zoom. No moving. Just more or less of 
+		-- the canvas area is exposed:
+		MODE_EXPOSE_CANVAS,
+
+		-- Center of visible canvas area remains in the center. 
+		-- Around the center more or less of the canvas area is exposed:
+		-- CS: MODE_KEEP_CENTER,
+
+		-- Zooming according to the change of widht or height.
+		-- Zoom center is the center of the visible area:
+		MODE_ZOOM_CENTER);
+
+
+	zoom_mode : type_main_window_zoom_mode := MODE_EXPOSE_CANVAS;
+	-- zoom_mode : type_main_window_zoom_mode := MODE_ZOOM_CENTER;
+	
 	
 
 	procedure cb_terminate (
@@ -156,6 +176,16 @@ package callbacks is
 	procedure cb_canvas_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
+
+
+	
+	type type_canvas_allocation is record
+		x, y : natural := 0;
+	end record;
+
+	-- Here we track the allocation of the canvas inside the 
+	-- main window:
+	canvas_allocation : type_canvas_allocation;
 
 	
 	

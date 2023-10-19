@@ -217,7 +217,7 @@ package body geometry is
 	begin
 		x :=   Bx * S - Bx;
 		y := - By * S;
-
+		
 		base_offset := (x, y);
 
 		put_line ("base offset: " & to_string (base_offset));
