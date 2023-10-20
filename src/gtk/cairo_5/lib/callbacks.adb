@@ -218,18 +218,11 @@ package body callbacks is
 
 
 		-- Get the corners of the bounding-box as it is BEFORE scaling:
-		-- BC : constant type_area_corners := get_corners (bounding_box);
+		BC : constant type_area_corners := get_corners (bounding_box);
 
 
 		-- The model point in the center of the visible area:
-		-- M : type_point_model;
-
-		-- The canvas point in the center of the visible area:
-		-- Z1: type_point_canvas;
-
-		-- The temporarily canvas point after scaling Z1.
-		-- It is required to compute the new translate_offset:
-		-- Z2 : type_point_canvas;
+		M : type_point_model := visible_center;
 
 
 		-- When the main window is resized, then it expands away from its top left corner
@@ -272,22 +265,50 @@ package body callbacks is
 			d : gdouble;
 			
 			a : gtk_allocation;
+			V2, P2, L2, U2 : gdouble;
+
+			-- The canvas point in the center of the visible area:
+			Z1: type_point_canvas;
+
+			-- The temporarily canvas point after scaling:
+			Z2 : type_point_canvas;
+
+			C : gdouble;
 		begin
 			null;
+
+			put_line ("center " & to_string (M));
+			Z1 := to_canvas (M, S1, true);
+			put_line ("Z1 " & to_string (Z1));
 			
-			d0_h := scrollbar_h_adj.get_lower - scrollbar_h_adj.get_value;
+			-- Z2 := to_canvas (M, S2, true);
+			-- put_line ("Z2 " & to_string (Z2));
+			
+			update_scrollbar_limits (BC, S2);
+
+			L2 := scrollbar_h_adj.get_lower;
+			U2 := scrollbar_h_adj.get_upper;
+			C := 0.5 * (U2 - L2) + L2;
+			put_line ("C : " & gdouble'image (C));
+			
+			dV_h := C - Z1.x;
+			put_line ("dv: " & gdouble'image (dV_h));
+			V2 := scrollbar_h_adj.get_value + dV_h;
+			-- scrollbar_h_adj.set_value (V2);
+			
+			-- d0_h := scrollbar_h_adj.get_lower - scrollbar_h_adj.get_value;
 			-- put_line ("d0_h : " & gdouble'image (d0_h));
 			
-			dV_h := (abs (d0_h) * gdouble (S2)) + d0_h;
+			-- dV_h := (abs (d0_h) * gdouble (S2)) + d0_h;
 			-- put_line ("dV_h : " & gdouble'image (dV_h));
 
-			d := dv_h - dv_2;
+			-- d := dv_h - dv_2;
 			-- NOTE: dv_2 is a global variable !
 			
 			-- put_line ("d    : " & gdouble'image (d));
-			base_offset.x := base_offset.x - d;
-			put_line ("boffs: " & gdouble'image (base_offset.x));
-			dv_2 := dV_h;
+			-- base_offset.x := base_offset.x - d;
+			-- put_line ("boffs: " & gdouble'image (base_offset.x));
+			-- dv_2 := dV_h;
 			
 			-- get_allocation (canvas, a);
 			-- a.x := a.x - gint (dV_h);
@@ -297,10 +318,26 @@ package body callbacks is
 			-- canvas.size_allocate (a);
 			
 			-- V2 := scrollbar_h_adj.get_value + dV_h;
+			-- scrollbar_h_adj.set_value (V2);
 			-- put_line ("V2   : " & gdouble'image (V2));
+
+			-- P2 := scrollbar_h_adj.get_page_size - dV_h;
+			-- scrollbar_h_adj.set_page_size (P2);
+			-- put_line ("P2   : " & gdouble'image (P2));
+
+			-- U2 := scrollbar_h_adj.get_upper + d;
+			-- scrollbar_h_adj.set_upper (U2);
+			-- put_line ("U2   : " & gdouble'image (U2));
+
+			-- L2 := scrollbar_h_adj.get_lower - d;
+			-- scrollbar_h_adj.set_lower (L2);
+			-- put_line ("L2   : " & gdouble'image (L2));
+
+			
+			-- dv_2 := dV_h;
 			
 			-- CS clip negative values ?
-			-- show_adjustments_h;
+			show_adjustments_h;
 
 			-- show_adjustments_v;
 		end move_center;
@@ -1093,7 +1130,7 @@ package body callbacks is
 		cp : type_point_canvas;
 	begin
 		-- new_line;
-		put_line ("cb_draw " & image (clock));
+		-- put_line ("cb_draw " & image (clock));
 		
 		-- NOTE: In a real project, the database that contains
 		-- all objects must be parsed here. One object after another
