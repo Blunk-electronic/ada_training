@@ -146,7 +146,7 @@ package body callbacks is
 	end update_scrollbar_limits;
 
 
-	dv_2 : gdouble := 0.0;
+	-- dv_2 : gdouble := 0.0;
 
 	
 		
@@ -171,7 +171,8 @@ package body callbacks is
 
 		-- This function computes the canvas point right in the center
 		-- of the visible area. The computation bases solely on the
-		-- current value and page size of the scrollbars:
+		-- current value and page size of the scrollbars.
+		-- NOTE: This function is probably useless.
 		function get_center
 			return type_point_canvas
 		is
@@ -218,19 +219,19 @@ package body callbacks is
 
 
 		-- Get the corners of the bounding-box as it is BEFORE scaling:
-		BC : constant type_area_corners := get_corners (bounding_box);
+		-- BC : constant type_area_corners := get_corners (bounding_box);
 
 
 		-- The model point in the center of the visible area:
-		M : type_point_model := visible_center;
+		-- M : type_point_model := visible_center;
 
 
 		-- When the main window is resized, then it expands away from its top left corner
 		-- or it shrinks toward its top-left corner. In both cases the bottom of the
 		-- window moves down or up. So the bottom of the canvas must follow the bottom
-		-- of the main window. This procedure aligns the bottom of the canvas with the
-		-- bottom of the main window:
-		procedure align_with_bottom is 
+		-- of the main window. This procedure moves the bottom of the canvas by the same
+		-- extent as the bottom of the main window:
+		procedure move_canvas_bottom is 
 		begin
 			-- Approach 1:
 			-- One way to move the canvas is to change the y-component of the base_offset.
@@ -242,17 +243,17 @@ package body callbacks is
 			-- allocation of the canvas. It requires the global variable canvas_allocation
 			-- to track the allocation of the canvas:
 			declare
-				a : gtk_allocation;
+				L : gtk_allocation;
 			begin					
 				canvas_allocation.y := canvas_allocation.y + (new_size.height - main_window_size.height);
 				-- put_line ("canvas_allocation.y  : " & positive'image (canvas_allocation.y));
 
-				get_allocation (canvas, a);
-				a.y := gint (canvas_allocation.y);
-				canvas.size_allocate (a);
+				get_allocation (canvas, L);
+				L.y := gint (canvas_allocation.y);
+				canvas.size_allocate (L);
 			end;
 
-		end align_with_bottom;
+		end move_canvas_bottom;
 		
 
 		-- This procedure should move the canvas so that the center
@@ -260,40 +261,45 @@ package body callbacks is
 		-- Related to MODE_ZOOM_CENTER.
 		-- This is a construction site (CS). No suitable solution found yet:
 		procedure move_center is 
-			d0_h : gdouble;
-			dV_h : gdouble;
-			d : gdouble;
+			-- d0_h : gdouble;
+			-- dV_h : gdouble;
+			-- d : gdouble;
 			
-			a : gtk_allocation;
-			V2, P2, L2, U2 : gdouble;
+			-- a : gtk_allocation;
+			-- V2, P2, L2, U2 : gdouble;
 
 			-- The canvas point in the center of the visible area:
-			Z1: type_point_canvas;
+			-- Z1: type_point_canvas;
 
 			-- The temporarily canvas point after scaling:
-			Z2 : type_point_canvas;
+			-- Z2 : type_point_canvas;
 
-			C : gdouble;
+			-- C : gdouble;
 		begin
 			null;
 
-			put_line ("center " & to_string (M));
-			Z1 := to_canvas (M, S1, true);
-			put_line ("Z1 " & to_string (Z1));
+			-- put_line ("center " & to_string (M));
+			-- Z1 := to_canvas (M, S1, true);
+			-- put_line ("Z1 " & to_string (Z1));
 			
 			-- Z2 := to_canvas (M, S2, true);
 			-- put_line ("Z2 " & to_string (Z2));
 			
-			update_scrollbar_limits (BC, S2);
+			-- update_scrollbar_limits (BC, S2);
 
-			L2 := scrollbar_h_adj.get_lower;
-			U2 := scrollbar_h_adj.get_upper;
-			C := 0.5 * (U2 - L2) + L2;
-			put_line ("C : " & gdouble'image (C));
+			-- Z2 := get_center;
+			-- put_line ("Z2 " & to_string (Z2));
+			-- C := scrollbar_h_adj.get_value + gdouble (new_size.width) * 0.5;
 			
-			dV_h := C - Z1.x;
-			put_line ("dv: " & gdouble'image (dV_h));
-			V2 := scrollbar_h_adj.get_value + dV_h;
+			-- L2 := scrollbar_h_adj.get_lower;
+			-- U2 := scrollbar_h_adj.get_upper;
+			-- C := 0.5 * (U2 - L2) + L2;
+			-- put_line ("C : " & gdouble'image (C));
+			
+			-- dV_h := Z2.x - C;
+			-- dV_h := C - Z2.x;
+			-- put_line ("dv: " & gdouble'image (dV_h));
+			-- V2 := scrollbar_h_adj.get_value + dV_h;
 			-- scrollbar_h_adj.set_value (V2);
 			
 			-- d0_h := scrollbar_h_adj.get_lower - scrollbar_h_adj.get_value;
@@ -337,7 +343,7 @@ package body callbacks is
 			-- dv_2 := dV_h;
 			
 			-- CS clip negative values ?
-			show_adjustments_h;
+			-- show_adjustments_h;
 
 			-- show_adjustments_v;
 		end move_center;
@@ -363,8 +369,8 @@ package body callbacks is
 		-- zooming in or out. The zoom center is ths canvas point in the 
 		-- center of the visible area:
 		if new_size /= main_window_size then
-			new_line;
-			-- put_line ("main window size changed");
+			-- new_line;
+			put_line ("main window size changed");
 
 			-- Opon resizing the main window, the settings of the scrollbars 
 			-- (upper, lower and page size) adapt to the size of the canvas. 
@@ -374,13 +380,13 @@ package body callbacks is
 			-- show_adjustments_h;
 			-- show_adjustments_v;
 			
--- 			put_line ("main window size old (w/h): " 
--- 				& positive'image (main_window_size.width)
--- 				& " /" & positive'image (main_window_size.height));
--- 			
--- 			put_line ("main window size new (w/h): " 
--- 				& positive'image (new_size.width)
--- 				& " /" & positive'image (new_size.height));
+			put_line (" size old (w/h): " 
+				& positive'image (main_window_size.width)
+				& " /" & positive'image (main_window_size.height));
+			
+			put_line (" size new (w/h): " 
+				& positive'image (new_size.width)
+				& " /" & positive'image (new_size.height));
 
 			-- put_line ("S1:" & to_string (S1));
 			
@@ -395,19 +401,25 @@ package body callbacks is
 				-- put_line ("S2H:" & to_string (S2H));
 
 				-- CS
-				-- The smaller one of the two scale factors has the final say:
+				-- The idea is that the smaller one of the two scale 
+				-- factors has the final say, like:				
 				-- S2 := type_scale_factor'min (S2W, S2H);
-
+				-- But this seems not sufficient. For the time being we
+				-- use the scale factor derived from the change of width:				
 				S2 := S2W;
+				
 				if S2 < 1.0 then
 					S2 := 1.0;
 				end if;
 				-- S2 := 1.0;
-				put_line ("S2:" & to_string (S2));
+				-- put_line ("S2:" & to_string (S2));
 			end if;
 
-			align_with_bottom;
+			-- Move the canvas so that its bottom follows
+			-- the bottom of the main window:
+			move_canvas_bottom;
 
+			
 			if zoom_mode = MODE_ZOOM_CENTER then
 				move_center;
 			end if;

@@ -43,8 +43,8 @@ package callbacks is
 		MODE_ZOOM_CENTER);
 
 
-	-- zoom_mode : type_main_window_zoom_mode := MODE_EXPOSE_CANVAS;
-	zoom_mode : type_main_window_zoom_mode := MODE_ZOOM_CENTER;
+	zoom_mode : type_main_window_zoom_mode := MODE_EXPOSE_CANVAS;
+	-- zoom_mode : type_main_window_zoom_mode := MODE_ZOOM_CENTER;
 	
 	
 
