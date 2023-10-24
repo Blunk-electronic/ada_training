@@ -260,7 +260,7 @@ package body callbacks is
 		-- remains in the center of the window. 
 		-- Related to MODE_ZOOM_CENTER.
 		-- This is a construction site (CS). No suitable solution found yet:
-		procedure move_center is 
+		procedure move_center_and_zoom is 
 			-- d0_h : gdouble;
 			-- dV_h : gdouble;
 			-- d : gdouble;
@@ -346,8 +346,22 @@ package body callbacks is
 			-- show_adjustments_h;
 
 			-- show_adjustments_v;
-		end move_center;
+		end move_center_and_zoom;
 
+		-- This procedure moves the canvas so that the center of the visible
+		-- area remains in the center when the main window changes size.
+		-- This procedure is required when zoom mode MODE_KEEP_CENTER is enabled:
+		procedure move_center is
+			dw, dh : gdouble;
+		begin
+			dw := gdouble (new_size.width - main_window_size.width);
+			dh := gdouble (new_size.height - main_window_size.height);
+			put_line ("dw : " & gdouble'image (dw));
+			put_line ("dh : " & gdouble'image (dh));
+			base_offset.x := base_offset.x + dw * 0.5;
+			base_offset.y := base_offset.y + dh * 0.5;
+			null;
+		end move_center;
 
 		
 	begin
@@ -388,6 +402,7 @@ package body callbacks is
 				& positive'image (new_size.width)
 				& " /" & positive'image (new_size.height));
 
+			-- CS dh, dw
 			-- put_line ("S1:" & to_string (S1));
 			
 			if zoom_mode = MODE_ZOOM_CENTER then
@@ -419,9 +434,13 @@ package body callbacks is
 			-- the bottom of the main window:
 			move_canvas_bottom;
 
+			if zoom_mode = MODE_KEEP_CENTER then
+				move_center;
+			end if;
+
 			
 			if zoom_mode = MODE_ZOOM_CENTER then
-				move_center;
+				move_center_and_zoom;
 			end if;
 			
 			-- refresh (canvas) is called automatically.

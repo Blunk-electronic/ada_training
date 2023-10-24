@@ -36,16 +36,16 @@ package callbacks is
 
 		-- Center of visible canvas area remains in the center. 
 		-- Around the center more or less of the canvas area is exposed:
-		-- CS: MODE_KEEP_CENTER,
+		MODE_KEEP_CENTER,
 
 		-- Zooming according to the change of widht or height.
 		-- Zoom center is the center of the visible area:
 		MODE_ZOOM_CENTER);
 
 
-	zoom_mode : type_main_window_zoom_mode := MODE_EXPOSE_CANVAS;
+	-- zoom_mode : type_main_window_zoom_mode := MODE_EXPOSE_CANVAS;
 	-- zoom_mode : type_main_window_zoom_mode := MODE_ZOOM_CENTER;
-	
+	zoom_mode : type_main_window_zoom_mode := MODE_KEEP_CENTER;
 	
 
 	procedure cb_terminate (
