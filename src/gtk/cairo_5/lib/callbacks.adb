@@ -165,6 +165,12 @@ package body callbacks is
 			width	=> positive (allocation.width),
 			height	=> positive (allocation.height));
 
+		-- This is the difference between new width and old width:
+		dW : gdouble;
+
+		-- This is the difference between new height and old height:
+		dH : gdouble;
+
 		
 		-- NOTE: At the end of this procedure, a redraw is called automatically.
 		-- No need for an extra call of "refresh (canvas)".
@@ -226,17 +232,34 @@ package body callbacks is
 		-- M : type_point_model := visible_center;
 
 
+		-- For debugging. Outputs the dimensions and size
+		-- changes of the main window:
+		procedure show_size is begin
+			put_line (" size old (w/h): " 
+				& positive'image (main_window_size.width)
+				& " /" & positive'image (main_window_size.height));
+			
+			put_line (" size new (w/h): " 
+				& positive'image (new_size.width)
+				& " /" & positive'image (new_size.height));
+
+			put_line (" dW : " & gdouble'image (dW));
+			put_line (" dH : " & gdouble'image (dH));
+
+			-- put_line ("S1:" & to_string (S1));
+		end show_size;
+		
+		
 		-- When the main window is resized, then it expands away from its top left corner
 		-- or it shrinks toward its top-left corner. In both cases the bottom of the
 		-- window moves down or up. So the bottom of the canvas must follow the bottom
 		-- of the main window. This procedure moves the bottom of the canvas by the same
 		-- extent as the bottom of the main window:
-		procedure move_canvas_bottom is 
-		begin
+		procedure move_canvas_bottom is begin
 			-- Approach 1:
 			-- One way to move the canvas is to change the y-component of the base_offset.
 			-- The drawback is that the aligning appears choppy:
-			-- base_offset.y := base_offset.y - gdouble (new_size.height - main_window_size.height);
+			-- base_offset.y := base_offset.y - dh;
 			
 			-- Approach 2:
 			-- This approach makes the aligning appear much more smoothly. It changes the
@@ -348,19 +371,14 @@ package body callbacks is
 			-- show_adjustments_v;
 		end move_center_and_zoom;
 
+		
 		-- This procedure moves the canvas so that the center of the visible
-		-- area remains in the center when the main window changes size.
+		-- area remains in the center.
 		-- This procedure is required when zoom mode MODE_KEEP_CENTER is enabled:
 		procedure move_center is
-			dw, dh : gdouble;
 		begin
-			dw := gdouble (new_size.width - main_window_size.width);
-			dh := gdouble (new_size.height - main_window_size.height);
-			put_line ("dw : " & gdouble'image (dw));
-			put_line ("dh : " & gdouble'image (dh));
-			base_offset.x := base_offset.x + dw * 0.5;
-			base_offset.y := base_offset.y + dh * 0.5;
-			null;
+			base_offset.x := base_offset.x + dW * 0.5;
+			base_offset.y := base_offset.y + dH * 0.5;
 		end move_center;
 
 		
@@ -383,7 +401,7 @@ package body callbacks is
 		-- zooming in or out. The zoom center is ths canvas point in the 
 		-- center of the visible area:
 		if new_size /= main_window_size then
-			-- new_line;
+			new_line;
 			put_line ("main window size changed");
 
 			-- Opon resizing the main window, the settings of the scrollbars 
@@ -394,54 +412,55 @@ package body callbacks is
 			-- show_adjustments_h;
 			-- show_adjustments_v;
 			
-			put_line (" size old (w/h): " 
-				& positive'image (main_window_size.width)
-				& " /" & positive'image (main_window_size.height));
-			
-			put_line (" size new (w/h): " 
-				& positive'image (new_size.width)
-				& " /" & positive'image (new_size.height));
+			-- Compute the change of width and height:
+			dW := gdouble (new_size.width - main_window_size.width);
+			dH := gdouble (new_size.height - main_window_size.height);
 
-			-- CS dh, dw
-			-- put_line ("S1:" & to_string (S1));
-			
-			if zoom_mode = MODE_ZOOM_CENTER then
-				-- Compute two new scale factors: one based on the change of width
-				-- and the other based on the change of height:
-
-				S2W := to_scale_factor (main_window_size.width, new_size.width);
-				-- put_line ("S2W:" & to_string (S2W));
-
-				S2H := to_scale_factor (main_window_size.height, new_size.height);
-				-- put_line ("S2H:" & to_string (S2H));
-
-				-- CS
-				-- The idea is that the smaller one of the two scale 
-				-- factors has the final say, like:				
-				-- S2 := type_scale_factor'min (S2W, S2H);
-				-- But this seems not sufficient. For the time being we
-				-- use the scale factor derived from the change of width:				
-				S2 := S2W;
-				
-				if S2 < 1.0 then
-					S2 := 1.0;
-				end if;
-				-- S2 := 1.0;
-				-- put_line ("S2:" & to_string (S2));
-			end if;
+			-- for debugging:
+			show_size;
 
 			-- Move the canvas so that its bottom follows
 			-- the bottom of the main window:
 			move_canvas_bottom;
-
-			if zoom_mode = MODE_KEEP_CENTER then
-				move_center;
-			end if;
-
 			
-			if zoom_mode = MODE_ZOOM_CENTER then
-				move_center_and_zoom;
-			end if;
+
+			case zoom_mode is
+				when MODE_EXPOSE_CANVAS =>
+					null; -- nothing more to do
+					
+				when MODE_KEEP_CENTER =>
+					move_center;
+					
+				when MODE_ZOOM_CENTER =>
+					-- CS:
+					-- Compute two new scale factors: one based on the change of width
+					-- and the other based on the change of height:
+
+					S2W := to_scale_factor (main_window_size.width, new_size.width);
+					-- put_line ("S2W:" & to_string (S2W));
+
+					S2H := to_scale_factor (main_window_size.height, new_size.height);
+					-- put_line ("S2H:" & to_string (S2H));
+
+					-- CS
+					-- The idea is that the smaller one of the two scale 
+					-- factors has the final say, like:				
+					-- S2 := type_scale_factor'min (S2W, S2H);
+					-- But this seems not sufficient. For the time being we
+					-- use the scale factor derived from the change of width:				
+					S2 := S2W;
+					
+					if S2 < 1.0 then
+						S2 := 1.0;
+					end if;
+					-- S2 := 1.0;
+					-- put_line ("S2:" & to_string (S2));
+					move_center_and_zoom;
+
+					-- update the global scale factor:
+					scale_factor := S2;
+
+			end case;
 			
 			-- refresh (canvas) is called automatically.
 			-- But this call makes the resizing appear more smoothely:
@@ -449,11 +468,6 @@ package body callbacks is
 			
 			-- Adjust scrollbars:
 			backup_scrollbar_settings;
-
-			if zoom_mode = MODE_ZOOM_CENTER then
-				-- update the global scale factor:
-				scale_factor := S2;
-			end if;
 
 			-- Update the main_window_size which is required
 			-- for the next time this procedure is called:
@@ -493,7 +507,7 @@ package body callbacks is
 	is
 		result : boolean := false;
 	begin
-		put_line ("cb_main_window_state_change " & image (clock)); 
+		-- put_line ("cb_main_window_state_change " & image (clock)); 
 		-- restore_scrollbar_settings;
 		return result;
 	end cb_main_window_state_change;
