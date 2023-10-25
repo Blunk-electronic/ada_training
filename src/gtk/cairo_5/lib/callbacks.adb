@@ -215,21 +215,6 @@ package body callbacks is
 			-- return type_scale_factor (L2 / L1);
 		end to_scale_factor;
 		
-		
-		-- These are the new scale factors. One is computed by the change
-		-- of the width, the other by the change of the height of the window:
-		S2W, S2H  : type_scale_factor;
-
-		-- The new scale factor:
-		S2 : type_scale_factor;
-
-
-		-- Get the corners of the bounding-box as it is BEFORE scaling:
-		-- BC : constant type_area_corners := get_corners (bounding_box);
-
-
-		-- The model point in the center of the visible area:
-		-- M : type_point_model := visible_center;
 
 
 		-- For debugging. Outputs the dimensions and size
@@ -298,9 +283,48 @@ package body callbacks is
 			-- Z2 : type_point_canvas;
 
 			-- C : gdouble;
+
+			-- These are the new scale factors. One is computed by the change
+			-- of the width, the other by the change of the height of the window:
+			S2W, S2H  : type_scale_factor;
+
+			-- The new scale factor:
+			S2 : type_scale_factor;
+
+			-- Get the corners of the bounding-box as it is BEFORE scaling:
+			BC : constant type_area_corners := get_corners (bounding_box);
+
+			-- The model point in the center of the visible area:
+			-- M : type_point_model := visible_center;
+			
 		begin
 			null;
 
+			-- CS:
+			-- Compute two new scale factors: one based on the change of width
+			-- and the other based on the change of height:
+
+			S2W := to_scale_factor (main_window_size.width, new_size.width);
+			-- put_line ("S2W:" & to_string (S2W));
+
+			S2H := to_scale_factor (main_window_size.height, new_size.height);
+			-- put_line ("S2H:" & to_string (S2H));
+
+			-- CS
+			-- The idea is that the smaller one of the two scale 
+			-- factors has the final say, like:				
+			-- S2 := type_scale_factor'min (S2W, S2H);
+			-- But this seems not sufficient. For the time being we
+			-- use the scale factor derived from the change of width:				
+			S2 := S2W;
+			
+			if S2 < 1.0 then
+				S2 := 1.0;
+			end if;
+			-- S2 := 1.0;
+			put_line ("S2:" & to_string (S2));
+
+			
 			-- put_line ("center " & to_string (M));
 			-- Z1 := to_canvas (M, S1, true);
 			-- put_line ("Z1 " & to_string (Z1));
@@ -363,12 +387,16 @@ package body callbacks is
 			-- put_line ("L2   : " & gdouble'image (L2));
 
 			
-			-- dv_2 := dV_h;
+			-- dv_2 := dV_h;			
+
+
+			-- update the global scale factor:
+			scale_factor := S2;
 			
 			-- CS clip negative values ?
-			-- show_adjustments_h;
-
-			-- show_adjustments_v;
+			show_adjustments_h;
+			show_adjustments_v;
+			
 		end move_center_and_zoom;
 
 		
@@ -379,6 +407,7 @@ package body callbacks is
 		begin
 			base_offset.x := base_offset.x + dW * 0.5;
 			base_offset.y := base_offset.y + dH * 0.5;
+			-- put_line ("F : " & to_string (base_offset));
 		end move_center;
 
 		
@@ -432,33 +461,9 @@ package body callbacks is
 					move_center;
 					
 				when MODE_ZOOM_CENTER =>
-					-- CS:
-					-- Compute two new scale factors: one based on the change of width
-					-- and the other based on the change of height:
-
-					S2W := to_scale_factor (main_window_size.width, new_size.width);
-					-- put_line ("S2W:" & to_string (S2W));
-
-					S2H := to_scale_factor (main_window_size.height, new_size.height);
-					-- put_line ("S2H:" & to_string (S2H));
-
 					-- CS
-					-- The idea is that the smaller one of the two scale 
-					-- factors has the final say, like:				
-					-- S2 := type_scale_factor'min (S2W, S2H);
-					-- But this seems not sufficient. For the time being we
-					-- use the scale factor derived from the change of width:				
-					S2 := S2W;
-					
-					if S2 < 1.0 then
-						S2 := 1.0;
-					end if;
-					-- S2 := 1.0;
-					-- put_line ("S2:" & to_string (S2));
+					move_center;
 					move_center_and_zoom;
-
-					-- update the global scale factor:
-					scale_factor := S2;
 
 			end case;
 			
