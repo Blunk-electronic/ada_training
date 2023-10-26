@@ -96,6 +96,12 @@ package callbacks is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v, scrollbar_h : gtk_scrollbar;
 
+	type type_scroll_direction is (
+		SCROLL_UP,
+		SCROLL_DOWN,
+		SCROLL_RIGHT,
+		SCROLL_LEFT);
+	
 	
 	-- Called whenever the horizontal scrollbar is moved, either
 	-- by the operator or by internal calls.

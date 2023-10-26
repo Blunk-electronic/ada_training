@@ -1087,60 +1087,50 @@ package body callbacks is
 		accel_mask : constant gdk_modifier_type := get_default_mod_mask;
 
 		-- The direction at which the operator is turning the wheel:
-		D : constant gdk_scroll_direction := event.direction;
+		wheel_direction : constant gdk_scroll_direction := event.direction;
 
-		-- The given point on the canvas where the operator is zooming in or out:
-		Z1 : constant type_point_canvas := (event.x, event.y);
 
-		-- The corresponding virtual model-point
-		-- according to the CURRENT (old) scale_factor:
-		M : constant type_point_model := to_model (Z1, scale_factor);
+		procedure zoom is
+			-- The given point on the canvas where the operator is zooming in or out:
+			Z1 : constant type_point_canvas := (event.x, event.y);
 
-		
-		-- After changing the scale_factor, the translate_offset must
-		-- be calculated anew. When the actual drawing takes place (see function cb_draw)
-		-- then the drawing will be dragged back by the translate_offset
-		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
-		-- Without applying a translate_offset the drawing would be appearing as 
-		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-		procedure compute_translate_offset is 
-			Z2 : type_point_canvas;
-		begin			
-			-- Compute the prospected canvas-point according to the new scale_factor:
-			Z2 := to_canvas (M, scale_factor);
-			-- put_line ("Z after scale   " & to_string (Z2));
+			-- The corresponding virtual model-point
+			-- according to the CURRENT (old) scale_factor:
+			M : constant type_point_model := to_model (Z1, scale_factor);
 
-			-- This is the offset from the given canvas-point to the prospected
-			-- canvas-point. The offset must be multiplied by -1 because the
-			-- drawing must be dragged-back to the given pointer position:
-			T.x := -(Z2.x - Z1.x);
-			T.y := -(Z2.y - Z1.y);
+			-- Get the corners of the bounding-box as it is BEFORE scaling:
+			BC : constant type_area_corners := get_corners (bounding_box);
+
+
+			-- After changing the scale_factor, the translate_offset must
+			-- be calculated anew. When the actual drawing takes place (see function cb_draw)
+			-- then the drawing will be dragged back by the translate_offset
+			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
+			-- Without applying a translate_offset the drawing would be appearing as 
+			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+			procedure compute_translate_offset is 
+				Z2 : type_point_canvas;
+			begin			
+				-- Compute the prospected canvas-point according to the new scale_factor:
+				Z2 := to_canvas (M, scale_factor);
+				-- put_line ("Z after scale   " & to_string (Z2));
+
+				-- This is the offset from the given canvas-point to the prospected
+				-- canvas-point. The offset must be multiplied by -1 because the
+				-- drawing must be dragged-back to the given pointer position:
+				T.x := -(Z2.x - Z1.x);
+				T.y := -(Z2.y - Z1.y);
+				
+				put_line (" T offset    " & to_string (T));
+			end compute_translate_offset;
+
 			
-			put_line (" T offset    " & to_string (T));
-		end compute_translate_offset;
-
-
-		
-
-		-- Get the corners of the bounding-box as it is BEFORE scaling:
-		BC : constant type_area_corners := get_corners (bounding_box);
-
-
-		
-	begin -- cb_mouse_wheel_rolled
-		new_line;
-		put_line ("mouse_wheel_rolled");
-		-- put_line (" direction " & gdk_scroll_direction'image (direction));
-
-
-		-- If CTRL is being pressed, zoom in or out:
-		if (event.state and accel_mask) = control_mask then
-
+		begin -- zoom
 			put_line (" zoom center (M)   " & to_string (M));
 			put_line (" zoom center (Z1) " & to_string (Z1));
 			put_line (" scale old" & to_string (scale_factor));
 			
-			case D is
+			case wheel_direction is
 				when SCROLL_UP =>
 					increase_scale;
 					put_line (" zoom in");
@@ -1152,7 +1142,6 @@ package body callbacks is
 				when others => null;
 			end case;
 
-			-- scale_factor := SM * SW;
 			put_line (" scale new" & to_string (scale_factor));
 			compute_translate_offset;
 			
@@ -1163,33 +1152,85 @@ package body callbacks is
 			refresh (canvas);
 
 			update_visible_area (canvas);
+		end zoom;
 
+
+		procedure scroll (
+			direction : in type_scroll_direction)
+		is
+			v1, dv, v2 : gdouble;
+
+			procedure set_delta is begin
+				null;
+				dv := 10.0 * gdouble (scale_factor);
+			end set_delta;
 			
+		begin
+			put_line (type_scroll_direction'image (direction));
+
+			case direction is
+				when SCROLL_UP =>
+					v1 := scrollbar_v_adj.get_value;
+					set_delta;
+					v2 := v1 + dv;
+					scrollbar_v_adj.set_value (v2);
+					
+				when SCROLL_DOWN =>
+					v1 := scrollbar_v_adj.get_value;
+					set_delta;
+					v2 := v1 - dv;
+					scrollbar_v_adj.set_value (v2);
+
+				when SCROLL_RIGHT =>
+					v1 := scrollbar_h_adj.get_value;
+					set_delta;
+					v2 := v1 + dv;
+					scrollbar_h_adj.set_value (v2);
+					
+				when SCROLL_LEFT =>
+					v1 := scrollbar_h_adj.get_value;
+					set_delta;
+					v2 := v1 - dv;
+					scrollbar_h_adj.set_value (v2);
+
+				-- CS clip ?
+			end case;
+		end scroll;
+		
+		
+	begin -- cb_mouse_wheel_rolled
+		new_line;
+		put_line ("mouse_wheel_rolled");
+		-- put_line (" direction " & gdk_scroll_direction'image (direction));
+
+
+		-- If CTRL is being pressed, then zoom in or out:
+		if (event.state and accel_mask) = control_mask then
+			zoom;
+
+		-- If SHIFT is being pressed, then scroll up or down:
 		elsif (event.state and accel_mask) = shift_mask then
-			case D is
+			case wheel_direction is
 				when SCROLL_UP =>
-					put_line (" scroll right");
+					scroll (SCROLL_RIGHT);
 					
 				when SCROLL_DOWN => 
-					put_line (" scroll left");
+					scroll (SCROLL_LEFT);
 					
 				when others => null;
 			end case;
 
-
+		-- If no key is being pressed, then scroll right or left:
 		else
-			case D is
+			case wheel_direction is
 				when SCROLL_UP =>
-					put_line (" scroll up");
-					scrollbar_v_adj.set_value (scrollbar_v_adj.get_value + 10.0 * gdouble (scale_factor));
+					scroll (SCROLL_UP);
+
 				when SCROLL_DOWN => 
-					put_line (" scroll down");
-					scrollbar_v_adj.set_value (scrollbar_v_adj.get_value - 10.0 * gdouble (scale_factor));
+					scroll (SCROLL_DOWN);
 					
 				when others => null;
 			end case;
-			
-			show_adjustments_v;
 		end if;
 		
 		return event_handled;
