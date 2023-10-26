@@ -1130,14 +1130,14 @@ package body callbacks is
 	begin -- cb_mouse_wheel_rolled
 		new_line;
 		put_line ("mouse_wheel_rolled");
-		put_line (" zoom center (M)   " & to_string (M));
-		put_line (" zoom center (Z1) " & to_string (Z1));
 		-- put_line (" direction " & gdk_scroll_direction'image (direction));
 
 
 		-- If CTRL is being pressed, zoom in or out:
 		if (event.state and accel_mask) = control_mask then
 
+			put_line (" zoom center (M)   " & to_string (M));
+			put_line (" zoom center (Z1) " & to_string (Z1));
 			put_line (" scale old" & to_string (scale_factor));
 			
 			case D is
@@ -1163,6 +1163,33 @@ package body callbacks is
 			refresh (canvas);
 
 			update_visible_area (canvas);
+
+			
+		elsif (event.state and accel_mask) = shift_mask then
+			case D is
+				when SCROLL_UP =>
+					put_line (" scroll right");
+					
+				when SCROLL_DOWN => 
+					put_line (" scroll left");
+					
+				when others => null;
+			end case;
+
+
+		else
+			case D is
+				when SCROLL_UP =>
+					put_line (" scroll up");
+					scrollbar_v_adj.set_value (scrollbar_v_adj.get_value + 10.0 * gdouble (scale_factor));
+				when SCROLL_DOWN => 
+					put_line (" scroll down");
+					scrollbar_v_adj.set_value (scrollbar_v_adj.get_value - 10.0 * gdouble (scale_factor));
+					
+				when others => null;
+			end case;
+			
+			show_adjustments_v;
 		end if;
 		
 		return event_handled;
