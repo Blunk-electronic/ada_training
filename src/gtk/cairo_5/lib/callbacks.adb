@@ -146,8 +146,6 @@ package body callbacks is
 	end update_scrollbar_limits;
 
 
-	-- dv_2 : gdouble := 0.0;
-
 	
 		
 	procedure cb_main_window_size_allocate (
@@ -174,47 +172,6 @@ package body callbacks is
 		
 		-- NOTE: At the end of this procedure, a redraw is called automatically.
 		-- No need for an extra call of "refresh (canvas)".
-
-		-- This function computes the canvas point right in the center
-		-- of the visible area. The computation bases solely on the
-		-- current value and page size of the scrollbars.
-		-- NOTE: This function is probably useless.
-		function get_center
-			return type_point_canvas
-		is
-			result : type_point_canvas;
-		begin
-			result.x := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size * 0.5;
-			result.y := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size * 0.5;
-			return result;
-		end get_center;
-		
-			
-		-- This function computes the the new scale factor S2 from the current 
-		-- scale factor S1, length_old and length_new. The formula used is:
-		--
-		--      length_new * S1
-		-- S2 = ---------------
-		--        length_old
-		--
-		function to_scale_factor (
-			length_old, length_new : in positive)
-			return type_scale_factor -- S2
-		is 
-			type type_float is digits 6 range 0.0 .. 100_000.0; 
-			-- CS: Upper limit might require adjustments for very large screens.
-			
-			L1 : type_float := type_float (length_old);
-			L2 : type_float := type_float (length_new);
-		begin
-			-- put_line ("L2:" & type_float'image (L2));
-			-- put_line ("L1:" & type_float'image (L1));
-
-			-- The return is S2:
-			return type_scale_factor (L2 / L1) * S1;
-			-- return type_scale_factor (L2 / L1);
-		end to_scale_factor;
-		
 
 
 		-- For debugging. Outputs the dimensions and size
@@ -269,6 +226,46 @@ package body callbacks is
 		-- Related to MODE_ZOOM_CENTER.
 		-- This is a construction site (CS). No suitable solution found yet:
 		procedure move_center_and_zoom is 
+			-- This function computes the canvas point right in the center
+			-- of the visible area. The computation bases solely on the
+			-- current value and page size of the scrollbars.
+			-- NOTE: This function is probably useless.
+			function get_center
+				return type_point_canvas
+			is
+				result : type_point_canvas;
+			begin
+				result.x := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size * 0.5;
+				result.y := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size * 0.5;
+				return result;
+			end get_center;
+			
+			-- This function computes the the new scale factor S2 from the current 
+			-- scale factor S1, length_old and length_new. The formula used is:
+			--
+			--      length_new * S1
+			-- S2 = ---------------
+			--        length_old
+			--
+			function to_scale_factor (
+				length_old, length_new : in positive)
+				return type_scale_factor -- S2
+			is 
+				type type_float is digits 6 range 0.0 .. 100_000.0; 
+				-- CS: Upper limit might require adjustments for very large screens.
+				
+				L1 : type_float := type_float (length_old);
+				L2 : type_float := type_float (length_new);
+			begin
+				-- put_line ("L2:" & type_float'image (L2));
+				-- put_line ("L1:" & type_float'image (L1));
+
+				-- The return is S2:
+				return type_scale_factor (L2 / L1) * S1;
+				-- return type_scale_factor (L2 / L1);
+			end to_scale_factor;
+
+			
 			-- d0_h : gdouble;
 			-- dV_h : gdouble;
 			-- d : gdouble;
@@ -411,7 +408,8 @@ package body callbacks is
 		end move_center;
 
 		
-	begin
+	begin -- cb_main_window_size_allocate
+		
 		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
 		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
@@ -466,10 +464,7 @@ package body callbacks is
 					move_center_and_zoom;
 
 			end case;
-			
-			-- refresh (canvas) is called automatically.
-			-- But this call makes the resizing appear more smoothely:
-			-- refresh (canvas);
+
 			
 			-- Adjust scrollbars:
 			backup_scrollbar_settings;
@@ -564,10 +559,6 @@ package body callbacks is
 
 
 	
-
--- SCROLLED WINDOW:
-
-
 
 
 	
@@ -895,47 +886,47 @@ package body callbacks is
 
 
 
-	function model_point_visible (
-		point 		: in type_point_model)
-		return type_model_point_visible
-	is
-		result : type_model_point_visible;
-		C : type_point_canvas;
-	begin
-		-- put_line ("M " & to_string (point));
-		
-		C := to_canvas (
-			point	=> point,
-			scale	=> scale_factor,
-			real	=> true);
-
-		-- put_line ("C " & to_string (C));
-
-		-- X-axis:
-		-- The visible area ranges from the current position
-		-- of the horizontal scrollbar (value) to the end of the
-		-- scrollbar (value + page_size). If C.x lies in that range,
-		-- then the corresponding flag in the return will be set.
-		if C.x >= scrollbar_h_adj.get_value and
-			C.x <= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
-			result.x := true;
-			-- put_line ("X visible");	
-		end if;
-
-		
-		-- Y-axis:
-		-- The visible area ranges from the current position
-		-- of the vertical scrollbar (value) to the end of the
-		-- scrollbar (value + page_size). If C.y lies in that range,
-		-- then the corresponding flag in the return will be set.
-		if C.y >= scrollbar_v_adj.get_value and
-			C.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
-			result.y := true;
-			-- put_line ("Y visible");	
-		end if;
-
-		return result;
-	end model_point_visible;
+-- 	function model_point_visible (
+-- 		point 		: in type_point_model)
+-- 		return type_model_point_visible
+-- 	is
+-- 		result : type_model_point_visible;
+-- 		C : type_point_canvas;
+-- 	begin
+-- 		-- put_line ("M " & to_string (point));
+-- 		
+-- 		C := to_canvas (
+-- 			point	=> point,
+-- 			scale	=> scale_factor,
+-- 			real	=> true);
+-- 
+-- 		-- put_line ("C " & to_string (C));
+-- 
+-- 		-- X-axis:
+-- 		-- The visible area ranges from the current position
+-- 		-- of the horizontal scrollbar (value) to the end of the
+-- 		-- scrollbar (value + page_size). If C.x lies in that range,
+-- 		-- then the corresponding flag in the return will be set.
+-- 		if C.x >= scrollbar_h_adj.get_value and
+-- 			C.x <= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
+-- 			result.x := true;
+-- 			-- put_line ("X visible");	
+-- 		end if;
+-- 
+-- 		
+-- 		-- Y-axis:
+-- 		-- The visible area ranges from the current position
+-- 		-- of the vertical scrollbar (value) to the end of the
+-- 		-- scrollbar (value + page_size). If C.y lies in that range,
+-- 		-- then the corresponding flag in the return will be set.
+-- 		if C.y >= scrollbar_v_adj.get_value and
+-- 			C.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
+-- 			result.y := true;
+-- 			-- put_line ("Y visible");	
+-- 		end if;
+-- 
+-- 		return result;
+-- 	end model_point_visible;
 
 
 

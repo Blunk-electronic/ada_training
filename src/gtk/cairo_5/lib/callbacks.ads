@@ -74,7 +74,9 @@ package callbacks is
 
 	
 	-- This callback procedure is called each time the size_allocate signal
-	-- is emitted by the main window:
+	-- is emitted by the main window.
+	-- Variables modified: the visible_area and visible_center by
+	-- call of update_visible_area:
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
@@ -169,7 +171,10 @@ package callbacks is
 	procedure show_adjustments_h;
 
 	procedure prepare_initial_scrollbar_settings;
-	
+
+	-- Applies the initial scrollbar settings.
+	-- Variables modified: the visible_area and visible_center by
+	-- call of update_visible_area:
 	procedure apply_initial_scrollbar_settings;
 	
 
@@ -206,14 +211,14 @@ package callbacks is
 -- POINT QUERY AND TEST:
 
 	-- CS no need anymore ?
-	type type_model_point_visible is record
-		x, y : boolean := false;
-	end record;
-
-	-- CS no need anymore ? rework required. use in_area test instead ?	
-	function model_point_visible (
-		point 		: in type_point_model)
-		return type_model_point_visible;
+	-- type type_model_point_visible is record
+	-- 	x, y : boolean := false;
+	-- end record;
+ -- 
+	-- -- CS no need anymore ? rework required. use in_area test instead ?	
+	-- function model_point_visible (
+	-- 	point 		: in type_point_model)
+	-- 	return type_model_point_visible;
 	
 
 
