@@ -238,13 +238,13 @@ package callbacks is
 
 	
 	visible_area : type_area;
-	visible_center : type_point_model;
+	-- visible_center : type_point_model;
 	
 
 	-- Updates the visible area and its center.
 	-- Variables modified: visible_area, visible_center:
-	procedure update_visible_area (
-		canvas	: access gtk_widget_record'class);
+	-- procedure update_visible_area (
+	-- 	canvas	: access gtk_widget_record'class);
 
 	
 	

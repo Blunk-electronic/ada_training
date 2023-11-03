@@ -473,7 +473,7 @@ package body callbacks is
 			-- for the next time this procedure is called:
 			main_window_size := new_size;
 
-			update_visible_area (canvas);
+			-- update_visible_area (canvas);
 		end if;
 		
 	end cb_main_window_size_allocate;
@@ -570,8 +570,9 @@ package body callbacks is
 	is begin
 		-- put_line ("horizontal moved " & image (clock));
 		null;
-		show_adjustments_h;
-		update_visible_area (canvas);		
+		-- show_adjustments_h;
+		-- update_visible_area (canvas);		
+		refresh (canvas);
 		backup_scrollbar_settings;
 	end cb_horizontal_moved;
 
@@ -581,8 +582,9 @@ package body callbacks is
 	is begin		
 		-- put_line ("vertical moved " & image (clock));
 		null;
-		show_adjustments_v;
-		update_visible_area (canvas);
+		-- show_adjustments_v;
+		-- update_visible_area (canvas);
+		refresh (canvas);
 		backup_scrollbar_settings;
 	end cb_vertical_moved;
 
@@ -784,7 +786,7 @@ package body callbacks is
 		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
 		scrollbar_h_adj.set_value (scrollbar_h_init.value);
 
-		update_visible_area (canvas); -- updates visible_area and visible_center
+		-- update_visible_area (canvas); -- updates visible_area and visible_center
 
 		backup_scrollbar_settings;
 	end apply_initial_scrollbar_settings;
@@ -973,16 +975,16 @@ package body callbacks is
 
 	
 
-	procedure update_visible_area (
-		canvas	: access gtk_widget_record'class)
-	is begin
-		-- put_line ("update visible area");
-		visible_area := get_visible_area (canvas);
-		-- put_line (" visible area " & to_string (visible_area));
-
-		visible_center := get_center (visible_area);
-		-- put_line (" visible center " & to_string (visible_center));
-	end update_visible_area;
+	-- procedure update_visible_area (
+	-- 	canvas	: access gtk_widget_record'class)
+	-- is begin
+	-- 	-- put_line ("update visible area");
+	-- 	visible_area := get_visible_area (canvas);
+	-- 	put_line (" visible area " & to_string (visible_area));
+ -- 
+	-- 	visible_center := get_center (visible_area);
+	-- 	-- put_line (" visible center " & to_string (visible_center));
+	-- end update_visible_area;
 
 	
 	
@@ -1141,8 +1143,6 @@ package body callbacks is
 
 			-- schedule a redraw:
 			refresh (canvas);
-
-			update_visible_area (canvas);
 		end zoom;
 
 
@@ -1153,6 +1153,8 @@ package body callbacks is
 
 			procedure set_delta is begin
 				null;
+				-- CS: This is emperical for the time being.
+				-- Rework required.
 				dv := 10.0 * gdouble (scale_factor);
 			end set_delta;
 			
@@ -1223,6 +1225,9 @@ package body callbacks is
 				when others => null;
 			end case;
 		end if;
+
+		
+		-- update_visible_area (canvas);
 		
 		return event_handled;
 	end cb_mouse_wheel_rolled;
@@ -1237,9 +1242,101 @@ package body callbacks is
 	is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
+
+
+
+		procedure draw_grid is
+			type type_float_grid is new float; -- CS refinement required
+			-- X-axis:
+			x1, x2 : type_distance_model;
+			ax1 : type_float_grid := type_float_grid (visible_area.position.x);
+			ax2 : type_float_grid := ax1 + type_float_grid (visible_area.width);
+			gx : type_float_grid := type_float_grid (grid.x);
+
+			-- y-axis:
+			y1, y2 : type_distance_model;
+			ay1 : type_float_grid := type_float_grid (visible_area.position.y);
+			ay2 : type_float_grid := ay1 + type_float_grid (visible_area.height);
+			gy : type_float_grid := type_float_grid (grid.y);
+
+			c : type_float_grid;
+			pm : type_point_model;
+			pc : type_point_canvas;
+
+			-- r : gdouble := (2.0 / gdouble (scale_factor));
+			-- w : gdouble := (1.0 / gdouble (scale_factor));
+			r : gdouble := 1.0;
+			w : gdouble := 1.0;
+
+		begin
+			put_line ("draw_grid");
+			
+			-- X-axis:
+			put_line (" ax1 " & type_float_grid'image (ax1));
+			-- if ax1 > 0.0 then
+				c := type_float_grid'floor (ax1 / gx);
+			-- else
+				-- c := type_float_grid'ceiling (ax1 / gx);
+			-- end if;
+			x1 := type_distance_model ((gx * c) + gx);
+			put_line (" x1  " & type_distance_model'image (x1));
+
+			put_line (" ax2 " & type_float_grid'image (ax2));
+			c := type_float_grid'floor (ax2 / gx);
+			x2 := type_distance_model (gx * c);
+			put_line (" x2  " & type_distance_model'image (x2));
+
+			
+			-- Y-axis:
+			put_line (" ay1 " & type_float_grid'image (ay1));
+			-- if ay1 > 0.0 then
+				c := type_float_grid'floor (ay1 / gy);
+			-- else
+				-- c := type_float_grid'ceiling (ay1 / gy);
+			-- end if;
+			y1 := type_distance_model ((gy * c) + gy);
+			put_line (" y1  " & type_distance_model'image (y1));
+   
+			put_line (" ay2 " & type_float_grid'image (ay2));
+			c := type_float_grid'floor (ay2 / gy);
+			y2 := type_distance_model (gy * c);
+			put_line (" y2  " & type_distance_model'image (y2));
+
+
+			set_line_width (context, w);
+			set_source_rgb (context, 1.0, 1.0, 0.0);
+			
+			pm := (x1, y1);
+			while pm.x <= x2 loop
+				--put_line ("x " & type_distance_model'image (p.x));
+
+				pm.y := y1;
+				while pm.y <= y2 loop
+					--put_line ("y " & type_distance_model'image (pm.y));
+					-- put_line ("pm " & to_string (pm));
+					
+					pc := to_canvas (pm, scale_factor, true);
+					arc (context, pc.x, pc.y, r, 0.0, 6.3);
+					stroke (context);
+    
+					pm.y := pm.y + grid.y;
+				end loop;
+
+				pm.x := pm.x + grid.x;
+
+			end loop;
+		end draw_grid;
+
+		
 	begin
-		-- new_line;
-		-- put_line ("cb_draw " & image (clock));
+		new_line;
+		put_line ("cb_draw " & image (clock));
+
+		-- Update the global visible_area:
+		visible_area := get_visible_area (canvas);
+		put_line (" visible " & to_string (visible_area));
+
+		draw_grid;
 		
 		-- NOTE: In a real project, the database that contains
 		-- all objects must be parsed here. One object after another

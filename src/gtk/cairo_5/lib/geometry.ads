@@ -7,7 +7,7 @@ package geometry is
 -- SCALE:
 
 	--type type_scale_factor is digits 4 range 0.1 .. 10.0;
-	type type_scale_factor is digits 6 range 0.001 .. 10.0;
+	type type_scale_factor is digits 6 range 0.001 .. 100.0;
 	scale_factor : type_scale_factor := 1.0;
 	scale_multiplier : constant type_scale_factor := 1.2;
 
@@ -33,7 +33,10 @@ package geometry is
 
 	model_origin : constant type_point_model := (0.0, 0.0);
 	
+	grid_default : constant type_distance_model := 10.0;
+	grid : type_point_model := (x => grid_default, y => grid_default);
 
+	
 	function to_string (
 		distance : in type_distance_model)
 		return string;
