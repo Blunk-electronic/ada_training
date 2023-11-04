@@ -940,16 +940,29 @@ package body callbacks is
 	is
 		result : type_area;
 
+		L : gtk_allocation;
+		
 		h_start  : constant gdouble := scrollbar_h_adj.get_value;
-		h_length : constant gdouble := scrollbar_h_adj.get_page_size;
+		--h_length : constant gdouble := scrollbar_h_adj.get_page_size;
+		h_length : constant gdouble := gdouble (main_window_size.width);
 		h_end    : constant gdouble := h_start + h_length;
 		
-		v_start	 : constant gdouble := scrollbar_v_adj.get_value;
-		v_length : constant gdouble := scrollbar_v_adj.get_page_size;
-		v_end	 : constant gdouble := v_start + v_length;
+		-- v_start	 : constant gdouble := scrollbar_v_adj.get_value;
+		v_start : gdouble;
+		-- v_length : constant gdouble := scrollbar_v_adj.get_page_size;
+		v_length : constant gdouble := gdouble (main_window_size.height);
+		-- v_end	 : constant gdouble := v_start + v_length;
+		v_end : gdouble;
 
 		BL, BR, TL, TR : type_point_model;
-	begin
+	begin		
+		get_allocation (canvas, L);
+		
+		v_start := scrollbar_v_adj.get_value - gdouble (L.y);
+		v_end := v_start + v_length;
+		
+
+		
 		BL := to_model ((h_start, v_end), scale_factor, true);
 		result.position := BL;
 
@@ -960,7 +973,7 @@ package body callbacks is
 		-- put_line ("BL " & to_string (BL));
 		-- put_line ("BR " & to_string (BR));
 		-- put_line ("TR " & to_string (TR));
-		-- put_line ("TL " & to_string (TL));
+		--put_line ("TL " & to_string (TL));
 
 		-- CS: more effective ?
 		-- result.width    := type_distance_model (h_length) * type_distance_model (scale_factor);
@@ -1268,6 +1281,7 @@ package body callbacks is
 			r : gdouble := 1.0;
 			w : gdouble := 1.0;
 
+			-- debug : boolean := false;
 		begin
 			put_line ("draw_grid");
 			
