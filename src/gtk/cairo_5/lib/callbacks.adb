@@ -940,29 +940,58 @@ package body callbacks is
 	is
 		result : type_area;
 
+		-- The allocation of the scrolled window:
+		W : gtk_allocation;
+		
+		-- The allocation of the canvas:		
 		L : gtk_allocation;
-		
-		h_start  : constant gdouble := scrollbar_h_adj.get_value;
-		--h_length : constant gdouble := scrollbar_h_adj.get_page_size;
-		h_length : constant gdouble := gdouble (main_window_size.width);
-		h_end    : constant gdouble := h_start + h_length;
-		
-		-- v_start	 : constant gdouble := scrollbar_v_adj.get_value;
-		v_start : gdouble;
-		-- v_length : constant gdouble := scrollbar_v_adj.get_page_size;
-		v_length : constant gdouble := gdouble (main_window_size.height);
-		-- v_end	 : constant gdouble := v_start + v_length;
-		v_end : gdouble;
 
+		
+		h_start, h_length, h_end : gdouble;
+		v_start, v_length, v_end : gdouble;
+
+		-- The four corners of the visible area:
 		BL, BR, TL, TR : type_point_model;
-	begin		
+	begin
+		-- Inquire the allocation of the scrolled window
+		-- inside the main window:
+		get_allocation (swin, W);
+
+		-- Inquire the allocation of the canvas inside
+		-- the scrolled window:
 		get_allocation (canvas, L);
-		
-		v_start := scrollbar_v_adj.get_value - gdouble (L.y);
-		v_end := v_start + v_length;
-		
 
 		
+		-- X-AXIS:
+		
+		-- The visible area along the x-axis starts at the
+		-- position of the horizontal scrollbar:
+		h_start  := scrollbar_h_adj.get_value;
+
+		-- The visible area along the x-axis is as wide as
+		-- the scrolled window:
+		h_length := gdouble (W.width);
+
+		-- The visible area ends here:
+		h_end    := h_start + h_length;
+
+
+		-- Y-AXIS:
+		
+		-- The visible area along the y-axis starts at the
+		-- position of the vertical scrollbar minus the
+		-- y-position of the canvas:
+		v_start := scrollbar_v_adj.get_value - gdouble (L.y);
+
+		-- The visible area along the y-axis is as high as
+		-- the scrolled window:
+		v_length := gdouble (W.height);
+
+		-- The visible area along the y-axis ends here:
+		v_end := v_start + v_length;
+
+		
+		-- Compute the corners of the visible area:
 		BL := to_model ((h_start, v_end), scale_factor, true);
 		result.position := BL;
 
