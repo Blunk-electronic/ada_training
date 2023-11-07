@@ -75,8 +75,6 @@ package callbacks is
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window.
-	-- Variables modified: the visible_area and visible_center by
-	-- call of update_visible_area:
 	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
@@ -90,7 +88,12 @@ package callbacks is
 	
 	swin		: gtk_scrolled_window;
 
-
+	-- This callback procedure is called each time the size_allocate signal
+	-- is emitted by the scrolled window.
+	procedure cb_scrolled_window_size_allocate (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation);
+	
 
 	
 -- SCROLLBARS:

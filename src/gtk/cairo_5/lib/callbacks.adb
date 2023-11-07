@@ -558,6 +558,19 @@ package body callbacks is
 	end set_up_main_window;
 
 
+	procedure cb_scrolled_window_size_allocate (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is 
+	begin
+		put_line ("cb_scrolled_window_size_allocate " & image (clock)); 
+		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+		-- 	& gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& " /" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
+
+	end cb_scrolled_window_size_allocate;
 	
 
 
@@ -674,6 +687,7 @@ package body callbacks is
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 		-- swin.set_border_width (10);
 		-- swin.set_redraw_on_allocate (false);
+		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
 		
 		scrollbar_h_adj := swin.get_hadjustment;
 		scrollbar_v_adj := swin.get_vadjustment;
