@@ -11,8 +11,6 @@ package geometry is
 	scale_factor : type_scale_factor := 1.0;
 	scale_multiplier : constant type_scale_factor := 1.2;
 
-	SW : type_scale_factor := 1.0;
-	SM : type_scale_factor := 1.0;
 	
 	function to_string (
 		scale : in type_scale_factor)

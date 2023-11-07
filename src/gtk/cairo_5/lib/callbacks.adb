@@ -152,13 +152,98 @@ package body callbacks is
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
+	begin -- cb_main_window_size_allocate
+		null;
+		
+		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
+
+		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+		-- 	& gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& " /" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
+		
+	end cb_main_window_size_allocate;
+
+
+
+	
+	function cb_main_window_configure (
+		window		: access gtk_widget_record'class;
+		event		: gdk.event.gdk_event_configure)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		-- put_line ("cb_main_window_configure " & image (clock)); 
+		return result;
+	end cb_main_window_configure;
+
+
+	procedure cb_main_window_realize (
+		window	: access gtk_widget_record'class)
+	is begin
+		null;
+		-- put_line ("cb_main_window_realize " & image (clock)); 
+	end cb_main_window_realize;
+	
+
+	function cb_main_window_state_change (
+		window		: access gtk_widget_record'class;
+		event		: gdk.event.gdk_event_window_state)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		-- put_line ("cb_main_window_state_change " & image (clock)); 
+		-- restore_scrollbar_settings;
+		return result;
+	end cb_main_window_state_change;
+
+
+	procedure cb_main_window_activate (
+		window		: access gtk_window_record'class)
+	is begin
+		null;
+		-- put_line ("cb_main_window_activate " & image (clock)); 
+	end cb_main_window_activate;
+
+	
+	procedure set_up_main_window is
+	begin
+		main_window := gtk_window_new (WINDOW_TOPLEVEL);
+		main_window.set_title ("Demo Canvas");
+		-- main_window.set_border_width (10);
+
+		-- CS: Set the minimum size of the main window ?
+		-- CS show main window size
+		
+		-- connect signals:
+		main_window.on_destroy (cb_terminate'access);
+		main_window.on_size_allocate (cb_main_window_size_allocate'access);
+		main_window.on_button_press_event (cb_button_pressed_win'access);
+
+		main_window.on_configure_event (cb_main_window_configure'access);
+		main_window.on_window_state_event (cb_main_window_state_change'access);
+		main_window.on_realize (cb_main_window_realize'access);
+		main_window.on_activate_default (cb_main_window_activate'access);
+		-- main_window.on_activate_focus (cb_focus_win'access);
+		-- main_window.set_has_window (false);
+		-- main_window.set_redraw_on_allocate (false);
+	end set_up_main_window;
+
+
+	procedure cb_scrolled_window_size_allocate (
+		window		: access gtk_widget_record'class;
+		allocation	: gtk_allocation)
+	is 
 		-- The current scale factor:
 		S1 : constant type_scale_factor := scale_factor;
 
 		-- Each time ths procedure is called, the argument "allocation"
-		-- provides the new size of the main window. Later this size will 
+		-- provides the new size of the scrolled window. Later this size will 
 		-- be compared with the old size (stored in global 
-		-- variable main_window_size):
+		-- variable scrolled_window_size):
 		new_size : constant type_window_size := (
 			width	=> positive (allocation.width),
 			height	=> positive (allocation.height));
@@ -178,8 +263,8 @@ package body callbacks is
 		-- changes of the main window:
 		procedure show_size is begin
 			put_line (" size old (w/h): " 
-				& positive'image (main_window_size.width)
-				& " /" & positive'image (main_window_size.height));
+				& positive'image (scrolled_window_size.width)
+				& " /" & positive'image (scrolled_window_size.height));
 			
 			put_line (" size new (w/h): " 
 				& positive'image (new_size.width)
@@ -192,11 +277,11 @@ package body callbacks is
 		end show_size;
 		
 		
-		-- When the main window is resized, then it expands away from its top left corner
+		-- When the scrolled window is resized, then it expands away from its top left corner
 		-- or it shrinks toward its top-left corner. In both cases the bottom of the
 		-- window moves down or up. So the bottom of the canvas must follow the bottom
 		-- of the main window. This procedure moves the bottom of the canvas by the same
-		-- extent as the bottom of the main window:
+		-- extent as the bottom of the scrolled window:
 		procedure move_canvas_bottom is begin
 			-- Approach 1:
 			-- One way to move the canvas is to change the y-component of the base_offset.
@@ -210,7 +295,7 @@ package body callbacks is
 			declare
 				L : gtk_allocation;
 			begin					
-				canvas_allocation.y := canvas_allocation.y + (new_size.height - main_window_size.height);
+				canvas_allocation.y := canvas_allocation.y + (new_size.height - scrolled_window_size.height);
 				-- put_line ("canvas_allocation.y  : " & positive'image (canvas_allocation.y));
 
 				get_allocation (canvas, L);
@@ -222,7 +307,7 @@ package body callbacks is
 		
 
 		-- This procedure should move the canvas so that the center
-		-- remains in the center of the window. 
+		-- remains in the center of the scrolled window. 
 		-- Related to MODE_ZOOM_CENTER.
 		-- This is a construction site (CS). No suitable solution found yet:
 		procedure move_center_and_zoom is 
@@ -301,10 +386,10 @@ package body callbacks is
 			-- Compute two new scale factors: one based on the change of width
 			-- and the other based on the change of height:
 
-			S2W := to_scale_factor (main_window_size.width, new_size.width);
+			S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
 			-- put_line ("S2W:" & to_string (S2W));
 
-			S2H := to_scale_factor (main_window_size.height, new_size.height);
+			S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
 			-- put_line ("S2H:" & to_string (S2H));
 
 			-- CS
@@ -408,30 +493,29 @@ package body callbacks is
 		end move_center;
 
 		
-	begin -- cb_main_window_size_allocate
+	begin -- cb_scrolled_window_size_allocate
 		
-		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
-		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+		-- put_line ("cb_scrolled_window_size_allocate " & image (clock)); 
+		-- put_line ("cb_scrolled_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
 
 		-- This procedure is called on many occasions. We are interested
-		-- only in cases where the size changes. That is when the user moves
-		-- the border of the main window or when she maximizes the window.
+		-- only in cases where the size changes.
 		-- So we watch for changes of width and height only:
 		
 		-- Compare the new size with the old size. The global variable 
-		-- main_window_size provides the size of the window BEFORE this
+		-- scrolled_window_size provides the size of the window BEFORE this
 		-- procedure has been called. If the size has changed, then we start 
 		-- zooming in or out. The zoom center is ths canvas point in the 
 		-- center of the visible area:
-		if new_size /= main_window_size then
+		if new_size /= scrolled_window_size then
 			new_line;
-			put_line ("main window size changed");
+			put_line ("scrolled window size changed");
 
-			-- Opon resizing the main window, the settings of the scrollbars 
+			-- Opon resizing the scrolled window, the settings of the scrollbars 
 			-- (upper, lower and page size) adapt to the size of the canvas. 
 			-- But we do NOT want this behaviour. Instead we restore the settings
 			-- as they where BEFORE this procedure has been called:
@@ -440,14 +524,14 @@ package body callbacks is
 			-- show_adjustments_v;
 			
 			-- Compute the change of width and height:
-			dW := gdouble (new_size.width - main_window_size.width);
-			dH := gdouble (new_size.height - main_window_size.height);
+			dW := gdouble (new_size.width - scrolled_window_size.width);
+			dH := gdouble (new_size.height - scrolled_window_size.height);
 
 			-- for debugging:
 			show_size;
 
 			-- Move the canvas so that its bottom follows
-			-- the bottom of the main window:
+			-- the bottom of the scrolled window:
 			move_canvas_bottom;
 			
 
@@ -469,107 +553,11 @@ package body callbacks is
 			-- Adjust scrollbars:
 			backup_scrollbar_settings;
 
-			-- Update the main_window_size which is required
+			-- Update the scrolled_window_size which is required
 			-- for the next time this procedure is called:
-			main_window_size := new_size;
+			scrolled_window_size := new_size;
 
-			-- update_visible_area (canvas);
 		end if;
-		
-	end cb_main_window_size_allocate;
-
-
-
-	
-	function cb_main_window_configure (
-		window		: access gtk_widget_record'class;
-		event		: gdk.event.gdk_event_configure)
-		return boolean
-	is
-		result : boolean := false;
-	begin
-		-- put_line ("cb_main_window_configure " & image (clock)); 
-		return result;
-	end cb_main_window_configure;
-
-
-	procedure cb_main_window_realize (
-		window	: access gtk_widget_record'class)
-	is begin
-		put_line ("cb_main_window_realize " & image (clock)); 
-	end cb_main_window_realize;
-	
-
-	function cb_main_window_state_change (
-		window		: access gtk_widget_record'class;
-		event		: gdk.event.gdk_event_window_state)
-		return boolean
-	is
-		result : boolean := false;
-	begin
-		-- put_line ("cb_main_window_state_change " & image (clock)); 
-		-- restore_scrollbar_settings;
-		return result;
-	end cb_main_window_state_change;
-
-
-	procedure cb_main_window_activate (
-		window		: access gtk_window_record'class)
-	is begin
-		put_line ("cb_main_window_activate " & image (clock)); 
-	end cb_main_window_activate;
-
-	
-	procedure set_up_main_window is
-	begin
-		main_window := gtk_window_new (WINDOW_TOPLEVEL);
-		main_window.set_title ("Demo Canvas");
-		-- main_window.set_border_width (10);
-
-		-- Set the minimum size of the main window basing on the 
-		-- bounding-box:
-		main_window.set_size_request (
-			gint (bounding_box.width),
-			gint (bounding_box.height));
-
-		
-		-- Set the global main_window_size variable:
-		main_window_size := (
-			width	=> positive (bounding_box.width),
-			height	=> positive (bounding_box.height));
-		
-		-- CS show main window size
-
-		put_line ("main window zoom mode: " 
-			& type_main_window_zoom_mode'image (zoom_mode));
-		
-		-- connect signals:
-		main_window.on_destroy (cb_terminate'access);
-		main_window.on_size_allocate (cb_main_window_size_allocate'access);
-		main_window.on_button_press_event (cb_button_pressed_win'access);
-
-		main_window.on_configure_event (cb_main_window_configure'access);
-		main_window.on_window_state_event (cb_main_window_state_change'access);
-		main_window.on_realize (cb_main_window_realize'access);
-		main_window.on_activate_default (cb_main_window_activate'access);
-		-- main_window.on_activate_focus (cb_focus_win'access);
-		-- main_window.set_has_window (false);
-		-- main_window.set_redraw_on_allocate (false);
-	end set_up_main_window;
-
-
-	procedure cb_scrolled_window_size_allocate (
-		window		: access gtk_widget_record'class;
-		allocation	: gtk_allocation)
-	is 
-	begin
-		put_line ("cb_scrolled_window_size_allocate " & image (clock)); 
-		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
-		-- 	& gint'image (allocation.x) 
-		-- 	& " /" & gint'image (allocation.y)
-		-- 	& " /" & gint'image (allocation.width)
-		-- 	& " /" & gint'image (allocation.height));
-
 	end cb_scrolled_window_size_allocate;
 	
 
@@ -685,12 +673,33 @@ package body callbacks is
 		
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
+
+		-- Set the minimum size of the main window basing on the 
+		-- bounding-box:
+		swin.set_size_request (
+			gint (bounding_box.width),
+			gint (bounding_box.height));
+
+		-- Set the global scrolled_window_size variable:
+		scrolled_window_size := (
+			width	=> positive (bounding_box.width),
+			height	=> positive (bounding_box.height));
+
+		-- CS show window size
+
+		put_line ("scrolled window zoom mode: " 
+			& type_scrolled_window_zoom_mode'image (zoom_mode));
+
+		
 		-- swin.set_border_width (10);
 		-- swin.set_redraw_on_allocate (false);
-		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
+
 		
 		scrollbar_h_adj := swin.get_hadjustment;
 		scrollbar_v_adj := swin.get_vadjustment;
+
+		-- connect signals:
+		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
 
 		-- Connect the signal "value-changed" of the scrollbars with 
 		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
@@ -800,8 +809,6 @@ package body callbacks is
 		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
 		scrollbar_h_adj.set_value (scrollbar_h_init.value);
 
-		-- update_visible_area (canvas); -- updates visible_area and visible_center
-
 		backup_scrollbar_settings;
 	end apply_initial_scrollbar_settings;
 	
@@ -816,7 +823,7 @@ package body callbacks is
 	is
 		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
 	begin
-		put_line ("refresh " & image (clock)); 
+		-- put_line ("refresh " & image (clock)); 
 		drawing_area.queue_draw;
 	end refresh;
 
@@ -828,11 +835,12 @@ package body callbacks is
 		null;
 		-- new_line;
 		-- put_line ("cb_canvas_size_allocate");
-		put_line ("cb_canvas_size_allocate. (x/y/w/h): " & gint'image (allocation.x) 
-			& " /" & gint'image (allocation.y)
-			& " /" & gint'image (allocation.width)
-			& " /" & gint'image (allocation.height));
 
+		-- put_line ("cb_canvas_size_allocate. (x/y/w/h): " & gint'image (allocation.x) 
+		-- 	& " /" & gint'image (allocation.y)
+		-- 	& " /" & gint'image (allocation.width)
+		-- 	& " /" & gint'image (allocation.height));
+  
 	end cb_canvas_size_allocate;
 
 
@@ -1117,7 +1125,8 @@ package body callbacks is
 		canvas	: access gtk_widget_record'class)
 	is
 	begin
-		put_line ("cb_canvas_realized");
+		null;
+		-- put_line ("cb_canvas_realized");
 	end cb_canvas_realized;
 
 

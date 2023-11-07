@@ -21,33 +21,6 @@ package callbacks is
 		width, height : positive := 1;
 	end record;
 
-	-- The current size of the main window. It gets updated
-	-- in procedure set_up_main_window and in cb_main_window_size_allocate:
-	main_window_size : type_window_size;
-
-	
-
-	-- When the operator resizes the main window, then the canvas can be
-	-- adjusted in several ways. Currently there are the modes known as follows:
-	type type_main_window_zoom_mode is (
-		-- No zoom. No moving. Just more or less of 
-		-- the canvas area is exposed:
-		MODE_EXPOSE_CANVAS,
-
-		-- Center of visible canvas area remains in the center. 
-		-- Around the center more or less of the canvas area is exposed:
-		MODE_KEEP_CENTER,
-
-		-- Zooming according to the change of widht or height.
-		-- Zoom center is the center of the visible area:
-		MODE_ZOOM_CENTER);
-
-
-	zoom_mode : constant type_main_window_zoom_mode := 
-		-- MODE_EXPOSE_CANVAS;
-		MODE_KEEP_CENTER;
-		-- MODE_ZOOM_CENTER;
-
 
 	
 
@@ -86,8 +59,36 @@ package callbacks is
 	
 -- SCROLLED WINDOW:
 	
-	swin		: gtk_scrolled_window;
+	swin : gtk_scrolled_window;
 
+	-- When the scrolled window is resized, then the canvas can be
+	-- adjusted in several ways. Currently there are the modes known as follows:
+	type type_scrolled_window_zoom_mode is (
+		-- No zoom. No moving. Just more or less of 
+		-- the canvas area is exposed:
+		MODE_EXPOSE_CANVAS,
+
+		-- Center of visible canvas area remains in the center. 
+		-- Around the center more or less of the canvas area is exposed:
+		MODE_KEEP_CENTER,
+
+		-- Zooming according to the change of widht or height.
+		-- Zoom center is the center of the visible area:
+		MODE_ZOOM_CENTER);
+
+
+	zoom_mode : constant type_scrolled_window_zoom_mode := 
+		-- MODE_EXPOSE_CANVAS;
+		MODE_KEEP_CENTER;
+		-- MODE_ZOOM_CENTER;
+
+	
+	-- The current size of the scrolled window. It gets updated
+	-- in procedure set_up_swin_and_scrollbars and 
+	-- in cb_scrolled_window_size_allocate:
+	scrolled_window_size : type_window_size;
+
+	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the scrolled window.
 	procedure cb_scrolled_window_size_allocate (
@@ -184,7 +185,7 @@ package callbacks is
 	
 -- CANVAS:
 	
-	canvas		: gtk_drawing_area;
+	canvas : gtk_drawing_area;
 
 	procedure refresh (
 		canvas	: access gtk_widget_record'class);
@@ -201,7 +202,8 @@ package callbacks is
 	end record;
 
 	-- Here we track the allocation of the canvas inside the 
-	-- main window:
+	-- main window: 
+	-- CS: probably no need ?
 	canvas_allocation : type_canvas_allocation;
 
 	
@@ -233,7 +235,7 @@ package callbacks is
 	-- The visible area depends the current scale factor,
 	-- base-offset, translate-offset, allocation of the canvas,
 	-- allocation of the scrolled window
-	-- and the current settings of the scollbars.
+	-- and the current settings of the scrollbars.
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
 		return type_area;
@@ -241,7 +243,7 @@ package callbacks is
 	
 
 	
-	visible_area : type_area;
+	visible_area : type_area; -- CS no need to be global ?
 	-- visible_center : type_point_model;
 	
 
