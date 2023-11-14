@@ -234,13 +234,22 @@ package body callbacks is
 
 	
 	procedure set_up_coordinates_display is
+		use gtk.enums;
 	begin
 		gtk_new_hbox (h_box_1);
+		h_box_1.set_spacing (10);
 		main_window.add (h_box_1);
 
 		gtk_new_vbox (v_box_1);
 		h_box_1.pack_start (v_box_1, expand => false);
 
+		separator_1 := gtk_separator_new (ORIENTATION_VERTICAL);
+		h_box_1.pack_start (separator_1, expand => false);
+
+		-- separator_2 := gtk_separator_new (ORIENTATION_VERTICAL);
+		-- h_box_1.pack_start (separator_2, expand => false);
+
+		
 		-- POINTER / MOUSE
 		gtk_new_vbox (PC.main_box);
 		v_box_1.pack_start (PC.main_box, expand => false);
@@ -1453,7 +1462,7 @@ package body callbacks is
 
 
 			set_line_width (context, w);
-			set_source_rgb (context, 1.0, 1.0, 0.0);
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 			
 			pm := (x1, y1);
 			while pm.x <= x2 loop
@@ -1485,6 +1494,11 @@ package body callbacks is
 		visible_area := get_visible_area (canvas);
 		put_line (" visible " & to_string (visible_area));
 
+		-- Set the background color:
+		-- set_source_rgb (context, 0.0, 0.0, 0.0); -- black
+		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
+		paint (context);
+		
 		draw_grid;
 		
 		-- NOTE: In a real project, the database that contains

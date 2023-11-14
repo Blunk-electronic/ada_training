@@ -1,7 +1,9 @@
 with glib;						use glib;
 with gdk.event;					use gdk.event;
 with gtk.box;					use gtk.box;
+with gtk.separator;				use gtk.separator;
 with gtk.combo_box_text;		use gtk.combo_box_text;
+with gtk.enums;
 with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
@@ -30,7 +32,10 @@ package callbacks is
 	
 	h_box_1 : gtk_hbox;
 	v_box_1 : gtk_vbox;
+	separator_1 : gtk_separator;
+	-- separator_2 : gtk_separator;
 
+	
 	type type_box_coordinates is record
 		main_box				: gtk_vbox;
 		title					: gtk_label;
