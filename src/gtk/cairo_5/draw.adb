@@ -46,7 +46,7 @@ begin
 	init; -- inits the GTK-stuff
 
 	set_up_main_window;
-
+	set_up_coordinates_display;
 	set_up_swin_and_scrollbars;
 
 	set_up_canvas;
@@ -60,7 +60,8 @@ begin
 	
 	-- Add the scrolled window as a child to the main window:
 	put_line ("add scrolled window to main window");
-	main_window.add (swin);
+	--main_window.add (swin);
+	pack_start (h_box_1, swin);
 
 	put_line ("show all widgets");
 	main_window.show_all;

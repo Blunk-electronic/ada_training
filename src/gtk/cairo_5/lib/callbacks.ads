@@ -1,8 +1,12 @@
 with glib;						use glib;
 with gdk.event;					use gdk.event;
+with gtk.box;					use gtk.box;
+with gtk.combo_box_text;		use gtk.combo_box_text;
+with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
 with gtk.button;				use gtk.button;
+with gtk.label;					use gtk.label;
 with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.scrollbar;				use gtk.scrollbar;
@@ -22,6 +26,24 @@ package callbacks is
 	end record;
 
 
+-- BOXES:
+	
+	h_box_1 : gtk_hbox;
+	v_box_1 : gtk_vbox;
+
+	type type_box_coordinates is record
+		main_box				: gtk_vbox;
+		title					: gtk_label;
+		box_x, box_y			: gtk_hbox;
+		label_x, label_y 		: gtk_label;
+		position_x, position_y	: gtk_combo_box_text;
+	end record;
+
+	-- The box for the pointer coordinates:
+	PC : type_box_coordinates;
+
+	-- The box for the cursor coordinates:
+	CC : type_box_coordinates;
 	
 
 	procedure cb_terminate (
@@ -55,7 +77,8 @@ package callbacks is
 	
 	procedure set_up_main_window;
 
-
+	procedure set_up_coordinates_display;
+	
 	
 -- SCROLLED WINDOW:
 	

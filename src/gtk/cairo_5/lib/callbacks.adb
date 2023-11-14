@@ -213,7 +213,7 @@ package body callbacks is
 	begin
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
 		main_window.set_title ("Demo Canvas");
-		-- main_window.set_border_width (10);
+		main_window.set_border_width (10);
 
 		-- CS: Set the minimum size of the main window ?
 		-- CS show main window size
@@ -232,6 +232,82 @@ package body callbacks is
 		-- main_window.set_redraw_on_allocate (false);
 	end set_up_main_window;
 
+	
+	procedure set_up_coordinates_display is
+	begin
+		gtk_new_hbox (h_box_1);
+		main_window.add (h_box_1);
+
+		gtk_new_vbox (v_box_1);
+		h_box_1.pack_start (v_box_1, expand => false);
+
+		-- POINTER / MOUSE
+		gtk_new_vbox (PC.main_box);
+		v_box_1.pack_start (PC.main_box, expand => false);
+
+		gtk_new (PC.title);
+		PC.title.set_text ("POINTER");
+		PC.main_box.pack_start (PC.title, expand => false);
+
+		-- x-axis:
+		gtk_new_hbox (PC.box_x);
+		PC.box_x.set_spacing (5);
+		PC.main_box.pack_start (PC.box_x, expand => false);
+		
+		gtk_new (PC.label_x);
+		PC.label_x.set_text ("X");
+		PC.box_x.pack_start (PC.label_x, expand => false);
+		
+		gtk_new_with_entry (PC.position_x);
+		PC.box_x.pack_start (PC.position_x, expand => false);
+
+		-- y-axis:
+		gtk_new_hbox (PC.box_y);
+		PC.box_y.set_spacing (5);
+		PC.main_box.pack_start (PC.box_y, expand => false);
+		
+		gtk_new (PC.label_y);
+		PC.label_y.set_text ("Y");
+		PC.box_y.pack_start (PC.label_y, expand => false);
+		
+		gtk_new_with_entry (PC.position_y);
+		PC.box_y.pack_start (PC.position_y, expand => false);
+
+
+		-- CURSOR
+		gtk_new_vbox (CC.main_box);
+		v_box_1.pack_start (CC.main_box, expand => false);
+		
+		gtk_new (CC.title);
+		CC.title.set_text ("CURSOR");
+		CC.main_box.pack_start (CC.title, expand => false);
+
+		-- x-axis:
+		gtk_new_hbox (CC.box_x);
+		CC.box_x.set_spacing (5);
+		CC.main_box.pack_start (CC.box_x, expand => false);
+		
+		gtk_new (CC.label_x);
+		CC.label_x.set_text ("X");
+		CC.box_x.pack_start (CC.label_x, expand => false);
+		
+		gtk_new_with_entry (CC.position_x);
+		CC.box_x.pack_start (CC.position_x, expand => false);
+
+		-- y-axis:
+		gtk_new_hbox (CC.box_y);
+		CC.box_y.set_spacing (5);
+		CC.main_box.pack_start (CC.box_y, expand => false);
+		
+		gtk_new (CC.label_y);
+		CC.label_y.set_text ("Y");
+		CC.box_y.pack_start (CC.label_y, expand => false);
+		
+		gtk_new_with_entry (CC.position_y);
+		CC.box_y.pack_start (CC.position_y, expand => false);
+		
+	end set_up_coordinates_display;
+	
 
 	procedure cb_scrolled_window_size_allocate (
 		window		: access gtk_widget_record'class;
@@ -1089,14 +1165,21 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		cp : constant type_point_canvas := (event.x, event.y);
-		mp : constant type_point_model := to_model (cp, scale_factor);
+
+		-- Get the real model coordinates:
+		mp : constant type_point_model := to_model (cp, scale_factor, true);
 	begin
 		null;
+		-- output on the terminal:
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
 		-- put_line (
 			-- to_string (cp)
 			-- & " " & to_string (mp)
+
+		-- Update the pointer position on the coordinates display:
+		gtk_entry (PC.position_x.get_child).set_text (to_string (mp.x));
+		gtk_entry (PC.position_y.get_child).set_text (to_string (mp.y));
 		
 		return event_handled;
 	end cb_mouse_moved;
