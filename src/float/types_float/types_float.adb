@@ -10,6 +10,8 @@ procedure types_float is
 						-- you get any accuracy
 						-- probably too much accuracy
 
+	f0n : float := -7.5;
+	
 	-- well defined accuracy
 	type float_1 is digits 2;	
 	f1 : float_1 := 5.5;
@@ -20,7 +22,16 @@ procedure types_float is
 	
 begin
 
-	put_line (float'image (f0));	-- 5.50000E+00
+	put_line (float'image (f0));					--  5.50000E+00
+	put_line (float'image (float'floor (f0)));		--  5.00000E+00
+	put_line (float'image (float'ceiling (f0)));	--  6.00000E+00
+	new_line;
+	
+	put_line (float'image (f0n));					-- -7.50000E+00
+	put_line (float'image (float'floor (f0n)));		-- -8.00000E+00
+	put_line (float'image (float'ceiling (f0n)));	-- -7.00000E+00
+	new_line;
+	
 	put_line (float_1'image (f1));	-- 5.5E+00
 	put_line (float_2'image (f2));	-- 1.1E+00
 	
