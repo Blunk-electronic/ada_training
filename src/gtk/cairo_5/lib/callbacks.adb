@@ -1400,87 +1400,129 @@ package body callbacks is
 		event_handled : boolean := true;
 		cp : type_point_canvas;
 
-
-
+		-- This procedure draws the grid in the visible area.
+		-- Outside the visible area nothing is drawn in order to save time.
+		-- The procedure works as follows:
+		-- 1. Define the begin and end of the visible area in x and y direction.
+		-- 2. Find the first column that comes after the begin of 
+		--    the visible area (in x direction).
+		-- 3. Find the last column that comes before the end of the 
+		--    visible area (in x direction).
+		-- 4. Find the first row that comes after the begin of the 
+		--    visible area (in y direction).
+		-- 5. Find the last row that comes before the end of the 
+		--    visible area (in y direction).
+		--
+		-- In case the grid consists of dots:
+		-- 1. Assemble from the first row and the first colum a real model point MP.
+		-- 2. Advance PM from row to row and column to column in a matrix like order.
+		-- 3. Draw a very small circle (or alternatively a crosshair) at PM.
+		--
+		-- In case the grid consists of lines:
+		-- CS
 		procedure draw_grid is
 			type type_float_grid is new float; -- CS refinement required
-			-- X-axis:
-			x1, x2 : type_distance_model;
-			ax1 : type_float_grid := type_float_grid (visible_area.position.x);
-			ax2 : type_float_grid := ax1 + type_float_grid (visible_area.width);
-			gx : type_float_grid := type_float_grid (grid.x);
 
-			-- y-axis:
+			-- X-AXIS:
+
+			-- The first and the last column:
+			x1, x2 : type_distance_model;
+
+			-- The start and the end of the visible area:
+			ax1 : constant type_float_grid := type_float_grid (visible_area.position.x);
+			ax2 : constant type_float_grid := ax1 + type_float_grid (visible_area.width);
+
+			-- The grid spacing:
+			gx : constant type_float_grid := type_float_grid (grid.x);
+
+			
+			-- Y-AXIS:
+
+			-- The first and the last row:
 			y1, y2 : type_distance_model;
-			ay1 : type_float_grid := type_float_grid (visible_area.position.y);
-			ay2 : type_float_grid := ay1 + type_float_grid (visible_area.height);
-			gy : type_float_grid := type_float_grid (grid.y);
+
+			-- The start and the end of the visible area:
+			ay1 : constant type_float_grid := type_float_grid (visible_area.position.y);
+			ay2 : constant type_float_grid := ay1 + type_float_grid (visible_area.height);
+
+			-- The grid spacing:
+			gy : constant type_float_grid := type_float_grid (grid.y);
 
 			c : type_float_grid;
-			pm : type_point_model;
-			pc : type_point_canvas;
-
-			-- r : gdouble := (2.0 / gdouble (scale_factor));
-			-- w : gdouble := (1.0 / gdouble (scale_factor));
-			r : gdouble := 1.0;
-			w : gdouble := 1.0;
+			MP : type_point_model;
+			CP : type_point_canvas;
 
 			-- debug : boolean := false;
 		begin
 			put_line ("draw_grid");
 			
-			-- X-axis:
+			-- X-AXIS:
+
+			-- Compute the first column:
 			put_line (" ax1 " & type_float_grid'image (ax1));
-			-- if ax1 > 0.0 then
-				c := type_float_grid'floor (ax1 / gx);
-			-- else
-				-- c := type_float_grid'ceiling (ax1 / gx);
-			-- end if;
+			c := type_float_grid'floor (ax1 / gx);
 			x1 := type_distance_model ((gx * c) + gx);
 			put_line (" x1  " & type_distance_model'image (x1));
 
+			-- Compute the last column:
 			put_line (" ax2 " & type_float_grid'image (ax2));
 			c := type_float_grid'floor (ax2 / gx);
 			x2 := type_distance_model (gx * c);
 			put_line (" x2  " & type_distance_model'image (x2));
 
 			
-			-- Y-axis:
+			-- Y-AXIS:
+			
+			-- Compute the first row:
 			put_line (" ay1 " & type_float_grid'image (ay1));
-			-- if ay1 > 0.0 then
-				c := type_float_grid'floor (ay1 / gy);
-			-- else
-				-- c := type_float_grid'ceiling (ay1 / gy);
-			-- end if;
+			c := type_float_grid'floor (ay1 / gy);
 			y1 := type_distance_model ((gy * c) + gy);
 			put_line (" y1  " & type_distance_model'image (y1));
-   
+
+			-- Compute the last row:
 			put_line (" ay2 " & type_float_grid'image (ay2));
 			c := type_float_grid'floor (ay2 / gy);
 			y2 := type_distance_model (gy * c);
 			put_line (" y2  " & type_distance_model'image (y2));
 
 
-			set_line_width (context, w);
+			-- Set color and linewidth of grid points:
+			set_line_width (context, 1.0);
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-			
-			pm := (x1, y1);
-			while pm.x <= x2 loop
+
+			-- Compose a model point from the first column and 
+			-- the first row:
+			MP := (x1, y1);
+
+			-- Advance PM from column to column:
+			while MP.x <= x2 loop
 				--put_line ("x " & type_distance_model'image (p.x));
 
-				pm.y := y1;
-				while pm.y <= y2 loop
-					--put_line ("y " & type_distance_model'image (pm.y));
-					-- put_line ("pm " & to_string (pm));
+				-- Advance PM from row to row:
+				MP.y := y1;
+				while MP.y <= y2 loop
+					--put_line ("y " & type_distance_model'image (MP.y));
+					-- put_line ("MP " & to_string (MP));
+
+					-- Convert the current real model point MP to a
+					-- point on the canvas:
+					CP := to_canvas (MP, scale_factor, true);
+
+					-- Draw a very small circle with its center at CP:
+					arc (context, CP.x, CP.y, 
+						 radius => 1.0, angle1 => 0.0, angle2 => 6.3);
 					
-					pc := to_canvas (pm, scale_factor, true);
-					arc (context, pc.x, pc.y, r, 0.0, 6.3);
 					stroke (context);
-    
-					pm.y := pm.y + grid.y;
+
+					-- CS: As an alternative a small crosshair could
+					-- be drawn at CP. This could be more efficient than a circle.
+					
+					-- Advance one row up:
+					MP.y := MP.y + grid.y;
 				end loop;
 
-				pm.x := pm.x + grid.x;
+				-- Advance one column to the right:
+				MP.x := MP.x + grid.x;
 
 			end loop;
 		end draw_grid;
