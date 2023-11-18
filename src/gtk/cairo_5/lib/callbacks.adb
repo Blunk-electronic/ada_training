@@ -1413,12 +1413,12 @@ package body callbacks is
 		-- 5. Find the last row that comes before the end of the 
 		--    visible area (in y direction).
 		--
-		-- In case the grid consists of dots:
+		-- In case the grid style is of dots:
 		-- 1. Assemble from the first row and the first colum a real model point MP.
 		-- 2. Advance PM from row to row and column to column in a matrix like order.
 		-- 3. Draw a very small circle (or alternatively a crosshair) at PM.
 		--
-		-- In case the grid consists of lines:
+		-- In case the grid style is lines:
 		-- CS
 		procedure draw_grid is
 			type type_float_grid is new float; -- CS refinement required
@@ -1433,7 +1433,7 @@ package body callbacks is
 			ax2 : constant type_float_grid := ax1 + type_float_grid (visible_area.width);
 
 			-- The grid spacing:
-			gx : constant type_float_grid := type_float_grid (grid.x);
+			gx : constant type_float_grid := type_float_grid (grid.spacing.x);
 
 			
 			-- Y-AXIS:
@@ -1446,85 +1446,155 @@ package body callbacks is
 			ay2 : constant type_float_grid := ay1 + type_float_grid (visible_area.height);
 
 			-- The grid spacing:
-			gy : constant type_float_grid := type_float_grid (grid.y);
+			gy : constant type_float_grid := type_float_grid (grid.spacing.y);
 
 			c : type_float_grid;
-			MP : type_point_model;
-			CP : type_point_canvas;
 
 			-- debug : boolean := false;
-		begin
-			put_line ("draw_grid");
+
+			procedure compute_columns is
+			begin
+				-- Compute the first column:
+				put_line (" ax1 " & type_float_grid'image (ax1));
+				c := type_float_grid'floor (ax1 / gx);
+				x1 := type_distance_model ((gx * c) + gx);
+				put_line (" x1  " & type_distance_model'image (x1));
+
+				-- Compute the last column:
+				put_line (" ax2 " & type_float_grid'image (ax2));
+				c := type_float_grid'floor (ax2 / gx);
+				x2 := type_distance_model (gx * c);
+				put_line (" x2  " & type_distance_model'image (x2));
+			end compute_columns;
+
+
+			procedure compute_rows is
+			begin
+				-- Compute the first row:
+				put_line (" ay1 " & type_float_grid'image (ay1));
+				c := type_float_grid'floor (ay1 / gy);
+				y1 := type_distance_model ((gy * c) + gy);
+				put_line (" y1  " & type_distance_model'image (y1));
+
+				-- Compute the last row:
+				put_line (" ay2 " & type_float_grid'image (ay2));
+				c := type_float_grid'floor (ay2 / gy);
+				y2 := type_distance_model (gy * c);
+				put_line (" y2  " & type_distance_model'image (y2));
+			end compute_rows;
 			
-			-- X-AXIS:
-
-			-- Compute the first column:
-			put_line (" ax1 " & type_float_grid'image (ax1));
-			c := type_float_grid'floor (ax1 / gx);
-			x1 := type_distance_model ((gx * c) + gx);
-			put_line (" x1  " & type_distance_model'image (x1));
-
-			-- Compute the last column:
-			put_line (" ax2 " & type_float_grid'image (ax2));
-			c := type_float_grid'floor (ax2 / gx);
-			x2 := type_distance_model (gx * c);
-			put_line (" x2  " & type_distance_model'image (x2));
-
 			
-			-- Y-AXIS:
-			
-			-- Compute the first row:
-			put_line (" ay1 " & type_float_grid'image (ay1));
-			c := type_float_grid'floor (ay1 / gy);
-			y1 := type_distance_model ((gy * c) + gy);
-			put_line (" y1  " & type_distance_model'image (y1));
+			procedure draw_dots is 
+				MP : type_point_model;
+				CP : type_point_canvas;
+			begin
+				-- Set the linewidth of the dots:
+				set_line_width (context, 1.0);
+				
+				-- Compose a model point from the first column and 
+				-- the first row:
+				MP := (x1, y1);
 
-			-- Compute the last row:
-			put_line (" ay2 " & type_float_grid'image (ay2));
-			c := type_float_grid'floor (ay2 / gy);
-			y2 := type_distance_model (gy * c);
-			put_line (" y2  " & type_distance_model'image (y2));
+				-- Advance PM from column to column:
+				while MP.x <= x2 loop
+					--put_line ("x " & type_distance_model'image (p.x));
+
+					-- Advance PM from row to row:
+					MP.y := y1;
+					while MP.y <= y2 loop
+						--put_line ("y " & type_distance_model'image (MP.y));
+						-- put_line ("MP " & to_string (MP));
+
+						-- Convert the current real model point MP to a
+						-- point on the canvas:
+						CP := to_canvas (MP, scale_factor, true);
+
+						-- Draw a very small circle with its center at CP:
+						arc (context, CP.x, CP.y, 
+							radius => 1.0, angle1 => 0.0, angle2 => 6.3);
+						
+						stroke (context);
+
+						-- CS: As an alternative a small crosshair could
+						-- be drawn at CP. This could be more efficient than a circle.
+						
+						-- Advance one row up:
+						MP.y := MP.y + grid.spacing.y;
+					end loop;
+
+					-- Advance one column to the right:
+					MP.x := MP.x + grid.spacing.x;
+				end loop;
+			end draw_dots;
 
 
-			-- Set color and linewidth of grid points:
-			set_line_width (context, 1.0);
-			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+			procedure draw_lines is 
+				MP1 : type_point_model;
+				MP2 : type_point_model;
 
-			-- Compose a model point from the first column and 
-			-- the first row:
-			MP := (x1, y1);
+				CP1 : type_point_canvas;
+				CP2 : type_point_canvas;
 
-			-- Advance PM from column to column:
-			while MP.x <= x2 loop
-				--put_line ("x " & type_distance_model'image (p.x));
+				ax1f : type_distance_model := visible_area.position.x;
+				ax2f : type_distance_model := ax1f + visible_area.width;
+				
+				ay1f : type_distance_model := visible_area.position.y;
+				ay2f : type_distance_model := ay1f + visible_area.height;
 
-				-- Advance PM from row to row:
-				MP.y := y1;
-				while MP.y <= y2 loop
-					--put_line ("y " & type_distance_model'image (MP.y));
-					-- put_line ("MP " & to_string (MP));
+			begin
+				-- Set the linewidth of the lines:
+				set_line_width (context, 0.5);
+				
+				-- vertical lines:
+				MP1 := (x1, ay1f);
+				MP2 := (x1, ay2f);
 
-					-- Convert the current real model point MP to a
-					-- point on the canvas:
-					CP := to_canvas (MP, scale_factor, true);
-
-					-- Draw a very small circle with its center at CP:
-					arc (context, CP.x, CP.y, 
-						 radius => 1.0, angle1 => 0.0, angle2 => 6.3);
+				while MP1.x <= x2 loop
+					CP1 := to_canvas (MP1, scale_factor, true);
+					CP2 := to_canvas (MP2, scale_factor, true);
 					
+					move_to (context, CP1.x, CP1.y);
+					line_to (context, CP2.x, CP2.y);
+
+					MP1.x := MP1.x + grid.spacing.x;
+					MP2.x := MP2.x + grid.spacing.x;
 					stroke (context);
-
-					-- CS: As an alternative a small crosshair could
-					-- be drawn at CP. This could be more efficient than a circle.
-					
-					-- Advance one row up:
-					MP.y := MP.y + grid.y;
 				end loop;
 
-				-- Advance one column to the right:
-				MP.x := MP.x + grid.x;
+				-- horizontal lines:
+				MP1 := (ax1f, y1);
+				MP2 := (ax2f, y1);
 
-			end loop;
+				while MP1.y <= y2 loop
+					CP1 := to_canvas (MP1, scale_factor, true);
+					CP2 := to_canvas (MP2, scale_factor, true);
+					
+					move_to (context, CP1.x, CP1.y);
+					line_to (context, CP2.x, CP2.y);
+
+					MP1.y := MP1.y + grid.spacing.y;
+					MP2.y := MP2.y + grid.spacing.y;
+					stroke (context);
+				end loop;
+
+			end draw_lines;
+			
+
+		begin
+			put_line ("draw_grid");
+			compute_columns;
+			compute_rows;
+
+			-- Set the color of the grid:
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+			case grid.style is
+				when STYLE_DOTS =>
+					draw_dots;
+
+				when STYLE_LINES =>
+					draw_lines;
+			end case;
 		end draw_grid;
 
 		

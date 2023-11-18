@@ -30,9 +30,21 @@ package geometry is
 	end record;
 
 	model_origin : constant type_point_model := (0.0, 0.0);
+
 	
-	grid_default : constant type_distance_model := 10.0;
-	grid : type_point_model := (x => grid_default, y => grid_default);
+	-- GRID:
+	type type_grid_style is (STYLE_DOTS, STYLE_LINES);
+	grid_spacing_default : constant type_distance_model := 10.0;
+	
+	type type_grid is record
+		spacing : type_point_model := (others => grid_spacing_default);
+		--style	: type_grid_style := STYLE_DOTS;
+		style	: type_grid_style := STYLE_LINES;
+	end record;
+	
+	grid : type_grid;
+
+
 
 	
 	function to_string (
