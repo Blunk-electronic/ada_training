@@ -1398,7 +1398,6 @@ package body callbacks is
 		return boolean
 	is
 		event_handled : boolean := true;
-		cp : type_point_canvas;
 
 		-- This procedure draws the grid in the visible area.
 		-- Outside the visible area nothing is drawn in order to save time.
@@ -1412,14 +1411,7 @@ package body callbacks is
 		--    visible area (in y direction).
 		-- 5. Find the last row that comes before the end of the 
 		--    visible area (in y direction).
-		--
-		-- In case the grid style is of dots:
-		-- 1. Assemble from the first row and the first colum a real model point MP.
-		-- 2. Advance PM from row to row and column to column in a matrix like order.
-		-- 3. Draw a very small circle (or alternatively a crosshair) at PM.
-		--
-		-- In case the grid style is lines:
-		-- CS
+		-- 6. Draw the grid as dots or lines, depending on the user specified settings.
 		procedure draw_grid is
 			type type_float_grid is new float; -- CS refinement required
 
@@ -1452,38 +1444,44 @@ package body callbacks is
 
 			-- debug : boolean := false;
 
+			
 			procedure compute_columns is
 			begin
 				-- Compute the first column:
-				put_line (" ax1 " & type_float_grid'image (ax1));
+				-- put_line (" ax1 " & type_float_grid'image (ax1));
 				c := type_float_grid'floor (ax1 / gx);
 				x1 := type_distance_model ((gx * c) + gx);
-				put_line (" x1  " & type_distance_model'image (x1));
+				-- put_line (" x1  " & type_distance_model'image (x1));
 
 				-- Compute the last column:
-				put_line (" ax2 " & type_float_grid'image (ax2));
+				-- put_line (" ax2 " & type_float_grid'image (ax2));
 				c := type_float_grid'floor (ax2 / gx);
 				x2 := type_distance_model (gx * c);
-				put_line (" x2  " & type_distance_model'image (x2));
+				-- put_line (" x2  " & type_distance_model'image (x2));
 			end compute_columns;
 
 
 			procedure compute_rows is
 			begin
 				-- Compute the first row:
-				put_line (" ay1 " & type_float_grid'image (ay1));
+				-- put_line (" ay1 " & type_float_grid'image (ay1));
 				c := type_float_grid'floor (ay1 / gy);
 				y1 := type_distance_model ((gy * c) + gy);
-				put_line (" y1  " & type_distance_model'image (y1));
+				-- put_line (" y1  " & type_distance_model'image (y1));
 
 				-- Compute the last row:
-				put_line (" ay2 " & type_float_grid'image (ay2));
+				-- put_line (" ay2 " & type_float_grid'image (ay2));
 				c := type_float_grid'floor (ay2 / gy);
 				y2 := type_distance_model (gy * c);
-				put_line (" y2  " & type_distance_model'image (y2));
+				-- put_line (" y2  " & type_distance_model'image (y2));
 			end compute_rows;
 			
-			
+
+			-- This procedure draws the dots of the grid:
+			-- 1. Assemble from the first row and the first colum a real model point MP.
+			-- 2. Advance PM from row to row and column to column in a matrix like order.
+			-- 3. Draw a very small circle, which will appear like a dot,
+			--    (or alternatively a crosshair) at PM.
 			procedure draw_dots is 
 				MP : type_point_model;
 				CP : type_point_canvas;
@@ -1528,6 +1526,7 @@ package body callbacks is
 			end draw_dots;
 
 
+			-- This procedure draws the lines of the grid:
 			procedure draw_lines is 
 				MP1 : type_point_model;
 				MP2 : type_point_model;
@@ -1540,15 +1539,22 @@ package body callbacks is
 				
 				ay1f : type_distance_model := visible_area.position.y;
 				ay2f : type_distance_model := ay1f + visible_area.height;
-
 			begin
 				-- Set the linewidth of the lines:
 				set_line_width (context, 0.5);
 				
-				-- vertical lines:
+				-- VERTICAL LINES:
+
+				-- All vertical lines start at the bottom of the visible area:
 				MP1 := (x1, ay1f);
+
+				-- All vertical lines end at the top of the visible area:
 				MP2 := (x1, ay2f);
 
+				-- The first vertical line runs along the first column. 
+				-- The last vertical line runs along the last column.
+				-- This loop advances from one column to the next and
+				-- draws a vertical line:
 				while MP1.x <= x2 loop
 					CP1 := to_canvas (MP1, scale_factor, true);
 					CP2 := to_canvas (MP2, scale_factor, true);
@@ -1561,10 +1567,19 @@ package body callbacks is
 					stroke (context);
 				end loop;
 
-				-- horizontal lines:
+				
+				-- HORIZONTAL LINES:
+
+				-- All horizontal lines start at the left edge of the visible area:
 				MP1 := (ax1f, y1);
+
+				-- All horizontal lines end at the right edge of the visible area:
 				MP2 := (ax2f, y1);
 
+				-- The first horizontal line runs along the first row. 
+				-- The last horizontal line runs along the last row.
+				-- This loop advances from one row to the next and
+				-- draws a horizontal line:
 				while MP1.y <= y2 loop
 					CP1 := to_canvas (MP1, scale_factor, true);
 					CP2 := to_canvas (MP2, scale_factor, true);
@@ -1576,12 +1591,11 @@ package body callbacks is
 					MP2.y := MP2.y + grid.spacing.y;
 					stroke (context);
 				end loop;
-
 			end draw_lines;
 			
 
-		begin
-			put_line ("draw_grid");
+		begin -- draw_grid
+			-- put_line ("draw_grid");
 			compute_columns;
 			compute_rows;
 
@@ -1598,13 +1612,15 @@ package body callbacks is
 		end draw_grid;
 
 		
-	begin
+		cp : type_point_canvas;
+		
+	begin -- cb_draw_objects
 		new_line;
 		put_line ("cb_draw " & image (clock));
 
 		-- Update the global visible_area:
 		visible_area := get_visible_area (canvas);
-		put_line (" visible " & to_string (visible_area));
+		-- put_line (" visible " & to_string (visible_area));
 
 		-- Set the background color:
 		-- set_source_rgb (context, 0.0, 0.0, 0.0); -- black

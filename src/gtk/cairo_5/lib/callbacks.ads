@@ -139,16 +139,12 @@ package callbacks is
 	
 	-- Called whenever the horizontal scrollbar is moved, either
 	-- by the operator or by internal calls.
-	-- Variables modified: the visible_area and visible_center by
-	-- call of update_visible_area:
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
 	
 	-- Called whenever the vertical scrollbar is moved, either
 	-- by the operator or by internal calls.
-	-- Variables modified: the visible_area and visible_center by
-	-- call of update_visible_area:
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
@@ -205,8 +201,6 @@ package callbacks is
 	procedure prepare_initial_scrollbar_settings;
 
 	-- Applies the initial scrollbar settings.
-	-- Variables modified: the visible_area and visible_center by
-	-- call of update_visible_area:
 	procedure apply_initial_scrollbar_settings;
 	
 
@@ -270,9 +264,13 @@ package callbacks is
 
 	
 
-	
-	visible_area : type_area; -- CS no need to be global ?
-	-- visible_center : type_point_model;
+	-- This visible area is a global variable.
+	-- It is updated by procedure cb_draw_objects.
+	-- The reason why it is global: If the user searches for a
+	-- particular object, then the result of a search could be
+	-- a message like "The object is outside the visible
+	-- area at position (x/y)."
+	visible_area : type_area;
 	
 
 	-- Updates the visible area and its center.
