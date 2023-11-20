@@ -1471,7 +1471,7 @@ package body callbacks is
 			-- debug : boolean := false;
 
 			
-			procedure compute_columns is
+			procedure compute_first_and_last_column is
 			begin
 				-- Compute the first column:
 				-- put_line (" ax1 " & type_float_grid'image (ax1));
@@ -1484,10 +1484,10 @@ package body callbacks is
 				c := type_float_grid'floor (ax2 / gx);
 				x2 := type_distance_model (gx * c);
 				-- put_line (" x2  " & type_distance_model'image (x2));
-			end compute_columns;
+			end compute_first_and_last_column;
 
 
-			procedure compute_rows is
+			procedure compute_first_and_last_row is
 			begin
 				-- Compute the first row:
 				-- put_line (" ay1 " & type_float_grid'image (ay1));
@@ -1500,7 +1500,7 @@ package body callbacks is
 				c := type_float_grid'floor (ay2 / gy);
 				y2 := type_distance_model (gy * c);
 				-- put_line (" y2  " & type_distance_model'image (y2));
-			end compute_rows;
+			end compute_first_and_last_row;
 			
 
 			-- This procedure draws the dots of the grid:
@@ -1622,8 +1622,8 @@ package body callbacks is
 
 		begin -- draw_grid
 			-- put_line ("draw_grid");
-			compute_columns;
-			compute_rows;
+			compute_first_and_last_column;
+			compute_first_and_last_row;
 
 			-- Set the color of the grid:
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
@@ -1653,7 +1653,10 @@ package body callbacks is
 		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
 		paint (context);
 
-		draw_grid;
+		-- Draw the grid if it is enabled:
+		if grid.on = GRID_ON then
+			draw_grid;
+		end if;
 		
 		draw_origin;
 		
