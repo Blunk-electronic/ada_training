@@ -33,6 +33,20 @@ package body geometry is
 	end decrease_scale;
 
 
+	function get_grid_spacing (
+		grid : in type_grid)
+		return gdouble
+	is
+		s : constant gdouble := gdouble (scale_factor);
+		x, y : gdouble;
+	begin
+		x := gdouble (grid.spacing.x) * s;
+		y := gdouble (grid.spacing.y) * s;
+		return gdouble'min (x, y);
+	end get_grid_spacing;
+
+	
+
 	function to_string (
 		distance : in type_distance_model)
 		return string

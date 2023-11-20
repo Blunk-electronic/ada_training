@@ -1513,7 +1513,7 @@ package body callbacks is
 				CP : type_point_canvas;
 			begin
 				-- Set the linewidth of the dots:
-				set_line_width (context, 1.0);
+				set_line_width (context, grid_width_dots);
 				
 				-- Compose a model point from the first column and 
 				-- the first row:
@@ -1521,21 +1521,17 @@ package body callbacks is
 
 				-- Advance PM from column to column:
 				while MP.x <= x2 loop
-					--put_line ("x " & type_distance_model'image (p.x));
 
 					-- Advance PM from row to row:
 					MP.y := y1;
 					while MP.y <= y2 loop
-						--put_line ("y " & type_distance_model'image (MP.y));
-						-- put_line ("MP " & to_string (MP));
-
 						-- Convert the current real model point MP to a
 						-- point on the canvas:
 						CP := to_canvas (MP, scale_factor, true);
 
 						-- Draw a very small circle with its center at CP:
 						arc (context, CP.x, CP.y, 
-							radius => 1.0, angle1 => 0.0, angle2 => 6.3);
+							radius => grid_radius_dots, angle1 => 0.0, angle2 => 6.3);
 						
 						stroke (context);
 
@@ -1567,7 +1563,7 @@ package body callbacks is
 				ay2f : type_distance_model := ay1f + visible_area.height;
 			begin
 				-- Set the linewidth of the lines:
-				set_line_width (context, 0.5);
+				set_line_width (context, grid_width_lines);
 				
 				-- VERTICAL LINES:
 
@@ -1653,8 +1649,10 @@ package body callbacks is
 		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
 		paint (context);
 
-		-- Draw the grid if it is enabled:
-		if grid.on = GRID_ON then
+		-- Draw the grid if it is enabled and if the spacing
+		-- is greater than the minimal required spacing:
+		if grid.on = GRID_ON and then
+			get_grid_spacing (grid) >= grid_spacing_min then
 			draw_grid;
 		end if;
 		
