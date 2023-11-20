@@ -29,17 +29,21 @@ package geometry is
 		x, y : type_distance_model := 0.0;
 	end record;
 
-	model_origin : constant type_point_model := (0.0, 0.0);
-
+	-- ORIGIN:
+	-- The origin is a small cross at model position (0;0).
+	origin				: constant type_point_model := (0.0, 0.0);
+	origin_size			: constant gdouble := 10.0;
+	origin_linewidth	: constant gdouble := 1.0;
 	
 	-- GRID:
+	-- The grid helps the operator to align or place objects:
 	type type_grid_style is (STYLE_DOTS, STYLE_LINES);
 	grid_spacing_default : constant type_distance_model := 10.0;
 	
-	type type_grid is record
+	type type_grid is record -- CS on, off
 		spacing : type_point_model := (others => grid_spacing_default);
-		--style	: type_grid_style := STYLE_DOTS;
-		style	: type_grid_style := STYLE_LINES;
+		style	: type_grid_style := STYLE_DOTS;
+		-- style	: type_grid_style := STYLE_LINES;
 	end record;
 	
 	grid : type_grid;

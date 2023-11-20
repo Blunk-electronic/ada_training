@@ -1403,6 +1403,28 @@ package body callbacks is
 	is
 		event_handled : boolean := true;
 
+		-- This procedure draws the origin. The origin is a small
+		-- cross at model position (0;0). This procedure does not
+		-- check whether the lines of the cross are inside the visible
+		-- area. Since it is about two simple lines we draw them
+		-- always:
+		procedure draw_origin is
+			cp : type_point_canvas := to_canvas (origin, scale_factor, true);
+		begin
+			set_source_rgb (context, 0.5, 0.5, 0.5);
+			set_line_width (context, origin_linewidth);
+
+			-- Draw the horizontal line from left to right:
+			move_to (context, cp.x - origin_size, cp.y);
+			line_to (context, cp.x + origin_size, cp.y);
+
+			-- Draw the vertical line from top to bottom:
+			move_to (context, cp.x, cp.y - origin_size);
+			line_to (context, cp.x, cp.y + origin_size);
+			stroke (context);
+		end draw_origin;
+		
+		
 		-- This procedure draws the grid in the visible area.
 		-- Outside the visible area nothing is drawn in order to save time.
 		-- The procedure works as follows:
@@ -1630,8 +1652,10 @@ package body callbacks is
 		-- set_source_rgb (context, 0.0, 0.0, 0.0); -- black
 		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
 		paint (context);
-		
+
 		draw_grid;
+		
+		draw_origin;
 		
 		-- NOTE: In a real project, the database that contains
 		-- all objects must be parsed here. One object after another
@@ -1639,7 +1663,7 @@ package body callbacks is
 		-- we have just a single object (a rectangle) do deal with.
 		
 		
-		set_line_width (context, 1.0);
+		set_line_width (context, 2.0);
 		set_source_rgb (context, 1.0, 0.0, 0.0);
 
 		
