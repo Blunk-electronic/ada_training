@@ -657,6 +657,8 @@ package body callbacks is
 		-- put_line ("horizontal moved " & image (clock));
 		null;
 		-- show_adjustments_h;
+
+		-- CS do not remove, might be required some day:
 		-- update_visible_area (canvas);		
 		refresh (canvas);
 		backup_scrollbar_settings;
@@ -669,6 +671,8 @@ package body callbacks is
 		-- put_line ("vertical moved " & image (clock));
 		null;
 		-- show_adjustments_v;
+
+		-- CS do not remove, might be required some day:
 		-- update_visible_area (canvas);
 		refresh (canvas);
 		backup_scrollbar_settings;
