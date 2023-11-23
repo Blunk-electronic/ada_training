@@ -281,8 +281,10 @@ package callbacks is
 	
 	
 	
-	
-	function cb_button_pressed (
+	-- This callback function is called each time the operator
+	-- clicks on the canvas.
+	-- It sets the focus on the canvas.
+	function cb_button_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
@@ -293,8 +295,10 @@ package callbacks is
 		event	: gdk_event_motion)
 		return boolean;
 
-	
-	function cb_key_pressed (
+
+	-- This callback function is called each time the
+	-- operator hits a key and if the canvas has the focus:
+	function cb_key_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean;

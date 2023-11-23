@@ -980,7 +980,7 @@ package body callbacks is
 		
 		-- Make the canvas responding to mouse button clicks:
 		canvas.add_events (gdk.event.button_press_mask);
-		canvas.on_button_press_event (cb_button_pressed'access);
+		canvas.on_button_press_event (cb_button_pressed_canvas'access);
 
 		-- Make the canvas responding to mouse movement:
 		canvas.add_events (gdk.event.pointer_motion_mask);
@@ -993,7 +993,7 @@ package body callbacks is
 		-- Make the canvas responding to the keyboard:
 		canvas.set_can_focus (true);
 		canvas.add_events (key_press_mask);
-		canvas.on_key_press_event (cb_key_pressed'access);
+		canvas.on_key_press_event (cb_key_pressed_canvas'access);
 
 	end set_up_canvas;
 
@@ -1141,13 +1141,13 @@ package body callbacks is
 
 	
 	
-	function cb_button_pressed (
+	function cb_button_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean
 	is
 		use glib;
-		event_handled : boolean := false;
+		event_handled : boolean := true;
 		point : constant type_point_canvas := (event.x, event.y);
 
 		mp : constant type_point_model := to_model (
@@ -1156,14 +1156,17 @@ package body callbacks is
 			real	=> true);
 	begin
 		-- Output the button id, x and y position:
-		put_line ("cb_button_pressed "
+		put_line ("cb_button_pressed_canvas "
 			& " button" & guint'image (event.button) & " "
 			& to_string (point));
 
 		put_line (to_string (mp));
+
+		-- Set the focus on the canvas:
+		canvas.grab_focus;
 		
 		return event_handled;
-	end cb_button_pressed;
+	end cb_button_pressed_canvas;
 
 
 
@@ -1200,7 +1203,7 @@ package body callbacks is
 
 
 	
-	function cb_key_pressed (
+	function cb_key_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean
@@ -1210,11 +1213,11 @@ package body callbacks is
 	begin
 		-- Output the the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
-		put_line ("cb_key_pressed "
+		put_line ("cb_key_pressed_canvas "
 			& " key " & gdk_key_type'image (event.keyval));
 
 		return event_handled;
-	end cb_key_pressed;
+	end cb_key_pressed_canvas;
 
 
 	procedure cb_canvas_realized (
