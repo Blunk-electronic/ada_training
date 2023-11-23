@@ -45,6 +45,27 @@ package body geometry is
 		return gdouble'min (x, y);
 	end get_grid_spacing;
 
+
+	function snap_to_grid (
+		point : in type_point_model)
+		return type_point_model
+	is
+		n : integer;
+		type type_float is new float; -- CS refinement required
+		f : type_float;
+		result : type_point_model;
+	begin
+		n := integer (point.x / grid.spacing.x);
+		f := type_float (n) * type_float (grid.spacing.x);
+		result.x := type_distance_model (f);
+
+		n := integer (point.y / grid.spacing.y);
+		f := type_float (n) * type_float (grid.spacing.y);
+		result.y := type_distance_model (f);
+		
+		return result;
+	end snap_to_grid;
+
 	
 
 	function to_string (

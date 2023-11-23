@@ -29,11 +29,13 @@ package geometry is
 		x, y : type_distance_model := 0.0;
 	end record;
 
+	
 	-- ORIGIN:
 	-- The origin is a small cross at model position (0;0).
 	origin				: constant type_point_model := (0.0, 0.0);
-	origin_size			: constant gdouble := 10.0;
+	origin_size			: constant gdouble := 10.0; -- the arm-length of the cross
 	origin_linewidth	: constant gdouble := 1.0;
+
 	
 	-- GRID:
 	-- The grid helps the operator to align or place objects:
@@ -77,6 +79,13 @@ package geometry is
 		grid : in type_grid)
 		return gdouble;
 
+
+	-- This function returns the grid point that is
+	-- closest to the given model point;
+	function snap_to_grid (
+		point : in type_point_model)
+		return type_point_model;
+	
 	
 	function to_string (
 		distance : in type_distance_model)

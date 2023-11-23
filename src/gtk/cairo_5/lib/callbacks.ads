@@ -278,12 +278,41 @@ package callbacks is
 	-- procedure update_visible_area (
 	-- 	canvas	: access gtk_widget_record'class);
 
+
+	-- CURSOR:
+	-- The cursor is a crosshair that can be moved by the
+	-- cursor keys (arrow keys) about the canvas:
+	type type_cursor is record
+		position	: type_point_model := origin;
+		linewidth	: gdouble := 1.0;
+		size		: gdouble := 20.0; -- the arm-length of the cross
+		-- CS other things like a rectangle around
+		-- the cross.
+		-- CS blink, color, ...
+	end record;
+
+	cursor : type_cursor;
+
 	
+	-- The directions into which the cursor can be moved
+	-- by means of the cursor keys (arrow keys):
+	type type_cursor_direction is (CURSOR_RIGHT, CURSOR_LEFT, CURSOR_UP, CURSOR_DOWN);
+
 	
+	-- This procedure moves the cursor to the given destination:
+	procedure move_cursor (
+		destination : type_point_model);
+
+
+	-- This procedure moves the cursor into the given direction:
+	procedure move_cursor (
+		direction : type_cursor_direction);
+
 	
 	-- This callback function is called each time the operator
 	-- clicks on the canvas.
-	-- It sets the focus on the canvas.
+	-- It sets the focus on the canvas and moves the cursor
+	-- to the place where the operator has clicked the canvas.
 	function cb_button_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)

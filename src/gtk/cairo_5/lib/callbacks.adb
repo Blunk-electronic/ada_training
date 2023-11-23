@@ -1148,22 +1148,38 @@ package body callbacks is
 	is
 		use glib;
 		event_handled : boolean := true;
-		point : constant type_point_canvas := (event.x, event.y);
 
+		-- This is the point in the canvas where the operator
+		-- has clicked:
+		cp : constant type_point_canvas := (event.x, event.y);
+
+		-- Convert the canvas point to the corresponding
+		-- real model point:
 		mp : constant type_point_model := to_model (
-			point 	=> point,
+			point 	=> cp,
 			scale	=> scale_factor,
 			real	=> true);
+		
 	begin
 		-- Output the button id, x and y position:
-		put_line ("cb_button_pressed_canvas "
-			& " button" & guint'image (event.button) & " "
-			& to_string (point));
 
+		put_line ("cb_button_pressed_canvas");
+		-- put_line ("cb_button_pressed_canvas "
+		-- 	& " button" & guint'image (event.button) & " "
+		-- 	& to_string (cp));
+
+		-- Output the model point in the terminal:
 		put_line (to_string (mp));
+
+		-- Move the cursor to the nearest grid point:
+		move_cursor (snap_to_grid (mp));
+
+		refresh (canvas);
 
 		-- Set the focus on the canvas:
 		canvas.grab_focus;
+
+		-- CS update display
 		
 		return event_handled;
 	end cb_button_pressed_canvas;
@@ -1202,20 +1218,91 @@ package body callbacks is
 
 
 
+	procedure move_cursor (
+		destination : type_point_model)
+	is
+	begin
+		cursor.position := destination;
+
+		-- CS update display
+		
+		-- Output the cursor position on the terminal:
+		put_line ("position " & to_string (cursor.position));
+	end move_cursor;
+
+	
+	procedure move_cursor (
+		direction : type_cursor_direction)
+	is begin
+		put_line ("move cursor " & type_cursor_direction'image (direction));
+		
+		case direction is
+			when CURSOR_RIGHT =>
+				cursor.position.x := cursor.position.x + grid.spacing.x;
+
+			when CURSOR_LEFT =>
+				cursor.position.x := cursor.position.x - grid.spacing.x;
+
+			when CURSOR_UP =>
+				cursor.position.y := cursor.position.y + grid.spacing.y;
+
+			when CURSOR_DOWN =>
+				cursor.position.y := cursor.position.y - grid.spacing.y;
+		end case;
+
+		refresh (canvas);
+		
+
+		-- Update the cursor position on the coordinates display:
+		gtk_entry (CC.position_x.get_child).set_text (to_string (cursor.position.x));
+		gtk_entry (CC.position_y.get_child).set_text (to_string (cursor.position.y));
+
+		-- Output the cursor position on the terminal:
+		put_line ("position " & to_string (cursor.position));
+	end move_cursor;
+	
 	
 	function cb_key_pressed_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean
 	is
-		use gdk.types;		
 		event_handled : boolean := true;
+
+		use gdk.types;		
+		use gdk.types.keysyms;
+		
+		key_ctrl	: gdk_modifier_type := event.state and control_mask;
+		key_shift	: gdk_modifier_type := event.state and shift_mask;
+		key			: gdk_key_type := event.keyval;
+
 	begin
 		-- Output the the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
 		put_line ("cb_key_pressed_canvas "
 			& " key " & gdk_key_type'image (event.keyval));
 
+		if key_ctrl = control_mask then 
+			null;
+		else
+			case key is
+				when GDK_Right =>
+					move_cursor (CURSOR_RIGHT);
+
+				when GDK_Left =>
+					move_cursor (CURSOR_LEFT);
+
+				when GDK_Up =>
+					move_cursor (CURSOR_UP);
+
+				when GDK_Down =>
+					move_cursor (CURSOR_DOWN);
+
+				when others =>
+					null;
+			end case;
+		end if;
+		
 		return event_handled;
 	end cb_key_pressed_canvas;
 
@@ -1414,7 +1501,7 @@ package body callbacks is
 		procedure draw_origin is
 			cp : type_point_canvas := to_canvas (origin, scale_factor, true);
 		begin
-			set_source_rgb (context, 0.5, 0.5, 0.5);
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 			set_line_width (context, origin_linewidth);
 
 			-- Draw the horizontal line from left to right:
@@ -1636,12 +1723,31 @@ package body callbacks is
 			end case;
 		end draw_grid;
 
+
+		-- This procedure draws the cursor at its current
+		-- position:
+		procedure draw_cursor is
+			cp : type_point_canvas := to_canvas (cursor.position, scale_factor, true);
+		begin
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+			set_line_width (context, cursor.linewidth);
+
+			-- Draw the horizontal line from left to right:
+			move_to (context, cp.x - cursor.size, cp.y);
+			line_to (context, cp.x + cursor.size, cp.y);
+
+			-- Draw the vertical line from top to bottom:
+			move_to (context, cp.x, cp.y - cursor.size);
+			line_to (context, cp.x, cp.y + cursor.size);
+			stroke (context);
+		end draw_cursor;
+		
 		
 		cp : type_point_canvas;
 		
 	begin -- cb_draw_objects
 		new_line;
-		put_line ("cb_draw " & image (clock));
+		put_line ("cb_draw_objects " & image (clock));
 
 		-- Update the global visible_area:
 		visible_area := get_visible_area (canvas);
@@ -1660,6 +1766,9 @@ package body callbacks is
 		end if;
 		
 		draw_origin;
+
+		draw_cursor;
+		
 		
 		-- NOTE: In a real project, the database that contains
 		-- all objects must be parsed here. One object after another
