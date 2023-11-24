@@ -214,9 +214,19 @@ package geometry is
 		return string;
 
 
-
-
+	-- Clips the given value by the given limit.
+	-- If the given value is less or equal the limit,
+	-- then value remains unchanged:
+	procedure clip_max (
+		value	: in out gdouble;
+		limit	: in gdouble);
 	
+	-- Clips the given value by the given limit.
+	-- If the given value is greater or equal the limit,
+	-- then value remains unchanged:
+	procedure clip_min (
+		value	: in out gdouble;
+		limit	: in gdouble);
 	
 
 	

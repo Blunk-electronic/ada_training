@@ -1027,12 +1027,11 @@ package body callbacks is
 				-- Compute the required scrollbar position:
 				v := scrollbar_h_adj.get_value + d;
 
-				-- If the required position is lower than
-				-- the allowed position, then apply the new
-				-- position to the scrollbar:
-				if v <= u then
-					scrollbar_h_adj.set_value (v);
-				end if;
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_max (v, u);
+				scrollbar_h_adj.set_value (v);
+
 				
 			when DIR_LEFT =>
 				-- Get the minimal allowed value for the
@@ -1042,12 +1041,10 @@ package body callbacks is
 				-- Compute the required scrollbar position:
 				v := scrollbar_h_adj.get_value - d;
 
-				-- If the required position is greater than
-				-- the allowed position, then apply the new
-				-- position to the scrollbar:
-				if v >= l then
-					scrollbar_h_adj.set_value (v);
-				end if;
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_min (v, l);
+				scrollbar_h_adj.set_value (v);
 
 				
 			when DIR_UP =>
@@ -1058,12 +1055,10 @@ package body callbacks is
 				-- Compute the required scrollbar position:
 				v := scrollbar_v_adj.get_value - d;
 
-				-- If the required position is greater than
-				-- the allowed position, then apply the new
-				-- position to the scrollbar:
-				if v >= l then
-					scrollbar_v_adj.set_value (v);
-				end if;
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_min (v, l);
+				scrollbar_v_adj.set_value (v);
 
 				
 			when DIR_DOWN =>
@@ -1074,12 +1069,11 @@ package body callbacks is
 				-- Compute the required scrollbar position:
 				v := scrollbar_v_adj.get_value + d;
 
-				-- If the required position is lower than
-				-- the allowed position, then apply the new
-				-- position to the scrollbar:
-				if v <= u then
-					scrollbar_v_adj.set_value (v);
-				end if;
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_max (v, u);
+				scrollbar_v_adj.set_value (v);
+
 				
 		end case;
 	end shift_canvas;

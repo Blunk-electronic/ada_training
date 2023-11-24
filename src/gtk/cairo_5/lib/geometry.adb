@@ -240,7 +240,26 @@ package body geometry is
 
 	
 
+	procedure clip_max (
+		value	: in out gdouble;
+		limit	: in gdouble)
+	is begin
+		if value > limit then
+			value := limit;
+		end if;
+	end clip_max;
 	
+	
+	procedure clip_min (
+		value	: in out gdouble;
+		limit	: in gdouble)
+	is begin
+		if value < limit then
+			value := limit;
+		end if;
+	end clip_min;
+
+
 
 	procedure compute_base_offset is
 		x, y : gdouble;
