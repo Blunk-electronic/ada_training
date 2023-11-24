@@ -51,6 +51,11 @@ package callbacks is
 	CC : type_box_coordinates;
 	
 
+	-- Updates the cursor coordinates display
+	-- by the current cursor position:
+	procedure update_cursor_coordinates;
+
+	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
 

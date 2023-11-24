@@ -13,6 +13,13 @@ with gtk.main;					use gtk.main;
 
 package body callbacks is
 
+	procedure update_cursor_coordinates is begin
+		gtk_entry (CC.position_x.get_child).set_text (to_string (cursor.position.x));
+		gtk_entry (CC.position_y.get_child).set_text (to_string (cursor.position.y));
+	end update_cursor_coordinates;
+
+
+	
 -- MAIN WINDOW:
 	
 	procedure cb_terminate (
@@ -812,6 +819,7 @@ package body callbacks is
 			vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
 			-- vscrollbar_policy => gtk.enums.POLICY_NEVER);
 
+		update_cursor_coordinates;
 	end set_up_swin_and_scrollbars;
 
 
@@ -1179,7 +1187,6 @@ package body callbacks is
 		-- Set the focus on the canvas:
 		canvas.grab_focus;
 
-		-- CS update display
 		
 		return event_handled;
 	end cb_button_pressed_canvas;
@@ -1223,8 +1230,7 @@ package body callbacks is
 	is
 	begin
 		cursor.position := destination;
-
-		-- CS update display
+		update_cursor_coordinates;
 		
 		-- Output the cursor position on the terminal:
 		put_line ("position " & to_string (cursor.position));
@@ -1252,10 +1258,7 @@ package body callbacks is
 
 		refresh (canvas);
 		
-
-		-- Update the cursor position on the coordinates display:
-		gtk_entry (CC.position_x.get_child).set_text (to_string (cursor.position.x));
-		gtk_entry (CC.position_y.get_child).set_text (to_string (cursor.position.y));
+		update_cursor_coordinates;
 
 		-- Output the cursor position on the terminal:
 		put_line ("position " & to_string (cursor.position));
