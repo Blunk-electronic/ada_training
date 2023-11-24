@@ -142,11 +142,23 @@ package geometry is
 	-- Returns true if the given point lies inside the given
 	-- area or on its border. 
 	function in_area (
-		point	: type_point_model;
-		area	: type_area)
+		point	: in type_point_model;
+		area	: in type_area)
 		return boolean;
 
-	
+	-- type type_relative_location is (
+	-- 	LOC_RIGHT_OF,
+	-- 	LOC_LEFT_OF,
+	-- 	LOC_ABOVE,
+	-- 	LOC_BELOW);
+ -- 
+	-- -- Returns the relative location
+	-- function get_relative_location (
+	-- 	point	: in type_point_model;
+	-- 	area	: in type_area)
+	-- 	return type_relative_location;
+		
+		
 	-- Returns true if the given point lies inside the height 
 	-- of the given area or on its lower or upper border. 
 	function in_height (
