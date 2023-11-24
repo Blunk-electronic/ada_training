@@ -240,6 +240,18 @@ package callbacks is
 	procedure set_up_canvas;
 		
 
+	-- The directions into which the an object can be moved
+	-- by means of the cursor keys (arrow keys):
+	type type_direction is (DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN);
+
+	
+	-- Shifts the canvas into the given direction
+	-- by the given distance:
+	procedure shift_canvas (
+		direction	: type_direction;
+		distance	: type_distance_model);
+	
+		
 -- POINT QUERY AND TEST:
 
 	-- CS no need anymore ?
@@ -298,10 +310,7 @@ package callbacks is
 
 	cursor : type_cursor;
 
-	
-	-- The directions into which the cursor can be moved
-	-- by means of the cursor keys (arrow keys):
-	type type_cursor_direction is (CURSOR_RIGHT, CURSOR_LEFT, CURSOR_UP, CURSOR_DOWN);
+
 
 	
 	-- This procedure moves the cursor to the given destination:
@@ -311,7 +320,7 @@ package callbacks is
 
 	-- This procedure moves the cursor into the given direction:
 	procedure move_cursor (
-		direction : type_cursor_direction);
+		direction : type_direction);
 
 	
 	-- This callback function is called each time the operator

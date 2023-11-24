@@ -1006,6 +1006,85 @@ package body callbacks is
 	end set_up_canvas;
 
 
+	procedure shift_canvas (
+		direction	: type_direction;
+		distance	: type_distance_model)
+	is
+		-- Convert the given model distance to 
+		-- a canvas distance:
+		d : constant gdouble := gdouble (distance) * gdouble (scale_factor);
+
+		-- Scratch values for upper limit, lower limit and value
+		-- of scrollbars:
+		u, l, v : gdouble;
+	begin
+		case direction is
+			when DIR_RIGHT =>
+				-- Get the maximal allowed value for the
+				-- horizontal scrollbar:
+				u := scrollbar_h_adj.get_upper;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_h_adj.get_value + d;
+
+				-- If the required position is lower than
+				-- the allowed position, then apply the new
+				-- position to the scrollbar:
+				if v <= u then
+					scrollbar_h_adj.set_value (v);
+				end if;
+				
+			when DIR_LEFT =>
+				-- Get the minimal allowed value for the
+				-- horizontal scrollbar:
+				l := scrollbar_h_adj.get_lower;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_h_adj.get_value - d;
+
+				-- If the required position is greater than
+				-- the allowed position, then apply the new
+				-- position to the scrollbar:
+				if v >= l then
+					scrollbar_h_adj.set_value (v);
+				end if;
+
+				
+			when DIR_UP =>
+				-- Get the minimal allowed value for the
+				-- vertical scrollbar:
+				l := scrollbar_v_adj.get_lower;
+				
+				-- Compute the required scrollbar position:
+				v := scrollbar_v_adj.get_value - d;
+
+				-- If the required position is greater than
+				-- the allowed position, then apply the new
+				-- position to the scrollbar:
+				if v >= l then
+					scrollbar_v_adj.set_value (v);
+				end if;
+
+				
+			when DIR_DOWN =>
+				-- Get the maximal allowed value for the
+				-- vertical scrollbar:
+				u := scrollbar_v_adj.get_upper;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_v_adj.get_value + d;
+
+				-- If the required position is lower than
+				-- the allowed position, then apply the new
+				-- position to the scrollbar:
+				if v <= u then
+					scrollbar_v_adj.set_value (v);
+				end if;
+				
+		end case;
+	end shift_canvas;
+
+	
 
 -- 	function model_point_visible (
 -- 		point 		: in type_point_model)
@@ -1238,30 +1317,59 @@ package body callbacks is
 
 	
 	procedure move_cursor (
-		direction : type_cursor_direction)
+		direction : type_direction)
 	is begin
-		put_line ("move cursor " & type_cursor_direction'image (direction));
+		-- Move the cursor by the grid spacing into the given direction:
+		put_line ("move cursor " & type_direction'image (direction));
 		
 		case direction is
-			when CURSOR_RIGHT =>
+			when DIR_RIGHT =>
 				cursor.position.x := cursor.position.x + grid.spacing.x;
 
-			when CURSOR_LEFT =>
+			when DIR_LEFT =>
 				cursor.position.x := cursor.position.x - grid.spacing.x;
 
-			when CURSOR_UP =>
+			when DIR_UP =>
 				cursor.position.y := cursor.position.y + grid.spacing.y;
 
-			when CURSOR_DOWN =>
+			when DIR_DOWN =>
 				cursor.position.y := cursor.position.y - grid.spacing.y;
 		end case;
 
+
+		-- If the cursor is outside the visible area, then the
+		-- canvas must be shifted with the cursor:
+		if not in_area (cursor.position, visible_area) then
+			put_line ("cursor not in visible area");
+
+			case direction is
+				when DIR_RIGHT =>
+					-- shift canvas right:
+					shift_canvas (direction, grid.spacing.x);
+					
+				when DIR_LEFT =>
+					-- shift canvas left:
+					shift_canvas (direction, grid.spacing.x);
+					
+				when DIR_UP =>
+					-- shift canvas up:
+					shift_canvas (direction, grid.spacing.y);
+
+				when DIR_DOWN =>
+					-- shift canvas down:
+					shift_canvas (direction, grid.spacing.y);
+
+			end case;
+
+		end if;
+			
 		refresh (canvas);
+		
 		
 		update_cursor_coordinates;
 
 		-- Output the cursor position on the terminal:
-		put_line ("position " & to_string (cursor.position));
+		put_line ("cursor at " & to_string (cursor.position));
 	end move_cursor;
 	
 	
@@ -1290,16 +1398,16 @@ package body callbacks is
 		else
 			case key is
 				when GDK_Right =>
-					move_cursor (CURSOR_RIGHT);
+					move_cursor (DIR_RIGHT);
 
 				when GDK_Left =>
-					move_cursor (CURSOR_LEFT);
+					move_cursor (DIR_LEFT);
 
 				when GDK_Up =>
-					move_cursor (CURSOR_UP);
+					move_cursor (DIR_UP);
 
 				when GDK_Down =>
-					move_cursor (CURSOR_DOWN);
+					move_cursor (DIR_DOWN);
 
 				when others =>
 					null;
