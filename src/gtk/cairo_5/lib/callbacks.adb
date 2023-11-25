@@ -243,6 +243,12 @@ package body callbacks is
 	procedure set_up_coordinates_display is
 		use gtk.enums;
 	begin
+		-- CS To disable focus use
+		-- procedure Set_Focus_On_Click
+		--    (Widget         : not null access Gtk_Widget_Record;
+		--     Focus_On_Click : Boolean);
+
+		
 		gtk_new_hbox (h_box_1);
 		h_box_1.set_spacing (10);
 		main_window.add (h_box_1);
@@ -794,6 +800,7 @@ package body callbacks is
 		scrollbar_h_adj := swin.get_hadjustment;
 		scrollbar_v_adj := swin.get_vadjustment;
 
+		
 		-- connect signals:
 		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
 
@@ -819,6 +826,15 @@ package body callbacks is
 			vscrollbar_policy => gtk.enums.POLICY_AUTOMATIC);
 			-- vscrollbar_policy => gtk.enums.POLICY_NEVER);
 
+
+		-- CS: Attempt to disable auto-scrolling of scrollbars
+		-- when the canvas get the focus:
+		-- set_focus_hadjustment (
+		-- 	container	=> swin,
+		-- 	adjustment	=> scrollbar_h_adj);
+
+		scrollbar_h.set_can_focus (false);
+		
 		update_cursor_coordinates;
 	end set_up_swin_and_scrollbars;
 
@@ -1073,9 +1089,10 @@ package body callbacks is
 				-- then apply it to the scrollbar:
 				clip_max (v, u);
 				scrollbar_v_adj.set_value (v);
-
 				
 		end case;
+
+		backup_scrollbar_settings;
 	end shift_canvas;
 
 	
@@ -1240,11 +1257,18 @@ package body callbacks is
 			point 	=> cp,
 			scale	=> scale_factor,
 			real	=> true);
-		
-	begin
-		-- Output the button id, x and y position:
 
+		-- CS: For some reason the value of the scrollbars
+		-- must be saved and restored if the canvas grabs the focus:
+		h, v : gdouble;
+		-- A solution might be:
+		-- <https://stackoverflow.com/questions/26693042/gtkscrolledwindow-disable-scroll-to-focused-child>
+		-- or
+		-- <https://discourse.gnome.org/t/disable-auto-scrolling-in-gtkscrolledwindow-when-grab-focus-in-children/13058>
+	begin
 		put_line ("cb_button_pressed_canvas");
+
+		-- Output the button id, x and y position:
 		-- put_line ("cb_button_pressed_canvas "
 		-- 	& " button" & guint'image (event.button) & " "
 		-- 	& to_string (cp));
@@ -1255,11 +1279,22 @@ package body callbacks is
 		-- Move the cursor to the nearest grid point:
 		move_cursor (snap_to_grid (mp));
 
-		refresh (canvas);
 
-		-- Set the focus on the canvas:
+		-- Set the focus on the canvas,
+		-- But first save the scrollbar values:
+		h := scrollbar_h_adj.get_value;
+		v := scrollbar_v_adj.get_value;
+		-- CS: backup_scrollbar_settings does not work for some reason.
+		-- put_line (gdouble'image (v));
+		
 		canvas.grab_focus;
 
+		scrollbar_h_adj.set_value (h);
+		scrollbar_v_adj.set_value (v);
+		-- CS: restore_scrollbar_settings does not work for some reason.
+		-- put_line (gdouble'image (v));
+		
+		refresh (canvas);
 		
 		return event_handled;
 	end cb_button_pressed_canvas;
@@ -1289,7 +1324,7 @@ package body callbacks is
 			-- to_string (cp)
 			-- & " " & to_string (mp)
 
-		-- Update the pointer position on the coordinates display:
+		-- Update the coordinates display with the pointer position:
 		gtk_entry (PC.position_x.get_child).set_text (to_string (mp.x));
 		gtk_entry (PC.position_y.get_child).set_text (to_string (mp.y));
 		
@@ -1369,8 +1404,7 @@ package body callbacks is
 
 		end if;
 			
-		refresh (canvas);
-		
+		refresh (canvas);		
 		
 		update_cursor_coordinates;
 
@@ -1507,7 +1541,7 @@ package body callbacks is
 			compute_translate_offset;
 			
 			update_scrollbar_limits (BC, scale_factor);
-			backup_scrollbar_settings;
+			-- backup_scrollbar_settings;
 
 			-- schedule a redraw:
 			refresh (canvas);
@@ -1594,6 +1628,7 @@ package body callbacks is
 			end case;
 		end if;
 
+		backup_scrollbar_settings;
 		
 		-- update_visible_area (canvas);
 		
