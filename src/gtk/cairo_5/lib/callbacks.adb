@@ -262,6 +262,7 @@ package body callbacks is
 
 		-- CS: Set the minimum size of the main window ?
 		-- CS show main window size
+		-- main_window.set_size_request (1000, 500);
 		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
@@ -272,6 +273,7 @@ package body callbacks is
 		main_window.on_window_state_event (cb_main_window_state_change'access);
 		main_window.on_realize (cb_main_window_realize'access);
 		main_window.on_activate_default (cb_main_window_activate'access);
+		
 		-- main_window.on_activate_focus (cb_focus_win'access);
 		-- main_window.set_has_window (false);
 		-- main_window.set_redraw_on_allocate (false);
@@ -883,7 +885,7 @@ package body callbacks is
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 
-		-- Set the minimum size of the main window basing on the 
+		-- Set the minimum size of the scrolled window basing on the 
 		-- bounding-box:
 		swin.set_size_request (
 			gint (bounding_box.width),
@@ -940,7 +942,8 @@ package body callbacks is
 		-- 	container	=> swin,
 		-- 	adjustment	=> scrollbar_h_adj);
 
-		scrollbar_h.set_can_focus (false);
+		-- scrollbar_h.set_can_focus (false);
+		-- swin.grab_focus;
 		
 		update_cursor_coordinates;
 	end set_up_swin_and_scrollbars;
@@ -1126,6 +1129,7 @@ package body callbacks is
 		canvas.add_events (key_press_mask);
 		canvas.on_key_press_event (cb_key_pressed_canvas'access);
 
+		-- canvas.grab_focus;
 	end set_up_canvas;
 
 
