@@ -1928,8 +1928,9 @@ package body callbacks is
 			-- These are the start and stop positions for the
 			-- vertical lines:
 			v1, v2, v3, v4 : gdouble;
-			
-			l : gdouble := cursor.length_1 + cursor.length_2;
+
+			-- This is the total length of an arm:
+			l : constant gdouble := cursor.length_1 + cursor.length_2;
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 
