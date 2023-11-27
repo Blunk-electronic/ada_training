@@ -84,6 +84,7 @@ begin
 
 	set_up_main_window;
 	set_up_coordinates_display;
+	set_up_distances_display;
 	set_up_swin_and_scrollbars;
 
 	set_up_canvas;

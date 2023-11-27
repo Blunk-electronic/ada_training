@@ -73,7 +73,9 @@ package callbacks is
 	separator_1 : gtk_separator;
 	-- separator_2 : gtk_separator;
 
-	
+
+	-- This composite type is intended to
+	-- display coordinates of pointer/mouse or cursor:
 	type type_box_coordinates is record
 		main_box				: gtk_vbox;
 		title					: gtk_label;
@@ -89,6 +91,31 @@ package callbacks is
 	CC : type_box_coordinates;
 	
 
+	-- This composite type is intended to
+	-- display distances between pointer/mouse and cursor:
+	type type_box_distances is record
+		main_box				: gtk_vbox;
+		title					: gtk_label;
+		
+		box_x, box_y			: gtk_hbox;
+		label_x, label_y 		: gtk_label;
+		dx, dy					: gtk_combo_box_text;
+
+		box_total				: gtk_hbox;
+		label_total				: gtk_label;
+		abs_distance			: gtk_combo_box_text;
+		
+		box_angle				: gtk_hbox;
+		label_angle				: gtk_label;
+		angle					: gtk_combo_box_text;
+	end record;
+
+	-- The box that displays the distances between pointer/mouse
+	-- and cursor:
+	DI : type_box_distances;
+
+	
+	
 	-- Updates the cursor coordinates display
 	-- by the current cursor position:
 	procedure update_cursor_coordinates;
@@ -126,6 +153,9 @@ package callbacks is
 	procedure set_up_main_window;
 
 	procedure set_up_coordinates_display;
+
+	procedure set_up_distances_display;
+	
 	
 	
 -- SCROLLED WINDOW:

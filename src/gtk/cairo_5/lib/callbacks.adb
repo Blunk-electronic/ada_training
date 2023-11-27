@@ -369,6 +369,75 @@ package body callbacks is
 	end set_up_coordinates_display;
 	
 
+	procedure set_up_distances_display is
+		use gtk.enums;
+	begin
+		-- CS To disable focus use
+		-- procedure Set_Focus_On_Click
+		--    (Widget         : not null access Gtk_Widget_Record;
+		--     Focus_On_Click : Boolean);
+
+		-- We add the widgets to the already existing v_box_1.
+		
+		gtk_new_vbox (DI.main_box);
+		v_box_1.pack_start (DI.main_box, expand => false);
+
+		gtk_new (DI.title);
+		DI.title.set_text ("DISTANCE");
+		DI.main_box.pack_start (DI.title, expand => false);
+
+		-- x-axis:
+		gtk_new_hbox (DI.box_x);
+		DI.box_x.set_spacing (5);
+		DI.main_box.pack_start (DI.box_x, expand => false);
+		
+		gtk_new (DI.label_x);
+		DI.label_x.set_text ("dx");
+		DI.box_x.pack_start (DI.label_x, expand => false);
+		
+		gtk_new_with_entry (DI.dx);
+		DI.box_x.pack_start (DI.dx, expand => false);
+
+		-- y-axis:
+		gtk_new_hbox (DI.box_y);
+		DI.box_y.set_spacing (5);
+		DI.main_box.pack_start (DI.box_y, expand => false);
+		
+		gtk_new (DI.label_y);
+		DI.label_y.set_text ("dy");
+		DI.box_y.pack_start (DI.label_y, expand => false);
+		
+		gtk_new_with_entry (DI.dy);
+		DI.box_y.pack_start (DI.dy, expand => false);
+
+		-- absolute distance:
+		gtk_new_hbox (DI.box_total);
+		DI.box_total.set_spacing (5);
+		DI.main_box.pack_start (DI.box_total, expand => false);
+		
+		gtk_new (DI.label_total);
+		DI.label_total.set_text ("abs");
+		DI.box_total.pack_start (DI.label_total, expand => false);
+		
+		gtk_new_with_entry (DI.abs_distance);
+		DI.box_total.pack_start (DI.abs_distance, expand => false);
+		
+		-- angle
+		gtk_new_hbox (DI.box_angle);
+		DI.box_angle.set_spacing (5);
+		DI.main_box.pack_start (DI.box_angle, expand => false);
+		
+		gtk_new (DI.label_angle);
+		DI.label_angle.set_text ("angle");
+		DI.box_angle.pack_start (DI.label_angle, expand => false);
+		
+		gtk_new_with_entry (DI.angle);
+		DI.box_angle.pack_start (DI.angle, expand => false);
+		
+	end set_up_distances_display;
+
+
+	
 	procedure cb_scrolled_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
@@ -1997,7 +2066,7 @@ package body callbacks is
 		cp : type_point_canvas;
 		
 	begin -- cb_draw_objects
-		new_line;
+		-- new_line;
 		put_line ("cb_draw_objects " & image (clock));
 
 		-- Update the global visible_area:
