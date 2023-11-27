@@ -56,7 +56,30 @@ package body callbacks is
 		gtk_entry (CC.position_y.get_child).set_text (to_string (cursor.position.y));
 	end update_cursor_coordinates;
 
+	
+	procedure update_distances_display is 
+		px, py : gint; -- the pointer position
+		cp : type_point_canvas;
+		mp : type_point_model;
 
+		dx, dy : type_distance_model;
+	begin
+		-- Get the mouse position:
+		canvas.get_pointer (px, py);
+
+		cp := (gdouble (px), gdouble (py));
+		mp := to_model (cp, scale_factor, true);
+
+		dx := mp.x - cursor.position.x;
+		dy := mp.y - cursor.position.y;
+
+
+		gtk_entry (DI.dx.get_child).set_text (to_string (dx));
+		gtk_entry (DI.dy.get_child).set_text (to_string (dy));
+
+	end update_distances_display;
+
+	
 	
 -- MAIN WINDOW:
 	
@@ -1452,7 +1475,8 @@ package body callbacks is
 		-- Update the coordinates display with the pointer position:
 		gtk_entry (PC.position_x.get_child).set_text (to_string (mp.x));
 		gtk_entry (PC.position_y.get_child).set_text (to_string (mp.y));
-		
+
+		update_distances_display;
 		return event_handled;
 	end cb_mouse_moved;
 
@@ -1464,6 +1488,7 @@ package body callbacks is
 	begin
 		cursor.position := destination;
 		update_cursor_coordinates;
+		update_distances_display;
 		
 		-- Output the cursor position on the terminal:
 		put_line ("position " & to_string (cursor.position));
@@ -1532,6 +1557,7 @@ package body callbacks is
 		refresh (canvas);		
 		
 		update_cursor_coordinates;
+		update_distances_display;
 
 		-- Output the cursor position on the terminal:
 		put_line ("cursor at " & to_string (cursor.position));

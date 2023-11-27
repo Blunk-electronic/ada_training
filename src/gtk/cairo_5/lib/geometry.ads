@@ -60,12 +60,23 @@ package geometry is
 	
 
 -- MODEL:
-	
-	type type_distance_model is delta 0.01 digits 8 range -100_000.00 .. 100_000.00;
+
+	-- The model coordinates system uses so called
+	-- decimal fixed point numbers for distances and positions:
+	type type_distance_model is delta 0.01 digits 8 
+		range -100_000.00 .. 100_000.00;
 	
 	type type_point_model is record
 		x, y : type_distance_model := 0.0;
 	end record;
+
+
+	-- The model coordinates system uses so called
+	-- decimal fixed point numbers for angles and rotations:
+	rotation_smallest : constant := 0.01;
+	type type_rotation_model is delta rotation_smallest digits 5 
+		range -360.0 + rotation_smallest .. 360.0 - rotation_smallest;
+		
 
 	
 	-- ORIGIN:

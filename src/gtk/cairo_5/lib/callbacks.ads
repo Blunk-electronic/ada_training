@@ -120,6 +120,9 @@ package callbacks is
 	-- by the current cursor position:
 	procedure update_cursor_coordinates;
 
+	-- Updates the distances display:
+	procedure update_distances_display;
+	
 	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);

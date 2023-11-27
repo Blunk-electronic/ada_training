@@ -103,7 +103,7 @@ begin
 	put_line ("show all widgets");
 	main_window.show_all;
 
-
+	
 	apply_initial_scrollbar_settings;
 
 	put_line ("start gtk main loop");
