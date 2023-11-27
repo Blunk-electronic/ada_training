@@ -1920,17 +1920,59 @@ package body callbacks is
 		-- area or not:
 		procedure draw_cursor is
 			cp : type_point_canvas := to_canvas (cursor.position, scale_factor, true);
+
+			-- These are the start and stop positions for the
+			-- horizontal lines:
+			h1, h2, h3, h4 : gdouble;
+
+			-- These are the start and stop positions for the
+			-- vertical lines:
+			v1, v2, v3, v4 : gdouble;
+			
+			l : gdouble := cursor.length_1 + cursor.length_2;
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-			set_line_width (context, cursor.linewidth);
+
+			-- Compute the start and stop positions:
+			h1 := cp.x - l;
+			h2 := cp.x - cursor.length_1;
+			h3 := cp.x + cursor.length_1;
+			h4 := cp.x + l;
+			
+			v1 := cp.y - l;
+			v2 := cp.y - cursor.length_1;
+			v3 := cp.y + cursor.length_1;
+			v4 := cp.y + l;
 
 			-- Draw the horizontal line from left to right:
-			move_to (context, cp.x - cursor.size, cp.y);
-			line_to (context, cp.x + cursor.size, cp.y);
-
+			set_line_width (context, cursor.linewidth_2);
+			move_to (context, h1, cp.y);
+			line_to (context, h2, cp.y);
+			stroke (context);
+			
+			set_line_width (context, cursor.linewidth_1);
+			move_to (context, h2, cp.y);
+			line_to (context, h3, cp.y);
+			stroke (context);
+			
+			set_line_width (context, cursor.linewidth_2);
+			move_to (context, h3, cp.y);
+			line_to (context, h4, cp.y);
+			stroke (context);
+			
 			-- Draw the vertical line from top to bottom:
-			move_to (context, cp.x, cp.y - cursor.size);
-			line_to (context, cp.x, cp.y + cursor.size);
+			move_to (context, cp.x, v1);
+			line_to (context, cp.x, v2);
+			stroke (context);
+
+			set_line_width (context, cursor.linewidth_1);
+			move_to (context, cp.x, v2);
+			line_to (context, cp.x, v3);
+			stroke (context);
+
+			set_line_width (context, cursor.linewidth_2);
+			move_to (context, cp.x, v3);
+			line_to (context, cp.x, v4);
 			stroke (context);
 		end draw_cursor;
 		

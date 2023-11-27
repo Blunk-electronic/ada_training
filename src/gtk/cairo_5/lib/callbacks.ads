@@ -339,8 +339,10 @@ package callbacks is
 	-- cursor keys (arrow keys) about the canvas:
 	type type_cursor is record
 		position	: type_point_model := origin;
-		linewidth	: gdouble := 1.0;
-		size		: gdouble := 20.0; -- the arm-length of the cross
+		linewidth_1	: gdouble := 1.0;
+		linewidth_2	: gdouble := 4.0;
+		length_1	: gdouble := 20.0;
+		length_2	: gdouble := 20.0; -- the arm-length of the cross
 		-- CS other things like a rectangle around
 		-- the cross.
 		-- CS blink, color, ...
