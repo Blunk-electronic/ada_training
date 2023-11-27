@@ -1915,7 +1915,9 @@ package body callbacks is
 
 
 		-- This procedure draws the cursor at its current
-		-- position:
+		-- position. To keep things simple, the cursor is
+		-- drawn always, regardless whether it is in the visible
+		-- area or not:
 		procedure draw_cursor is
 			cp : type_point_canvas := to_canvas (cursor.position, scale_factor, true);
 		begin
