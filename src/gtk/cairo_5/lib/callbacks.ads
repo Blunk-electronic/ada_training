@@ -342,9 +342,8 @@ package callbacks is
 		linewidth_1	: gdouble := 1.0;
 		linewidth_2	: gdouble := 4.0;
 		length_1	: gdouble := 20.0;
-		length_2	: gdouble := 20.0; -- the arm-length of the cross
-		-- CS other things like a rectangle around
-		-- the cross.
+		length_2	: gdouble := 20.0;
+		radius		: gdouble := 25.0;
 		-- CS blink, color, ...
 	end record;
 

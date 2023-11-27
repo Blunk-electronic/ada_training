@@ -1945,35 +1945,51 @@ package body callbacks is
 			v4 := cp.y + l;
 
 			-- Draw the horizontal line from left to right:
+			-- thick
 			set_line_width (context, cursor.linewidth_2);
 			move_to (context, h1, cp.y);
 			line_to (context, h2, cp.y);
 			stroke (context);
-			
+
+			-- thin
 			set_line_width (context, cursor.linewidth_1);
 			move_to (context, h2, cp.y);
 			line_to (context, h3, cp.y);
 			stroke (context);
-			
+
+			-- thick
 			set_line_width (context, cursor.linewidth_2);
 			move_to (context, h3, cp.y);
 			line_to (context, h4, cp.y);
 			stroke (context);
 			
 			-- Draw the vertical line from top to bottom:
+			-- thick
 			move_to (context, cp.x, v1);
 			line_to (context, cp.x, v2);
 			stroke (context);
 
+			-- thin
 			set_line_width (context, cursor.linewidth_1);
 			move_to (context, cp.x, v2);
 			line_to (context, cp.x, v3);
 			stroke (context);
 
+			-- thick
 			set_line_width (context, cursor.linewidth_2);
 			move_to (context, cp.x, v3);
 			line_to (context, cp.x, v4);
 			stroke (context);
+
+			-- arc
+			set_line_width (context, cursor.linewidth_1);
+			arc (context, cp.x, cp.y, 
+				radius => cursor.radius, angle1 => 0.0, angle2 => 6.3);
+			stroke (context);
+
+			-- CS: To improve performance on drawing, it might help
+			-- to draw all objects which have a thin line first, then
+			-- all object with a thick line.
 		end draw_cursor;
 		
 		
