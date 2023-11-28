@@ -42,6 +42,8 @@ begin
 	-- (see below) can read the text that is shown in the text_view.
 	gtk_new (callbacks_text_view.my_text_view);
 
+	-- callbacks_text_view.my_text_view.set_editable (false);
+	
 	-- Put the text view in the box:
 	pack_start (box, callbacks_text_view.my_text_view);
 
