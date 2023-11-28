@@ -52,8 +52,13 @@ with gtk.main;					use gtk.main;
 package body callbacks is
 
 	procedure update_cursor_coordinates is begin
-		gtk_entry (CC.position_x.get_child).set_text (to_string (cursor.position.x));
-		gtk_entry (CC.position_y.get_child).set_text (to_string (cursor.position.y));
+		-- x-axis:
+		CC.position_x_buf.set_text (to_string (cursor.position.x));
+		CC.position_x.set_buffer (CC.position_x_buf);
+
+		-- y-axis:
+		CC.position_y_buf.set_text (to_string (cursor.position.y));
+		CC.position_y.set_buffer (CC.position_y_buf);
 	end update_cursor_coordinates;
 
 	
@@ -325,6 +330,7 @@ package body callbacks is
 	
 	procedure set_up_coordinates_display is
 		use gtk.enums;
+		margin : gint := 30;
 	begin
 		-- CS To disable focus use
 		-- procedure Set_Focus_On_Click
@@ -363,7 +369,13 @@ package body callbacks is
 		PC.label_x.set_text ("X");
 		PC.box_x.pack_start (PC.label_x, expand => false);
 		
-		gtk_new_with_entry (PC.position_x);
+		gtk_new (PC.position_x);
+		PC.position_x.set_justification (JUSTIFY_RIGHT);
+		-- PC.position_x.set_justification (JUSTIFY_LEFT);
+		PC.position_x.set_left_margin (margin);
+		PC.position_x.set_editable (false);
+		PC.position_x.set_cursor_visible (false); 
+		gtk_new (PC.position_x_buf);
 		PC.box_x.pack_start (PC.position_x, expand => false);
 
 		-- y-axis:
@@ -375,7 +387,12 @@ package body callbacks is
 		PC.label_y.set_text ("Y");
 		PC.box_y.pack_start (PC.label_y, expand => false);
 		
-		gtk_new_with_entry (PC.position_y);
+		gtk_new (PC.position_y);
+		PC.position_y.set_justification (JUSTIFY_RIGHT);
+		PC.position_y.set_left_margin (margin);
+		PC.position_y.set_editable (false);
+		PC.position_y.set_cursor_visible (false);
+		gtk_new (PC.position_y_buf);
 		PC.box_y.pack_start (PC.position_y, expand => false);
 
 
@@ -396,7 +413,12 @@ package body callbacks is
 		CC.label_x.set_text ("X");
 		CC.box_x.pack_start (CC.label_x, expand => false);
 		
-		gtk_new_with_entry (CC.position_x);
+		gtk_new (CC.position_x);
+		CC.position_x.set_justification (JUSTIFY_RIGHT);
+		CC.position_x.set_left_margin (margin);
+		CC.position_x.set_editable (false);
+		CC.position_x.set_cursor_visible (false);
+		gtk_new (CC.position_x_buf);
 		CC.box_x.pack_start (CC.position_x, expand => false);
 
 		-- y-axis:
@@ -408,7 +430,12 @@ package body callbacks is
 		CC.label_y.set_text ("Y");
 		CC.box_y.pack_start (CC.label_y, expand => false);
 		
-		gtk_new_with_entry (CC.position_y);
+		gtk_new (CC.position_y);
+		CC.position_y.set_justification (JUSTIFY_RIGHT);
+		CC.position_y.set_left_margin (margin);
+		CC.position_y.set_editable (false);
+		CC.position_y.set_cursor_visible (false);
+		gtk_new (CC.position_y_buf);
 		CC.box_y.pack_start (CC.position_y, expand => false);
 		
 	end set_up_coordinates_display;
@@ -1493,8 +1520,13 @@ package body callbacks is
 			-- & " " & to_string (mp)
 
 		-- Update the coordinates display with the pointer position:
-		gtk_entry (PC.position_x.get_child).set_text (to_string (mp.x));
-		gtk_entry (PC.position_y.get_child).set_text (to_string (mp.y));
+		-- x-axis:
+		PC.position_x_buf.set_text (to_string (mp.x));
+		PC.position_x.set_buffer (PC.position_x_buf);
+
+		-- y-axis:
+		PC.position_y_buf.set_text (to_string (mp.y));
+		PC.position_y.set_buffer (PC.position_y_buf);
 
 		update_distances_display;
 		return event_handled;

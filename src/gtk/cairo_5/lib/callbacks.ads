@@ -41,6 +41,8 @@ with gdk.event;					use gdk.event;
 with gtk.box;					use gtk.box;
 with gtk.separator;				use gtk.separator;
 with gtk.combo_box_text;		use gtk.combo_box_text;
+with gtk.text_view;				use gtk.text_view;
+with gtk.text_buffer;			use gtk.text_buffer;
 with gtk.enums;
 with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
@@ -81,7 +83,8 @@ package callbacks is
 		title					: gtk_label;
 		box_x, box_y			: gtk_hbox;
 		label_x, label_y 		: gtk_label;
-		position_x, position_y	: gtk_combo_box_text;
+		position_x_buf, position_y_buf	: gtk_text_buffer;
+		position_x, position_y 			: gtk_text_view;
 	end record;
 
 	-- The box for the pointer coordinates:
