@@ -38,6 +38,9 @@
 
 with glib;						use glib;
 
+with ada.numerics;
+with ada.numerics.generic_elementary_functions;
+
 package geometry is
 
 
@@ -76,7 +79,12 @@ package geometry is
 	rotation_smallest : constant := 0.01;
 	type type_rotation_model is delta rotation_smallest digits 5 
 		range -360.0 + rotation_smallest .. 360.0 - rotation_smallest;
+
 		
+	-- Converts the given rotation/angle to a string:
+	function to_string (
+		rotation : in type_rotation_model)
+		return string;
 
 	
 	-- ORIGIN:
@@ -246,6 +254,34 @@ package geometry is
 	-- Detects the smallest and greatest x and y values used by the model.
 	-- Sets the global variable bounding_box:
 	procedure compute_bounding_box;
+
+
+	
+-- INTERNAL FLOAT TYPE:
+
+	-- This float type is used for internal computations only:
+	type type_float is new float; -- CS refinement required
+
+
+	
+	package pac_float_numbers_functions is new 
+		ada.numerics.generic_elementary_functions (type_float);
+	
+	
+	-- Returns the absolute distance between the given
+	-- model points. Uses internally a float type:
+	function get_distance (
+		p1, p2 : in type_point_model)
+		return type_distance_model;
+
+	
+
+	-- Returns the angle of direection from the given 
+	-- point p1 to the point p2. Uses internally a float type:
+	function get_angle (
+		p1, p2 : in type_point_model)
+		return type_rotation_model;
+
 
 
 	

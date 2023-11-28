@@ -63,20 +63,40 @@ package body callbacks is
 		mp : type_point_model;
 
 		dx, dy : type_distance_model;
+		dabs : type_distance_model;
+		angle : type_rotation_model;
 	begin
-		-- Get the mouse position:
+		-- Get the current pointer/mouse position:
 		canvas.get_pointer (px, py);
-
 		cp := (gdouble (px), gdouble (py));
+		
+		-- Convert the pointer position to a real
+		-- point in the model:
 		mp := to_model (cp, scale_factor, true);
 
+		-- Compute the relative distance from cursor
+		-- to pointer:
 		dx := mp.x - cursor.position.x;
 		dy := mp.y - cursor.position.y;
 
+		-- Compute the absolute distance from
+		-- cursor to pointer:
+		dabs := get_distance (
+			p1 => (0.0, 0.0),
+			p2 => (dx, dy));
 
+		-- Compute the angle of direction from cursor
+		-- to pointer:
+		angle := get_angle (
+			p1 => (0.0, 0.0),
+			p2 => (dx, dy));
+
+		-- Output the relative distances on the display:
 		gtk_entry (DI.dx.get_child).set_text (to_string (dx));
 		gtk_entry (DI.dy.get_child).set_text (to_string (dy));
-
+		gtk_entry (DI.abs_distance.get_child).set_text (to_string (dabs));
+		gtk_entry (DI.angle.get_child).set_text (to_string (angle));
+		
 	end update_distances_display;
 
 	

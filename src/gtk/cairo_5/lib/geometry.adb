@@ -71,6 +71,15 @@ package body geometry is
 	end decrease_scale;
 
 
+	function to_string (
+		rotation : in type_rotation_model)
+		return string
+	is begin
+		return type_rotation_model'image (rotation);
+	end to_string;
+
+
+	
 	function get_grid_spacing (
 		grid : in type_grid)
 		return gdouble
@@ -277,7 +286,38 @@ package body geometry is
 	end compute_bounding_box;
 
 	
+	function get_distance (
+		p1, p2 : in type_point_model)
+		return type_distance_model
+	is
+		use pac_float_numbers_functions;
 
+		dx : type_float := abs (type_float (p2.x - p1.x));
+		dy : type_float := abs (type_float (p2.y - p1.y));
+		d : type_float;
+	begin
+		d := sqrt (dx**2.0 + dy**2.0);
+		return type_distance_model (d);
+	end get_distance;
+	
+
+	function get_angle (
+		p1, p2 : in type_point_model)
+		return type_rotation_model
+	is
+		use pac_float_numbers_functions;
+
+		dx : type_float := type_float (p2.x - p1.x);
+		dy : type_float := type_float (p2.y - p1.y);
+		a : type_float;
+	begin
+		a := arctan (dy, dx, 360.0);
+		return type_rotation_model (a);
+	end get_angle;
+
+
+
+	
 	procedure clip_max (
 		value	: in out gdouble;
 		limit	: in gdouble)
