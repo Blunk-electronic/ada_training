@@ -102,15 +102,18 @@ package callbacks is
 		
 		box_x, box_y			: gtk_hbox;
 		label_x, label_y 		: gtk_label;
-		dx, dy					: gtk_combo_box_text;
+		dx_buf, dy_buf			: gtk_text_buffer;
+		dx, dy					: gtk_text_view;
 
 		box_total				: gtk_hbox;
 		label_total				: gtk_label;
-		abs_distance			: gtk_combo_box_text;
+		abs_distance_buf		: gtk_text_buffer;
+		abs_distance			: gtk_text_view;
 		
 		box_angle				: gtk_hbox;
 		label_angle				: gtk_label;
-		angle					: gtk_combo_box_text;
+		angle_buf				: gtk_text_buffer;
+		angle					: gtk_text_view;
 	end record;
 
 	-- The box that displays the distances between pointer/mouse

@@ -97,11 +97,23 @@ package body callbacks is
 			p2 => (dx, dy));
 
 		-- Output the relative distances on the display:
-		gtk_entry (DI.dx.get_child).set_text (to_string (dx));
-		gtk_entry (DI.dy.get_child).set_text (to_string (dy));
-		gtk_entry (DI.abs_distance.get_child).set_text (to_string (dabs));
-		gtk_entry (DI.angle.get_child).set_text (to_string (angle));
-		
+
+		-- dx:
+		DI.dx_buf.set_text (to_string (dx));
+		DI.dx.set_buffer (DI.dx_buf);
+
+		-- dy:
+		DI.dy_buf.set_text (to_string (dy));
+		DI.dy.set_buffer (DI.dy_buf);
+
+		-- absolute:
+		DI.abs_distance_buf.set_text (to_string (dabs));
+		DI.abs_distance.set_buffer (DI.abs_distance_buf);
+
+		-- angle:
+		DI.angle_buf.set_text (to_string (angle));
+		DI.angle.set_buffer (DI.angle_buf);
+	
 	end update_distances_display;
 
 	
@@ -443,6 +455,7 @@ package body callbacks is
 
 	procedure set_up_distances_display is
 		use gtk.enums;
+		margin : gint := 30;
 	begin
 		-- CS To disable focus use
 		-- procedure Set_Focus_On_Click
@@ -467,7 +480,12 @@ package body callbacks is
 		DI.label_x.set_text ("dx");
 		DI.box_x.pack_start (DI.label_x, expand => false);
 		
-		gtk_new_with_entry (DI.dx);
+		gtk_new (DI.dx);
+		DI.dx.set_justification (JUSTIFY_RIGHT);
+		DI.dx.set_left_margin (margin);
+		DI.dx.set_editable (false);
+		DI.dx.set_cursor_visible (false);
+		gtk_new (DI.dx_buf);
 		DI.box_x.pack_start (DI.dx, expand => false);
 
 		-- y-axis:
@@ -479,7 +497,12 @@ package body callbacks is
 		DI.label_y.set_text ("dy");
 		DI.box_y.pack_start (DI.label_y, expand => false);
 		
-		gtk_new_with_entry (DI.dy);
+		gtk_new (DI.dy);
+		DI.dy.set_justification (JUSTIFY_RIGHT);
+		DI.dy.set_left_margin (margin);
+		DI.dy.set_editable (false);
+		DI.dy.set_cursor_visible (false);
+		gtk_new (DI.dy_buf);
 		DI.box_y.pack_start (DI.dy, expand => false);
 
 		-- absolute distance:
@@ -491,7 +514,12 @@ package body callbacks is
 		DI.label_total.set_text ("abs");
 		DI.box_total.pack_start (DI.label_total, expand => false);
 		
-		gtk_new_with_entry (DI.abs_distance);
+		gtk_new (DI.abs_distance);
+		DI.abs_distance.set_justification (JUSTIFY_RIGHT);
+		DI.abs_distance.set_left_margin (margin);
+		DI.abs_distance.set_editable (false);
+		DI.abs_distance.set_cursor_visible (false);
+		gtk_new (DI.abs_distance_buf);
 		DI.box_total.pack_start (DI.abs_distance, expand => false);
 		
 		-- angle
@@ -503,7 +531,12 @@ package body callbacks is
 		DI.label_angle.set_text ("angle");
 		DI.box_angle.pack_start (DI.label_angle, expand => false);
 		
-		gtk_new_with_entry (DI.angle);
+		gtk_new (DI.angle);
+		DI.angle.set_justification (JUSTIFY_RIGHT);
+		DI.angle.set_left_margin (margin);
+		DI.angle.set_editable (false);
+		DI.angle.set_cursor_visible (false);
+		gtk_new (DI.angle_buf);
 		DI.box_angle.pack_start (DI.angle, expand => false);
 		
 	end set_up_distances_display;
