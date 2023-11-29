@@ -343,6 +343,7 @@ package body callbacks is
 	procedure set_up_coordinates_display is
 		use gtk.enums;
 		margin : gint := 30;
+		padding : guint := 10;
 	begin
 		-- CS To disable focus use
 		-- procedure Set_Focus_On_Click
@@ -352,10 +353,16 @@ package body callbacks is
 		
 		gtk_new_hbox (h_box_1);
 		h_box_1.set_spacing (10);
+		--h_box_1.set_hexpand (false);
 		main_window.add (h_box_1);
 
 		gtk_new_vbox (v_box_1);
-		h_box_1.pack_start (v_box_1, expand => false);
+		-- v_box_1.set_homogeneous (true);
+		-- v_box_1.set_hexpand (false);
+		-- v_box_1.set_orientation (ORIENTATION_horizontal);
+		-- v_box_1.set_valign (align_start);
+		-- h_box_1.pack_start (v_box_1, expand => false, fill => false);
+		h_box_1.pack_start (v_box_1, expand => true, fill => true);
 
 		separator_1 := gtk_separator_new (ORIENTATION_VERTICAL);
 		h_box_1.pack_start (separator_1, expand => false);
@@ -465,6 +472,8 @@ package body callbacks is
 		-- We add the widgets to the already existing v_box_1.
 		
 		gtk_new_vbox (DI.main_box);
+		-- DI.main_box.set_homogeneous (true);
+		-- DI.main_box.set_hexpand (false);
 		v_box_1.pack_start (DI.main_box, expand => false);
 
 		gtk_new (DI.title);
@@ -516,7 +525,7 @@ package body callbacks is
 		
 		gtk_new (DI.abs_distance);
 		DI.abs_distance.set_justification (JUSTIFY_RIGHT);
-		DI.abs_distance.set_left_margin (margin);
+		DI.abs_distance.set_left_margin (22);
 		DI.abs_distance.set_editable (false);
 		DI.abs_distance.set_cursor_visible (false);
 		gtk_new (DI.abs_distance_buf);
@@ -533,7 +542,7 @@ package body callbacks is
 		
 		gtk_new (DI.angle);
 		DI.angle.set_justification (JUSTIFY_RIGHT);
-		DI.angle.set_left_margin (margin);
+		DI.angle.set_left_margin (8);
 		DI.angle.set_editable (false);
 		DI.angle.set_cursor_visible (false);
 		gtk_new (DI.angle_buf);
