@@ -1,0 +1,9 @@
+# Ignore all files created by gprbuild:
+*.adb
+*.ads
+*.ali
+*.o
+*.stderr
+*.stdout
+*.bexch
+
