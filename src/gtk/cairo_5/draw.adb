@@ -89,16 +89,9 @@ begin
 	
 	set_up_swin_and_scrollbars;
 	set_up_canvas;
-
 	
-	-- Add the canvas as a child to the scrolled window:
-	put_line ("add canvas to scrolled window");
-	swin.add (canvas); 
-	-- swin.set_propagate_natural_height (true);
 	
-	-- Add the scrolled window as a child to the main window:
 	put_line ("add scrolled window to main window");
-	--main_window.add (swin);
 	pack_start (box_h, swin);
 
 	put_line ("show all widgets");

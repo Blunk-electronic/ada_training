@@ -1085,6 +1085,8 @@ package body callbacks is
 
 		-- scrollbar_h.set_can_focus (false);
 		-- swin.grab_focus;
+
+		-- swin.set_propagate_natural_height (true);
 		
 		update_cursor_coordinates;
 	end set_up_swin_and_scrollbars;
@@ -1285,6 +1287,10 @@ package body callbacks is
 		alloc_main_window.x := alloc_main_window.x + 1;
 		main_window.set_allocation (alloc_main_window);
 
+		-- Add the canvas as a child to the scrolled window:
+		put_line ("add canvas to scrolled window");
+		swin.add (canvas); 
+		
 	end set_up_canvas;
 
 
