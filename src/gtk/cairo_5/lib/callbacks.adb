@@ -341,7 +341,7 @@ package body callbacks is
 
 		gtk_new_hbox (box_h);
 		gtk_new_vbox (box_v1);
-		gtk_new_vbox (box_v2);
+		box_v1.set_border_width (10);
 
 		-- The left vbox shall not change its width when the 
 		-- main window is resized:
@@ -353,7 +353,7 @@ package body callbacks is
 		box_h.pack_start (separator, expand => false);
 
 		-- The right vbox shall expand upon resizing the main window:
-		box_h.pack_start (box_v2);
+		-- box_h.pack_start (box_v2);
 
 		main_window.add (box_h);
 	end set_up_main_window;
@@ -375,6 +375,7 @@ package body callbacks is
 		-- and text views for the actual coordinates:
 		gtk_new (table_coordinates, rows => 11, columns => 2, homogeneous => false);
 		-- table.set_col_spacings (50);
+		-- table_coordinates.set_border_width (10);
 
 		-- The table shall not expand downward:
 		box_v1.pack_start (table_coordinates, expand => false);
@@ -1290,7 +1291,10 @@ package body callbacks is
 		-- Add the canvas as a child to the scrolled window:
 		put_line ("add canvas to scrolled window");
 		swin.add (canvas); 
-		
+
+		-- Insert the scrolled window in box_h:
+		put_line ("add scrolled window to box_h");
+		box_h.pack_start (swin);
 	end set_up_canvas;
 
 

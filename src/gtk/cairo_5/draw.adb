@@ -89,10 +89,7 @@ begin
 	
 	set_up_swin_and_scrollbars;
 	set_up_canvas;
-	
-	
-	put_line ("add scrolled window to main window");
-	pack_start (box_h, swin);
+		
 
 	put_line ("show all widgets");
 	main_window.show_all;

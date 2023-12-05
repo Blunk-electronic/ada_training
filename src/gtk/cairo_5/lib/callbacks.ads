@@ -72,7 +72,7 @@ package callbacks is
 -- BOXES:
 	
 	box_h 				: gtk_hbox;
-	box_v1, box_v2		: gtk_vbox;
+	box_v1				: gtk_vbox;
 	separator			: gtk_separator;
 
 	table_coordinates	: gtk_table; -- incl. relative distances
