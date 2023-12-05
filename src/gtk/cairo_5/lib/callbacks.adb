@@ -41,6 +41,8 @@ with gdk.types;
 with gdk.types.keysyms;
 with gtk.accel_group;
 with gtk.enums;					use gtk.enums;
+with gtk.misc;					use gtk.misc;
+
 with ada.text_io;				use ada.text_io;
 with ada.calendar;				use ada.calendar;
 with ada.calendar.formatting;	use ada.calendar.formatting;
@@ -53,12 +55,12 @@ package body callbacks is
 
 	procedure update_cursor_coordinates is begin
 		-- x-axis:
-		CC.position_x_buf.set_text (to_string (cursor.position.x));
-		CC.position_x.set_buffer (CC.position_x_buf);
-
+		pos_cursor_x_buf.set_text (to_string (cursor.position.x));
+		pos_cursor_x.set_buffer (pos_cursor_x_buf);
+ 
 		-- y-axis:
-		CC.position_y_buf.set_text (to_string (cursor.position.y));
-		CC.position_y.set_buffer (CC.position_y_buf);
+		pos_cursor_y_buf.set_text (to_string (cursor.position.y));
+		pos_cursor_y.set_buffer (pos_cursor_y_buf);
 	end update_cursor_coordinates;
 
 	
@@ -96,24 +98,24 @@ package body callbacks is
 			p1 => (0.0, 0.0),
 			p2 => (dx, dy));
 
+		
 		-- Output the relative distances on the display:
 
 		-- dx:
-		DI.dx_buf.set_text (to_string (dx));
-		DI.dx.set_buffer (DI.dx_buf);
+		distances_dx_buf.set_text (to_string (dx));
+		distances_dx.set_buffer (distances_dx_buf);
 
 		-- dy:
-		DI.dy_buf.set_text (to_string (dy));
-		DI.dy.set_buffer (DI.dy_buf);
+		distances_dy_buf.set_text (to_string (dy));
+		distances_dy.set_buffer (distances_dy_buf);
 
 		-- absolute:
-		DI.abs_distance_buf.set_text (to_string (dabs));
-		DI.abs_distance.set_buffer (DI.abs_distance_buf);
+		distances_absolute_buf.set_text (to_string (dabs));
+		distances_absolute.set_buffer (distances_absolute_buf);
 
 		-- angle:
-		DI.angle_buf.set_text (to_string (angle));
-		DI.angle.set_buffer (DI.angle_buf);
-	
+		distances_angle_buf.set_text (to_string (angle));
+		distances_angle.set_buffer (distances_angle_buf);
 	end update_distances_display;
 
 	
@@ -314,8 +316,7 @@ package body callbacks is
 	end cb_main_window_activate;
 
 	
-	procedure set_up_main_window is
-	begin
+	procedure set_up_main_window is begin
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
 		main_window.set_title ("Demo Canvas");
 		main_window.set_border_width (10);
@@ -337,218 +338,246 @@ package body callbacks is
 		-- main_window.on_activate_focus (cb_focus_win'access);
 		-- main_window.set_has_window (false);
 		-- main_window.set_redraw_on_allocate (false);
+
+		gtk_new_hbox (box_h);
+		gtk_new_vbox (box_v1);
+		gtk_new_vbox (box_v2);
+
+		-- The left vbox shall not change its width when the 
+		-- main window is resized:
+		box_h.pack_start (box_v1, expand => false);
+
+		-- Place a separator between the left and right
+		-- vertical box:
+		separator := gtk_separator_new (ORIENTATION_VERTICAL);
+		box_h.pack_start (separator, expand => false);
+
+		-- The right vbox shall expand upon resizing the main window:
+		box_h.pack_start (box_v2);
+
+		main_window.add (box_h);
 	end set_up_main_window;
 
 	
 	procedure set_up_coordinates_display is
 		use gtk.enums;
-		margin : gint := 30;
-		padding : guint := 10;
+
+		-- The width of the text view shall be wide enough
+		-- to fit the greatest numbers:
+		pos_field_width_min : constant gint := 80;
 	begin
 		-- CS To disable focus use
 		-- procedure Set_Focus_On_Click
 		--    (Widget         : not null access Gtk_Widget_Record;
 		--     Focus_On_Click : Boolean);
 
+		-- Create a table, that contains headers, text labels
+		-- and text views for the actual coordinates:
+		gtk_new (table_coordinates, rows => 11, columns => 2, homogeneous => false);
+		-- table.set_col_spacings (50);
+
+		-- The table shall not expand downward:
+		box_v1.pack_start (table_coordinates, expand => false);
+
+
+		-- POINTER / MOUSE:
+		gtk_new (label_pointer_header, "POINTER");		
+		gtk_new (label_pointer_x, "x:"); -- create a text label
+
+		-- The label shall be aligned in the column.
+		-- The discussion at:
+		-- <https://stackoverflow.com/questions/26345989/gtk-how-to-align-a-label-to-the-left-in-a-table>
+		-- gave the solution. See also package gtk.misc for details:
+		label_pointer_x.set_alignment (0.0, 0.0);	
+		gtk_new (pos_pointer_x); -- create a text view vor the value
+		-- A minimum width must be set for the text.
+		-- Setting the size request is one way. The height is
+		-- not affected, therefore the value -1:
+		pos_pointer_x.set_size_request (pos_field_width_min, -1);
+		-- See also discussion at:
+		-- <https://stackoverflow.com/questions/24412859/gtk-how-can-the-size-of-a-textview-be-set-manually>
+		-- for a way to achieve this using a tag.
+
+		gtk_new (pos_pointer_x_buf); -- create a text buffer
+		pos_pointer_x.set_justification (JUSTIFY_RIGHT); -- align the value left
+		pos_pointer_x.set_editable (false); -- the value is not editable
+		pos_pointer_x.set_cursor_visible (false); -- do not show a cursor
+
+		gtk_new (label_pointer_y, "y:"); -- create a text label
+		label_pointer_y.set_alignment (0.0, 0.0);	
+		gtk_new (pos_pointer_y);
+		pos_pointer_y.set_size_request (pos_field_width_min, -1);
+		gtk_new (pos_pointer_y_buf); -- create a text buffer
+		pos_pointer_y.set_justification (JUSTIFY_RIGHT); -- align the value left
+		pos_pointer_y.set_editable (false); -- the value is not editable
+		pos_pointer_y.set_cursor_visible (false); -- do not show a cursor
+
+		------------------------------------------------------------------------------
 		
-		gtk_new_hbox (h_box_1);
-		h_box_1.set_spacing (10);
-		--h_box_1.set_hexpand (false);
-		main_window.add (h_box_1);
-
-		gtk_new_vbox (v_box_1);
-		-- v_box_1.set_homogeneous (true);
-		-- v_box_1.set_hexpand (false);
-		-- v_box_1.set_orientation (ORIENTATION_horizontal);
-		-- v_box_1.set_valign (align_start);
-		-- h_box_1.pack_start (v_box_1, expand => false, fill => false);
-		h_box_1.pack_start (v_box_1, expand => true, fill => true);
-
-		separator_1 := gtk_separator_new (ORIENTATION_VERTICAL);
-		h_box_1.pack_start (separator_1, expand => false);
-
-		-- separator_2 := gtk_separator_new (ORIENTATION_VERTICAL);
-		-- h_box_1.pack_start (separator_2, expand => false);
-
-		
-		-- POINTER / MOUSE
-		gtk_new_vbox (PC.main_box);
-		v_box_1.pack_start (PC.main_box, expand => false);
-
-		gtk_new (PC.title);
-		PC.title.set_text ("POINTER");
-		PC.main_box.pack_start (PC.title, expand => false);
-
-		-- x-axis:
-		gtk_new_hbox (PC.box_x);
-		PC.box_x.set_spacing (5);
-		PC.main_box.pack_start (PC.box_x, expand => false);
-		
-		gtk_new (PC.label_x);
-		PC.label_x.set_text ("X");
-		PC.box_x.pack_start (PC.label_x, expand => false);
-		
-		gtk_new (PC.position_x);
-		PC.position_x.set_justification (JUSTIFY_RIGHT);
-		-- PC.position_x.set_justification (JUSTIFY_LEFT);
-		PC.position_x.set_left_margin (margin);
-		PC.position_x.set_editable (false);
-		PC.position_x.set_cursor_visible (false); 
-		gtk_new (PC.position_x_buf);
-		PC.box_x.pack_start (PC.position_x, expand => false);
-
-		-- y-axis:
-		gtk_new_hbox (PC.box_y);
-		PC.box_y.set_spacing (5);
-		PC.main_box.pack_start (PC.box_y, expand => false);
-		
-		gtk_new (PC.label_y);
-		PC.label_y.set_text ("Y");
-		PC.box_y.pack_start (PC.label_y, expand => false);
-		
-		gtk_new (PC.position_y);
-		PC.position_y.set_justification (JUSTIFY_RIGHT);
-		PC.position_y.set_left_margin (margin);
-		PC.position_y.set_editable (false);
-		PC.position_y.set_cursor_visible (false);
-		gtk_new (PC.position_y_buf);
-		PC.box_y.pack_start (PC.position_y, expand => false);
-
-
 		-- CURSOR
-		gtk_new_vbox (CC.main_box);
-		v_box_1.pack_start (CC.main_box, expand => false);
-		
-		gtk_new (CC.title);
-		CC.title.set_text ("CURSOR");
-		CC.main_box.pack_start (CC.title, expand => false);
+		gtk_new (label_cursor_header, "CURSOR");
 
-		-- x-axis:
-		gtk_new_hbox (CC.box_x);
-		CC.box_x.set_spacing (5);
-		CC.main_box.pack_start (CC.box_x, expand => false);
-		
-		gtk_new (CC.label_x);
-		CC.label_x.set_text ("X");
-		CC.box_x.pack_start (CC.label_x, expand => false);
-		
-		gtk_new (CC.position_x);
-		CC.position_x.set_justification (JUSTIFY_RIGHT);
-		CC.position_x.set_left_margin (margin);
-		CC.position_x.set_editable (false);
-		CC.position_x.set_cursor_visible (false);
-		gtk_new (CC.position_x_buf);
-		CC.box_x.pack_start (CC.position_x, expand => false);
+		gtk_new (label_cursor_x, "x:");
+		label_cursor_x.set_alignment (0.0, 0.0);	
+		gtk_new (pos_cursor_x);
+		pos_cursor_x.set_size_request (pos_field_width_min, -1);
 
-		-- y-axis:
-		gtk_new_hbox (CC.box_y);
-		CC.box_y.set_spacing (5);
-		CC.main_box.pack_start (CC.box_y, expand => false);
+		gtk_new (pos_cursor_x_buf);
+		pos_cursor_x.set_justification (JUSTIFY_RIGHT);
+		pos_cursor_x.set_editable (false);
+		pos_cursor_x.set_cursor_visible (false);
+
+		gtk_new (label_cursor_y, "y:");
+		label_cursor_y.set_alignment (0.0, 0.0);	
+		gtk_new (pos_cursor_y);
+		pos_cursor_y.set_size_request (pos_field_width_min, -1);
+		gtk_new (pos_cursor_y_buf);
+		pos_cursor_y.set_justification (JUSTIFY_RIGHT);
+		pos_cursor_y.set_editable (false);
+		pos_cursor_y.set_cursor_visible (false);
+
+		------------------------------------------------------------------------------
+		-- DISTANCES		
+		gtk_new (label_distances_header, "DISTANCE");
+		gtk_new (label_distances_dx, "dx:");
+		label_distances_dx.set_alignment (0.0, 0.0);	
+		gtk_new (distances_dx);
+		distances_dx.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (distances_dx_buf);
+		distances_dx.set_justification (JUSTIFY_RIGHT);
+		distances_dx.set_editable (false);
+		distances_dx.set_cursor_visible (false);
+
 		
-		gtk_new (CC.label_y);
-		CC.label_y.set_text ("Y");
-		CC.box_y.pack_start (CC.label_y, expand => false);
+		gtk_new (label_distances_dy, "dy:");
+		label_distances_dy.set_alignment (0.0, 0.0);	
+		gtk_new (distances_dy);
+		distances_dy.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (distances_dy_buf);
+		distances_dy.set_justification (JUSTIFY_RIGHT);
+		distances_dy.set_editable (false);
+		distances_dy.set_cursor_visible (false);
+
+
+		gtk_new (label_distances_absolute, "abs:");
+		label_distances_absolute.set_alignment (0.0, 0.0);	
+		gtk_new (distances_absolute);
+		distances_absolute.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (distances_absolute_buf);
+		distances_absolute.set_justification (JUSTIFY_RIGHT);
+		distances_absolute.set_editable (false);
+		distances_absolute.set_cursor_visible (false);
+
+
+		gtk_new (label_distances_angle, "angle:");
+		label_distances_angle.set_alignment (0.0, 0.0);	
+		gtk_new (distances_angle);
+		distances_angle.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (distances_angle_buf);
+		distances_angle.set_justification (JUSTIFY_RIGHT);
+		distances_angle.set_editable (false);
+		distances_angle.set_cursor_visible (false);
 		
-		gtk_new (CC.position_y);
-		CC.position_y.set_justification (JUSTIFY_RIGHT);
-		CC.position_y.set_left_margin (margin);
-		CC.position_y.set_editable (false);
-		CC.position_y.set_cursor_visible (false);
-		gtk_new (CC.position_y_buf);
-		CC.box_y.pack_start (CC.position_y, expand => false);
+		------------------------------------------------------------------------------
+		
+		-- Put the items in the table:
+
+		-- MOUSE / POINTER:
+		table_coordinates.attach (label_pointer_header, 
+			left_attach	=> 0, right_attach	=> 2, 
+			top_attach	=> 0, bottom_attach	=> 1);
+
+		-- x-coordinate:
+		table_coordinates.attach (label_pointer_x, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 1, bottom_attach	=> 2);
+
+		table_coordinates.attach (pos_pointer_x, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 1, bottom_attach	=> 2);
+
+		-- y-coordinate:
+		table_coordinates.attach (label_pointer_y, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 2, bottom_attach	=> 3);
+  
+		table_coordinates.attach (pos_pointer_y, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 2, bottom_attach	=> 3);
+
+
+		-- CURSOR:
+		table_coordinates.attach (label_cursor_header, 
+			left_attach	=> 0, right_attach	=> 2, 
+			top_attach	=> 3, bottom_attach	=> 4);
+
+		-- x-coordinate:
+		table_coordinates.attach (label_cursor_x, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 4, bottom_attach	=> 5);
+
+		table_coordinates.attach (pos_cursor_x, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 4, bottom_attach	=> 5);
+
+		-- y-coordinate:
+		table_coordinates.attach (label_cursor_y, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 5, bottom_attach	=> 6);
+  
+		table_coordinates.attach (pos_cursor_y, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 5, bottom_attach	=> 6);
+
+
+
+		-- DISTANCES:
+		table_coordinates.attach (label_distances_header, 
+			left_attach	=> 0, right_attach	=> 2, 
+			top_attach	=> 6, bottom_attach	=> 7);
+
+		-- x-coordinate:
+		table_coordinates.attach (label_distances_dx, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 7, bottom_attach	=> 8);
+
+		table_coordinates.attach (distances_dx, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 7, bottom_attach	=> 8);
+
+		-- y-coordinate:
+		table_coordinates.attach (label_distances_dy, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 9, bottom_attach	=> 10);
+  
+		table_coordinates.attach (distances_dy, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 9, bottom_attach	=> 10);
+
+		-- absolute:
+		table_coordinates.attach (label_distances_absolute, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 10, bottom_attach => 11);
+  
+		table_coordinates.attach (distances_absolute, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 10, bottom_attach => 11);
+		
+		-- angle:
+		table_coordinates.attach (label_distances_angle, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 11, bottom_attach => 12);
+  
+		table_coordinates.attach (distances_angle, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 11, bottom_attach => 12);
 		
 	end set_up_coordinates_display;
 	
-
-	procedure set_up_distances_display is
-		use gtk.enums;
-		margin : gint := 30;
-	begin
-		-- CS To disable focus use
-		-- procedure Set_Focus_On_Click
-		--    (Widget         : not null access Gtk_Widget_Record;
-		--     Focus_On_Click : Boolean);
-
-		-- We add the widgets to the already existing v_box_1.
-		
-		gtk_new_vbox (DI.main_box);
-		-- DI.main_box.set_homogeneous (true);
-		-- DI.main_box.set_hexpand (false);
-		v_box_1.pack_start (DI.main_box, expand => false);
-
-		gtk_new (DI.title);
-		DI.title.set_text ("DISTANCE");
-		DI.main_box.pack_start (DI.title, expand => false);
-
-		-- x-axis:
-		gtk_new_hbox (DI.box_x);
-		DI.box_x.set_spacing (5);
-		DI.main_box.pack_start (DI.box_x, expand => false);
-		
-		gtk_new (DI.label_x);
-		DI.label_x.set_text ("dx");
-		DI.box_x.pack_start (DI.label_x, expand => false);
-		
-		gtk_new (DI.dx);
-		DI.dx.set_justification (JUSTIFY_RIGHT);
-		DI.dx.set_left_margin (margin);
-		DI.dx.set_editable (false);
-		DI.dx.set_cursor_visible (false);
-		gtk_new (DI.dx_buf);
-		DI.box_x.pack_start (DI.dx, expand => false);
-
-		-- y-axis:
-		gtk_new_hbox (DI.box_y);
-		DI.box_y.set_spacing (5);
-		DI.main_box.pack_start (DI.box_y, expand => false);
-		
-		gtk_new (DI.label_y);
-		DI.label_y.set_text ("dy");
-		DI.box_y.pack_start (DI.label_y, expand => false);
-		
-		gtk_new (DI.dy);
-		DI.dy.set_justification (JUSTIFY_RIGHT);
-		DI.dy.set_left_margin (margin);
-		DI.dy.set_editable (false);
-		DI.dy.set_cursor_visible (false);
-		gtk_new (DI.dy_buf);
-		DI.box_y.pack_start (DI.dy, expand => false);
-
-		-- absolute distance:
-		gtk_new_hbox (DI.box_total);
-		DI.box_total.set_spacing (5);
-		DI.main_box.pack_start (DI.box_total, expand => false);
-		
-		gtk_new (DI.label_total);
-		DI.label_total.set_text ("abs");
-		DI.box_total.pack_start (DI.label_total, expand => false);
-		
-		gtk_new (DI.abs_distance);
-		DI.abs_distance.set_justification (JUSTIFY_RIGHT);
-		DI.abs_distance.set_left_margin (22);
-		DI.abs_distance.set_editable (false);
-		DI.abs_distance.set_cursor_visible (false);
-		gtk_new (DI.abs_distance_buf);
-		DI.box_total.pack_start (DI.abs_distance, expand => false);
-		
-		-- angle
-		gtk_new_hbox (DI.box_angle);
-		DI.box_angle.set_spacing (5);
-		DI.main_box.pack_start (DI.box_angle, expand => false);
-		
-		gtk_new (DI.label_angle);
-		DI.label_angle.set_text ("angle");
-		DI.box_angle.pack_start (DI.label_angle, expand => false);
-		
-		gtk_new (DI.angle);
-		DI.angle.set_justification (JUSTIFY_RIGHT);
-		DI.angle.set_left_margin (8);
-		DI.angle.set_editable (false);
-		DI.angle.set_cursor_visible (false);
-		gtk_new (DI.angle_buf);
-		DI.box_angle.pack_start (DI.angle, expand => false);
-		
-	end set_up_distances_display;
 
 
 	
@@ -1563,12 +1592,12 @@ package body callbacks is
 
 		-- Update the coordinates display with the pointer position:
 		-- x-axis:
-		PC.position_x_buf.set_text (to_string (mp.x));
-		PC.position_x.set_buffer (PC.position_x_buf);
-
+		pos_pointer_x_buf.set_text (to_string (mp.x));
+		pos_pointer_x.set_buffer (pos_pointer_x_buf);
+  
 		-- y-axis:
-		PC.position_y_buf.set_text (to_string (mp.y));
-		PC.position_y.set_buffer (PC.position_y_buf);
+		pos_pointer_y_buf.set_text (to_string (mp.y));
+		pos_pointer_y.set_buffer (pos_pointer_y_buf);
 
 		update_distances_display;
 		return event_handled;

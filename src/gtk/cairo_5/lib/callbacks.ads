@@ -47,7 +47,8 @@ with gtk.enums;
 with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
-with gtk.button;				use gtk.button;
+-- with gtk.button;				use gtk.button;
+with gtk.table;					use gtk.table;
 with gtk.label;					use gtk.label;
 with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
@@ -70,55 +71,35 @@ package callbacks is
 
 -- BOXES:
 	
-	h_box_1 : gtk_hbox;
-	v_box_1 : gtk_vbox;
-	separator_1 : gtk_separator;
-	-- separator_2 : gtk_separator;
+	box_h 				: gtk_hbox;
+	box_v1, box_v2		: gtk_vbox;
+	separator			: gtk_separator;
 
+	table_coordinates	: gtk_table; -- incl. relative distances
 
-	-- This composite type is intended to
-	-- display coordinates of pointer/mouse or cursor:
-	type type_box_coordinates is record
-		main_box				: gtk_vbox;
-		title					: gtk_label;
-		box_x, box_y			: gtk_hbox;
-		label_x, label_y 		: gtk_label;
-		position_x_buf, position_y_buf	: gtk_text_buffer;
-		position_x, position_y 			: gtk_text_view;
-	end record;
+	label_pointer_header					: gtk_label;
+	label_pointer_x, label_pointer_y		: gtk_label;
+	pos_pointer_x, pos_pointer_y			: gtk_text_view;
+	pos_pointer_x_buf, pos_pointer_y_buf	: gtk_text_buffer;
+	
+	label_cursor_header						: gtk_label;
+	label_cursor_x, label_cursor_y			: gtk_label;
+	pos_cursor_x, pos_cursor_y				: gtk_text_view;
+	pos_cursor_x_buf, pos_cursor_y_buf		: gtk_text_buffer;
+	
+	label_distances_header					: gtk_label;
+	label_distances_dx, label_distances_dy	: gtk_label;
+	label_distances_absolute				: gtk_label;
+	label_distances_angle					: gtk_label;
+	distances_dx, distances_dy				: gtk_text_view;
+	distances_absolute						: gtk_text_view;
+	distances_angle							: gtk_text_view;
+	distances_dx_buf, distances_dy_buf		: gtk_text_buffer;
+	distances_absolute_buf					: gtk_text_buffer;
+	distances_angle_buf						: gtk_text_buffer;
 
-	-- The box for the pointer coordinates:
-	PC : type_box_coordinates;
-
-	-- The box for the cursor coordinates:
-	CC : type_box_coordinates;
 	
 
-	-- This composite type is intended to
-	-- display distances between pointer/mouse and cursor:
-	type type_box_distances is record
-		main_box				: gtk_vbox;
-		title					: gtk_label;
-		
-		box_x, box_y			: gtk_hbox;
-		label_x, label_y 		: gtk_label;
-		dx_buf, dy_buf			: gtk_text_buffer;
-		dx, dy					: gtk_text_view;
-
-		box_total				: gtk_hbox;
-		label_total				: gtk_label;
-		abs_distance_buf		: gtk_text_buffer;
-		abs_distance			: gtk_text_view;
-		
-		box_angle				: gtk_hbox;
-		label_angle				: gtk_label;
-		angle_buf				: gtk_text_buffer;
-		angle					: gtk_text_view;
-	end record;
-
-	-- The box that displays the distances between pointer/mouse
-	-- and cursor:
-	DI : type_box_distances;
 
 	
 	
@@ -126,6 +107,7 @@ package callbacks is
 	-- by the current cursor position:
 	procedure update_cursor_coordinates;
 
+	
 	-- Updates the distances display:
 	procedure update_distances_display;
 	
@@ -161,11 +143,11 @@ package callbacks is
 	
 	procedure set_up_main_window;
 
+	
+	-- Creates the display for pointer/mouse and cursor position,
+	-- distances and angle:
 	procedure set_up_coordinates_display;
 
-	procedure set_up_distances_display;
-	
-	
 	
 -- SCROLLED WINDOW:
 	

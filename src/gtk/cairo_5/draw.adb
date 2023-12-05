@@ -62,7 +62,7 @@ with gtk.enums;					use gtk.enums;
 with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.drawing_area;			use gtk.drawing_area;
 with gtk.box;					use gtk.box;
-
+with gtk.separator;				use gtk.separator;
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
 with geometry;					use geometry;
@@ -82,9 +82,10 @@ begin
 	
 	init; -- inits the GTK-stuff
 
-	set_up_main_window;
-	set_up_coordinates_display;
-	set_up_distances_display;
+
+	set_up_main_window; -- incl. box_h, box_v1, separator, box_v2
+	
+	set_up_coordinates_display; -- table in box_v1
 	
 	set_up_swin_and_scrollbars;
 	set_up_canvas;
@@ -98,7 +99,7 @@ begin
 	-- Add the scrolled window as a child to the main window:
 	put_line ("add scrolled window to main window");
 	--main_window.add (swin);
-	pack_start (h_box_1, swin);
+	pack_start (box_h, swin);
 
 	put_line ("show all widgets");
 	main_window.show_all;
