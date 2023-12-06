@@ -118,6 +118,23 @@ package body callbacks is
 		distances_angle.set_buffer (distances_angle_buf);
 	end update_distances_display;
 
+
+	procedure update_scale_display is begin
+		scale_buf.set_text (to_string (scale_factor));
+		scale_value.set_buffer (scale_buf);
+	end update_scale_display;
+	
+
+	procedure update_grid_display is begin
+		-- x-axis:
+		grid_x_buf.set_text (to_string (grid.spacing.x));
+		grid_x_value.set_buffer (grid_x_buf);
+
+		-- y-axis:
+		grid_y_buf.set_text (to_string (grid.spacing.y));
+		grid_y_value.set_buffer (grid_y_buf);
+	end update_grid_display;
+
 	
 	
 -- MAIN WINDOW:
@@ -482,8 +499,48 @@ package body callbacks is
 		distances_angle.set_justification (JUSTIFY_RIGHT);
 		distances_angle.set_editable (false);
 		distances_angle.set_cursor_visible (false);
-		
+
 		------------------------------------------------------------------------------
+		-- GRID
+		gtk_new (grid_header, "GRID");
+		gtk_new (grid_x_label, "x:");
+		grid_x_label.set_alignment (0.0, 0.0);	
+		gtk_new (grid_x_value);
+		grid_x_value.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (grid_x_buf);
+		grid_x_value.set_justification (JUSTIFY_RIGHT);
+		grid_x_value.set_editable (false);
+		grid_x_value.set_cursor_visible (false);
+
+
+		gtk_new (grid_y_label, "y:");
+		grid_y_label.set_alignment (0.0, 0.0);	
+		gtk_new (grid_y_value);
+		grid_x_value.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (grid_y_buf);
+		grid_y_value.set_justification (JUSTIFY_RIGHT);
+		grid_y_value.set_editable (false);
+		grid_y_value.set_cursor_visible (false);		
+
+		------------------------------------------------------------------------------
+		-- SCALE
+		-- gtk_new (scale_header, "SCALE");
+		gtk_new (scale_label, "scale:");
+		scale_label.set_alignment (0.0, 0.0);	
+		gtk_new (scale_value);
+		scale_value.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (scale_buf);
+		scale_value.set_justification (JUSTIFY_RIGHT);
+		scale_value.set_editable (false);
+		scale_value.set_cursor_visible (false);
+
+
+		------------------------------------------------------------------------------
+
+
 		
 		-- Put the items in the table:
 
@@ -576,7 +633,41 @@ package body callbacks is
 		table_coordinates.attach (distances_angle, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 11, bottom_attach => 12);
+
+
 		
+		-- GRID:
+		table_coordinates.attach (grid_header, 
+			left_attach	=> 0, right_attach	=> 2, 
+			top_attach	=> 12, bottom_attach => 13);
+
+		-- x-axis:
+		table_coordinates.attach (grid_x_label, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 13, bottom_attach => 14);
+  
+		table_coordinates.attach (grid_x_value, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 13, bottom_attach => 14);
+
+		-- y-axis:
+		table_coordinates.attach (grid_y_label, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 14, bottom_attach => 15);
+  
+		table_coordinates.attach (grid_y_value, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 14, bottom_attach => 15);
+
+		-- scale:
+		table_coordinates.attach (scale_label, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 15, bottom_attach => 16);
+  
+		table_coordinates.attach (scale_value, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 15, bottom_attach => 16);
+
 	end set_up_coordinates_display;
 	
 
@@ -1530,6 +1621,8 @@ package body callbacks is
 			when others => null;
 		end case;
 
+		update_scale_display;
+		
 		-- put_line (" scale new" & to_string (scale_factor));
 
 		-- After changing the scale_factor, the translate_offset must
@@ -1832,10 +1925,12 @@ package body callbacks is
 				when SCROLL_UP =>
 					increase_scale;
 					put_line (" zoom in");
+					update_scale_display;
 					
 				when SCROLL_DOWN => 
 					decrease_scale;
 					put_line (" zoom out");
+					update_scale_display;
 					
 				when others => null;
 			end case;

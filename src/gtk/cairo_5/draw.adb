@@ -97,6 +97,9 @@ begin
 	
 	apply_initial_scrollbar_settings;
 
+	update_scale_display;
+	update_grid_display;
+
 	put_line ("start gtk main loop");
 
 	gtk.main.main;

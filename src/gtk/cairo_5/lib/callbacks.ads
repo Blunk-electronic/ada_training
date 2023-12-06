@@ -98,9 +98,14 @@ package callbacks is
 	distances_absolute_buf					: gtk_text_buffer;
 	distances_angle_buf						: gtk_text_buffer;
 
-	
+	grid_header								: gtk_label;
+	grid_x_label, grid_y_label				: gtk_label;
+	grid_x_value, grid_y_value				: gtk_text_view;
+	grid_x_buf, grid_y_buf					: gtk_text_buffer;
 
-
+	scale_label								: gtk_label;
+	scale_value								: gtk_text_view;
+	scale_buf								: gtk_text_buffer;
 	
 	
 	-- Updates the cursor coordinates display
@@ -110,7 +115,15 @@ package callbacks is
 	
 	-- Updates the distances display:
 	procedure update_distances_display;
+
+
+	-- Updates the scale display:
+	procedure update_scale_display;
 	
+
+	-- Updates the grid display:
+	procedure update_grid_display;
+
 	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
