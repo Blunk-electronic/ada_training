@@ -355,6 +355,28 @@ package body geometry is
 		put_line ("base offset: " & to_string (base_offset));
 	end compute_base_offset;
 
+
+	procedure compute_translate_offset (
+		MP	: in type_point_model;
+		Z1	: in type_point_canvas)
+	is 
+		Z2 : type_point_canvas;
+	begin			
+		-- Compute the prospected canvas-point according to the 
+		-- current scale_factor:
+		Z2 := to_canvas (MP, scale_factor);
+		-- put_line ("Z after scale   " & to_string (Z2));
+
+		-- This is the offset from the given canvas-point Z1 to the prospected
+		-- canvas-point Z2. The offset must be multiplied by -1 because the
+		-- drawing must be dragged-back to the given pointer position:
+		T.x := -(Z2.x - Z1.x);
+		T.y := -(Z2.y - Z1.y);
+		
+		put_line (" T offset    " & to_string (T));
+	end compute_translate_offset;
+
+
 	
 	
 	function to_model (
