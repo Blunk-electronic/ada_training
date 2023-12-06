@@ -74,6 +74,18 @@ package geometry is
 	end record;
 
 
+	-- Converts a virtual model point to a real model point:
+	function to_real (
+		point : in type_point_model)
+		return type_point_model;
+
+	-- Converts a real model point to a virtual model point:
+	function to_virtual (
+		point : in type_point_model)
+		return type_point_model;
+
+	
+	
 	-- The model coordinates system uses so called
 	-- decimal fixed point numbers for angles and rotations:
 	rotation_smallest : constant := 0.01;

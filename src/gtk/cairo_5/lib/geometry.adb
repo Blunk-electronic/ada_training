@@ -71,6 +71,29 @@ package body geometry is
 	end decrease_scale;
 
 
+	function to_real (
+		point : in type_point_model)
+		return type_point_model
+	is	
+		result : type_point_model := point;
+	begin
+		move_by (result, bounding_box.position);
+		return result;
+	end to_real;
+
+
+	function to_virtual (
+		point : in type_point_model)
+		return type_point_model
+	is
+		result : type_point_model := point;
+	begin
+		move_by (result, invert (bounding_box.position));
+		return result;
+	end to_virtual;
+
+	
+
 	function to_string (
 		rotation : in type_rotation_model)
 		return string
@@ -425,7 +448,8 @@ package body geometry is
 		result : type_point_canvas;
 	begin
 		-- If real model coordinates are given, then they must
-		-- be compensated by the inverted bounding-box position:
+		-- be compensated by the inverted bounding-box position
+		-- in order to get virtual model coordinates:
 		if real then
 			move_by (P, invert (bounding_box.position));
 		end if;

@@ -1505,15 +1505,17 @@ package body callbacks is
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction)
 	is
-		Z1 : type_point_canvas;
-		M : type_point_model;
-		BC : constant type_area_corners := get_corners (bounding_box);
+		Z1	: type_point_canvas;
+		M	: type_point_model;
+		BC	: constant type_area_corners := get_corners (bounding_box);
 	begin
 		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
 
+		-- Convert the cursor position to the corresponding canvas point:
 		Z1 := to_canvas (cursor.position, scale_factor, real => true);
-		M := to_model (Z1, scale_factor, real => false);
-		-- CS use a direct conversion instead
+
+		-- Convert the cursor position to a virtual model point:
+		M := to_virtual (cursor.position);
 
 
 		case direction is
