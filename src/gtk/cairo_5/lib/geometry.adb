@@ -62,7 +62,6 @@ package body geometry is
 	
 	procedure decrease_scale is begin
 		scale_factor := scale_factor / scale_multiplier;
-		-- SM := SM / scale_multiplier;
 		
 		exception 
 			when constraint_error => 

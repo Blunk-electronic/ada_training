@@ -349,13 +349,8 @@ package callbacks is
 	visible_area : type_area;
 	
 
-	-- Updates the visible area and its center.
-	-- Variables modified: visible_area, visible_center:
-	-- procedure update_visible_area (
-	-- 	canvas	: access gtk_widget_record'class);
 
-
-	-- CURSOR:
+-- CURSOR:
 	-- The cursor is a crosshair that can be moved by the
 	-- cursor keys (arrow keys) about the canvas:
 	type type_cursor is record

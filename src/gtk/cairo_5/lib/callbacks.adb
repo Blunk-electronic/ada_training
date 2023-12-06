@@ -1547,18 +1547,6 @@ package body callbacks is
 	end zoom_on_cursor;
 
 	
-
-	-- procedure update_visible_area (
-	-- 	canvas	: access gtk_widget_record'class)
-	-- is begin
-	-- 	-- put_line ("update visible area");
-	-- 	visible_area := get_visible_area (canvas);
-	-- 	put_line (" visible area " & to_string (visible_area));
- -- 
-	-- 	visible_center := get_center (visible_area);
-	-- 	-- put_line (" visible center " & to_string (visible_center));
-	-- end update_visible_area;
-
 	
 	
 	function cb_button_pressed_canvas (
@@ -1638,7 +1626,8 @@ package body callbacks is
 		-- Get the real model coordinates:
 		mp : constant type_point_model := to_model (cp, scale_factor, true);
 	begin
-		null;
+		-- put_line ("cb_mouse_moved");
+
 		-- output on the terminal:
 		-- Output the x/y position of the pointer
 		-- in logical and model coordinates:
