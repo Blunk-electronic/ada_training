@@ -1500,6 +1500,61 @@ package body callbacks is
 		return result;
 	end get_visible_area;
 
+
+
+	procedure zoom_on_cursor (
+		direction : type_zoom_direction)
+	is
+		Z1 : type_point_canvas;
+		M : type_point_model;
+		BC : type_area_corners;
+
+		procedure compute_translate_offset is 
+			Z2 : type_point_canvas;
+		begin			
+			-- Compute the prospected canvas-point according to the new scale_factor:
+			Z2 := to_canvas (M, scale_factor);
+			-- put_line ("Z after scale   " & to_string (Z2));
+
+			-- This is the offset from the given canvas-point to the prospected
+			-- canvas-point. The offset must be multiplied by -1 because the
+			-- drawing must be dragged-back to the given pointer position:
+			T.x := -(Z2.x - Z1.x);
+			T.y := -(Z2.y - Z1.y);
+			
+			put_line (" T offset    " & to_string (T));
+		end compute_translate_offset;
+		
+	begin
+		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
+
+		Z1 := to_canvas (cursor.position, scale_factor, real => true);
+		M := to_model (Z1, scale_factor, real => false);
+		-- CS use a direct conversion instead
+
+		BC := get_corners (bounding_box);
+
+		case direction is
+			when ZOOM_IN =>
+				increase_scale;
+				put_line (" zoom in");
+				
+			when ZOOM_OUT => 
+				decrease_scale;
+				put_line (" zoom out");
+				
+			when others => null;
+		end case;
+
+		-- put_line (" scale new" & to_string (scale_factor));
+		compute_translate_offset;
+		
+		update_scrollbar_limits (BC, scale_factor);
+
+		-- schedule a redraw:
+		refresh (canvas);		
+	end zoom_on_cursor;
+
 	
 
 	-- procedure update_visible_area (
@@ -1718,7 +1773,16 @@ package body callbacks is
 			& " key " & gdk_key_type'image (event.keyval));
 
 		if key_ctrl = control_mask then 
-			null;
+			case key is
+				when GDK_KP_ADD | GDK_PLUS =>
+					zoom_on_cursor (ZOOM_IN);
+
+				when GDK_KP_SUBTRACT | GDK_MINUS =>
+					zoom_on_cursor (ZOOM_OUT);
+
+				when others => null;
+			end case;
+
 		else
 			case key is
 				when GDK_Right =>
@@ -1733,8 +1797,7 @@ package body callbacks is
 				when GDK_Down =>
 					move_cursor (DIR_DOWN);
 
-				when others =>
-					null;
+				when others => null;
 			end case;
 		end if;
 		

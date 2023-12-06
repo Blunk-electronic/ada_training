@@ -382,6 +382,13 @@ package callbacks is
 	procedure move_cursor (
 		direction : type_direction);
 
+
+	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
+
+	-- Zooms in or out at the current cursor position:
+	procedure zoom_on_cursor (
+		direction : type_zoom_direction);
+	
 	
 	-- This callback function is called each time the operator
 	-- clicks on the canvas.
