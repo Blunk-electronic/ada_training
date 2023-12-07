@@ -1823,6 +1823,8 @@ package body callbacks is
 		-- Output the cursor position on the terminal:
 		put_line ("cursor at " & to_string (cursor.position));
 	end move_cursor;
+
+
 	
 	
 	function cb_key_pressed_canvas (
@@ -1870,6 +1872,13 @@ package body callbacks is
 				when GDK_Down =>
 					move_cursor (DIR_DOWN);
 
+				when GDK_HOME | GDK_KP_HOME =>
+					-- Move the cursor to the grid point that
+					-- is nearest to the center of the visible area:
+					put_line ("move cursor to center");
+					move_cursor (snap_to_grid (get_center (visible_area)));
+					refresh (canvas);
+					
 				when others => null;
 			end case;
 		end if;
