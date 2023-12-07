@@ -65,7 +65,7 @@ with gtk.box;					use gtk.box;
 with gtk.separator;				use gtk.separator;
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
-with geometry;					use geometry;
+with geometry_1;				use geometry_1;
 
 procedure draw is
 

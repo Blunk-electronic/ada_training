@@ -49,6 +49,7 @@ with ada.calendar.formatting;	use ada.calendar.formatting;
 
 with gtk.main;					use gtk.main;
 
+with geometry_2;
 
 
 package body callbacks is
@@ -2050,6 +2051,7 @@ package body callbacks is
 	end cb_mouse_wheel_rolled;
 
 
+
 	
 	
 	function cb_draw_objects (
@@ -2371,6 +2373,21 @@ package body callbacks is
 		
 		
 		cp : type_point_canvas;
+
+
+		procedure draw_objects is
+			c : type_point_canvas;
+		begin
+			put_line ("draw objects");
+
+			-- set_line_width (context, 2.0) -- CS
+   -- 
+			-- set_source_rgb (context, 1.0, 0.0, 0.0);
+   -- 
+			-- c := to_canvas (object_1.
+							
+		end draw_objects;
+
 		
 	begin -- cb_draw_objects
 		-- new_line;
@@ -2401,6 +2418,7 @@ package body callbacks is
 		-- all objects must be parsed here. One object after another
 		-- must be drawn. But since this is a demo,
 		-- we have just a single object (a rectangle) do deal with.
+		-- draw_objects;
 		
 		
 		set_line_width (context, 2.0);

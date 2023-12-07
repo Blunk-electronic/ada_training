@@ -56,7 +56,7 @@ with gtk.scrollbar;				use gtk.scrollbar;
 with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
-with geometry;					use geometry;
+with geometry_1;				use geometry_1;
 
 package callbacks is
 

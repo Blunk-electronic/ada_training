@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                               GEOMETRY                                   --
+--                               GEOMETRY 1                                 --
 --                                                                          --
 --                               B o d y                                    --
 --                                                                          --
@@ -39,7 +39,7 @@
 with ada.text_io;				use ada.text_io;
 with glib;						use glib;
 
-package body geometry is
+package body geometry_1 is
 
 	function to_string (
 		scale : in type_scale_factor)
@@ -476,5 +476,5 @@ package body geometry is
 		object.height := 190.0;
 	end make_object;
 	
-end geometry;
+end geometry_1;
 

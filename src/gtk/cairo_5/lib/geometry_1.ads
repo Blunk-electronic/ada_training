@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                               GEOMETRY                                   --
+--                              GEOMETRY 1                                  --
 --                                                                          --
 --                               S p e c                                    --
 --                                                                          --
@@ -41,7 +41,7 @@ with glib;						use glib;
 with ada.numerics;
 with ada.numerics.generic_elementary_functions;
 
-package geometry is
+package geometry_1 is
 
 
 
@@ -389,5 +389,5 @@ package geometry is
 
 	procedure make_object;
 	
-end geometry;
+end geometry_1;
 
