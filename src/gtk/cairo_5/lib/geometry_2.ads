@@ -44,7 +44,7 @@ with ada.numerics.generic_elementary_functions;
 with geometry_1;				use geometry_1;
 
 package geometry_2 is
-
+		
 	procedure dummy;
 
 	-- The simplest object in the model world is a line:
@@ -56,42 +56,44 @@ package geometry_2 is
 
 	-- CS arc ?
 
+	
+	-- type type_rectangle is new type_object with record
+	-- 	-- The four corners of the rectangle in
+	-- 	-- counter-clockwise order:
+	-- 	bl : type_point_model; -- bottom left
+	-- 	br : type_point_model; -- bottom right
+	-- 	tr : type_point_model; -- top right
+	-- 	tl : type_point_model; -- top left
+	-- 	w  : type_distance_model; -- the linewidth
+	-- end record;
+	
+
+	-- Another primitive object is a circle:
+	type type_circle is record
+		c : type_point_model;
+		w : type_distance_model; -- the linewidth
+		-- CS: fill status
+	end record;
+
+	
 	type type_object is abstract tagged record
 		p : type_point_model;
 	end record;
 
 	
-	type type_rectangle is new type_object with record
-		-- The four corners of the rectangle in
-		-- counter-clockwise order:
-		bl : type_point_model; -- bottom left
-		br : type_point_model; -- bottom right
-		tr : type_point_model; -- top right
-		tl : type_point_model; -- top left
-		w  : type_distance_model; -- the linewidth
-	end record;
-	
-
-	-- Another primitive object is a circle:
-	type type_circle is new type_object with record
-		w : type_distance_model; -- the linewidth
-		-- CS: fill status
-	end record;
-
-
 	type type_complex_object is new type_object with record
 		l1, l2, l3 : type_line;
 		c1 : type_circle;
 	end record;
 
 
-	object_1 : type_rectangle := (
-		p	=> ( 20.0,  20.0),
-		bl	=> (-10.0, -10.0),
-		br	=> ( 10.0, -10.0),
-		tr	=> ( 10.0,  10.0),
-		tl	=> (-10.0,  20.0),
-		w	=> 1.0);
+	object_1 : type_complex_object := (
+		p	=> (30.0, 60.0),
+		l1	=> (s => (-10.0, -10.0), e => ( 10.0, -10.0), w => 5.0),
+		l2	=> (s => ( 10.0, -10.0), e => ( 10.0, +10.0), w => 1.0),
+		l3	=> (s => ( 10.0, +10.0), e => (-10.0, -10.0), w => 1.0),
+		c1	=> (c => (0.0, 0.0), w => 2.0)
+		);
 	
 end geometry_2;
 

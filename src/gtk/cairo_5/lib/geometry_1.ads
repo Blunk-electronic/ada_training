@@ -314,6 +314,20 @@ package geometry_1 is
 		return string;
 
 
+	-- Converts the given model distance to
+	-- a canvas distance according to the current scale_factor:
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_canvas;
+
+	
+	-- Converts the given canvas distance to
+	-- a model distance according to the current scale_factor:
+	function to_distance (
+		d : in type_distance_canvas)
+		return type_distance_model;
+
+	
 	-- Clips the given value by the given limit.
 	-- If the given value is less or equal the limit,
 	-- then value remains unchanged:

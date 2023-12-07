@@ -2374,17 +2374,44 @@ package body callbacks is
 		
 		cp : type_point_canvas;
 
+		use geometry_2;
+		
+		procedure draw_line (
+			line	: in type_line;
+			pos		: in type_point_model)
+		is
+			s : type_point_model := line.s;
+			e : type_point_model := line.e;
 
+			c1, c2 : type_point_canvas;
+			
+		begin
+			set_line_width (context, to_distance (line.w));
+			
+			move_by (s, pos);
+			move_by (e, pos);
+
+			c1 := to_canvas (s, scale_factor, real => true);
+			c2 := to_canvas (e, scale_factor, real => true);
+			move_to (context, c1.x, c1.y);
+			line_to (context, c2.x, c2.y);
+			stroke (context);
+		end draw_line;
+			
+			
+			
 		procedure draw_objects is
 			c : type_point_canvas;
 		begin
 			put_line ("draw objects");
+   
+			set_source_rgb (context, 1.0, 0.0, 0.0);
 
-			-- set_line_width (context, 2.0) -- CS
-   -- 
-			-- set_source_rgb (context, 1.0, 0.0, 0.0);
-   -- 
-			-- c := to_canvas (object_1.
+			-- CS draw origin
+			
+			draw_line (object_1.l1, object_1.p);
+			draw_line (object_1.l2, object_1.p);
+			draw_line (object_1.l3, object_1.p);
 							
 		end draw_objects;
 
@@ -2418,7 +2445,7 @@ package body callbacks is
 		-- all objects must be parsed here. One object after another
 		-- must be drawn. But since this is a demo,
 		-- we have just a single object (a rectangle) do deal with.
-		-- draw_objects;
+		draw_objects;
 		
 		
 		set_line_width (context, 2.0);

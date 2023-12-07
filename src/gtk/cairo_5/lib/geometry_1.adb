@@ -338,6 +338,22 @@ package body geometry_1 is
 
 
 
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_canvas
+	is begin
+		return gdouble (d) * gdouble (scale_factor);
+	end to_distance;
+
+
+	function to_distance (
+		d : in type_distance_canvas)
+		return type_distance_model
+	is begin
+		return type_distance_model (d / gdouble (scale_factor));
+	end to_distance;
+
+	
 	
 	procedure clip_max (
 		value	: in out gdouble;
