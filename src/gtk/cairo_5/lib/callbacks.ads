@@ -57,6 +57,8 @@ with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
 with geometry_1;				use geometry_1;
+with geometry_2;
+
 
 package callbacks is
 
@@ -437,6 +439,13 @@ package callbacks is
 		return boolean;
 
 
+	-- This is a primitive draw operation that draws a line:
+	procedure draw_line (
+		context	: in cairo_context; -- CS make context global ?
+		line	: in geometry_2.type_line;
+		pos		: in type_point_model);
+
+	
 	-- This function is called each time the canvas is to be refreshed:
 	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;

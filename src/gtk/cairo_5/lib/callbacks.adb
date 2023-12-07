@@ -49,8 +49,6 @@ with ada.calendar.formatting;	use ada.calendar.formatting;
 
 with gtk.main;					use gtk.main;
 
-with geometry_2;
-
 
 package body callbacks is
 
@@ -2054,6 +2052,34 @@ package body callbacks is
 
 	
 	
+	procedure draw_line (
+		context	: in cairo_context; -- CS make context global ?
+		line	: in geometry_2.type_line;
+		pos		: in type_point_model)
+	is
+		s : type_point_model := line.s;
+		e : type_point_model := line.e;
+
+		c1, c2 : type_point_canvas;
+		
+	begin
+		-- CS area check
+		-- CS size check
+		
+		set_line_width (context, to_distance (line.w));
+		
+		move_by (s, pos);
+		move_by (e, pos);
+
+		c1 := to_canvas (s, scale_factor, real => true);
+		c2 := to_canvas (e, scale_factor, real => true);
+		move_to (context, c1.x, c1.y);
+		line_to (context, c2.x, c2.y);
+		stroke (context);
+	end draw_line;
+
+	
+	
 	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;
 		context	: in cairo_context)
@@ -2372,54 +2398,38 @@ package body callbacks is
 		end draw_cursor;
 		
 		
-		cp : type_point_canvas;
-
-		use geometry_2;
+	
+			
 		
-		procedure draw_line (
-			line	: in type_line;
-			pos		: in type_point_model)
-		is
-			s : type_point_model := line.s;
-			e : type_point_model := line.e;
-
-			c1, c2 : type_point_canvas;
-			
-		begin
-			set_line_width (context, to_distance (line.w));
-			
-			move_by (s, pos);
-			move_by (e, pos);
-
-			c1 := to_canvas (s, scale_factor, real => true);
-			c2 := to_canvas (e, scale_factor, real => true);
-			move_to (context, c1.x, c1.y);
-			line_to (context, c2.x, c2.y);
-			stroke (context);
-		end draw_line;
-			
-			
-			
 		procedure draw_objects is
+			use geometry_2;
+			
 			c : type_point_canvas;
 		begin
 			put_line ("draw objects");
-   
-			set_source_rgb (context, 1.0, 0.0, 0.0);
+
+			-- Set the color:
+			set_source_rgb (context, 0.0, 1.0, 0.0);
 
 			-- CS draw origin
 			
-			draw_line (object_1.l1, object_1.p);
-			draw_line (object_1.l2, object_1.p);
-			draw_line (object_1.l3, object_1.p);
+			draw_line (context, object_1.l1, object_1.p);
+			draw_line (context, object_1.l2, object_1.p);
+			draw_line (context, object_1.l3, object_1.p);
 							
 		end draw_objects;
+
+		
+		cp : type_point_canvas;
 
 		
 	begin -- cb_draw_objects
 		-- new_line;
 		put_line ("cb_draw_objects " & image (clock));
 
+		-- CS if context is global then do:
+		-- context_global := context;
+		
 		-- Update the global visible_area:
 		visible_area := get_visible_area (canvas);
 		-- put_line (" visible " & to_string (visible_area));
@@ -2429,6 +2439,8 @@ package body callbacks is
 		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
 		paint (context);
 
+		-- CS line caps round
+		
 		-- Draw the grid if it is enabled and if the spacing
 		-- is greater than the minimal required spacing:
 		if grid.on = GRID_ON and then
