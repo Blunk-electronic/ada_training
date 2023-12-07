@@ -55,12 +55,12 @@ package body callbacks is
 
 	procedure update_cursor_coordinates is begin
 		-- x-axis:
-		pos_cursor_x_buf.set_text (to_string (cursor.position.x));
-		pos_cursor_x.set_buffer (pos_cursor_x_buf);
+		cursor_x_buf.set_text (to_string (cursor.position.x));
+		cursor_x_value.set_buffer (cursor_x_buf);
  
 		-- y-axis:
-		pos_cursor_y_buf.set_text (to_string (cursor.position.y));
-		pos_cursor_y.set_buffer (pos_cursor_y_buf);
+		cursor_y_buf.set_text (to_string (cursor.position.y));
+		cursor_y_value.set_buffer (cursor_y_buf);
 	end update_cursor_coordinates;
 
 	
@@ -103,19 +103,19 @@ package body callbacks is
 
 		-- dx:
 		distances_dx_buf.set_text (to_string (dx));
-		distances_dx.set_buffer (distances_dx_buf);
+		distances_dx_value.set_buffer (distances_dx_buf);
 
 		-- dy:
 		distances_dy_buf.set_text (to_string (dy));
-		distances_dy.set_buffer (distances_dy_buf);
+		distances_dy_value.set_buffer (distances_dy_buf);
 
 		-- absolute:
 		distances_absolute_buf.set_text (to_string (dabs));
-		distances_absolute.set_buffer (distances_absolute_buf);
+		distances_absolute_value.set_buffer (distances_absolute_buf);
 
 		-- angle:
 		distances_angle_buf.set_text (to_string (angle));
-		distances_angle.set_buffer (distances_angle_buf);
+		distances_angle_value.set_buffer (distances_angle_buf);
 	end update_distances_display;
 
 
@@ -399,106 +399,106 @@ package body callbacks is
 
 
 		-- POINTER / MOUSE:
-		gtk_new (label_pointer_header, "POINTER");		
-		gtk_new (label_pointer_x, "x:"); -- create a text label
+		gtk_new (pointer_header, "POINTER");		
+		gtk_new (pointer_x_label, "x:"); -- create a text label
 
 		-- The label shall be aligned in the column.
 		-- The discussion at:
 		-- <https://stackoverflow.com/questions/26345989/gtk-how-to-align-a-label-to-the-left-in-a-table>
 		-- gave the solution. See also package gtk.misc for details:
-		label_pointer_x.set_alignment (0.0, 0.0);	
-		gtk_new (pos_pointer_x); -- create a text view vor the value
+		pointer_x_label.set_alignment (0.0, 0.0);	
+		gtk_new (pointer_x_value); -- create a text view vor the value
 		-- A minimum width must be set for the text.
 		-- Setting the size request is one way. The height is
 		-- not affected, therefore the value -1:
-		pos_pointer_x.set_size_request (pos_field_width_min, -1);
+		pointer_x_value.set_size_request (pos_field_width_min, -1);
 		-- See also discussion at:
 		-- <https://stackoverflow.com/questions/24412859/gtk-how-can-the-size-of-a-textview-be-set-manually>
 		-- for a way to achieve this using a tag.
 
-		gtk_new (pos_pointer_x_buf); -- create a text buffer
-		pos_pointer_x.set_justification (JUSTIFY_RIGHT); -- align the value left
-		pos_pointer_x.set_editable (false); -- the value is not editable
-		pos_pointer_x.set_cursor_visible (false); -- do not show a cursor
+		gtk_new (pointer_x_buf); -- create a text buffer
+		pointer_x_value.set_justification (JUSTIFY_RIGHT); -- align the value left
+		pointer_x_value.set_editable (false); -- the value is not editable
+		pointer_x_value.set_cursor_visible (false); -- do not show a cursor
 
-		gtk_new (label_pointer_y, "y:"); -- create a text label
-		label_pointer_y.set_alignment (0.0, 0.0);	
-		gtk_new (pos_pointer_y);
-		pos_pointer_y.set_size_request (pos_field_width_min, -1);
-		gtk_new (pos_pointer_y_buf); -- create a text buffer
-		pos_pointer_y.set_justification (JUSTIFY_RIGHT); -- align the value left
-		pos_pointer_y.set_editable (false); -- the value is not editable
-		pos_pointer_y.set_cursor_visible (false); -- do not show a cursor
+		gtk_new (pointer_y_label, "y:"); -- create a text label
+		pointer_y_label.set_alignment (0.0, 0.0);	
+		gtk_new (pointer_y_value);
+		pointer_y_value.set_size_request (pos_field_width_min, -1);
+		gtk_new (pointer_y_buf); -- create a text buffer
+		pointer_y_value.set_justification (JUSTIFY_RIGHT); -- align the value left
+		pointer_y_value.set_editable (false); -- the value is not editable
+		pointer_y_value.set_cursor_visible (false); -- do not show a cursor
 
 		------------------------------------------------------------------------------
 		
 		-- CURSOR
-		gtk_new (label_cursor_header, "CURSOR");
+		gtk_new (cursor_header, "CURSOR");
 
-		gtk_new (label_cursor_x, "x:");
-		label_cursor_x.set_alignment (0.0, 0.0);	
-		gtk_new (pos_cursor_x);
-		pos_cursor_x.set_size_request (pos_field_width_min, -1);
+		gtk_new (cursor_x_label, "x:");
+		cursor_x_label.set_alignment (0.0, 0.0);	
+		gtk_new (cursor_x_value);
+		cursor_x_value.set_size_request (pos_field_width_min, -1);
 
-		gtk_new (pos_cursor_x_buf);
-		pos_cursor_x.set_justification (JUSTIFY_RIGHT);
-		pos_cursor_x.set_editable (false);
-		pos_cursor_x.set_cursor_visible (false);
+		gtk_new (cursor_x_buf);
+		cursor_x_value.set_justification (JUSTIFY_RIGHT);
+		cursor_x_value.set_editable (false);
+		cursor_x_value.set_cursor_visible (false);
 
-		gtk_new (label_cursor_y, "y:");
-		label_cursor_y.set_alignment (0.0, 0.0);	
-		gtk_new (pos_cursor_y);
-		pos_cursor_y.set_size_request (pos_field_width_min, -1);
-		gtk_new (pos_cursor_y_buf);
-		pos_cursor_y.set_justification (JUSTIFY_RIGHT);
-		pos_cursor_y.set_editable (false);
-		pos_cursor_y.set_cursor_visible (false);
+		gtk_new (cursor_y_label, "y:");
+		cursor_y_label.set_alignment (0.0, 0.0);	
+		gtk_new (cursor_y_value);
+		cursor_y_value.set_size_request (pos_field_width_min, -1);
+		gtk_new (cursor_y_buf);
+		cursor_y_value.set_justification (JUSTIFY_RIGHT);
+		cursor_y_value.set_editable (false);
+		cursor_y_value.set_cursor_visible (false);
 
 		------------------------------------------------------------------------------
 		-- DISTANCES		
-		gtk_new (label_distances_header, "DISTANCE");
-		gtk_new (label_distances_dx, "dx:");
-		label_distances_dx.set_alignment (0.0, 0.0);	
-		gtk_new (distances_dx);
-		distances_dx.set_size_request (pos_field_width_min, -1);
+		gtk_new (distances_header, "DISTANCE");
+		gtk_new (distances_dx_label, "dx:");
+		distances_dx_label.set_alignment (0.0, 0.0);	
+		gtk_new (distances_dx_value);
+		distances_dx_value.set_size_request (pos_field_width_min, -1);
 
 		gtk_new (distances_dx_buf);
-		distances_dx.set_justification (JUSTIFY_RIGHT);
-		distances_dx.set_editable (false);
-		distances_dx.set_cursor_visible (false);
+		distances_dx_value.set_justification (JUSTIFY_RIGHT);
+		distances_dx_value.set_editable (false);
+		distances_dx_value.set_cursor_visible (false);
 
 		
-		gtk_new (label_distances_dy, "dy:");
-		label_distances_dy.set_alignment (0.0, 0.0);	
-		gtk_new (distances_dy);
-		distances_dy.set_size_request (pos_field_width_min, -1);
+		gtk_new (distances_dy_label, "dy:");
+		distances_dy_label.set_alignment (0.0, 0.0);	
+		gtk_new (distances_dy_value);
+		distances_dy_value.set_size_request (pos_field_width_min, -1);
 
 		gtk_new (distances_dy_buf);
-		distances_dy.set_justification (JUSTIFY_RIGHT);
-		distances_dy.set_editable (false);
-		distances_dy.set_cursor_visible (false);
+		distances_dy_value.set_justification (JUSTIFY_RIGHT);
+		distances_dy_value.set_editable (false);
+		distances_dy_value.set_cursor_visible (false);
 
 
-		gtk_new (label_distances_absolute, "abs:");
-		label_distances_absolute.set_alignment (0.0, 0.0);	
-		gtk_new (distances_absolute);
-		distances_absolute.set_size_request (pos_field_width_min, -1);
+		gtk_new (distances_absolute_label, "abs:");
+		distances_absolute_label.set_alignment (0.0, 0.0);	
+		gtk_new (distances_absolute_value);
+		distances_absolute_value.set_size_request (pos_field_width_min, -1);
 
 		gtk_new (distances_absolute_buf);
-		distances_absolute.set_justification (JUSTIFY_RIGHT);
-		distances_absolute.set_editable (false);
-		distances_absolute.set_cursor_visible (false);
+		distances_absolute_value.set_justification (JUSTIFY_RIGHT);
+		distances_absolute_value.set_editable (false);
+		distances_absolute_value.set_cursor_visible (false);
 
 
-		gtk_new (label_distances_angle, "angle:");
-		label_distances_angle.set_alignment (0.0, 0.0);	
-		gtk_new (distances_angle);
-		distances_angle.set_size_request (pos_field_width_min, -1);
+		gtk_new (distances_angle_label, "angle:");
+		distances_angle_label.set_alignment (0.0, 0.0);	
+		gtk_new (distances_angle_value);
+		distances_angle_value.set_size_request (pos_field_width_min, -1);
 
 		gtk_new (distances_angle_buf);
-		distances_angle.set_justification (JUSTIFY_RIGHT);
-		distances_angle.set_editable (false);
-		distances_angle.set_cursor_visible (false);
+		distances_angle_value.set_justification (JUSTIFY_RIGHT);
+		distances_angle_value.set_editable (false);
+		distances_angle_value.set_cursor_visible (false);
 
 		------------------------------------------------------------------------------
 		-- GRID
@@ -545,92 +545,92 @@ package body callbacks is
 		-- Put the items in the table:
 
 		-- MOUSE / POINTER:
-		table_coordinates.attach (label_pointer_header, 
+		table_coordinates.attach (pointer_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 0, bottom_attach	=> 1);
 
 		-- x-coordinate:
-		table_coordinates.attach (label_pointer_x, 
+		table_coordinates.attach (pointer_x_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 1, bottom_attach	=> 2);
 
-		table_coordinates.attach (pos_pointer_x, 
+		table_coordinates.attach (pointer_x_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 1, bottom_attach	=> 2);
 
 		-- y-coordinate:
-		table_coordinates.attach (label_pointer_y, 
+		table_coordinates.attach (pointer_y_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 2, bottom_attach	=> 3);
   
-		table_coordinates.attach (pos_pointer_y, 
+		table_coordinates.attach (pointer_y_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 2, bottom_attach	=> 3);
 
 
 		-- CURSOR:
-		table_coordinates.attach (label_cursor_header, 
+		table_coordinates.attach (cursor_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 3, bottom_attach	=> 4);
 
 		-- x-coordinate:
-		table_coordinates.attach (label_cursor_x, 
+		table_coordinates.attach (cursor_x_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 4, bottom_attach	=> 5);
 
-		table_coordinates.attach (pos_cursor_x, 
+		table_coordinates.attach (cursor_x_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 4, bottom_attach	=> 5);
 
 		-- y-coordinate:
-		table_coordinates.attach (label_cursor_y, 
+		table_coordinates.attach (cursor_y_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 5, bottom_attach	=> 6);
   
-		table_coordinates.attach (pos_cursor_y, 
+		table_coordinates.attach (cursor_y_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 5, bottom_attach	=> 6);
 
 
 
 		-- DISTANCES:
-		table_coordinates.attach (label_distances_header, 
+		table_coordinates.attach (distances_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 6, bottom_attach	=> 7);
 
 		-- x-coordinate:
-		table_coordinates.attach (label_distances_dx, 
+		table_coordinates.attach (distances_dx_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 7, bottom_attach	=> 8);
 
-		table_coordinates.attach (distances_dx, 
+		table_coordinates.attach (distances_dx_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 7, bottom_attach	=> 8);
 
 		-- y-coordinate:
-		table_coordinates.attach (label_distances_dy, 
+		table_coordinates.attach (distances_dy_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 9, bottom_attach	=> 10);
   
-		table_coordinates.attach (distances_dy, 
+		table_coordinates.attach (distances_dy_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 9, bottom_attach	=> 10);
 
 		-- absolute:
-		table_coordinates.attach (label_distances_absolute, 
+		table_coordinates.attach (distances_absolute_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 10, bottom_attach => 11);
   
-		table_coordinates.attach (distances_absolute, 
+		table_coordinates.attach (distances_absolute_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 10, bottom_attach => 11);
 		
 		-- angle:
-		table_coordinates.attach (label_distances_angle, 
+		table_coordinates.attach (distances_angle_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 11, bottom_attach => 12);
   
-		table_coordinates.attach (distances_angle, 
+		table_coordinates.attach (distances_angle_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 11, bottom_attach => 12);
 
@@ -1730,12 +1730,12 @@ package body callbacks is
 
 		-- Update the coordinates display with the pointer position:
 		-- x-axis:
-		pos_pointer_x_buf.set_text (to_string (mp.x));
-		pos_pointer_x.set_buffer (pos_pointer_x_buf);
+		pointer_x_buf.set_text (to_string (mp.x));
+		pointer_x_value.set_buffer (pointer_x_buf);
   
 		-- y-axis:
-		pos_pointer_y_buf.set_text (to_string (mp.y));
-		pos_pointer_y.set_buffer (pos_pointer_y_buf);
+		pointer_y_buf.set_text (to_string (mp.y));
+		pointer_y_value.set_buffer (pointer_y_buf);
 
 		update_distances_display;
 		return event_handled;

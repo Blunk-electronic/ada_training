@@ -77,23 +77,23 @@ package callbacks is
 
 	table_coordinates	: gtk_table; -- incl. relative distances
 
-	label_pointer_header					: gtk_label;
-	label_pointer_x, label_pointer_y		: gtk_label;
-	pos_pointer_x, pos_pointer_y			: gtk_text_view;
-	pos_pointer_x_buf, pos_pointer_y_buf	: gtk_text_buffer;
+	pointer_header							: gtk_label;
+	pointer_x_label, pointer_y_label		: gtk_label;
+	pointer_x_value, pointer_y_value		: gtk_text_view;
+	pointer_x_buf, pointer_y_buf			: gtk_text_buffer;
 	
-	label_cursor_header						: gtk_label;
-	label_cursor_x, label_cursor_y			: gtk_label;
-	pos_cursor_x, pos_cursor_y				: gtk_text_view;
-	pos_cursor_x_buf, pos_cursor_y_buf		: gtk_text_buffer;
+	cursor_header							: gtk_label;
+	cursor_x_label, cursor_y_label			: gtk_label;
+	cursor_x_value, cursor_y_value			: gtk_text_view;
+	cursor_x_buf, cursor_y_buf				: gtk_text_buffer;
 	
-	label_distances_header					: gtk_label;
-	label_distances_dx, label_distances_dy	: gtk_label;
-	label_distances_absolute				: gtk_label;
-	label_distances_angle					: gtk_label;
-	distances_dx, distances_dy				: gtk_text_view;
-	distances_absolute						: gtk_text_view;
-	distances_angle							: gtk_text_view;
+	distances_header						: gtk_label;
+	distances_dx_label, distances_dy_label	: gtk_label;
+	distances_absolute_label				: gtk_label;
+	distances_angle_label					: gtk_label;
+	distances_dx_value, distances_dy_value	: gtk_text_view;
+	distances_absolute_value				: gtk_text_view;
+	distances_angle_value					: gtk_text_view;
 	distances_dx_buf, distances_dy_buf		: gtk_text_buffer;
 	distances_absolute_buf					: gtk_text_buffer;
 	distances_angle_buf						: gtk_text_buffer;
