@@ -47,12 +47,15 @@ package geometry is
 
 -- SCALE:
 
-	--type type_scale_factor is digits 4 range 0.1 .. 10.0;
-	type type_scale_factor is digits 6 range 0.001 .. 100.0;
+	type type_scale_factor is digits 3 range 0.10 .. 10.0;
 	scale_factor : type_scale_factor := 1.0;
 	scale_multiplier : constant type_scale_factor := 1.2;
 
-	
+
+	-- Converts the given scale factor to a string.
+	-- CS: Since type_scale_factor is a float type, the output is
+	-- something like 1.44E+00. Instead the output should be something
+	-- simpler like 1.44:
 	function to_string (
 		scale : in type_scale_factor)
 		return string;
