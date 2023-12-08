@@ -66,6 +66,7 @@ with gtk.separator;				use gtk.separator;
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
 with geometry_1;				use geometry_1;
+with geometry_2;
 
 procedure draw is
 
@@ -74,6 +75,8 @@ begin
 	make_object;
 	-- NOTE: A real project should provide all objects in
 	-- some kind of database.
+	geometry_2.make_database;
+	
 	
 	compute_bounding_box;
 	compute_base_offset;

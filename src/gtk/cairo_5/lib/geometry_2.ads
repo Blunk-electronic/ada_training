@@ -41,6 +41,10 @@ with glib;						use glib;
 with ada.numerics;
 with ada.numerics.generic_elementary_functions;
 
+with ada.containers;			use ada.containers;
+with ada.containers.doubly_linked_lists;
+
+
 with geometry_1;				use geometry_1;
 
 package geometry_2 is
@@ -127,6 +131,21 @@ package geometry_2 is
 		l3	=> (s => ( 10.0, +10.0), e => (-10.0, -10.0), w => 1.0),
 		c1	=> (c => (0.0, 0.0), w => 2.0)
 		);
+
+
+	package pac_lines is new doubly_linked_lists (element_type => type_line);
+	package pac_circles is new doubly_linked_lists (element_type => type_circle);
+	
+	type type_complex_object_2 is new type_object with record
+		lines	: pac_lines.list;
+		circles	: pac_circles.list;
+	end record;
+
+	package pac_objects is new doubly_linked_lists (element_type => type_complex_object_2);
+	objects_database : pac_objects.list;
+
+
+	procedure make_database;
 	
 end geometry_2;
 

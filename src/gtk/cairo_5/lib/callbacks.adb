@@ -2427,20 +2427,39 @@ package body callbacks is
 		-- and draws objects one by one:
 		procedure draw_objects is
 			use geometry_2;
+			use pac_lines;
+			use pac_circles;
+			use pac_objects;
 			
 			c : type_point_canvas;
+
+			procedure query_object (oc : in pac_objects.cursor) is
+				object : type_complex_object_2 renames element (oc);
+
+				procedure query_line (lc : in pac_lines.cursor) is
+					line : type_line renames element (lc);
+				begin
+					put_line ("query_line");
+					draw_line (context, line, object.p);					
+				end query_line;
+
+				
+			begin
+				put_line ("query_object");
+				object.lines.iterate (query_line'access);
+				null;
+			end query_object;
+			
 		begin
-			put_line ("draw objects");
+			put_line ("draw_objects");
 			
 			-- Set the color:
 			set_source_rgb (context, 0.0, 1.0, 0.0);
 
 			-- CS draw origin
-			
-			draw_line (context, object_1.l1, object_1.p);
-			draw_line (context, object_1.l2, object_1.p);
-			draw_line (context, object_1.l3, object_1.p);
-							
+
+
+			objects_database.iterate (query_object'access);
 		end draw_objects;
 
 		

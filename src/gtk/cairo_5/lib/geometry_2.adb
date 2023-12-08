@@ -175,18 +175,69 @@ package body geometry_2 is
 		
 	end above_visibility_threshold;
 
+
+	procedure make_database is
+		use pac_lines;
+		use pac_circles;
+		use pac_objects;
+
+		object : type_complex_object_2;
+		line : type_line;
+	begin
+		put_line ("make_database");
+
+		object.p := (100.0, 50.0);
+		
+		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
+		object.lines.append (line);
+
+		objects_database.append (object);
+		------------------------------------
+
+		object.lines.clear;
+		object.circles.clear;
+		
+		object.p := (200.0, 100.0);
+		-- object.p := (190.0, 95.0);
+		
+		line := (s => (-200.0, -100.0), e => (200.0, -100.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (200.0, -100.0), e => (200.0, 100.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (200.0, 100.0), e => (-200.0, 100.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (-200.0, 100.0), e => (-200.0, -90.0), w => 1.0);
+		object.lines.append (line);
+
+		objects_database.append (object);
+
+
+		
+	end make_database;
 	
--- 
--- 	procedure make_object is
--- 	begin
--- 		object.lower_left_corner := (-10.0, -5.0);
--- 		-- object.width  := 400.0;
--- 		-- object.height := 200.0;
--- 		
--- 		-- object.lower_left_corner := (5.0, 5.0);
--- 		object.width  := 390.0;
--- 		object.height := 190.0;
--- 	end make_object;
+
+	procedure make_object is
+	begin
+		object.lower_left_corner := (-10.0, -5.0);
+		-- object.width  := 400.0;
+		-- object.height := 200.0;
+		
+		-- object.lower_left_corner := (5.0, 5.0);
+		object.width  := 390.0;
+		object.height := 190.0;
+	end make_object;
 	
 end geometry_2;
 
