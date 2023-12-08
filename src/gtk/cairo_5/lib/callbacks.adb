@@ -2057,25 +2057,44 @@ package body callbacks is
 		line	: in geometry_2.type_line;
 		pos		: in type_point_model)
 	is
-		s : type_point_model := line.s;
-		e : type_point_model := line.e;
+		use geometry_2;
+		-- CS: Optimization required. Compiler options ?
+		
+		-- Make a copy of the given line:
+		l : type_line := line;
 
-		c1, c2 : type_point_canvas;
+		-- When the line is drawn, we need canvas points
+		-- for start and end:
+		c1, c2 : type_point_canvas; -- start and end of the line
+
+		-- The bounding-box of the line. It is required
+		-- for the area and size check:
+		b : type_area;
 		
 	begin
-		-- CS area check
+		-- Move the line to the given position:
+		move_line (l, pos);
+		
+		-- Get the bounding-box of line:
+		b := get_bounding_box (l);
+		-- put_line ("b" & to_string (b));
+		
+		-- Do the area check. If the bounding-box of the line
+		-- is inside the visible area then draw the line. Otherwise
+		-- nothing will be drawn:
+		if areas_overlap (visible_area, b) then
 		-- CS size check
-		
-		set_line_width (context, to_distance (line.w));
-		
-		move_by (s, pos);
-		move_by (e, pos);
 
-		c1 := to_canvas (s, scale_factor, real => true);
-		c2 := to_canvas (e, scale_factor, real => true);
-		move_to (context, c1.x, c1.y);
-		line_to (context, c2.x, c2.y);
-		stroke (context);
+			-- put_line ("draw line");
+
+			set_line_width (context, to_distance (line.w));
+
+			c1 := to_canvas (l.s, scale_factor, real => true);
+			c2 := to_canvas (l.e, scale_factor, real => true);
+			move_to (context, c1.x, c1.y);
+			line_to (context, c2.x, c2.y);
+			stroke (context);
+		end if;
 	end draw_line;
 
 	
@@ -2414,8 +2433,8 @@ package body callbacks is
 			-- CS draw origin
 			
 			draw_line (context, object_1.l1, object_1.p);
-			draw_line (context, object_1.l2, object_1.p);
-			draw_line (context, object_1.l3, object_1.p);
+			-- draw_line (context, object_1.l2, object_1.p);
+			-- draw_line (context, object_1.l3, object_1.p);
 							
 		end draw_objects;
 

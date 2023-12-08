@@ -44,8 +44,6 @@ with ada.numerics.generic_elementary_functions;
 with geometry_1;				use geometry_1;
 
 package geometry_2 is
-		
-	procedure dummy;
 
 	-- The simplest object in the model world is a line:
 	type type_line is record
@@ -53,8 +51,26 @@ package geometry_2 is
 		w : type_distance_model; -- linewidth
 	end record;
 
-
 	-- CS arc ?
+
+	-- Moves a line by the given offset:
+	procedure move_line (
+		line	: in out type_line;
+		offset	: in type_point_model);
+
+	
+	-- Returns the bounding-box of the given line.
+	-- It respects the linewidth and assumes that the line ends
+	-- have round caps:
+	function get_bounding_box (
+		line : in type_line)
+		return type_area;
+
+
+	-- Returns true if the given areas overlap each other:
+	function areas_overlap (
+		A, B : in type_area)
+		return boolean;
 
 	
 	-- type type_rectangle is new type_object with record

@@ -182,8 +182,8 @@ package geometry_1 is
 
 
 	type type_area is record
-		width		: type_distance_model;
-		height		: type_distance_model;
+		width		: type_distance_model; -- CS should be positive
+		height		: type_distance_model; -- CS should be positive
 		position	: type_point_model; -- lower left corner
 	end record;
 
