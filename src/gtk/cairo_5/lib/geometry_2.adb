@@ -143,6 +143,28 @@ package body geometry_2 is
 		end if;
 	end areas_overlap;
 
+
+
+	function above_visibility_threshold (
+		a : in type_area)
+		return boolean
+	is
+		-- CS: Optimization required. Compiler options ?
+		w : constant gdouble := to_distance (a.width);
+		h : constant gdouble := to_distance (a.height);
+		l : gdouble;
+	begin
+		-- Get the greatest of w and h:
+		l := gdouble'max (w, h);
+
+		if l > visibility_threshold then
+			return true;
+		else
+			return false;
+		end if;
+		
+	end above_visibility_threshold;
+
 	
 -- 
 -- 	procedure make_object is

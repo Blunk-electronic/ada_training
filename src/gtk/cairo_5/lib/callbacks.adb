@@ -2082,10 +2082,14 @@ package body callbacks is
 		-- Do the area check. If the bounding-box of the line
 		-- is inside the visible area then draw the line. Otherwise
 		-- nothing will be drawn:
-		if areas_overlap (visible_area, b) then
-		-- CS size check
+		if areas_overlap (visible_area, b) and then
 
-			-- put_line ("draw line");
+			-- Do the size check. If the bounding-box is greater
+			-- (either in width or heigth) than the visiblity threshold
+			-- then draw the line. Otherwise nothing will be drawn:
+			above_visibility_threshold (b) then
+
+			--put_line ("draw line");
 
 			set_line_width (context, to_distance (line.w));
 

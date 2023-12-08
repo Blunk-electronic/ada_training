@@ -36,7 +36,7 @@
 --   history of changes:
 --
 
--- with glib;						use glib;
+with glib;						use glib;
 
 with ada.numerics;
 with ada.numerics.generic_elementary_functions;
@@ -66,13 +66,23 @@ package geometry_2 is
 		line : in type_line)
 		return type_area;
 
-
+	
 	-- Returns true if the given areas overlap each other:
 	function areas_overlap (
 		A, B : in type_area)
 		return boolean;
 
+
 	
+	visibility_threshold : constant gdouble := 5.0;
+	
+	-- Returns true if the given area is large enough
+	-- to display objects therein:
+	function above_visibility_threshold (
+		a : in type_area)
+		return boolean;
+	
+		
 	-- type type_rectangle is new type_object with record
 	-- 	-- The four corners of the rectangle in
 	-- 	-- counter-clockwise order:
