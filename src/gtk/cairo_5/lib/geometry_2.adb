@@ -144,6 +144,16 @@ package body geometry_2 is
 	end areas_overlap;
 
 
+	procedure merge_areas (
+		A : in out type_area;
+		B : in type_area)
+	is
+	begin
+		null;
+		-- CS
+	end merge_areas;
+
+	
 
 	function above_visibility_threshold (
 		a : in type_area)

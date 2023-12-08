@@ -2422,23 +2422,24 @@ package body callbacks is
 		
 		
 	
-			
-		
+
+		-- Draws all model objects. Parses the model database
+		-- and draws objects one by one:
 		procedure draw_objects is
 			use geometry_2;
 			
 			c : type_point_canvas;
 		begin
 			put_line ("draw objects");
-
+			
 			-- Set the color:
 			set_source_rgb (context, 0.0, 1.0, 0.0);
 
 			-- CS draw origin
 			
 			draw_line (context, object_1.l1, object_1.p);
-			-- draw_line (context, object_1.l2, object_1.p);
-			-- draw_line (context, object_1.l3, object_1.p);
+			draw_line (context, object_1.l2, object_1.p);
+			draw_line (context, object_1.l3, object_1.p);
 							
 		end draw_objects;
 
@@ -2462,7 +2463,9 @@ package body callbacks is
 		set_source_rgb (context, 1.0, 1.0, 1.0); -- white
 		paint (context);
 
-		-- CS line caps round
+		-- The ends of all kinds of lines are round:
+		set_line_cap (context, cairo_line_cap_round);
+
 		
 		-- Draw the grid if it is enabled and if the spacing
 		-- is greater than the minimal required spacing:
@@ -2474,12 +2477,7 @@ package body callbacks is
 		draw_origin;
 
 		draw_cursor;
-		
-		
-		-- NOTE: In a real project, the database that contains
-		-- all objects must be parsed here. One object after another
-		-- must be drawn. But since this is a demo,
-		-- we have just a single object (a rectangle) do deal with.
+				
 		draw_objects;
 		
 		

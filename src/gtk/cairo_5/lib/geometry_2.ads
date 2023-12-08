@@ -73,7 +73,14 @@ package geometry_2 is
 		return boolean;
 
 
+	-- Merges the given area B into area A:
+	procedure merge_areas (
+		A : in out type_area;
+		B : in type_area);
 	
+
+	-- If an object occupies a space that is wider or
+	-- higher than this constant, then it will be drawn on the screen:
 	visibility_threshold : constant gdouble := 5.0;
 	
 	-- Returns true if the given area is large enough
