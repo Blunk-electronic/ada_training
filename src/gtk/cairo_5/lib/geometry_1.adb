@@ -279,32 +279,6 @@ package body geometry_1 is
 	end in_width;
 
 	
-	
-
-	
-	procedure compute_bounding_box is
-	begin
-		-- NOTE: In a real project, the database that contains
-		-- all objects must be parsed here. But since this is a demo,
-		-- we have just a single object (a rectangle) do deal with.
-		
-		-- Add to the object dimensions the margin. 
-		-- The margin is part of the model and thus part 
-		-- of the bounding box:
-		bounding_box.width  := object.width  + 2.0 * margin;
-		bounding_box.height := object.height + 2.0 * margin;
-		
-		-- Compute the position of the bounding-box.
-		-- First we aquire the smallest x and y value used by the objects:
-		bounding_box.position := object.lower_left_corner;
-
-		-- Since we regard the margin as inside the bounding-box,
-		-- we must move the bounding-box position towards bottom-left
-		-- by the inverted margin_offset:
-		move_by (bounding_box.position, invert (margin_offset));
-
-		put_line ("bounding-box: " & to_string (bounding_box));
-	end compute_bounding_box;
 
 	
 	function get_distance (
@@ -479,18 +453,7 @@ package body geometry_1 is
 		return result;
 	end to_canvas;
 
-	
 
-	procedure make_object is
-	begin
-		object.lower_left_corner := (-10.0, -5.0);
-		-- object.width  := 400.0;
-		-- object.height := 200.0;
-		
-		-- object.lower_left_corner := (5.0, 5.0);
-		object.width  := 390.0;
-		object.height := 190.0;
-	end make_object;
 	
 end geometry_1;
 

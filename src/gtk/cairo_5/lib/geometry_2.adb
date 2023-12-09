@@ -41,16 +41,7 @@ with glib;						use glib;
 
 package body geometry_2 is
 
-	procedure move_line (
-		line	: in out type_line;
-		offset	: in type_point_model)
-	is begin
-		-- CS: Optimization required. Compiler options ?
-		move_by (line.s, offset);
-		move_by (line.e, offset);
-	end move_line;
-
-
+	
 	function get_bounding_box (
 		line : in type_line)
 		return type_area
@@ -95,6 +86,28 @@ package body geometry_2 is
 	end get_bounding_box;
 
 
+	procedure move_line (
+		line	: in out type_line;
+		offset	: in type_point_model)
+	is begin
+		-- CS: Optimization required. Compiler options ?
+		move_by (line.s, offset);
+		move_by (line.e, offset);
+	end move_line;
+
+	
+	
+	function get_bounding_box (
+		circle : in type_circle)
+		return type_area
+	is
+		result : type_area;
+	begin
+		-- CS
+		return result;
+	end get_bounding_box;
+	
+	
 	
 	function areas_overlap (
 		A, B : in type_area)
@@ -225,6 +238,7 @@ package body geometry_2 is
 	end above_visibility_threshold;
 
 
+	
 	procedure make_database is
 		use pac_lines;
 		use pac_circles;
@@ -243,10 +257,10 @@ package body geometry_2 is
 		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 1.0);
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 2.0);
 		object.lines.append (line);
 
-		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 2.0);
 		object.lines.append (line);
 
 		objects_database.append (object);
@@ -258,35 +272,86 @@ package body geometry_2 is
 		object.p := (200.0, 100.0);
 		-- object.p := (190.0, 95.0);
 		
-		line := (s => (-200.0, -100.0), e => (200.0, -100.0), w => 1.0);
+		line := (s => (-200.0, -100.0), e => (200.0, -100.0), w => 1.5);
 		object.lines.append (line);
 
-		line := (s => (200.0, -100.0), e => (200.0, 100.0), w => 1.0);
+		line := (s => (200.0, -100.0), e => (200.0, 100.0), w => 1.5);
 		object.lines.append (line);
 
-		line := (s => (200.0, 100.0), e => (-200.0, 100.0), w => 1.0);
+		line := (s => (200.0, 100.0), e => (-200.0, 100.0), w => 1.5);
 		object.lines.append (line);
 
-		line := (s => (-200.0, 100.0), e => (-200.0, -90.0), w => 1.0);
+		line := (s => (-200.0, 100.0), e => (-200.0, -90.0), w => 1.5);
 		object.lines.append (line);
 
 		objects_database.append (object);
-
-
 		
 	end make_database;
 	
 
-	procedure make_object is
-	begin
-		object.lower_left_corner := (-10.0, -5.0);
-		-- object.width  := 400.0;
-		-- object.height := 200.0;
+	
+	procedure compute_bounding_box is
+		use pac_lines;
+		use pac_circles;
+		use pac_objects;
+
 		
-		-- object.lower_left_corner := (5.0, 5.0);
-		object.width  := 390.0;
-		object.height := 190.0;
-	end make_object;
+		procedure query_object (oc : in pac_objects.cursor) is
+			object : type_complex_object_2 renames element (oc);
+
+			procedure query_line (lc : in pac_lines.cursor) is
+				line : type_line renames element (lc);
+				b : type_area;
+			begin
+				b := get_bounding_box (line);
+				move_by (b.position, object.p);
+				merge_areas (bounding_box, b);
+			end query_line;
+
+			
+			procedure query_circle (cc : in pac_circles.cursor) is
+				circle : type_circle renames element (cc);
+				b : type_area;
+			begin
+				b := get_bounding_box (circle);
+				move_by (b.position, object.p);
+				merge_areas (bounding_box, b);
+			end query_circle;
+
+			
+		begin
+			object.lines.iterate (query_line'access);
+			object.circles.iterate (query_circle'access);
+		end query_object;
+
+		
+	begin
+		put_line ("compute_bounding_box");
+
+		-- Reset the global bounding-box:
+		bounding_box := bounding_box_default;
+		
+		-- The database that contains all objects of the model
+		-- must be parsed here:
+		objects_database.iterate (query_object'access);
+		
+		
+		-- Expand the bounding-box by the margin. 
+		-- The margin is part of the model and thus part 
+		-- of the bounding box:
+		bounding_box.width  := bounding_box.width  + 2.0 * margin;
+		bounding_box.height := bounding_box.height + 2.0 * margin;
+		
+		-- Since we regard the margin as inside the bounding-box,
+		-- we must move the bounding-box position towards bottom-left
+		-- by the inverted margin_offset:
+		move_by (bounding_box.position, invert (margin_offset));
+	
+		
+		put_line ("bounding-box: " & to_string (bounding_box));
+	end compute_bounding_box;
+
+
 	
 end geometry_2;
 

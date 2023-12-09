@@ -2454,16 +2454,13 @@ package body callbacks is
 			put_line ("draw_objects");
 			
 			-- Set the color:
-			set_source_rgb (context, 0.0, 1.0, 0.0);
+			set_source_rgb (context, 1.0, 0.0, 0.0);
 
 			-- CS draw origin
-
 
 			objects_database.iterate (query_object'access);
 		end draw_objects;
 
-		
-		cp : type_point_canvas;
 
 		
 	begin -- cb_draw_objects
@@ -2499,35 +2496,6 @@ package body callbacks is
 				
 		draw_objects;
 		
-		
-		set_line_width (context, 2.0);
-		set_source_rgb (context, 1.0, 0.0, 0.0);
-
-		
-		-- put_line ("object position " & to_string (object.lower_left_corner));
-
-		cp := to_canvas (object.lower_left_corner, scale_factor, true);
-		
-		-- Draw the rectangle:
-		rectangle (context, 
-			cp.x, cp.y,	-- lower left corner
-			gdouble (object.width)  * gdouble  (scale_factor),  -- width
-			gdouble (object.height) * gdouble (-scale_factor)); -- height
-
-		stroke (context);
-		
-		set_source_rgb (context, 0.0, 1.0, 0.0);
-		
-		move_to (context,
-			cp.x, cp.y + gdouble (object.height) * gdouble (-scale_factor) * 0.5);
-
-		line_to (context,
-			cp.x + gdouble (object.width) * gdouble (scale_factor), 
-			cp.y + gdouble (object.height) * gdouble (-scale_factor) * 0.5);
-		
-		stroke (context);
-
-		-- destroy (context); -- exception assertion failed ...
 		
 		return event_handled;
 	end cb_draw_objects;

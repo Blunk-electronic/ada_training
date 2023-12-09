@@ -182,8 +182,8 @@ package geometry_1 is
 
 
 	type type_area is record
-		width		: type_distance_model; -- CS should be positive
-		height		: type_distance_model; -- CS should be positive
+		width		: type_distance_model := 0.0; -- CS should be positive
+		height		: type_distance_model := 0.0; -- CS should be positive
 		position	: type_point_model; -- lower left corner
 	end record;
 
@@ -253,6 +253,11 @@ package geometry_1 is
 	-- that encloses all objects of the model and the margins 
 	-- around the model:
 	bounding_box : type_area;
+	
+	bounding_box_default : constant type_area := (
+		position	=> (0.0, 0.0),
+		width		=> 400.0,
+		height		=> 200.0);
 
 	
 	
@@ -266,9 +271,6 @@ package geometry_1 is
 		y	=> margin);
 
 	
-	-- Detects the smallest and greatest x and y values used by the model.
-	-- Sets the global variable bounding_box:
-	procedure compute_bounding_box;
 
 
 	
@@ -386,22 +388,6 @@ package geometry_1 is
 		scale	: in type_scale_factor;
 		real	: in boolean := false) -- if real model coordinates are given
 		return type_point_canvas;
-
-
-
-	
--- DUMMY OBJECT TO BE DRAWN ON THE CANVAS:
-
-	type type_rectangle is record
-		lower_left_corner : type_point_model;
-		width  : type_distance_model := bounding_box.width;
-		height : type_distance_model := bounding_box.height;
-	end record;
-	
-
-	object : type_rectangle;
-
-	procedure make_object;
 	
 end geometry_1;
 

@@ -55,13 +55,6 @@ package geometry_2 is
 		w : type_distance_model; -- linewidth
 	end record;
 
-	-- CS arc ?
-
-	-- Moves a line by the given offset:
-	procedure move_line (
-		line	: in out type_line;
-		offset	: in type_point_model);
-
 	
 	-- Returns the bounding-box of the given line.
 	-- It respects the linewidth and assumes that the line ends
@@ -69,6 +62,34 @@ package geometry_2 is
 	function get_bounding_box (
 		line : in type_line)
 		return type_area;
+
+	
+	-- Moves a line by the given offset:
+	procedure move_line (
+		line	: in out type_line;
+		offset	: in type_point_model);
+
+	
+	
+	-- Another primitive object is a circle:
+	type type_circle is record
+		c : type_point_model;
+		w : type_distance_model; -- the linewidth
+		-- CS: fill status
+	end record;
+
+	
+	-- Returns the bounding-box of the given circle.
+	-- It respects the linewidth of the circumfence:
+	function get_bounding_box (
+		circle : in type_circle)
+		return type_area;
+	
+	-- CS arc ?
+
+	
+
+	
 
 	
 	-- Returns true if the given areas overlap each other:
@@ -93,25 +114,9 @@ package geometry_2 is
 		a : in type_area)
 		return boolean;
 	
-		
-	-- type type_rectangle is new type_object with record
-	-- 	-- The four corners of the rectangle in
-	-- 	-- counter-clockwise order:
-	-- 	bl : type_point_model; -- bottom left
-	-- 	br : type_point_model; -- bottom right
-	-- 	tr : type_point_model; -- top right
-	-- 	tl : type_point_model; -- top left
-	-- 	w  : type_distance_model; -- the linewidth
-	-- end record;
+
+
 	
-
-	-- Another primitive object is a circle:
-	type type_circle is record
-		c : type_point_model;
-		w : type_distance_model; -- the linewidth
-		-- CS: fill status
-	end record;
-
 	
 	type type_object is abstract tagged record
 		p : type_point_model;
@@ -146,6 +151,10 @@ package geometry_2 is
 
 
 	procedure make_database;
+
+	-- Detects the smallest and greatest x and y values used by the model.
+	-- Sets the global variable bounding_box:
+	procedure compute_bounding_box;
 	
 end geometry_2;
 

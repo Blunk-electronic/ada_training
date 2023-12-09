@@ -71,14 +71,11 @@ with geometry_2;
 procedure draw is
 
 begin
-	-- Create a dummy object that is to be displayed:
-	make_object;
-	-- NOTE: A real project should provide all objects in
-	-- some kind of database.
+
 	geometry_2.make_database;
+		
+	geometry_2.compute_bounding_box;
 	
-	
-	compute_bounding_box;
 	compute_base_offset;
 	prepare_initial_scrollbar_settings;
 
