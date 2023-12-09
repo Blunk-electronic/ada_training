@@ -37,7 +37,7 @@
 --
 
 with ada.text_io;				use ada.text_io;
-with glib;						use glib;
+
 
 package body geometry_1 is
 

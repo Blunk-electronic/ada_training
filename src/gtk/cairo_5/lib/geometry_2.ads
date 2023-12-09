@@ -44,8 +44,8 @@ with ada.numerics.generic_elementary_functions;
 with ada.containers;			use ada.containers;
 with ada.containers.doubly_linked_lists;
 
-
 with geometry_1;				use geometry_1;
+
 
 package geometry_2 is
 

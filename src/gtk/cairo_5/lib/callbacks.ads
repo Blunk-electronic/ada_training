@@ -62,12 +62,17 @@ with geometry_2;				use geometry_2;
 
 package callbacks is
 
+-- BASE-OFFSET:
+	
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin:
 	base_offset : type_point_canvas;
 		
 	procedure compute_base_offset;
 
+
+	
+-- TRANSLATE-OFFSET:
 	
 	-- The global translate-offset by which all draw operations on the canvas
 	-- are translated when the operator zooms on the pointer or the cursor:
@@ -87,6 +92,7 @@ package callbacks is
 	procedure compute_translate_offset (
 		MP	: in type_point_model;		-- the virtual zoom center as model point
 		Z1	: in type_point_canvas);	-- the zoom center as canvas point
+
 
 	
 -- CONVERSION BETWEEN MODEL AND CANVAS:
@@ -119,6 +125,8 @@ package callbacks is
 		return type_point_canvas;
 
 
+
+-- VISIBILTY THRESHOLD:
 	
 	-- If an object occupies a space that is wider or
 	-- higher than this constant, then it will be drawn on the screen:
@@ -131,6 +139,7 @@ package callbacks is
 		return boolean;
 
 
+	
 -- GRID:
 	
 	-- This function returns the space between
@@ -146,6 +155,7 @@ package callbacks is
 
 
 
+	
 
 	
 -- MAIN WINDOW:
@@ -157,7 +167,7 @@ package callbacks is
 	end record;
 
 
--- BOXES:
+-- GTK-BOXES:
 	
 	box_h 				: gtk_hbox;
 	box_v1				: gtk_vbox;
@@ -249,6 +259,7 @@ package callbacks is
 	-- distances and angle:
 	procedure set_up_coordinates_display;
 
+	
 	
 -- SCROLLED WINDOW:
 	
@@ -412,23 +423,9 @@ package callbacks is
 		distance	: type_distance_model);
 	
 		
--- POINT QUERY AND TEST:
-
-	-- CS no need anymore ?
-	-- type type_model_point_visible is record
-	-- 	x, y : boolean := false;
-	-- end record;
- -- 
-	-- -- CS no need anymore ? rework required. use in_area test instead ?	
-	-- function model_point_visible (
-	-- 	point 		: in type_point_model)
-	-- 	return type_model_point_visible;
-	
-
-
 
 	
-	
+-- VISIBLE AREA:	
 
 	-- Returns the currently visible area of the model.
 	-- The visible area depends the current scale factor,
@@ -450,8 +447,10 @@ package callbacks is
 	visible_area : type_area;
 	
 
+	
 
 -- CURSOR:
+	
 	-- The cursor is a crosshair that can be moved by the
 	-- cursor keys (arrow keys) about the canvas:
 	type type_cursor is record
@@ -485,6 +484,10 @@ package callbacks is
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction);
 	
+
+
+
+
 	
 	-- This callback function is called each time the operator
 	-- clicks on the canvas.

@@ -68,6 +68,7 @@ package body callbacks is
 		put_line ("base offset: " & to_string (base_offset));
 	end compute_base_offset;
 
+	
 
 	procedure compute_translate_offset (
 		MP	: in type_point_model;
@@ -107,6 +108,7 @@ package body callbacks is
 		return type_distance_model (d / gdouble (scale_factor));
 	end to_distance;
 	
+
 	
 	function to_model (
 		point	: in type_point_canvas;
@@ -194,6 +196,8 @@ package body callbacks is
 	end above_visibility_threshold;
 
 
+	
+
 	function get_grid_spacing (
 		grid : in type_grid)
 		return gdouble
@@ -218,6 +222,8 @@ package body callbacks is
 		cursor_y_value.set_buffer (cursor_y_buf);
 	end update_cursor_coordinates;
 
+
+	
 	
 	procedure update_distances_display is 
 		px, py : gint; -- the pointer position
@@ -274,10 +280,12 @@ package body callbacks is
 	end update_distances_display;
 
 
+	
 	procedure update_scale_display is begin
 		scale_buf.set_text (to_string (scale_factor));
 		scale_value.set_buffer (scale_buf);
 	end update_scale_display;
+
 	
 
 	procedure update_grid_display is begin
@@ -529,6 +537,7 @@ package body callbacks is
 
 		main_window.add (box_h);
 	end set_up_main_window;
+
 
 	
 	procedure set_up_coordinates_display is
@@ -1123,7 +1132,7 @@ package body callbacks is
 			dH := gdouble (new_size.height - scrolled_window_size.height);
 
 			-- for debugging:
-			show_size;
+			-- show_size;
 
 			-- Move the canvas so that its bottom follows
 			-- the bottom of the scrolled window:
@@ -1618,50 +1627,6 @@ package body callbacks is
 	end shift_canvas;
 
 	
-
--- 	function model_point_visible (
--- 		point 		: in type_point_model)
--- 		return type_model_point_visible
--- 	is
--- 		result : type_model_point_visible;
--- 		C : type_point_canvas;
--- 	begin
--- 		-- put_line ("M " & to_string (point));
--- 		
--- 		C := to_canvas (
--- 			point	=> point,
--- 			scale	=> scale_factor,
--- 			real	=> true);
--- 
--- 		-- put_line ("C " & to_string (C));
--- 
--- 		-- X-axis:
--- 		-- The visible area ranges from the current position
--- 		-- of the horizontal scrollbar (value) to the end of the
--- 		-- scrollbar (value + page_size). If C.x lies in that range,
--- 		-- then the corresponding flag in the return will be set.
--- 		if C.x >= scrollbar_h_adj.get_value and
--- 			C.x <= scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size then
--- 			result.x := true;
--- 			-- put_line ("X visible");	
--- 		end if;
--- 
--- 		
--- 		-- Y-axis:
--- 		-- The visible area ranges from the current position
--- 		-- of the vertical scrollbar (value) to the end of the
--- 		-- scrollbar (value + page_size). If C.y lies in that range,
--- 		-- then the corresponding flag in the return will be set.
--- 		if C.y >= scrollbar_v_adj.get_value and
--- 			C.y <= scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size then
--- 			result.y := true;
--- 			-- put_line ("Y visible");	
--- 		end if;
--- 
--- 		return result;
--- 	end model_point_visible;
-
-
 
 	
 
@@ -2210,10 +2175,9 @@ package body callbacks is
 	
 	procedure draw_line (
 		context	: in cairo_context; -- CS make context global ?
-		line	: in geometry_2.type_line;
+		line	: in type_line;
 		pos		: in type_point_model)
 	is
-		use geometry_2;
 		-- CS: Optimization required. Compiler options ?
 		
 		-- Make a copy of the given line:
@@ -2582,7 +2546,6 @@ package body callbacks is
 		-- Draws all model objects. Parses the model database
 		-- and draws objects one by one:
 		procedure draw_objects is
-			use geometry_2;
 			use pac_lines;
 			use pac_circles;
 			use pac_objects;
@@ -2595,19 +2558,19 @@ package body callbacks is
 				procedure query_line (lc : in pac_lines.cursor) is
 					line : type_line renames element (lc);
 				begin
-					put_line ("query_line");
+					--put_line ("query_line");
 					draw_line (context, line, object.p);					
 				end query_line;
 
 				
 			begin
-				put_line ("query_object");
+				--put_line ("query_object");
 				object.lines.iterate (query_line'access);
 				null;
 			end query_object;
 			
 		begin
-			put_line ("draw_objects");
+			--put_line ("draw_objects");
 			
 			-- Set the color:
 			set_source_rgb (context, 1.0, 0.0, 0.0);
