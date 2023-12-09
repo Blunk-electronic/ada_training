@@ -148,9 +148,58 @@ package body geometry_2 is
 		A : in out type_area;
 		B : in type_area)
 	is
+		-- CS: Optimization required. Compiler options ?
+		
+		-- AREA A:
+		-- This is the lowest x used by area A
+		A_lx : type_distance_model renames A.position.x;
+
+		-- This is the greatest x used by area A
+		A_gx : type_distance_model := A_lx + A.width;
+
+		
+		-- This is the lowest y used by area A
+		A_ly : type_distance_model renames A.position.y;
+
+		-- This is the greatest y used by area A
+		A_gy : type_distance_model := A_ly + A.height;
+
+
+		-- AREA B:
+		-- This is the lowest x used by area B
+		B_lx : type_distance_model renames B.position.x;
+
+		-- This is the greatest x used by area B
+		B_gx : type_distance_model := B_lx + B.width;
+
+		
+		-- This is the lowest y used by area B
+		B_ly : type_distance_model renames B.position.y;
+
+		-- This is the greatest y used by area B
+		B_gy : type_distance_model := B_ly + B.height;
+
 	begin
-		null;
-		-- CS
+		-- x-axis:
+		if B_lx < A_lx then
+			A_lx := B_lx;
+		end if;
+		
+		if B_gx > A_gx then
+			A_gx := B_gx;
+		end if;
+
+		-- y-axis:
+		if B_ly < A_ly then
+			A_ly := B_ly;
+		end if;
+		
+		if B_gy > A_gy then
+			A_gy := B_gy;
+		end if;
+
+		A.width  := A_gx - A_lx;
+		A.height := A_gy - A_ly;
 	end merge_areas;
 
 	
