@@ -90,6 +90,23 @@ package body callbacks is
 	end compute_translate_offset;
 
 
+
+
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_canvas
+	is begin
+		return gdouble (d) * gdouble (scale_factor);
+	end to_distance;
+
+
+	function to_distance (
+		d : in type_distance_canvas)
+		return type_distance_model
+	is begin
+		return type_distance_model (d / gdouble (scale_factor));
+	end to_distance;
+	
 	
 	function to_model (
 		point	: in type_point_canvas;
@@ -154,6 +171,40 @@ package body callbacks is
 		return result;
 	end to_canvas;
 
+
+
+	function above_visibility_threshold (
+		a : in type_area)
+		return boolean
+	is
+		-- CS: Optimization required. Compiler options ?
+		w : constant gdouble := to_distance (a.width);
+		h : constant gdouble := to_distance (a.height);
+		l : gdouble;
+	begin
+		-- Get the greatest of w and h:
+		l := gdouble'max (w, h);
+
+		if l > visibility_threshold then
+			return true;
+		else
+			return false;
+		end if;
+		
+	end above_visibility_threshold;
+
+
+	function get_grid_spacing (
+		grid : in type_grid)
+		return gdouble
+	is
+		s : constant gdouble := gdouble (scale_factor);
+		x, y : gdouble;
+	begin
+		x := gdouble (grid.spacing.x) * s;
+		y := gdouble (grid.spacing.y) * s;
+		return gdouble'min (x, y);
+	end get_grid_spacing;
 
 	
 	

@@ -41,7 +41,167 @@ with glib;						use glib;
 
 package body geometry_2 is
 
+	function to_string (
+		distance : in type_distance_model)
+		return string
+	is begin
+		return type_distance_model'image (distance);
+	end to_string;
 
+	
+	function to_string (
+		rotation : in type_rotation_model)
+		return string
+	is begin
+		return type_rotation_model'image (rotation);
+	end to_string;
+
+	
+	
+	function to_string (
+		point	: in type_point_model)
+		return string
+	is begin
+		return "model x/y: " & to_string (point.x) & "/" & to_string (point.y);
+	end to_string;
+
+
+	function invert (
+		point	: in type_point_model)
+		return type_point_model
+	is begin
+		return (- point.x, - point.y);
+	end invert;
+
+	
+
+	procedure move_by (
+		point	: in out type_point_model;
+		offset	: in type_point_model)
+	is begin
+		point.x := point.x + offset.x;
+		point.y := point.y + offset.y;
+	end move_by;
+
+
+	
+	function get_distance (
+		p1, p2 : in type_point_model)
+		return type_distance_model
+	is
+		use pac_float_numbers_functions;
+
+		dx : type_float := abs (type_float (p2.x - p1.x));
+		dy : type_float := abs (type_float (p2.y - p1.y));
+		d : type_float;
+	begin
+		d := sqrt (dx**2.0 + dy**2.0);
+		return type_distance_model (d);
+	end get_distance;
+	
+
+	function get_angle (
+		p1, p2 : in type_point_model)
+		return type_rotation_model
+	is
+		use pac_float_numbers_functions;
+
+		dx : type_float := type_float (p2.x - p1.x);
+		dy : type_float := type_float (p2.y - p1.y);
+		a : type_float;
+	begin
+		a := arctan (dy, dx, 360.0);
+		return type_rotation_model (a);
+	end get_angle;
+
+
+	function snap_to_grid (
+		point : in type_point_model)
+		return type_point_model
+	is
+		n : integer;
+		type type_float is new float; -- CS refinement required
+		f : type_float;
+		result : type_point_model;
+	begin
+		n := integer (point.x / grid.spacing.x);
+		f := type_float (n) * type_float (grid.spacing.x);
+		result.x := type_distance_model (f);
+
+		n := integer (point.y / grid.spacing.y);
+		f := type_float (n) * type_float (grid.spacing.y);
+		result.y := type_distance_model (f);
+		
+		return result;
+	end snap_to_grid;
+
+
+	
+	function to_string (
+		box : in type_area)
+		return string
+	is begin
+		return "area (x/y/w/h): "
+			& to_string (box.position) & "/"
+			& to_string (box.width) & "/"
+			& to_string (box.height);
+	end to_string;
+
+	
+	function get_corners (
+		area	: in type_area)
+		return type_area_corners
+	is
+		result : type_area_corners;
+	begin
+		result.BL := (area.position.x, area.position.y);
+		result.BR := (area.position.x + area.width, area.position.y);
+
+		result.TL := (area.position.x, area.position.y + area.height); 
+		result.TR := (area.position.x + area.width, area.position.y + area.height); 
+		return result;
+	end get_corners;
+
+
+	
+	function get_center (
+		area	: in type_area)
+		return type_point_model
+	is
+		result : type_point_model;
+	begin
+		result.x := area.position.x + area.width  * 0.5;
+		result.y := area.position.y + area.height * 0.5;
+		return result;
+	end get_center;
+
+
+	
+	function in_area (
+		point	: type_point_model;
+		area	: type_area)
+		return boolean
+	is
+		result : boolean := false;
+	begin
+		-- text x-axis:
+		if point.x >= area.position.x then
+			if point.x <= area.position.x + area.width then
+
+				-- test y-axis:
+				if point.y >= area.position.y then
+					if point.y <= area.position.y + area.height then
+						result := true;
+					end if;
+				end if;
+				
+			end if;
+		end if;
+		
+		return result;
+	end in_area;
+
+	
 
 	function to_real (
 		point : in type_point_model)
@@ -240,25 +400,6 @@ package body geometry_2 is
 
 	
 
-	function above_visibility_threshold (
-		a : in type_area)
-		return boolean
-	is
-		-- CS: Optimization required. Compiler options ?
-		w : constant gdouble := to_distance (a.width);
-		h : constant gdouble := to_distance (a.height);
-		l : gdouble;
-	begin
-		-- Get the greatest of w and h:
-		l := gdouble'max (w, h);
-
-		if l > visibility_threshold then
-			return true;
-		else
-			return false;
-		end if;
-		
-	end above_visibility_threshold;
 
 
 	

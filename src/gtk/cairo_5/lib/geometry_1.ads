@@ -65,188 +65,17 @@ package geometry_1 is
 
 	
 
--- MODEL:
-
-	-- The model coordinates system uses so called
-	-- decimal fixed point numbers for distances and positions:
-	type type_distance_model is delta 0.01 digits 8 
-		range -100_000.00 .. 100_000.00;
-	
-	type type_point_model is record
-		x, y : type_distance_model := 0.0;
-	end record;
-
-
-	
-	
-	-- The model coordinates system uses so called
-	-- decimal fixed point numbers for angles and rotations:
-	rotation_smallest : constant := 0.01;
-	type type_rotation_model is delta rotation_smallest digits 5 
-		range -360.0 + rotation_smallest .. 360.0 - rotation_smallest;
-
-		
-	-- Converts the given rotation/angle to a string:
-	function to_string (
-		rotation : in type_rotation_model)
-		return string;
-
-	
-	-- ORIGIN:
-	-- The origin is a small cross at model position (0;0).
-	origin				: constant type_point_model := (0.0, 0.0);
-	origin_size			: constant gdouble := 10.0; -- the arm-length of the cross
-	origin_linewidth	: constant gdouble := 1.0;
-
-	
-	-- GRID:
-	-- The grid helps the operator to align or place objects:
-	type type_grid_on_off is (GRID_ON, GRID_OFF);
-	type type_grid_style is (STYLE_DOTS, STYLE_LINES);
-
-	-- The linewidth of the grid lines:
-	grid_width_lines : constant gdouble := 0.5;
-
-	-- The linewidth of the circles which form the grid dots:
-	grid_width_dots : constant gdouble := 1.0;
-	grid_radius_dots : constant gdouble := 0.5;
-
-	-- The default grid size in in the model domain:
-	grid_spacing_default : constant type_distance_model := 10.0;
-
-	-- If the displayed grid is too dense, then it makes no
-	-- sense to draw a grid. For this reason we define a minimum
-	-- distance between grid rows and columns. If the spacing becomes
-	-- greater than this threshold then the grid will be drawn:
-	grid_spacing_min : constant gdouble := 10.0;
-	
-	type type_grid is record
-		on		: type_grid_on_off := GRID_ON;
-		-- on		: type_grid_on_off := GRID_OFF;
-		spacing : type_point_model := (others => grid_spacing_default);
-		style	: type_grid_style := STYLE_DOTS;
-		-- style	: type_grid_style := STYLE_LINES;
-	end record;
-	
-	grid : type_grid;
-
-	-- This function returns the space between
-	-- the grid columns or rows. It returns the lesser
-	-- spacing of them. It calculates the spacing by this
-	-- equation:
-	-- x = grid.spacing.x * scale_factor
-	-- y = grid.spacing.y * scale_factor
-	-- Then the lesser one, either x or y will be returned:
-	function get_grid_spacing (
-		grid : in type_grid)
-		return gdouble;
-
-
-	-- This function returns the grid point that is
-	-- closest to the given model point;
-	function snap_to_grid (
-		point : in type_point_model)
-		return type_point_model;
-	
-	
-	function to_string (
-		distance : in type_distance_model)
-		return string;
-
-	
-	function to_string (
-		point	: in type_point_model)
-		return string;
-
-
-	
-	function invert (
-		point	: in type_point_model)
-		return type_point_model;
-	
-						 
-	-- Moves a model point by the given offset:
-	procedure move_by (
-		point	: in out type_point_model;
-		offset	: in type_point_model);
-
-
-	type type_area is record
-		width		: type_distance_model := 0.0; -- CS should be positive
-		height		: type_distance_model := 0.0; -- CS should be positive
-		position	: type_point_model; -- lower left corner
-	end record;
-
-
-	type type_area_corners is record
-		BL, BR, TL, TR : type_point_model;
-	end record;
-
-
-	-- Returns the four corners of the given area.
-	-- The area is given in model coordinates:
-	function get_corners (
-		area	: in type_area)
-		return type_area_corners;
-
-	
-	-- Returns the center of the given area:
-	function get_center (
-		area	: in type_area)
-		return type_point_model;
-
-	
-	function to_string (
-		box : in type_area)
-		return string;
-
-	
-	-- Returns true if the given point lies inside the given
-	-- area or on its border. 
-	function in_area (
-		point	: in type_point_model;
-		area	: in type_area)
-		return boolean;
-
-	
-	
-	
-	-- The margin around the drawing is part of the model.
-	-- The bounding box includes the margin:
-	margin : constant type_distance_model := 5.0;
-	
-	margin_offset : constant type_point_model := (
-		x	=> margin,
-		y	=> margin);
-
-	
-
-
 	
 -- INTERNAL FLOAT TYPE:
 
 	-- This float type is used for internal computations only:
 	type type_float is new float; -- CS refinement required
 
-
 	
 	package pac_float_numbers_functions is new 
 		ada.numerics.generic_elementary_functions (type_float);
 	
 	
-	-- Returns the absolute distance between the given
-	-- model points. Uses internally a float type:
-	function get_distance (
-		p1, p2 : in type_point_model)
-		return type_distance_model;
-
-	
-
-	-- Returns the angle of direection from the given 
-	-- point p1 to the point p2. Uses internally a float type:
-	function get_angle (
-		p1, p2 : in type_point_model)
-		return type_rotation_model;
 
 
 
@@ -265,18 +94,6 @@ package geometry_1 is
 		return string;
 
 
-	-- Converts the given model distance to
-	-- a canvas distance according to the current scale_factor:
-	function to_distance (
-		d : in type_distance_model)
-		return type_distance_canvas;
-
-	
-	-- Converts the given canvas distance to
-	-- a model distance according to the current scale_factor:
-	function to_distance (
-		d : in type_distance_canvas)
-		return type_distance_model;
 
 	
 	-- Clips the given value by the given limit.

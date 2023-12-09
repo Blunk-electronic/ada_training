@@ -91,6 +91,20 @@ package callbacks is
 	
 -- CONVERSION BETWEEN MODEL AND CANVAS:
 
+	-- Converts the given model distance to
+	-- a canvas distance according to the current scale_factor:
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_canvas;
+
+	
+	-- Converts the given canvas distance to
+	-- a model distance according to the current scale_factor:
+	function to_distance (
+		d : in type_distance_canvas)
+		return type_distance_model;
+
+	
 	function to_model (
 		point	: in type_point_canvas;
 		scale	: in type_scale_factor;
@@ -103,6 +117,35 @@ package callbacks is
 		scale	: in type_scale_factor;
 		real	: in boolean := false) -- if real model coordinates are given
 		return type_point_canvas;
+
+
+	
+	-- If an object occupies a space that is wider or
+	-- higher than this constant, then it will be drawn on the screen:
+	visibility_threshold : constant gdouble := 5.0;
+	
+	-- Returns true if the given area is large enough
+	-- to display objects therein:
+	function above_visibility_threshold (
+		a : in type_area)
+		return boolean;
+
+
+-- GRID:
+	
+	-- This function returns the space between
+	-- the grid columns or rows. It returns the lesser
+	-- spacing of them. It calculates the spacing by this
+	-- equation:
+	-- x = grid.spacing.x * scale_factor
+	-- y = grid.spacing.y * scale_factor
+	-- Then the lesser one, either x or y will be returned:
+	function get_grid_spacing (
+		grid : in type_grid)
+		return gdouble;
+
+
+
 
 	
 -- MAIN WINDOW:
