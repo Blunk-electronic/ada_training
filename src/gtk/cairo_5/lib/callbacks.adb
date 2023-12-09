@@ -2434,7 +2434,7 @@ package body callbacks is
 			c : type_point_canvas;
 
 			procedure query_object (oc : in pac_objects.cursor) is
-				object : type_complex_object_2 renames element (oc);
+				object : type_complex_object renames element (oc);
 
 				procedure query_line (lc : in pac_lines.cursor) is
 					line : type_line renames element (lc);

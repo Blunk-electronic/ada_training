@@ -123,30 +123,16 @@ package geometry_2 is
 	end record;
 
 	
-	type type_complex_object is new type_object with record
-		l1, l2, l3 : type_line;
-		c1 : type_circle;
-	end record;
-
-
-	object_1 : type_complex_object := (
-		p	=> (30.0, 60.0),
-		l1	=> (s => (-10.0, -10.0), e => ( 10.0, -10.0), w => 5.0),
-		l2	=> (s => ( 10.0, -10.0), e => ( 10.0, +10.0), w => 1.0),
-		l3	=> (s => ( 10.0, +10.0), e => (-10.0, -10.0), w => 1.0),
-		c1	=> (c => (0.0, 0.0), w => 2.0)
-		);
-
 
 	package pac_lines is new doubly_linked_lists (element_type => type_line);
 	package pac_circles is new doubly_linked_lists (element_type => type_circle);
 	
-	type type_complex_object_2 is new type_object with record
+	type type_complex_object is new type_object with record
 		lines	: pac_lines.list;
 		circles	: pac_circles.list;
 	end record;
 
-	package pac_objects is new doubly_linked_lists (element_type => type_complex_object_2);
+	package pac_objects is new doubly_linked_lists (element_type => type_complex_object);
 	objects_database : pac_objects.list;
 
 

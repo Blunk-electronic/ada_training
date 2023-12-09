@@ -190,6 +190,7 @@ package body geometry_1 is
 			& to_string (box.height);
 	end to_string;
 
+	
 
 	function get_corners (
 		area	: in type_area)
@@ -204,6 +205,7 @@ package body geometry_1 is
 		result.TR := (area.position.x + area.width, area.position.y + area.height); 
 		return result;
 	end get_corners;
+
 
 	
 	function get_center (
@@ -243,40 +245,6 @@ package body geometry_1 is
 		
 		return result;
 	end in_area;
-
-
-	function in_height (
-		point	: type_point_model;
-		area	: type_area)
-		return boolean
-	is
-		result : boolean := false;
-	begin
-		if point.y >= area.position.y then
-			if point.y <= area.position.y + area.height then
-				result := true;
-			end if;
-		end if;
-
-		return result;
-	end in_height;
-
-
-	function in_width (
-		point	: type_point_model;
-		area	: type_area)
-		return boolean
-	is
-		result : boolean := false;
-	begin
-		if point.x >= area.position.x then
-			if point.x <= area.position.x + area.width then
-				result := true;
-			end if;
-		end if;
-
-		return result;
-	end in_width;
 
 	
 

@@ -244,7 +244,7 @@ package body geometry_2 is
 		use pac_circles;
 		use pac_objects;
 
-		object : type_complex_object_2;
+		object : type_complex_object;
 		line : type_line;
 	begin
 		put_line ("make_database");
@@ -297,7 +297,7 @@ package body geometry_2 is
 
 		
 		procedure query_object (oc : in pac_objects.cursor) is
-			object : type_complex_object_2 renames element (oc);
+			object : type_complex_object renames element (oc);
 
 			procedure query_line (lc : in pac_lines.cursor) is
 				line : type_line renames element (lc);
