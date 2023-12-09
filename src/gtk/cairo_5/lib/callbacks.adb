@@ -52,6 +52,111 @@ with gtk.main;					use gtk.main;
 
 package body callbacks is
 
+	procedure compute_base_offset is
+		x, y : gdouble;
+
+		-- The maximum scale factor:
+		S : constant gdouble := gdouble (type_scale_factor'last);
+		By : constant gdouble := gdouble (bounding_box.height);
+		Bx : constant gdouble := gdouble (bounding_box.width);
+	begin
+		x :=   Bx * S - Bx;
+		y := - By * S;
+		
+		base_offset := (x, y);
+
+		put_line ("base offset: " & to_string (base_offset));
+	end compute_base_offset;
+
+
+	procedure compute_translate_offset (
+		MP	: in type_point_model;
+		Z1	: in type_point_canvas)
+	is 
+		Z2 : type_point_canvas;
+	begin			
+		-- Compute the prospected canvas-point according to the 
+		-- current scale_factor:
+		Z2 := to_canvas (MP, scale_factor);
+		-- put_line ("Z after scale   " & to_string (Z2));
+
+		-- This is the offset from the given canvas-point Z1 to the prospected
+		-- canvas-point Z2. The offset must be multiplied by -1 because the
+		-- drawing must be dragged-back to the given pointer position:
+		T.x := -(Z2.x - Z1.x);
+		T.y := -(Z2.y - Z1.y);
+		
+		put_line (" T offset    " & to_string (T));
+	end compute_translate_offset;
+
+
+	
+	function to_model (
+		point	: in type_point_canvas;
+		scale	: in type_scale_factor;
+		real 	: in boolean := false)
+		return type_point_model
+	is 
+		result : type_point_model;
+		debug : boolean := false;
+	begin
+		if debug then
+			put_line ("to_model");
+			put_line ("T " & to_string (T));
+		end if;
+		
+		result.x := type_distance_model (( (point.x - T.x) - base_offset.x) / gdouble (scale));
+		result.y := type_distance_model ((-(point.y - T.y) - base_offset.y) / gdouble (scale));
+
+		-- If real model coordinates are required, then the result must be compensated
+		-- by the bounding-box position:
+		if real then
+			move_by (result, bounding_box.position);
+		end if;
+		return result;
+
+		exception
+			when constraint_error =>
+				put_line ("ERROR: conversion from canvas point to model point failed !");
+				put_line (" point " & to_string (point));
+				put_line (" scale " & to_string (scale));
+				put_line (" T     " & to_string (T));
+				put_line (" F     " & to_string (base_offset));
+				put_line (" real  " & boolean'image (real));
+				raise;						  
+	end to_model;
+	
+
+	function to_canvas (
+		point 	: in type_point_model;
+		scale	: in type_scale_factor;
+		real	: in boolean := false)
+		return type_point_canvas
+	is
+		P : type_point_model := point;
+		result : type_point_canvas;
+	begin
+		-- If real model coordinates are given, then they must
+		-- be compensated by the inverted bounding-box position
+		-- in order to get virtual model coordinates:
+		if real then
+			move_by (P, invert (bounding_box.position));
+		end if;
+		
+		result.x :=  (gdouble (P.x) * gdouble (scale) + base_offset.x);
+		result.y := -(gdouble (P.y) * gdouble (scale) + base_offset.y);
+
+		if real then
+			result.x := result.x + T.x;
+			result.y := result.y + T.y;
+		end if;
+		
+		return result;
+	end to_canvas;
+
+
+	
+	
 	procedure update_cursor_coordinates is begin
 		-- x-axis:
 		cursor_x_buf.set_text (to_string (cursor.position.x));
@@ -813,7 +918,7 @@ package body callbacks is
 			S2 : type_scale_factor;
 
 			-- Get the corners of the bounding-box as it is BEFORE scaling:
-			BC : constant type_area_corners := get_corners (bounding_box);
+			-- BC : constant type_area_corners := get_corners (bounding_box);
 
 			-- The model point in the center of the visible area:
 			-- M : type_point_model := visible_center;

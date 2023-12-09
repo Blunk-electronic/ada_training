@@ -49,6 +49,29 @@ with geometry_1;				use geometry_1;
 
 package geometry_2 is
 
+	-- Converts a virtual model point to a real model point:
+	function to_real (
+		point : in type_point_model)
+		return type_point_model;
+
+	-- Converts a real model point to a virtual model point:
+	function to_virtual (
+		point : in type_point_model)
+		return type_point_model;
+
+
+	
+	-- This is the bounding-box of the model. It is a rectangle
+	-- that encloses all objects of the model and the margins 
+	-- around the model:
+	bounding_box : type_area;
+	
+	bounding_box_default : constant type_area := (
+		position	=> (0.0, 0.0),
+		width		=> 400.0,
+		height		=> 200.0);
+
+	
 	-- The simplest object in the model world is a line:
 	type type_line is record
 		s, e : type_point_model; -- start and end point

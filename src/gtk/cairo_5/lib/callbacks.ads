@@ -57,11 +57,54 @@ with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
 with geometry_1;				use geometry_1;
-with geometry_2;
+with geometry_2;				use geometry_2;
 
 
 package callbacks is
 
+	-- The place on the canvase where the model 
+	-- coordinates system has its origin:
+	base_offset : type_point_canvas;
+		
+	procedure compute_base_offset;
+
+	
+	-- The global translate-offset by which all draw operations on the canvas
+	-- are translated when the operator zooms on the pointer or the cursor:
+	T : type_point_canvas := (0.0, 0.0);
+
+	-- This procedure updates the global translate-offset T.
+	-- After changing the scale_factor (either by zoom on mouse pointer or
+	-- by zoom on cursor), the translate_offset T must
+	-- be calculated anew. The computation requires as input values
+	-- the zoom center as virtual model point and as the corresponding
+	-- canvas point.
+	-- Later, when the actual drawing takes place (see function cb_draw_objects)
+	-- the drawing will be dragged back by the translate_offset
+	-- so that the operator gets the impression of a zoom-into or zoom-out effect.
+	-- Without applying a translate_offset the drawing would be appearing as 
+	-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+	procedure compute_translate_offset (
+		MP	: in type_point_model;		-- the virtual zoom center as model point
+		Z1	: in type_point_canvas);	-- the zoom center as canvas point
+
+	
+-- CONVERSION BETWEEN MODEL AND CANVAS:
+
+	function to_model (
+		point	: in type_point_canvas;
+		scale	: in type_scale_factor;
+		real 	: in boolean := false) -- if real model coordinates are required
+		return type_point_model;
+	
+
+	function to_canvas (
+		point 	: in type_point_model;
+		scale	: in type_scale_factor;
+		real	: in boolean := false) -- if real model coordinates are given
+		return type_point_canvas;
+
+	
 -- MAIN WINDOW:
 	
 	main_window	: gtk_window;
