@@ -1,2 +1,5 @@
-obj
-gtkada_2
+# Ignore files created by editor joe:
+*~
+
+# The binary file:
+button
