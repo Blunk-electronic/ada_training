@@ -217,10 +217,49 @@ package body callbacks is
 	procedure cb_zoom_fit (
 		button : access gtk_button_record'class)
 	is
+		size_x, size_y : gint;
+		a : gtk_allocation;
 	begin
 		put_line ("cb_zoom_fit");
 
-		-- CS
+		scale_factor := 1.0;
+		T := (0.0, 0.0);
+
+		compute_bounding_box;
+
+		-- canvas_allocation ??
+		
+		compute_base_offset;
+		prepare_initial_scrollbar_settings;
+
+		-- Set the minimum size of the scrolled window basing on the 
+		-- bounding-box:
+		swin.set_size_request (
+			gint (bounding_box.width),
+			gint (bounding_box.height));
+  
+		-- Set the global scrolled_window_size variable:
+		-- scrolled_window_size := (
+		-- 	width	=> positive (bounding_box.width),
+		-- 	height	=> positive (bounding_box.height));
+
+		-- canvas.get_allocation (a);
+		-- a.x := 0;
+		-- a.y := 0;
+		-- canvas.set_allocation (a);
+
+		-- Set the size of the canvas (in pixels).
+		-- It is like the wooden frame around a real-world canvas. 
+		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
+		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
+  		canvas.set_size_request (size_x, size_y); -- unit is pixels
+  
+		-- show_canvas_size;
+
+		apply_initial_scrollbar_settings;
+
+		refresh (canvas);
+		
 	end cb_zoom_fit;
 
 
