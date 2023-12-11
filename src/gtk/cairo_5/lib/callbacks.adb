@@ -210,6 +210,30 @@ package body callbacks is
 		return gdouble'min (x, y);
 	end get_grid_spacing;
 
+
+
+
+
+	procedure cb_zoom_fit (
+		button : access gtk_button_record'class)
+	is
+	begin
+		put_line ("cb_zoom_fit");
+
+		-- CS
+	end cb_zoom_fit;
+
+
+	procedure cb_export (
+		button : access gtk_button_record'class)
+	is
+	begin
+		put_line ("cb_export");
+
+		-- CS
+	end cb_export;
+
+
 	
 	
 	procedure update_cursor_coordinates is begin
@@ -495,8 +519,48 @@ package body callbacks is
 		-- put_line ("cb_main_window_activate " & image (clock)); 
 	end cb_main_window_activate;
 
+
+	procedure set_up_command_buttons is
+	begin
+		put_line ("set_up_command_buttons");
+		
+		gtk_new_vbox (box_v0);
+		box_h.pack_start (box_v0, expand => false);
+
+
+		gtk_new (buttons_table, rows => 2, columns => 1, homogeneous => false);
+		-- table.set_col_spacings (50);
+		-- table_coordinates.set_border_width (10);
+
+		gtk_new (button_zoom_fit, "ZOOM FIT");
+		button_zoom_fit.on_clicked (cb_zoom_fit'access);
+
+		gtk_new (button_export, "EXPORT");
+		button_export.on_clicked (cb_export'access);
+
+		-- CS add other buttons
+		
+		
+		-- The table shall not expand downward:
+		box_v0.pack_start (buttons_table, expand => false);
+
+		
+		buttons_table.attach (button_zoom_fit,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 0, bottom_attach => 1);
+
+		buttons_table.attach (button_export,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 1, bottom_attach => 2);
+
+		
+	end set_up_command_buttons;
+
+	
 	
 	procedure set_up_main_window is begin
+		put_line ("set_up_main_window");
+		
 		main_window := gtk_window_new (WINDOW_TOPLEVEL);
 		main_window.set_title ("Demo Canvas");
 		main_window.set_border_width (10);
@@ -520,9 +584,13 @@ package body callbacks is
 		-- main_window.set_redraw_on_allocate (false);
 
 		gtk_new_hbox (box_h);
+
+		set_up_command_buttons;
+		
+		-- vertical box for coordinates:
 		gtk_new_vbox (box_v1);
 		box_v1.set_border_width (10);
-
+		
 		-- The left vbox shall not change its width when the 
 		-- main window is resized:
 		box_h.pack_start (box_v1, expand => false);

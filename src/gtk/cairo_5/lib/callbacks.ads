@@ -47,7 +47,7 @@ with gtk.enums;
 with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
--- with gtk.button;				use gtk.button;
+with gtk.button;				use gtk.button;
 with gtk.table;					use gtk.table;
 with gtk.label;					use gtk.label;
 with gtk.scrolled_window;		use gtk.scrolled_window;
@@ -170,10 +170,17 @@ package callbacks is
 -- GTK-BOXES:
 	
 	box_h 				: gtk_hbox;
+	box_v0				: gtk_vbox;
 	box_v1				: gtk_vbox;
 	separator			: gtk_separator;
 
+	buttons_table		: gtk_table;
+	button_zoom_fit		: gtk_button;
+	button_export		: gtk_button;
+	
+	
 	table_coordinates	: gtk_table; -- incl. relative distances
+	-- CS rename to coordinates_tabel
 
 	pointer_header							: gtk_label;
 	pointer_x_label, pointer_y_label		: gtk_label;
@@ -204,7 +211,25 @@ package callbacks is
 	scale_label								: gtk_label;
 	scale_value								: gtk_text_view;
 	scale_buf								: gtk_text_buffer;
+
+
 	
+-- COMMAND BUTTONS:
+	
+	-- This callback procedure is called each time the 
+	-- button "zoom fit" is clicked:
+	procedure cb_zoom_fit (
+		button : access gtk_button_record'class);
+
+
+	-- This callback procedure is called each time the 
+	-- button "export" is clicked:
+	procedure cb_export (
+		button : access gtk_button_record'class);
+	
+
+	
+-- COORDINATES DISPLAY:
 	
 	-- Updates the cursor coordinates display
 	-- by the current cursor position:
@@ -222,6 +247,10 @@ package callbacks is
 	-- Updates the grid display:
 	procedure update_grid_display;
 
+
+	
+
+-- MAIN WINDOW:
 	
 	procedure cb_terminate (
 		main_window : access gtk_widget_record'class);
@@ -230,7 +259,6 @@ package callbacks is
 	procedure cb_focus_win (
 		main_window : access gtk_window_record'class);
 
-
 	
 	function cb_button_pressed_win (
 		window	: access gtk_widget_record'class;
@@ -238,6 +266,10 @@ package callbacks is
 		return boolean;
 
 
+	
+
+-- SCROLLBARS:
+	
 	-- Updates the limits of the scrollbars according to
 	-- the given bounding-box area and scale factor:
 	procedure update_scrollbar_limits (
