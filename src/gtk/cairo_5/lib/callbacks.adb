@@ -238,11 +238,6 @@ package body callbacks is
 			gint (bounding_box.width),
 			gint (bounding_box.height));
   
-		-- Set the global scrolled_window_size variable:
-		-- scrolled_window_size := (
-		-- 	width	=> positive (bounding_box.width),
-		-- 	height	=> positive (bounding_box.height));
-
 		-- canvas.get_allocation (a);
 		-- a.x := 0;
 		-- a.y := 0;
@@ -259,6 +254,19 @@ package body callbacks is
 		apply_initial_scrollbar_settings;
 
 		refresh (canvas);
+
+		-- Set the global scrolled_window_size variable:
+		-- scrolled_window_size := (
+			-- width	=> positive (bounding_box.width),
+			-- height	=> positive (bounding_box.height));
+  -- 
+		-- swin.get_allocation (a);
+		-- a.x := 0;
+		-- a.y := 0;
+		-- swin.set_allocation (a);
+
+		-- 
+		-- cb_scrolled_window_size_allocate (swin, a);
 		
 	end cb_zoom_fit;
 
@@ -991,7 +999,7 @@ package body callbacks is
 		-- When the scrolled window is resized, then it expands away from its top left corner
 		-- or it shrinks toward its top-left corner. In both cases the bottom of the
 		-- window moves down or up. So the bottom of the canvas must follow the bottom
-		-- of the main window. This procedure moves the bottom of the canvas by the same
+		-- of the scrolled window. This procedure moves the bottom of the canvas by the same
 		-- extent as the bottom of the scrolled window:
 		procedure move_canvas_bottom is begin
 			-- Approach 1:

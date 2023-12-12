@@ -328,7 +328,7 @@ package callbacks is
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the scrolled window.
 	procedure cb_scrolled_window_size_allocate (
-		window		: access gtk_widget_record'class;
+		window		: access gtk_widget_record'class; -- CS rename to swin
 		allocation	: gtk_allocation);
 	
 
