@@ -217,8 +217,8 @@ package callbacks is
 -- COMMAND BUTTONS:
 	
 	-- This callback procedure is called each time the 
-	-- button "zoom fit" is clicked:
-	procedure cb_zoom_fit (
+	-- button "zoom fit" is clicked.
+	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class);
 
 

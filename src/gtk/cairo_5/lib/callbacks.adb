@@ -212,24 +212,36 @@ package body callbacks is
 
 
 
+	-- This flag indicates that a zoom-to-fit-action is in
+	-- progress. It is set and cleared by procedure cb_zoom_to_fit.
+	-- It is read by procedure cb_scrolled_window_size_allocate:
+	zoom_to_fit_in_progress : boolean := false;
+	
 
-
-	procedure cb_zoom_fit (
+	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
 	is
 		size_x, size_y : gint;
-		a : gtk_allocation;
+		swin_alloc : gtk_allocation;
 	begin
-		put_line ("cb_zoom_fit");
+		put_line ("cb_zoom_to_fit");
 
+		-- Reset the scale to default:
 		scale_factor := 1.0;
+
+		-- Reset the translate-offset to defaul:
 		T := (0.0, 0.0);
 
+		-- Compute the new bounding-box. Update global
+		-- variable bounding_box:
 		compute_bounding_box;
 
-		-- canvas_allocation ??
-		
+		-- Compute the new base-offset. Update global
+		-- variable base_offset:
 		compute_base_offset;
+
+		-- Since the bounding_box has changed, the scrollbars
+		-- must be reinitialized:
 		prepare_initial_scrollbar_settings;
 
 		-- Set the minimum size of the scrolled window basing on the 
@@ -238,37 +250,60 @@ package body callbacks is
 			gint (bounding_box.width),
 			gint (bounding_box.height));
   
-		-- canvas.get_allocation (a);
-		-- a.x := 0;
-		-- a.y := 0;
-		-- canvas.set_allocation (a);
-
-		-- Set the size of the canvas (in pixels).
-		-- It is like the wooden frame around a real-world canvas. 
+		-- Set the new size of the canvas:
 		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
 		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
   		canvas.set_size_request (size_x, size_y); -- unit is pixels
   
 		-- show_canvas_size;
 
+		-- Apply the scrollbar settings:
 		apply_initial_scrollbar_settings;
 
+		-- refresh (canvas);
+
+		-- Set the global scrolled_window_size variable.
+		-- It is now the new reference for further size changes:
+		scrolled_window_size := (
+			width	=> positive (bounding_box.width),
+			height	=> positive (bounding_box.height));
+
+		-- Procedure cb_scrolled_window_size_allocate in intended to
+		-- handle size changes of the scrolled window.
+		-- Now we imitate a size change of the scrolled window.
+		-- The global variable scrolled_window_size has just been set
+		-- as reference.
+		-- Now we fetch the current allocation of the scrolled window
+		-- to store it in swin_alloc.
+		-- Then we call cb_scrolled_window_size_allocate and pass to
+		-- it the current allocation swin_alloc.
+		-- Procedure cb_scrolled_window_size_allocate is usually called
+		-- implicitly when the scrolled window emits a "size_allocate" signal
+		-- (See procedure set_up_swin_and_scrollbars). Here we will call 
+		-- it explicitly. Procedure cb_scrolled_window_size_allocate 
+		-- then compares the given unchanged allocation with the reference
+		-- size stored scrolled_window_size and acts as if
+		-- the size of the scrolled window has changed.
+		-- In other words: We do not change the size of the scrolled window,
+		-- but the reference value scrolled_window_size:
+		swin.get_allocation (swin_alloc);
+
+		-- Small problem:
+		-- By default procedure cb_scrolled_window_size_allocate changes
+		-- the y-allocation of the canvas. This would cause the image to
+		-- move downwards on each zoom-to-fit action which MUST NOT 
+		-- happen in this case. The solution is a global flag
+		-- which indicates to procedure cb_scrolled_window_size_allocate
+		-- that the allocation of the canvas must be left untouched:
+		zoom_to_fit_in_progress := true;
+
+		cb_scrolled_window_size_allocate (swin, swin_alloc);
+
+		zoom_to_fit_in_progress := false;
+
+		-- Redraw the canvas:
 		refresh (canvas);
-
-		-- Set the global scrolled_window_size variable:
-		-- scrolled_window_size := (
-			-- width	=> positive (bounding_box.width),
-			-- height	=> positive (bounding_box.height));
-  -- 
-		-- swin.get_allocation (a);
-		-- a.x := 0;
-		-- a.y := 0;
-		-- swin.set_allocation (a);
-
-		-- 
-		-- cb_scrolled_window_size_allocate (swin, a);
-		
-	end cb_zoom_fit;
+	end cb_zoom_to_fit;
 
 
 	procedure cb_export (
@@ -580,7 +615,7 @@ package body callbacks is
 		-- table_coordinates.set_border_width (10);
 
 		gtk_new (button_zoom_fit, "ZOOM FIT");
-		button_zoom_fit.on_clicked (cb_zoom_fit'access);
+		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
 
 		gtk_new (button_export, "EXPORT");
 		button_export.on_clicked (cb_export'access);
@@ -973,10 +1008,6 @@ package body callbacks is
 		-- This is the difference between new height and old height:
 		dH : gdouble;
 
-		
-		-- NOTE: At the end of this procedure, a redraw is called automatically.
-		-- No need for an extra call of "refresh (canvas)".
-
 
 		-- For debugging. Outputs the dimensions and size
 		-- changes of the main window:
@@ -1250,8 +1281,11 @@ package body callbacks is
 			-- show_size;
 
 			-- Move the canvas so that its bottom follows
-			-- the bottom of the scrolled window:
-			move_canvas_bottom;
+			-- the bottom of the scrolled window. If a zoom-to-fit-action
+			-- is in progress, then the canvas must be left where it is:
+			if not zoom_to_fit_in_progress then
+				move_canvas_bottom;
+			end if;
 			
 
 			case zoom_mode is
@@ -1424,6 +1458,8 @@ package body callbacks is
 		
 		-- connect signals:
 		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
+		-- After executing procedure cb_scrolled_window_size_allocate
+		-- the canvas is refreshed (similar to refresh (canvas)) automatically..
 
 		-- Connect the signal "value-changed" of the scrollbars with 
 		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
@@ -2699,7 +2735,7 @@ package body callbacks is
 		
 	begin -- cb_draw_objects
 		-- new_line;
-		put_line ("cb_draw_objects " & image (clock));
+		--put_line ("cb_draw_objects " & image (clock));
 
 		-- CS if context is global then do:
 		-- context_global := context;
