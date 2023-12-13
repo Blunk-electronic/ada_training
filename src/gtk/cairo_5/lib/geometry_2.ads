@@ -238,11 +238,16 @@ package geometry_2 is
 	-- that encloses all objects of the model and the margins 
 	-- around the model:
 	bounding_box : type_area;
-	
+
+	-- On startup a default bounding-box will be applied in order
+	-- to obtain a minimal drawning area:
 	bounding_box_default : constant type_area := (
 		position	=> (0.0, 0.0),
 		width		=> 400.0,
-		height		=> 200.0);
+		height		=> 400.0);
+	-- IMPORTANT: The height must be greater than the sum
+	-- of the height of all other widgets in the main window !
+	-- Otherwise the canvas may freeze and stop emitting signals.
 
 	
 	-- The simplest object in the model world is a line:

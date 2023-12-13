@@ -1680,20 +1680,6 @@ package body callbacks is
 		canvas.add_events (key_press_mask);
 		canvas.on_key_press_event (cb_key_pressed_canvas'access);
 
-		-- canvas.grab_focus;
-
-		
-		-- CS: For some unknown reason the allocation of the
-		-- main window must be touched so that the canvas
-		-- emits signals. The location (x,y) or the widht or
-		-- the height must be changed slightly.
-		-- This strange effect happens if procedure set_up_distances_display is
-		-- called (see main procedure draw in draw.adb), then
-		-- the canvas seems dead and does not emit any signal.
-		main_window.get_allocation (alloc_main_window);
-		alloc_main_window.x := alloc_main_window.x + 1;
-		main_window.set_allocation (alloc_main_window);
-
 		-- Add the canvas as a child to the scrolled window:
 		put_line ("add canvas to scrolled window");
 		swin.add (canvas); 

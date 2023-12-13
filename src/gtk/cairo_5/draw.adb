@@ -100,6 +100,10 @@ begin
 	update_scale_display;
 	update_grid_display;
 
+	-- On startup the canvas has the focus. This enables the operator
+	-- to move the cursor with the cursor-keys from the beginning:
+	canvas.grab_focus;
+	
 	put_line ("start gtk main loop");
 
 	gtk.main.main;
