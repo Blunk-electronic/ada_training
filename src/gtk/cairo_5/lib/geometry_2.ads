@@ -334,6 +334,11 @@ package geometry_2 is
 	-- Detects the smallest and greatest x and y values used by the model.
 	-- Sets the global variable bounding_box:
 	procedure compute_bounding_box;
+
+
+	procedure add_object;
+
+	procedure delete_object;
 	
 end geometry_2;
 

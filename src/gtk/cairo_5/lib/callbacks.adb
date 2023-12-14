@@ -306,6 +306,38 @@ package body callbacks is
 	end cb_zoom_to_fit;
 
 
+
+	procedure cb_add (
+		button : access gtk_button_record'class)
+	is begin
+		put_line ("cb_add");
+		add_object;
+
+		-- Redraw the canvas:
+		refresh (canvas);
+	end cb_add;
+
+	
+	procedure cb_delete (
+		button : access gtk_button_record'class)
+	is begin
+		put_line ("cb_delete");
+		delete_object;
+
+		-- Redraw the canvas:
+		refresh (canvas);
+	end cb_delete;
+
+	
+	procedure cb_move (
+		button : access gtk_button_record'class)
+	is begin
+		put_line ("cb_move");
+	end cb_move;
+
+
+	
+
 	procedure cb_export (
 		button : access gtk_button_record'class)
 	is
@@ -610,13 +642,22 @@ package body callbacks is
 		box_h.pack_start (box_v0, expand => false);
 
 
-		gtk_new (buttons_table, rows => 2, columns => 1, homogeneous => false);
+		gtk_new (buttons_table, rows => 5, columns => 1, homogeneous => false);
 		-- table.set_col_spacings (50);
 		-- table_coordinates.set_border_width (10);
 
 		gtk_new (button_zoom_fit, "ZOOM FIT");
 		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
 
+		gtk_new (button_add, "ADD");
+		button_add.on_clicked (cb_add'access);
+
+		gtk_new (button_delete, "DELETE");
+		button_delete.on_clicked (cb_delete'access);
+
+		gtk_new (button_move, "MOVE");
+		button_move.on_clicked (cb_move'access);
+		
 		gtk_new (button_export, "EXPORT");
 		button_export.on_clicked (cb_export'access);
 
@@ -631,9 +672,21 @@ package body callbacks is
 			left_attach => 0, right_attach => 1,
 			top_attach  => 0, bottom_attach => 1);
 
-		buttons_table.attach (button_export,
+		buttons_table.attach (button_add,
 			left_attach => 0, right_attach => 1,
 			top_attach  => 1, bottom_attach => 2);
+
+		buttons_table.attach (button_delete,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 2, bottom_attach => 3);
+
+		buttons_table.attach (button_move,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 3, bottom_attach => 4);
+
+		buttons_table.attach (button_export,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 4, bottom_attach => 5);
 
 		
 	end set_up_command_buttons;

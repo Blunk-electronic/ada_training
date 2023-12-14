@@ -176,6 +176,9 @@ package callbacks is
 
 	buttons_table		: gtk_table;
 	button_zoom_fit		: gtk_button;
+	button_move			: gtk_button;
+	button_add			: gtk_button;
+	button_delete		: gtk_button;
 	button_export		: gtk_button;
 	
 	
@@ -221,7 +224,25 @@ package callbacks is
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class);
 
+	
+	-- This callback procedure is called each time the 
+	-- button "add" is clicked.
+	procedure cb_add (
+		button : access gtk_button_record'class);
 
+	
+	-- This callback procedure is called each time the 
+	-- button "delete is clicked.
+	procedure cb_delete (
+		button : access gtk_button_record'class);
+
+	
+	-- This callback procedure is called each time the 
+	-- button "move" is clicked.
+	procedure cb_move (
+		button : access gtk_button_record'class);
+
+	
 	-- This callback procedure is called each time the 
 	-- button "export" is clicked:
 	procedure cb_export (

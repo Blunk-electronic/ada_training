@@ -449,6 +449,27 @@ package body geometry_2 is
 		object.lines.append (line);
 
 		objects_database.append (object);
+
+		------------------------------------
+
+		object.lines.clear;
+		object.circles.clear;
+
+		object.p := (100.0, -250.0);
+		
+		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 2.0);
+		object.lines.append (line);
+
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 2.0);
+		object.lines.append (line);
+
+		objects_database.append (object);
 		
 	end make_database;
 	
@@ -514,6 +535,46 @@ package body geometry_2 is
 		
 		put_line ("bounding-box: " & to_string (bounding_box));
 	end compute_bounding_box;
+
+
+	procedure add_object is
+		use pac_lines;
+		use pac_circles;
+		use pac_objects;
+
+		object : type_complex_object;
+		line : type_line;
+
+	begin
+		-- put_line ("add_object");
+
+		object.p := (500.0, -250.0);
+		
+		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
+		object.lines.append (line);
+
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 2.0);
+		object.lines.append (line);
+
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 2.0);
+		object.lines.append (line);
+
+		objects_database.append (object);
+
+		
+	end add_object;
+
+	
+	procedure delete_object is
+		use pac_objects;
+	begin
+		put_line ("delete_object");
+
+		objects_database.delete_last;
+	end delete_object;
 
 
 	
