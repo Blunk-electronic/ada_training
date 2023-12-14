@@ -223,6 +223,33 @@ package body geometry_2 is
 		move_by (result, invert (bounding_box.position));
 		return result;
 	end to_virtual;
+
+
+	procedure fit_bounding_box is
+		sw, sh : type_scale_factor;
+	begin
+		put_line ("fit_bounding_box");
+
+		-- The ratio of default width to current width:
+		sw := type_scale_factor (bounding_box_default.width / bounding_box.width);
+
+		-- The ratio of default height to current height:
+		sh := type_scale_factor (bounding_box_default.height / bounding_box.height);
+		
+		-- put_line ("sw: " & to_string (sw));
+		-- put_line ("sh: " & to_string (sh));
+
+		-- The smaller of sw and sh now determines the new global scale_factor:
+		scale_factor := type_scale_factor'min (sw, sh);
+
+		-- Scale the bounding-box by the new global scale_factor:
+		bounding_box.width  := bounding_box.width  * type_distance_model (scale_factor);
+		bounding_box.height := bounding_box.height * type_distance_model (scale_factor);
+
+		put_line (" bounding_box: " & to_string (bounding_box));
+		put_line (" scale_factor: " & to_string (scale_factor));
+	end fit_bounding_box;
+
 	
 	
 	function get_bounding_box (
@@ -429,7 +456,8 @@ package body geometry_2 is
 
 		objects_database.append (object);
 		------------------------------------
-
+		-- goto l_end;
+		
 		object.lines.clear;
 		object.circles.clear;
 		
@@ -470,6 +498,8 @@ package body geometry_2 is
 		object.lines.append (line);
 
 		objects_database.append (object);
+
+	<<l_end>>
 		
 	end make_database;
 	

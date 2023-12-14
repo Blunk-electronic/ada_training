@@ -237,7 +237,7 @@ package geometry_2 is
 	-- This is the bounding-box of the model. It is a rectangle
 	-- that encloses all objects of the model and the margins 
 	-- around the model:
-	bounding_box : type_area;
+	bounding_box : type_area; -- CS initialize with bounding_box_default ?
 
 	-- On startup a default bounding-box will be applied in order
 	-- to obtain a minimal drawning area:
@@ -249,6 +249,11 @@ package geometry_2 is
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
 
+
+	-- Scales the bounding-box so that it fits into bounding_box_default.
+	-- Sets the scale_factor accordingly. -- CS more details !
+	procedure fit_bounding_box;
+	
 	
 	-- The simplest object in the model world is a line:
 	type type_line is record

@@ -75,6 +75,8 @@ begin
 	geometry_2.make_database;
 		
 	geometry_2.compute_bounding_box;
+
+	geometry_2.fit_bounding_box;
 	
 	compute_base_offset;
 	prepare_initial_scrollbar_settings;
