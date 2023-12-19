@@ -98,6 +98,7 @@ begin
 
 	
 	apply_initial_scrollbar_settings;
+	show_adjustments_v;
 
 	update_scale_display;
 	update_grid_display;

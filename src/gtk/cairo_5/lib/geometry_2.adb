@@ -226,26 +226,60 @@ package body geometry_2 is
 
 
 	procedure fit_bounding_box is
-		sw, sh : type_scale_factor;
+		sw, sh, s : type_scale_factor;
+		
 	begin
 		put_line ("fit_bounding_box");
+		-- put_line (" bounding_box: " & to_string (bounding_box));
 
+		-- bounding_box_init := bounding_box;
+		
 		-- The ratio of default width to current width:
-		sw := type_scale_factor (bounding_box_default.width / bounding_box.width);
+		-- sw := type_scale_factor (bounding_box_default.width / bounding_box.width);
+		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
 
 		-- The ratio of default height to current height:
-		sh := type_scale_factor (bounding_box_default.height / bounding_box.height);
+		-- sh := type_scale_factor (bounding_box_default.height / bounding_box.height);
+		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
 		
-		-- put_line ("sw: " & to_string (sw));
-		-- put_line ("sh: " & to_string (sh));
+		put_line ("sw: " & to_string (sw));
+		put_line ("sh: " & to_string (sh));
 
 		-- The smaller of sw and sh now determines the new global scale_factor:
-		scale_factor := type_scale_factor'min (sw, sh);
+		-- scale_factor := type_scale_factor'min (sw, sh);
+		put_line (" scale (fixp): " & type_distance_model'image (type_distance_model (scale_factor)));
+		-- scale_factor := type_scale_factor'min (s, 2.0);
 
 		-- Scale the bounding-box by the new global scale_factor:
-		bounding_box.width  := bounding_box.width  * type_distance_model (scale_factor);
-		bounding_box.height := bounding_box.height * type_distance_model (scale_factor);
+		-- bounding_box.width  := type_distance_model (float (bounding_box.width)  * float (scale_factor));
+		-- bounding_box.height := type_distance_model (float (bounding_box.height) * float (scale_factor));
+  
+		-- put_line (" bounding_box: " & to_string (bounding_box));
+		-- bounding_box.position.x := type_distance_model (float (bounding_box.position.x) * float (scale_factor));
+		-- bounding_box.position.y := type_distance_model (float (bounding_box.position.y) * float (scale_factor));
+		
+		-- put_line (" bounding_box: " & to_string (bounding_box));
+		
+		-- Ensure a mimimal width and height:
+		-- bounding_box.width  := type_distance_model'max (bounding_box.width,  bounding_box_min.width);
+		-- bounding_box.height := type_distance_model'max (bounding_box.height, bounding_box_min.height);
 
+
+
+		
+		-- Expand the bounding-box by the margin. 
+		-- The margin is part of the model and thus part 
+		-- of the bounding box:
+		-- bounding_box.width  := bounding_box.width  + 2.0 * margin;
+-- 		bounding_box.height := bounding_box.height + 2.0 * margin;
+		
+		-- Since we regard the margin as inside the bounding-box,
+		-- we must move the bounding-box position towards bottom-left
+		-- by the inverted margin_offset:
+		-- move_by (bounding_box.position, invert (margin_offset));
+
+
+		
 		put_line (" bounding_box: " & to_string (bounding_box));
 		put_line (" scale_factor: " & to_string (scale_factor));
 	end fit_bounding_box;
@@ -440,7 +474,9 @@ package body geometry_2 is
 	begin
 		put_line ("make_database");
 
-		object.p := (100.0, 50.0);
+		object.p := (100.0, 400.0);
+		-- object.p := (500.0, 50.0);
+		-- object.p := (100.0, 500.0);
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -458,28 +494,29 @@ package body geometry_2 is
 		------------------------------------
 		-- goto l_end;
 		
-		object.lines.clear;
-		object.circles.clear;
-		
-		object.p := (200.0, 100.0);
-		-- object.p := (190.0, 95.0);
-		
-		line := (s => (-200.0, -100.0), e => (200.0, -100.0), w => 1.5);
-		object.lines.append (line);
-
-		line := (s => (200.0, -100.0), e => (200.0, 100.0), w => 1.5);
-		object.lines.append (line);
-
-		line := (s => (200.0, 100.0), e => (-200.0, 100.0), w => 1.5);
-		object.lines.append (line);
-
-		line := (s => (-200.0, 100.0), e => (-200.0, -90.0), w => 1.5);
-		object.lines.append (line);
-
-		objects_database.append (object);
-
+-- 		object.lines.clear;
+-- 		object.circles.clear;
+-- 		
+-- 		object.p := (200.0, 100.0);
+-- 		-- object.p := (190.0, 95.0);
+-- 		
+-- 		line := (s => (-200.0, -100.0), e => (200.0, -100.0), w => 1.5);
+-- 		object.lines.append (line);
+-- 
+-- 		line := (s => (200.0, -100.0), e => (200.0, 100.0), w => 1.5);
+-- 		object.lines.append (line);
+-- 
+-- 		line := (s => (200.0, 100.0), e => (-200.0, 100.0), w => 1.5);
+-- 		object.lines.append (line);
+-- 
+-- 		line := (s => (-200.0, 100.0), e => (-200.0, -90.0), w => 1.5);
+-- 		object.lines.append (line);
+-- 
+-- 		objects_database.append (object);
+-- 
 		------------------------------------
-
+		-- goto l_end;
+		
 		object.lines.clear;
 		object.circles.clear;
 
@@ -544,12 +581,15 @@ package body geometry_2 is
 		put_line ("compute_bounding_box");
 
 		-- Reset the global bounding-box:
-		bounding_box := bounding_box_default;
+		-- bounding_box := bounding_box_default;
+		bounding_box := bounding_box_min;
 		
 		-- The database that contains all objects of the model
 		-- must be parsed here:
 		objects_database.iterate (query_object'access);
 		
+
+		-- goto l_end;
 		
 		-- Expand the bounding-box by the margin. 
 		-- The margin is part of the model and thus part 
@@ -561,7 +601,8 @@ package body geometry_2 is
 		-- we must move the bounding-box position towards bottom-left
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
-	
+
+		<<l_end>>
 		
 		put_line ("bounding-box: " & to_string (bounding_box));
 	end compute_bounding_box;

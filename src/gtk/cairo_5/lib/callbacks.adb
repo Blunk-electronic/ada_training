@@ -59,6 +59,8 @@ package body callbacks is
 		S : constant gdouble := gdouble (type_scale_factor'last);
 		By : constant gdouble := gdouble (bounding_box.height);
 		Bx : constant gdouble := gdouble (bounding_box.width);
+		-- By : constant gdouble := gdouble (bounding_box_init.height);
+		-- Bx : constant gdouble := gdouble (bounding_box_init.width);
 	begin
 		x :=   Bx * S - Bx;
 		y := - By * S;
@@ -1484,17 +1486,39 @@ package body callbacks is
 		-- Create a scrolled window:
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 
-		-- Set the minimum size of the scrolled window basing on the 
-		-- bounding-box:
+		-- Set the minimum size of the scrolled window and
+		-- the global scrolled_window_size variable.
+		-- There are two ways to do that:
+		
+		-- 1. Basing on the global bounding-box which has been calculated
+		--    by parsing the model database. This causes the scrolled window
+		--    to adapt on startup to the model.
+		--    IMPORTANT: The height must be greater than the sum
+		--    of the height of all other widgets in the main window !
+		--    Otherwise the canvas may freeze and stop emitting signals.
+
 		swin.set_size_request (
 			gint (bounding_box.width),
-			gint (bounding_box.height));
+			gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
 
-		-- Set the global scrolled_window_size variable:
 		scrolled_window_size := (
 			width	=> positive (bounding_box.width),
 			height	=> positive (bounding_box.height));
 
+		
+		-- 2. A static startup-configuration based on a certain 
+		--    minimal width and height:
+-- 		swin.set_size_request (
+-- 			gint (bounding_box_min.width),
+-- 			gint (bounding_box_min.height));
+--   
+-- 		scrolled_window_size := (
+-- 			width	=> positive (bounding_box_min.width),
+-- 			height	=> positive (bounding_box_min.height));
+-- CS does not work
+
+
+		
 		-- CS show window size
 
 		put_line ("scrolled window zoom mode: " 
@@ -1586,6 +1610,7 @@ package body callbacks is
 	procedure prepare_initial_scrollbar_settings is
 		debug : boolean := false;
 		-- debug : boolean := true;
+		-- bounding_box : type_area := bounding_box_init;
 	begin
 		put_line ("prepare initial scrollbar settings");
 		
@@ -2774,7 +2799,7 @@ package body callbacks is
 		
 	begin -- cb_draw_objects
 		-- new_line;
-		--put_line ("cb_draw_objects " & image (clock));
+		put_line ("cb_draw_objects " & image (clock));
 
 		-- CS if context is global then do:
 		-- context_global := context;

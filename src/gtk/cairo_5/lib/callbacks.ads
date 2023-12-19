@@ -427,8 +427,12 @@ package callbacks is
 	procedure show_adjustments_v;
 	procedure show_adjustments_h;
 
+	
+	-- Prepares initial scrollbar settings based on
+	-- current base_offset and bounding-box:
 	procedure prepare_initial_scrollbar_settings;
 
+	
 	-- Applies the initial scrollbar settings.
 	procedure apply_initial_scrollbar_settings;
 	
