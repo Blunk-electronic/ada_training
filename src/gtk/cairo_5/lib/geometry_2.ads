@@ -257,9 +257,6 @@ package geometry_2 is
 		height		=> 400.0);
 
 	
-	-- Scales the bounding-box so that it fits into bounding_box_default.
-	-- Sets the scale_factor accordingly. -- CS more details !
-	procedure fit_bounding_box;
 	
 	
 	-- The simplest object in the model world is a line:

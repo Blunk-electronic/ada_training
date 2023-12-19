@@ -59,8 +59,6 @@ package body callbacks is
 		S : constant gdouble := gdouble (type_scale_factor'last);
 		By : constant gdouble := gdouble (bounding_box.height);
 		Bx : constant gdouble := gdouble (bounding_box.width);
-		-- By : constant gdouble := gdouble (bounding_box_init.height);
-		-- Bx : constant gdouble := gdouble (bounding_box_init.width);
 	begin
 		x :=   Bx * S - Bx;
 		y := - By * S;
@@ -472,7 +470,7 @@ package body callbacks is
 		put_line ("cb_button_pressed_win ");
 		-- 	& " button " & guint'image (event.button)
 		-- 	& to_string (point));
-
+		
 		return event_handled;
 	end cb_button_pressed_win;
 
@@ -1497,25 +1495,24 @@ package body callbacks is
 		--    of the height of all other widgets in the main window !
 		--    Otherwise the canvas may freeze and stop emitting signals.
 
-		swin.set_size_request (
-			gint (bounding_box.width),
-			gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
-
-		scrolled_window_size := (
-			width	=> positive (bounding_box.width),
-			height	=> positive (bounding_box.height));
+		-- swin.set_size_request (
+		-- 	gint (bounding_box.width),
+		-- 	gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
+  -- 
+		-- scrolled_window_size := (
+		-- 	width	=> positive (bounding_box.width),
+		-- 	height	=> positive (bounding_box.height));
 
 		
 		-- 2. A static startup-configuration based on a certain 
 		--    minimal width and height:
--- 		swin.set_size_request (
--- 			gint (bounding_box_min.width),
--- 			gint (bounding_box_min.height));
---   
--- 		scrolled_window_size := (
--- 			width	=> positive (bounding_box_min.width),
--- 			height	=> positive (bounding_box_min.height));
--- CS does not work
+		swin.set_size_request (
+			gint (bounding_box_min.width),
+			gint (bounding_box_min.height));
+  
+		scrolled_window_size := (
+			width	=> positive (bounding_box_min.width),
+			height	=> positive (bounding_box_min.height));
 
 
 		
@@ -1975,6 +1972,47 @@ package body callbacks is
 	end zoom_on_cursor;
 
 	
+
+	procedure fit is
+		sw, sh, s : type_scale_factor;
+		tlm : type_point_model;
+
+		Z1	: type_point_canvas;
+		M	: type_point_model;
+		BC	: constant type_area_corners := get_corners (bounding_box);
+
+	begin
+		put_line ("fit");
+		
+		tlm := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
+		-- put_line ("tlm:" & to_string (tlm));
+		Z1 := to_canvas (tlm, scale_factor, real => true);
+		M := to_virtual (tlm);
+
+		-- The ratio of default width to current width:
+		-- sw := type_scale_factor (bounding_box_default.width / bounding_box.width);
+		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
+
+		-- The ratio of default height to current height:
+		-- sh := type_scale_factor (bounding_box_default.height / bounding_box.height);
+		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
+		
+		-- put_line ("sw: " & to_string (sw));
+		-- put_line ("sh: " & to_string (sh));
+
+		-- The smaller of sw and sh now determines the new global scale_factor:
+		scale_factor := type_scale_factor'min (sw, sh);
+		-- put_line (" scale (fixp): " & type_distance_model'image (type_distance_model (scale_factor)));
+
+		update_scale_display;
+		
+		compute_translate_offset (M, Z1);
+		
+		update_scrollbar_limits (BC, scale_factor);
+
+	end fit;
+
+
 	
 	
 	function cb_button_pressed_canvas (

@@ -75,8 +75,6 @@ begin
 	geometry_2.make_database;
 		
 	geometry_2.compute_bounding_box;
-
-	geometry_2.fit_bounding_box;
 	
 	compute_base_offset;
 	prepare_initial_scrollbar_settings;
@@ -106,6 +104,8 @@ begin
 	-- On startup the canvas has the focus. This enables the operator
 	-- to move the cursor with the cursor-keys from the beginning:
 	canvas.grab_focus;
+
+	fit;
 	
 	put_line ("start gtk main loop");
 

@@ -542,7 +542,7 @@ package callbacks is
 		direction : type_zoom_direction);
 	
 
-
+	procedure fit;
 
 
 	
