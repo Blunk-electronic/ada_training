@@ -96,7 +96,6 @@ begin
 
 	
 	apply_initial_scrollbar_settings;
-	show_adjustments_v;
 
 	update_scale_display;
 	update_grid_display;
@@ -105,7 +104,8 @@ begin
 	-- to move the cursor with the cursor-keys from the beginning:
 	canvas.grab_focus;
 
-	fit;
+	-- Zoom so that all objects are visible:
+	zoom_to_fit;
 	
 	put_line ("start gtk main loop");
 

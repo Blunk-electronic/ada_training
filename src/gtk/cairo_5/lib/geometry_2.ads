@@ -239,14 +239,13 @@ package geometry_2 is
 	-- around the model:
 	bounding_box : type_area; -- CS initialize with bounding_box_default ?
 
-	bounding_box_init : type_area;
 	
 	-- On startup a default bounding-box will be applied in order
 	-- to obtain a minimal drawning area:
-	bounding_box_default : constant type_area := (
-		position	=> (0.0, 0.0),
-		width		=> 300.0,
-		height		=> 200.0);
+	-- bounding_box_default : constant type_area := (
+	-- 	position	=> (0.0, 0.0),
+	-- 	width		=> 300.0,
+	-- 	height		=> 200.0);
 
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !

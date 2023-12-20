@@ -87,7 +87,7 @@ package body callbacks is
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
 		
-		put_line (" T offset    " & to_string (T));
+		-- put_line (" T offset    " & to_string (T));
 	end compute_translate_offset;
 
 
@@ -1930,11 +1930,13 @@ package body callbacks is
 	is
 		Z1	: type_point_canvas;
 		M	: type_point_model;
+
+		-- The corners of the bounding-box:
 		BC	: constant type_area_corners := get_corners (bounding_box);
 	begin
 		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
 
-		-- Convert the cursor position to the corresponding canvas point:
+		-- Get the canvas point corresponding to the current cursor position:
 		Z1 := to_canvas (cursor.position, scale_factor, real => true);
 
 		-- Convert the cursor position to a virtual model point:
@@ -1955,7 +1957,7 @@ package body callbacks is
 
 		update_scale_display;
 		
-		-- put_line (" scale new" & to_string (scale_factor));
+		-- put_line (" scale_factor" & to_string (scale_factor));
 
 		-- After changing the scale_factor, the translate_offset must
 		-- be calculated anew. When the actual drawing takes place (see function cb_draw_objects)
@@ -1973,28 +1975,36 @@ package body callbacks is
 
 	
 
-	procedure fit is
-		sw, sh, s : type_scale_factor;
-		tlm : type_point_model;
+	procedure zoom_to_fit is
+		-- The top-left corner of the bounding-box:
+		TL : type_point_model;
 
 		Z1	: type_point_canvas;
 		M	: type_point_model;
+
+		-- The corners of the bounding-box:
 		BC	: constant type_area_corners := get_corners (bounding_box);
 
+		-- The two scale factors: one based on the width and another
+		-- based on the height of the current bounding-box:
+		sw, sh : type_scale_factor;
 	begin
-		put_line ("fit");
-		
-		tlm := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
-		-- put_line ("tlm:" & to_string (tlm));
-		Z1 := to_canvas (tlm, scale_factor, real => true);
-		M := to_virtual (tlm);
+		put_line ("zoom_to_fit");
 
+		-- Get the top-left corner of the bounding-box:
+		TL := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
+
+		-- Get canvas point corresponding to TL:
+		Z1 := to_canvas (TL, scale_factor, real => true);
+
+		-- Convert TL to a virtual model point:
+		M := to_virtual (TL);
+
+		
 		-- The ratio of default width to current width:
-		-- sw := type_scale_factor (bounding_box_default.width / bounding_box.width);
 		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
 
 		-- The ratio of default height to current height:
-		-- sh := type_scale_factor (bounding_box_default.height / bounding_box.height);
 		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
 		
 		-- put_line ("sw: " & to_string (sw));
@@ -2002,15 +2012,14 @@ package body callbacks is
 
 		-- The smaller of sw and sh now determines the new global scale_factor:
 		scale_factor := type_scale_factor'min (sw, sh);
-		-- put_line (" scale (fixp): " & type_distance_model'image (type_distance_model (scale_factor)));
+		put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 
 		update_scale_display;
 		
 		compute_translate_offset (M, Z1);
 		
 		update_scrollbar_limits (BC, scale_factor);
-
-	end fit;
+	end zoom_to_fit;
 
 
 	
@@ -2837,7 +2846,7 @@ package body callbacks is
 		
 	begin -- cb_draw_objects
 		-- new_line;
-		put_line ("cb_draw_objects " & image (clock));
+		-- put_line ("cb_draw_objects " & image (clock));
 
 		-- CS if context is global then do:
 		-- context_global := context;

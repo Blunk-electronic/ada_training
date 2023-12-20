@@ -537,12 +537,20 @@ package callbacks is
 
 	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
-	-- Zooms in or out at the current cursor position:
+	-- Zooms in or out at the current cursor position.
+	-- If the direction is ZOOM_IN, then the global scale_factor
+	-- is increased by multplying it with the scale_multiplier.
+	-- If direction is ZOOM_OUT then it decreases by dividing
+	-- by scale_multiplier:
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction);
 	
 
-	procedure fit;
+	-- This procedure sets the global scale_factor and translate-offset
+	-- so that all objects of the model fit into the scrolled window.
+	-- The zoom center is the top-left corner of the bounding-box.
+	-- It bases on the current bounding-box:
+	procedure zoom_to_fit;
 
 
 	
@@ -555,7 +563,9 @@ package callbacks is
 		event	: gdk_event_button)
 		return boolean;
 
-	
+
+	-- This callback function is called each time the operator
+	-- moves the pointer (or the mouse) inside the canvas:
 	function cb_mouse_moved (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_motion)
