@@ -224,6 +224,9 @@ package callbacks is
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class);
 
+	procedure cb_zoom_to_fit_2 (
+		button : access gtk_button_record'class);
+
 	
 	-- This callback procedure is called each time the 
 	-- button "add" is clicked.
@@ -548,8 +551,9 @@ package callbacks is
 
 	-- This procedure sets the global scale_factor and translate-offset
 	-- so that all objects of the model fit into the scrolled window.
-	-- The zoom center is the top-left corner of the bounding-box.
-	-- It bases on the current bounding-box:
+	-- The zoom center is the top-left corner of the current bounding-box.
+	-- NOTE: This procedure is intended to fit all objects ON STARTUP ONLY.
+	--       It is not suitable to fit object during normal operation.
 	procedure zoom_to_fit;
 
 

@@ -229,7 +229,7 @@ package body callbacks is
 		-- Reset the scale to default:
 		scale_factor := 1.0;
 
-		-- Reset the translate-offset to defaul:
+		-- Reset the translate-offset to default:
 		T := (0.0, 0.0);
 
 		-- Compute the new bounding-box. Update global
@@ -306,6 +306,55 @@ package body callbacks is
 	end cb_zoom_to_fit;
 
 
+	procedure cb_zoom_to_fit_2 (
+		button : access gtk_button_record'class)
+	is
+		size_x, size_y : gint;
+		-- a : gtk_allocation;
+	begin
+		put_line ("cb_zoom_to_fit_2");
+
+		-- canvas.get_allocation (a);
+		-- a.x := 0;
+		-- a.y := 0;
+		-- canvas.set_allocation (a);
+		
+		-- Reset the scale to default:
+		scale_factor := 1.0;
+
+		-- Reset the translate-offset to default:
+		T := (0.0, 0.0);
+
+		-- Compute the new bounding-box. Update global
+		-- variable bounding_box:
+		compute_bounding_box;
+
+		-- Compute the new base-offset. Update global
+		-- variable base_offset:
+		compute_base_offset;
+
+		-- Since the bounding_box has changed, the scrollbars
+		-- must be reinitialized:
+		prepare_initial_scrollbar_settings;
+
+		-- Set the size of the canvas (in pixels).
+		-- It is like the wooden frame around a real-world canvas. 
+		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
+		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
+
+		canvas.set_size_request (size_x, size_y); -- unit is pixels
+		show_canvas_size;
+
+		-- Apply the scrollbar settings:
+		apply_initial_scrollbar_settings;
+
+		-- zoom_to_fit;
+		
+		-- Redraw the canvas:
+		refresh (canvas);
+	end cb_zoom_to_fit_2;
+
+	
 
 	procedure cb_add (
 		button : access gtk_button_record'class)
@@ -648,6 +697,7 @@ package body callbacks is
 
 		gtk_new (button_zoom_fit, "ZOOM FIT");
 		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
+		--button_zoom_fit.on_clicked (cb_zoom_to_fit_2'access);
 
 		gtk_new (button_add, "ADD");
 		button_add.on_clicked (cb_add'access);
@@ -1707,7 +1757,7 @@ package body callbacks is
 	
 	procedure set_up_canvas is
 		size_x, size_y : gint;
-		alloc_main_window : gtk_allocation;
+		-- alloc_main_window : gtk_allocation;
 	begin
 		put_line ("set_up_canvas");
 		
