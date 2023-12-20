@@ -1477,8 +1477,7 @@ package body callbacks is
 
 	
 
-	procedure set_up_swin_and_scrollbars is
-	begin
+	procedure set_up_swin_and_scrollbars is	begin
 		put_line ("set_up_swin_and_scrollbars");
 		
 		-- Create a scrolled window:
@@ -1487,25 +1486,27 @@ package body callbacks is
 		-- Set the minimum size of the scrolled window and
 		-- the global scrolled_window_size variable.
 		-- There are two ways to do that:
-		
+		--
 		-- 1. Basing on the global bounding-box which has been calculated
 		--    by parsing the model database. This causes the scrolled window
 		--    to adapt on startup to the model.
 		--    IMPORTANT: The height must be greater than the sum
 		--    of the height of all other widgets in the main window !
-		--    Otherwise the canvas may freeze and stop emitting signals.
-
+		--    Otherwise the canvas may freeze and stop emitting signals:
+		--
 		-- swin.set_size_request (
 		-- 	gint (bounding_box.width),
 		-- 	gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
-  -- 
+		-- 
 		-- scrolled_window_size := (
 		-- 	width	=> positive (bounding_box.width),
 		-- 	height	=> positive (bounding_box.height));
 
 		
 		-- 2. A static startup-configuration based on a certain 
-		--    minimal width and height:
+		--    minimal width and height. This ensures that the scrolled
+		--    window has a predictable and well defined size.
+		--    This is to be prefered over approach 1 (see above):
 		swin.set_size_request (
 			gint (bounding_box_min.width),
 			gint (bounding_box_min.height));

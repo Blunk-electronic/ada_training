@@ -234,19 +234,10 @@ package geometry_2 is
 		y	=> margin);
 
 	
-	-- This is the bounding-box of the model. It is a rectangle
-	-- that encloses all objects of the model and the margins 
-	-- around the model:
-	bounding_box : type_area; -- CS initialize with bounding_box_default ?
 
 	
 	-- On startup a default bounding-box will be applied in order
-	-- to obtain a minimal drawning area:
-	-- bounding_box_default : constant type_area := (
-	-- 	position	=> (0.0, 0.0),
-	-- 	width		=> 300.0,
-	-- 	height		=> 200.0);
-
+	-- to obtain a minimal drawning area.
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
@@ -255,6 +246,11 @@ package geometry_2 is
 		width		=> 400.0,
 		height		=> 400.0);
 
+	-- This is the bounding-box of the model. It is a rectangle
+	-- that encloses all objects of the model and the margins 
+	-- around the model. By default it assumes a minimal
+	-- widht and height:
+	bounding_box : type_area := bounding_box_min;
 	
 	
 	
@@ -339,8 +335,11 @@ package geometry_2 is
 
 	procedure make_database;
 
-	-- Detects the smallest and greatest x and y values used by the model.
-	-- Sets the global variable bounding_box:
+	-- This procedure pareses the whole database of model objects,
+	-- detects the smallest and greatest x and y values used by the model
+	-- and sets the global variable bounding_box accordingly.
+	-- It starts with a minimal bounding-box (that is the constant bounding_box_min)
+	-- to ensure a minimal height and width:
 	procedure compute_bounding_box;
 
 

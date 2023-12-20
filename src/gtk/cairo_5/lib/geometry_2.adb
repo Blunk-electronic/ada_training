@@ -415,9 +415,9 @@ package body geometry_2 is
 	begin
 		put_line ("make_database");
 
-		object.p := (100.0, 400.0);
+		-- object.p := (-600.0, -600.0);
 		-- object.p := (500.0, 50.0);
-		-- object.p := (100.0, 500.0);
+		object.p := (100.0, 250.0);
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -513,8 +513,11 @@ package body geometry_2 is
 
 			
 		begin
+			-- Iterate the lines, circles and other primitive
+			-- components of the current object:
 			object.lines.iterate (query_line'access);
 			object.circles.iterate (query_circle'access);
+			-- CS arcs
 		end query_object;
 
 		
@@ -522,7 +525,6 @@ package body geometry_2 is
 		put_line ("compute_bounding_box");
 
 		-- Reset the global bounding-box:
-		-- bounding_box := bounding_box_default;
 		bounding_box := bounding_box_min;
 		
 		-- The database that contains all objects of the model
@@ -530,7 +532,6 @@ package body geometry_2 is
 		objects_database.iterate (query_object'access);
 		
 
-		-- goto l_end;
 		
 		-- Expand the bounding-box by the margin. 
 		-- The margin is part of the model and thus part 
@@ -543,8 +544,6 @@ package body geometry_2 is
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
 
-		<<l_end>>
-		
 		put_line ("bounding-box: " & to_string (bounding_box));
 	end compute_bounding_box;
 
