@@ -415,8 +415,8 @@ package body geometry_2 is
 	begin
 		put_line ("make_database");
 
-		-- object.p := (-600.0, -600.0);
-		-- object.p := (500.0, 50.0);
+		-- object.p := (-100.0, -100.0);
+		-- object.p := (-50.0, 50.0);
 		object.p := (100.0, 250.0);
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
@@ -488,6 +488,12 @@ package body geometry_2 is
 		use pac_circles;
 		use pac_objects;
 
+		-- The first object encountered will be the
+		-- seed for the first boundinb-box. All other objects cause 
+		-- this seed box to expand. After the first object,
+		-- this flag is cleared:
+		first_object : boolean := true;
+
 		
 		procedure query_object (oc : in pac_objects.cursor) is
 			object : type_complex_object renames element (oc);
@@ -498,7 +504,13 @@ package body geometry_2 is
 			begin
 				b := get_bounding_box (line);
 				move_by (b.position, object.p);
-				merge_areas (bounding_box, b);
+				
+				if first_object then
+					bounding_box := b;
+					first_object := false;
+				else
+					merge_areas (bounding_box, b);
+				end if;
 			end query_line;
 
 			
@@ -508,7 +520,13 @@ package body geometry_2 is
 			begin
 				b := get_bounding_box (circle);
 				move_by (b.position, object.p);
-				merge_areas (bounding_box, b);
+
+				if first_object then
+					bounding_box := b;
+					first_object := false;
+				else
+					merge_areas (bounding_box, b);
+				end if;
 			end query_circle;
 
 			
@@ -524,14 +542,9 @@ package body geometry_2 is
 	begin
 		put_line ("compute_bounding_box");
 
-		-- Reset the global bounding-box:
-		bounding_box := bounding_box_min;
-		
 		-- The database that contains all objects of the model
 		-- must be parsed here:
 		objects_database.iterate (query_object'access);
-		
-
 		
 		-- Expand the bounding-box by the margin. 
 		-- The margin is part of the model and thus part 
@@ -547,6 +560,7 @@ package body geometry_2 is
 		put_line ("bounding-box: " & to_string (bounding_box));
 	end compute_bounding_box;
 
+	
 
 	procedure add_object is
 		use pac_lines;

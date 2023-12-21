@@ -241,7 +241,7 @@ package geometry_2 is
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
-	bounding_box_min : constant type_area := (
+	bounding_box_min : constant type_area := ( -- CS rename to bounding_box_default
 		position	=> (0.0, 0.0),
 		width		=> 400.0,
 		height		=> 400.0);
@@ -250,7 +250,8 @@ package geometry_2 is
 	-- that encloses all objects of the model and the margins 
 	-- around the model. By default it assumes a minimal
 	-- widht and height:
-	bounding_box : type_area := bounding_box_min;
+	-- bounding_box : type_area := bounding_box_min;
+	bounding_box : type_area;
 	
 	
 	
@@ -337,9 +338,7 @@ package geometry_2 is
 
 	-- This procedure pareses the whole database of model objects,
 	-- detects the smallest and greatest x and y values used by the model
-	-- and sets the global variable bounding_box accordingly.
-	-- It starts with a minimal bounding-box (that is the constant bounding_box_min)
-	-- to ensure a minimal height and width:
+	-- and sets the global variable bounding_box accordingly:
 	procedure compute_bounding_box;
 
 

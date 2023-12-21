@@ -311,16 +311,13 @@ package body callbacks is
 	is
 		size_x, size_y : gint;
 		-- a : gtk_allocation;
+
+		-- The two scale factors: one based on the width and another
+		-- based on the height of the current bounding-box:
+		sw, sh : type_scale_factor;
+
 	begin
 		put_line ("cb_zoom_to_fit_2");
-
-		-- canvas.get_allocation (a);
-		-- a.x := 0;
-		-- a.y := 0;
-		-- canvas.set_allocation (a);
-		
-		-- Reset the scale to default:
-		scale_factor := 1.0;
 
 		-- Reset the translate-offset to default:
 		T := (0.0, 0.0);
@@ -341,14 +338,30 @@ package body callbacks is
 		-- It is like the wooden frame around a real-world canvas. 
 		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
 		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
-
 		canvas.set_size_request (size_x, size_y); -- unit is pixels
-		show_canvas_size;
+		-- show_canvas_size;
 
 		-- Apply the scrollbar settings:
 		apply_initial_scrollbar_settings;
+		-- show_adjustments_v;
 
-		-- zoom_to_fit;
+		-- put_line ("T: " & to_string (T));
+		
+		-- The ratio of default width to current width:
+		-- sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
+
+		-- The ratio of default height to current height:
+		-- sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
+		
+		-- put_line ("sw: " & to_string (sw));
+		-- put_line ("sh: " & to_string (sh));
+
+		-- The smaller of sw and sh now determines the new global scale_factor:
+		-- scale_factor := type_scale_factor'min (sw, sh);
+		-- put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+
+
+		zoom_to_fit;
 		
 		-- Redraw the canvas:
 		refresh (canvas);
@@ -696,8 +709,8 @@ package body callbacks is
 		-- table_coordinates.set_border_width (10);
 
 		gtk_new (button_zoom_fit, "ZOOM FIT");
-		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
-		--button_zoom_fit.on_clicked (cb_zoom_to_fit_2'access);
+		-- button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
+		button_zoom_fit.on_clicked (cb_zoom_to_fit_2'access);
 
 		gtk_new (button_add, "ADD");
 		button_add.on_clicked (cb_add'access);
@@ -2028,9 +2041,9 @@ package body callbacks is
 
 	procedure zoom_to_fit is
 		-- The top-left corner of the bounding-box:
-		TL : type_point_model;
+		-- TL : type_point_model;
 
-		Z1	: type_point_canvas;
+		Z	: type_point_canvas;
 		M	: type_point_model;
 
 		-- The corners of the bounding-box:
@@ -2043,19 +2056,32 @@ package body callbacks is
 		put_line ("zoom_to_fit");
 
 		-- Get the top-left corner of the bounding-box:
-		TL := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
+		-- TL := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
 
 		-- Get canvas point corresponding to TL:
-		Z1 := to_canvas (TL, scale_factor, real => true);
+		-- Z1 := to_canvas (TL, scale_factor, real => true);
+
+		-- The center of the scaling is the top-left corner of the
+		-- scrolled window:
+		Z := (scrollbar_h_adj.get_lower, scrollbar_v_adj.get_lower);
+		put_line ("Z1: " & to_string (Z));
 
 		-- Convert TL to a virtual model point:
-		M := to_virtual (TL);
+		-- M := to_virtual (TL);
+		-- Compute the virtual model point that belongs to Z:
+		M := to_model (Z, scale_factor, real => false);
 
 		
-		-- The ratio of default width to current width:
+		-- Get the ratio of default width to current width.
+		-- The width of the current bounding-box is equal or greater than
+		-- the width of the default bounding-box. So sw is equal or less than 1.0:
+		-- CS ??
 		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
 
 		-- The ratio of default height to current height:
+		-- The height of the current bounding-box is equal or greater than
+		-- the height of the default bounding-box. So sh is equal or less than 1.0:
+		-- CS ??
 		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
 		
 		-- put_line ("sw: " & to_string (sw));
@@ -2067,9 +2093,9 @@ package body callbacks is
 
 		update_scale_display;
 		
-		compute_translate_offset (M, Z1);
+		compute_translate_offset (M, Z);
 		
-		update_scrollbar_limits (BC, scale_factor);
+		update_scrollbar_limits (BC, scale_factor); -- CS required ?
 	end zoom_to_fit;
 
 
@@ -2359,9 +2385,9 @@ package body callbacks is
 			BC : constant type_area_corners := get_corners (bounding_box);
 			
 		begin -- zoom
-			put_line (" zoom center (M)   " & to_string (M));
-			put_line (" zoom center (Z1) " & to_string (Z1));
-			put_line (" scale old" & to_string (scale_factor));
+			-- put_line (" zoom center (M)   " & to_string (M));
+			-- put_line (" zoom center (Z1) " & to_string (Z1));
+			-- put_line (" scale old" & to_string (scale_factor));
 			
 			case wheel_direction is
 				when SCROLL_UP =>
@@ -2377,7 +2403,7 @@ package body callbacks is
 				when others => null;
 			end case;
 
-			put_line (" scale new" & to_string (scale_factor));
+			-- put_line (" scale_factor" & to_string (scale_factor));
 
 			-- After changing the scale_factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes place (see function cb_draw_objects)
@@ -2441,7 +2467,7 @@ package body callbacks is
 		
 		
 	begin -- cb_mouse_wheel_rolled
-		new_line;
+		-- new_line;
 		put_line ("mouse_wheel_rolled");
 		-- put_line (" direction " & gdk_scroll_direction'image (direction));
 
