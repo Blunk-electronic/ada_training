@@ -417,7 +417,8 @@ package body geometry_2 is
 
 		-- object.p := (-100.0, -100.0);
 		-- object.p := (-50.0, 50.0);
-		object.p := (100.0, 250.0);
+		-- object.p := (-100.0, -250.0);
+		object.p := (10.0, 20.0);
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);

@@ -95,6 +95,16 @@ package callbacks is
 
 
 	
+	type type_corners is record
+		BL, BR, TL, TR : type_point_canvas;
+	end record;
+
+	function get_corners (
+		B	: in type_area; -- bounding-box
+		S	: in type_scale_factor)
+		return type_corners;
+	
+	
 -- CONVERSION BETWEEN MODEL AND CANVAS:
 
 	-- Converts the given model distance to
@@ -299,7 +309,19 @@ package callbacks is
 	procedure update_scrollbar_limits (
 		bounding_box_corners	: in type_area_corners;
 		scale_factor			: in type_scale_factor);
+	
 
+	procedure update_scrollbar_limits_1 (
+		bounding_box_corners	: in type_area_corners;
+		scale_factor_1			: in type_scale_factor;
+		scale_factor_2			: in type_scale_factor);
+
+	procedure update_scrollbar_limits_2 (
+		-- bounding_box_corners	: in type_area_corners;
+		-- scale_factor_1			: in type_scale_factor;
+		-- scale_factor_2			: in type_scale_factor);
+		C1, C2 : in type_corners);
+	
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window.

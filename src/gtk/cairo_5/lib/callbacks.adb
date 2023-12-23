@@ -92,6 +92,27 @@ package body callbacks is
 
 
 
+	function get_corners (
+		B	: in type_area; -- bounding-box
+		S	: in type_scale_factor)
+		return type_corners
+	is
+		result : type_corners;
+
+		-- The corners of the bounding-box:
+		BC	: constant type_area_corners := get_corners (B);
+
+	begin
+		-- Convert the corners of the bounding-box to canvas coordinates:
+		result.TL := to_canvas (BC.TL, S, true);
+		result.TR := to_canvas (BC.TR, S, true);
+		result.BL := to_canvas (BC.BL, S, true);
+		result.BR := to_canvas (BC.BR, S, true);
+		
+		return result;
+	end get_corners;
+
+	
 
 	function to_distance (
 		d : in type_distance_model)
@@ -537,21 +558,19 @@ package body callbacks is
 	end cb_button_pressed_win;
 
 
-
-	
 	procedure update_scrollbar_limits (
 		bounding_box_corners	: in type_area_corners;
 		scale_factor			: in type_scale_factor)
 	is
 		TL, BL, BR : type_point_canvas;
 		scratch : gdouble;
-		
 	begin
+		
 		-- Convert the corners of the bounding-box to canvas coordinates:
 		TL := to_canvas (bounding_box_corners.TL, scale_factor, true);
 		BL := to_canvas (bounding_box_corners.BL, scale_factor, true);
 		BR := to_canvas (bounding_box_corners.BR, scale_factor, true);
-
+		
 		-- put_line ("TL " & to_string (TL));
 		-- put_line ("BL " & to_string (BL));
 		-- put_line ("BR " & to_string (BR));
@@ -631,6 +650,267 @@ package body callbacks is
 		end if;
 
 	end update_scrollbar_limits;
+	
+
+	procedure update_scrollbar_limits_1 (
+		bounding_box_corners	: in type_area_corners;
+		scale_factor_1			: in type_scale_factor;
+		scale_factor_2			: in type_scale_factor)
+	is
+		TL1, BL1, BR1 : type_point_canvas;
+		TL2, BL2, BR2 : type_point_canvas;
+		scratch : gdouble;
+
+		HL : constant gdouble := scrollbar_h_adj.get_lower;
+		HU : constant gdouble := scrollbar_h_adj.get_upper;
+
+		VL : constant gdouble := scrollbar_v_adj.get_lower;
+		VU : constant gdouble := scrollbar_v_adj.get_upper;
+
+		dHL, dHU : gdouble;
+		dVL, dVU : gdouble;
+	begin
+		-- put_line ("S_old" & to_string (scale_factor_1));
+		-- put_line ("S_new" & to_string (scale_factor_2));
+		
+		-- Convert the corners of the bounding-box to canvas coordinates:
+		TL1 := to_canvas (bounding_box_corners.TL, scale_factor_1, true);
+		BL1 := to_canvas (bounding_box_corners.BL, scale_factor_1, true);
+		BR1 := to_canvas (bounding_box_corners.BR, scale_factor_1, true);
+  
+		TL2 := to_canvas (bounding_box_corners.TL, scale_factor_2, true);
+		BL2 := to_canvas (bounding_box_corners.BL, scale_factor_2, true);
+		BR2 := to_canvas (bounding_box_corners.BR, scale_factor_2, true);
+
+		dHL := BL2.x - BL1.x;
+		dHU := BR2.x - BR1.x;
+
+		dVL := TL2.y - TL1.y;
+		dVU := BL2.y - BL1.y;
+		
+		-- put_line ("TL " & to_string (TL));
+		-- put_line ("BL " & to_string (BL));
+		-- put_line ("BR " & to_string (BR));
+
+		-- CS clip negative values of U and L ?
+
+
+		-- horizontal:
+
+		-- The left end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the left edge of the bounding-box is farther to the
+		-- left than the left end of the bar, then the lower limit
+		-- moves to the left. It assumes the value of the left edge
+		-- of the bounding-box:
+		--if BL.x <= scrollbar_h_adj.get_value then
+		if BL2.x <= scrollbar_h_adj.get_value then
+			-- scrollbar_h_adj.set_lower (BL.x);
+			scrollbar_h_adj.set_lower (HL + dHL);
+		else
+		-- If the left edge of the box is farther to the right than
+		-- the left end of the bar, then the lower limit can not be
+		-- moved further to the right. So the lower limit can at most assume
+		-- the value of the left end of the bar:
+			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+		end if;
+
+		-- The right end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		-- If the right edge of the bounding-box is farther to the
+		-- right than the right end of the bar, then the upper limit
+		-- moves to the right. It assumes the value of the right edge
+		-- of the bounding-box:
+		-- if BR.x >= scratch then
+		if BR2.x >= scratch then
+			-- scrollbar_h_adj.set_upper (BR.x);
+			scrollbar_h_adj.set_upper (HU + dHU);
+		else
+		-- If the right edge of the box is farther to the left than
+		-- the right end of the bar, then the upper limit can not be
+		-- moved further to the left. So the upper limit can at most assume
+		-- the value of the right end of the bar:
+			scrollbar_h_adj.set_upper (scratch);
+		end if;
+
+		
+		-- vertical:
+
+		-- The upper end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the upper edge of the bounding-box is higher
+		-- than the upper end of the bar, then the lower limit
+		-- moves upwards. It assumes the value of the upper edge
+		-- of the bounding-box:		
+		-- if TL.y <= scrollbar_v_adj.get_value then
+		if TL2.y <= scrollbar_v_adj.get_value then
+			--scrollbar_v_adj.set_lower (TL.y);
+			scrollbar_v_adj.set_lower (VL + dVL);
+		else
+		-- If the upper edge of the box is below
+		-- the upper end of the bar, then the lower limit can not be
+		-- moved further upwards. So the lower limit can at most assume
+		-- the value of the upper end of the bar:
+			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+		end if;
+
+		-- The lower end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		-- If the lower edge of the bounding-box is below the
+		-- lower end of the bar, then the upper limit
+		-- moves further downwards. It assumes the value of the lower edge
+		-- of the bounding-box:
+		-- if BL.y >= scratch then
+		if BL2.y >= scratch then
+			--scrollbar_v_adj.set_upper (BL.y);
+			scrollbar_v_adj.set_upper (VU + dVU);
+		else
+		-- If the lower edge of the box is above
+		-- the lower end of the bar, then the upper limit can not be
+		-- moved further downwards. So the upper limit can at most assume
+		-- the value of the lower end of the bar:
+			scrollbar_v_adj.set_upper (scratch);
+		end if;
+
+		-- scrollbar_v_adj.set_page_size (pv_bak);
+		-- scrollbar_h_adj.set_page_size (ph_bak);
+		-- show_adjustments_v;
+	end update_scrollbar_limits_1;
+
+	
+	
+	procedure update_scrollbar_limits_2 (
+		C1, C2 : in type_corners)
+		-- bounding_box_corners	: in type_area_corners;
+		-- scale_factor_1			: in type_scale_factor;
+		-- scale_factor_2			: in type_scale_factor)
+	is
+		-- TL1, BL1, BR1 : type_point_canvas;
+		-- TL2, BL2, BR2 : type_point_canvas;
+		scratch : gdouble;
+
+		-- pv_bak : gdouble := scrollbar_v_adj.get_page_size;
+		-- ph_bak : gdouble := scrollbar_h_adj.get_page_size;
+
+		HL : constant gdouble := scrollbar_h_adj.get_lower;
+		HU : constant gdouble := scrollbar_h_adj.get_upper;
+
+		VL : constant gdouble := scrollbar_v_adj.get_lower;
+		VU : constant gdouble := scrollbar_v_adj.get_upper;
+
+		dHL, dHU : gdouble;
+		dVL, dVU : gdouble;
+	begin
+		-- put_line ("S_old" & to_string (scale_factor_1));
+		-- put_line ("S_new" & to_string (scale_factor_2));
+		
+		-- Convert the corners of the bounding-box to canvas coordinates:
+		-- TL1 := to_canvas (bounding_box_corners.TL, scale_factor_1, true);
+		-- BL1 := to_canvas (bounding_box_corners.BL, scale_factor_1, true);
+		-- BR1 := to_canvas (bounding_box_corners.BR, scale_factor_1, true);
+  -- 
+		-- TL2 := to_canvas (bounding_box_corners.TL, scale_factor_2, true);
+		-- BL2 := to_canvas (bounding_box_corners.BL, scale_factor_2, true);
+		-- BR2 := to_canvas (bounding_box_corners.BR, scale_factor_2, true);
+
+		dHL := C2.BL.x - C1.BL.x;
+		dHU := C2.BR.x - C1.BR.x;
+
+		dVL := C2.TL.y - C1.TL.y;
+		dVU := C2.BL.y - C1.BL.y;
+		
+		-- put_line ("TL " & to_string (TL));
+		-- put_line ("BL " & to_string (BL));
+		-- put_line ("BR " & to_string (BR));
+
+		-- CS clip negative values of U and L ?
+
+
+		-- horizontal:
+
+		-- The left end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the left edge of the bounding-box is farther to the
+		-- left than the left end of the bar, then the lower limit
+		-- moves to the left. It assumes the value of the left edge
+		-- of the bounding-box:
+		--if BL.x <= scrollbar_h_adj.get_value then
+		if C2.BL.x <= scrollbar_h_adj.get_value then
+			-- scrollbar_h_adj.set_lower (BL.x);
+			scrollbar_h_adj.set_lower (HL + dHL);
+		else
+		-- If the left edge of the box is farther to the right than
+		-- the left end of the bar, then the lower limit can not be
+		-- moved further to the right. So the lower limit can at most assume
+		-- the value of the left end of the bar:
+			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+		end if;
+
+		-- The right end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		-- If the right edge of the bounding-box is farther to the
+		-- right than the right end of the bar, then the upper limit
+		-- moves to the right. It assumes the value of the right edge
+		-- of the bounding-box:
+		-- if BR.x >= scratch then
+		if C2.BR.x >= scratch then
+			-- scrollbar_h_adj.set_upper (BR.x);
+			scrollbar_h_adj.set_upper (HU + dHU);
+		else
+		-- If the right edge of the box is farther to the left than
+		-- the right end of the bar, then the upper limit can not be
+		-- moved further to the left. So the upper limit can at most assume
+		-- the value of the right end of the bar:
+			scrollbar_h_adj.set_upper (scratch);
+		end if;
+
+		
+		-- vertical:
+
+		-- The upper end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the upper edge of the bounding-box is higher
+		-- than the upper end of the bar, then the lower limit
+		-- moves upwards. It assumes the value of the upper edge
+		-- of the bounding-box:		
+		-- if TL.y <= scrollbar_v_adj.get_value then
+		if C2.TL.y <= scrollbar_v_adj.get_value then
+			--scrollbar_v_adj.set_lower (TL.y);
+			scrollbar_v_adj.set_lower (VL + dVL);
+		else
+		-- If the upper edge of the box is below
+		-- the upper end of the bar, then the lower limit can not be
+		-- moved further upwards. So the lower limit can at most assume
+		-- the value of the upper end of the bar:
+			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+		end if;
+
+		-- The lower end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		-- If the lower edge of the bounding-box is below the
+		-- lower end of the bar, then the upper limit
+		-- moves further downwards. It assumes the value of the lower edge
+		-- of the bounding-box:
+		-- if BL.y >= scratch then
+		if C2.BL.y >= scratch then
+			--scrollbar_v_adj.set_upper (BL.y);
+			scrollbar_v_adj.set_upper (VU + dVU);
+		else
+		-- If the lower edge of the box is above
+		-- the lower end of the bar, then the upper limit can not be
+		-- moved further downwards. So the upper limit can at most assume
+		-- the value of the lower end of the bar:
+			scrollbar_v_adj.set_upper (scratch);
+		end if;
+
+		-- scrollbar_v_adj.set_page_size (pv_bak);
+		-- scrollbar_h_adj.set_page_size (ph_bak);
+		-- show_adjustments_v;
+	end update_scrollbar_limits_2;
 
 
 	
@@ -1671,7 +1951,7 @@ package body callbacks is
 	procedure prepare_initial_scrollbar_settings is
 		debug : boolean := false;
 		-- debug : boolean := true;
-		-- bounding_box : type_area := bounding_box_init;
+		-- bounding_box : type_area := bounding_box_min;
 	begin
 		put_line ("prepare initial scrollbar settings");
 		
@@ -1997,8 +2277,13 @@ package body callbacks is
 
 		-- The corners of the bounding-box:
 		BC	: constant type_area_corners := get_corners (bounding_box);
+		C1, C2 : type_corners;
+
+		scale_factor_old : constant type_scale_factor := scale_factor;
 	begin
 		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
+
+		-- C1 := get_corners (bounding_box, scale_factor_old);
 
 		-- Get the canvas point corresponding to the current cursor position:
 		Z1 := to_canvas (cursor.position, scale_factor, real => true);
@@ -2030,8 +2315,13 @@ package body callbacks is
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		compute_translate_offset (M, Z1);
-		
+
 		update_scrollbar_limits (BC, scale_factor);
+		--update_scrollbar_limits_1 (BC, scale_factor_old, scale_factor);
+
+		-- C1 := get_corners (bounding_box, scale_factor_old);
+		-- C2 := get_corners (bounding_box, scale_factor);
+		-- update_scrollbar_limits_2 (C1, C2);
 
 		-- schedule a redraw:
 		refresh (canvas);		
@@ -2095,7 +2385,7 @@ package body callbacks is
 		
 		compute_translate_offset (M, Z);
 		
-		update_scrollbar_limits (BC, scale_factor); -- CS required ?
+		-- update_scrollbar_limits (BC, scale_factor); -- CS required ?
 	end zoom_to_fit;
 
 
@@ -2383,11 +2673,16 @@ package body callbacks is
 
 			-- Get the corners of the bounding-box as it is BEFORE scaling:
 			BC : constant type_area_corners := get_corners (bounding_box);
+
+			scale_factor_old : constant type_scale_factor := scale_factor;
+			C1, C2 : type_corners;
 			
 		begin -- zoom
 			-- put_line (" zoom center (M)   " & to_string (M));
 			-- put_line (" zoom center (Z1) " & to_string (Z1));
 			-- put_line (" scale old" & to_string (scale_factor));
+
+			C1 := get_corners (bounding_box, scale_factor);
 			
 			case wheel_direction is
 				when SCROLL_UP =>
@@ -2412,10 +2707,15 @@ package body callbacks is
 			-- Without applying a translate_offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 			compute_translate_offset (M, Z1);
-			
+
+			-- show_adjustments_v;
 			update_scrollbar_limits (BC, scale_factor);
+			-- update_scrollbar_limits_1 (BC, scale_factor_old, scale_factor);
 			-- backup_scrollbar_settings;
 
+			-- C2 := get_corners (bounding_box, scale_factor);
+			-- update_scrollbar_limits_2 (C1, C2);
+			
 			-- schedule a redraw:
 			refresh (canvas);
 		end zoom;
@@ -2927,6 +3227,8 @@ package body callbacks is
 
 		-- CS if context is global then do:
 		-- context_global := context;
+
+		-- show_adjustments_v;
 		
 		-- Update the global visible_area:
 		visible_area := get_visible_area (canvas);
