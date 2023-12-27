@@ -803,6 +803,9 @@ package body callbacks is
 		dHL, dHU : gdouble;
 		dVL, dVU : gdouble;
 	begin
+		put_line ("VL     " & gdouble'image (VL));
+		put_line ("VU     " & gdouble'image (VU));
+		
 		-- put_line ("S_old" & to_string (scale_factor_1));
 		-- put_line ("S_new" & to_string (scale_factor_2));
 		
@@ -815,11 +818,20 @@ package body callbacks is
 		-- BL2 := to_canvas (bounding_box_corners.BL, scale_factor_2, true);
 		-- BR2 := to_canvas (bounding_box_corners.BR, scale_factor_2, true);
 
+		put_line ("C1.TL.y" & gdouble'image (C1.TL.y));
+		put_line ("C1.BL.y" & gdouble'image (C1.BL.y));
+
+		put_line ("C2.TL.y" & gdouble'image (C2.TL.y));
+		put_line ("C2.BL.y" & gdouble'image (C2.BL.y));
+
+		
 		dHL := C2.BL.x - C1.BL.x;
 		dHU := C2.BR.x - C1.BR.x;
 
 		dVL := C2.TL.y - C1.TL.y;
 		dVU := C2.BL.y - C1.BL.y;
+		put_line ("dVL    " & gdouble'image (dVL));
+		put_line ("dVU    " & gdouble'image (dVU));
 		
 		-- put_line ("TL " & to_string (TL));
 		-- put_line ("BL " & to_string (BL));
@@ -837,16 +849,16 @@ package body callbacks is
 		-- moves to the left. It assumes the value of the left edge
 		-- of the bounding-box:
 		--if BL.x <= scrollbar_h_adj.get_value then
-		if C2.BL.x <= scrollbar_h_adj.get_value then
+		-- if C2.BL.x <= scrollbar_h_adj.get_value then
 			-- scrollbar_h_adj.set_lower (BL.x);
 			scrollbar_h_adj.set_lower (HL + dHL);
-		else
+		-- else
 		-- If the left edge of the box is farther to the right than
 		-- the left end of the bar, then the lower limit can not be
 		-- moved further to the right. So the lower limit can at most assume
 		-- the value of the left end of the bar:
-			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
-		end if;
+			-- scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+		-- end if;
 
 		-- The right end of the scrollbar is the sum of its position (value)
 		-- and its length (page size):
@@ -856,16 +868,16 @@ package body callbacks is
 		-- moves to the right. It assumes the value of the right edge
 		-- of the bounding-box:
 		-- if BR.x >= scratch then
-		if C2.BR.x >= scratch then
+		-- if C2.BR.x >= scratch then
 			-- scrollbar_h_adj.set_upper (BR.x);
 			scrollbar_h_adj.set_upper (HU + dHU);
-		else
+		-- else
 		-- If the right edge of the box is farther to the left than
 		-- the right end of the bar, then the upper limit can not be
 		-- moved further to the left. So the upper limit can at most assume
 		-- the value of the right end of the bar:
-			scrollbar_h_adj.set_upper (scratch);
-		end if;
+			-- scrollbar_h_adj.set_upper (scratch);
+		-- end if;
 
 		
 		-- vertical:
@@ -877,16 +889,16 @@ package body callbacks is
 		-- moves upwards. It assumes the value of the upper edge
 		-- of the bounding-box:		
 		-- if TL.y <= scrollbar_v_adj.get_value then
-		if C2.TL.y <= scrollbar_v_adj.get_value then
+		-- if C2.TL.y <= scrollbar_v_adj.get_value then
 			--scrollbar_v_adj.set_lower (TL.y);
 			scrollbar_v_adj.set_lower (VL + dVL);
-		else
+		-- else
 		-- If the upper edge of the box is below
 		-- the upper end of the bar, then the lower limit can not be
 		-- moved further upwards. So the lower limit can at most assume
 		-- the value of the upper end of the bar:
-			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
-		end if;
+			-- scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+		-- end if;
 
 		-- The lower end of the scrollbar is the sum of its position (value)
 		-- and its length (page size):
@@ -896,16 +908,18 @@ package body callbacks is
 		-- moves further downwards. It assumes the value of the lower edge
 		-- of the bounding-box:
 		-- if BL.y >= scratch then
-		if C2.BL.y >= scratch then
+		-- if C2.BL.y >= scratch then
 			--scrollbar_v_adj.set_upper (BL.y);
 			scrollbar_v_adj.set_upper (VU + dVU);
-		else
+			-- put_line ("A");
+		-- else
 		-- If the lower edge of the box is above
 		-- the lower end of the bar, then the upper limit can not be
 		-- moved further downwards. So the upper limit can at most assume
 		-- the value of the lower end of the bar:
-			scrollbar_v_adj.set_upper (scratch);
-		end if;
+			-- scrollbar_v_adj.set_upper (scratch);
+			-- put_line ("B");
+		-- end if;
 
 		-- scrollbar_v_adj.set_page_size (pv_bak);
 		-- scrollbar_h_adj.set_page_size (ph_bak);
@@ -2279,11 +2293,11 @@ package body callbacks is
 		BC	: constant type_area_corners := get_corners (bounding_box);
 		C1, C2 : type_corners;
 
-		scale_factor_old : constant type_scale_factor := scale_factor;
+		-- scale_factor_old : constant type_scale_factor := scale_factor;
 	begin
 		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
 
-		-- C1 := get_corners (bounding_box, scale_factor_old);
+		C1 := get_corners (bounding_box, scale_factor);
 
 		-- Get the canvas point corresponding to the current cursor position:
 		Z1 := to_canvas (cursor.position, scale_factor, real => true);
@@ -2316,13 +2330,15 @@ package body callbacks is
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		compute_translate_offset (M, Z1);
 
-		update_scrollbar_limits (BC, scale_factor);
+		-- update_scrollbar_limits (BC, scale_factor);
 		--update_scrollbar_limits_1 (BC, scale_factor_old, scale_factor);
 
 		-- C1 := get_corners (bounding_box, scale_factor_old);
-		-- C2 := get_corners (bounding_box, scale_factor);
-		-- update_scrollbar_limits_2 (C1, C2);
+		C2 := get_corners (bounding_box, scale_factor);
+		update_scrollbar_limits_2 (C1, C2);
 
+		-- show_adjustments_v;
+		
 		-- schedule a redraw:
 		refresh (canvas);		
 	end zoom_on_cursor;
@@ -2337,14 +2353,16 @@ package body callbacks is
 		M	: type_point_model;
 
 		-- The corners of the bounding-box:
-		BC	: constant type_area_corners := get_corners (bounding_box);
+		-- BC	: constant type_area_corners := get_corners (bounding_box);
 
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
+		-- C1, C2 : type_corners;
 	begin
 		put_line ("zoom_to_fit");
-
+		-- C1 := get_corners (bounding_box, scale_factor);
+		
 		-- Get the top-left corner of the bounding-box:
 		-- TL := (bounding_box.position.x, bounding_box.position.y + bounding_box.height); 
 
@@ -2380,12 +2398,19 @@ package body callbacks is
 		-- The smaller of sw and sh now determines the new global scale_factor:
 		scale_factor := type_scale_factor'min (sw, sh);
 		put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
-
+		
 		update_scale_display;
 		
 		compute_translate_offset (M, Z);
+
+		-- C2 := get_corners (bounding_box, scale_factor);
 		
 		-- update_scrollbar_limits (BC, scale_factor); -- CS required ?
+		-- update_scrollbar_limits_2 (C1, C2);
+
+		show_adjustments_v;
+
+		-- CS backup_scrollbar_settings ??
 	end zoom_to_fit;
 
 
@@ -2434,15 +2459,15 @@ package body callbacks is
 
 		-- Set the focus on the canvas,
 		-- But first save the scrollbar values:
-		h := scrollbar_h_adj.get_value;
-		v := scrollbar_v_adj.get_value;
+		-- h := scrollbar_h_adj.get_value;
+		-- v := scrollbar_v_adj.get_value;
 		-- CS: backup_scrollbar_settings does not work for some reason.
 		-- put_line (gdouble'image (v));
 		
 		canvas.grab_focus;
 
-		scrollbar_h_adj.set_value (h);
-		scrollbar_v_adj.set_value (v);
+		-- scrollbar_h_adj.set_value (h);
+		-- scrollbar_v_adj.set_value (v);
 		-- CS: restore_scrollbar_settings does not work for some reason.
 		-- put_line (gdouble'image (v));
 		
@@ -2709,12 +2734,12 @@ package body callbacks is
 			compute_translate_offset (M, Z1);
 
 			-- show_adjustments_v;
-			update_scrollbar_limits (BC, scale_factor);
+			-- update_scrollbar_limits (BC, scale_factor);
 			-- update_scrollbar_limits_1 (BC, scale_factor_old, scale_factor);
 			-- backup_scrollbar_settings;
 
-			-- C2 := get_corners (bounding_box, scale_factor);
-			-- update_scrollbar_limits_2 (C1, C2);
+			C2 := get_corners (bounding_box, scale_factor);
+			update_scrollbar_limits_2 (C1, C2);
 			
 			-- schedule a redraw:
 			refresh (canvas);
