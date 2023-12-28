@@ -1659,7 +1659,7 @@ package body callbacks is
 			dH := gdouble (new_size.height - scrolled_window_size.height);
 
 			-- for debugging:
-			-- show_size;
+			show_size;
 
 			-- Move the canvas so that its bottom follows
 			-- the bottom of the scrolled window. If a zoom-to-fit-action
@@ -1685,7 +1685,9 @@ package body callbacks is
 
 			
 			-- Adjust scrollbars:
-			backup_scrollbar_settings;
+			-- backup_scrollbar_settings;
+
+			-- show_adjustments_v;
 
 			-- Update the scrolled_window_size which is required
 			-- for the next time this procedure is called:
@@ -1710,7 +1712,7 @@ package body callbacks is
 		-- CS do not remove, might be required some day:
 		-- update_visible_area (canvas);		
 		refresh (canvas);
-		backup_scrollbar_settings;
+		-- backup_scrollbar_settings;
 	end cb_horizontal_moved;
 
 	
@@ -1724,7 +1726,7 @@ package body callbacks is
 		-- CS do not remove, might be required some day:
 		-- update_visible_area (canvas);
 		refresh (canvas);
-		backup_scrollbar_settings;
+		-- backup_scrollbar_settings;
 	end cb_vertical_moved;
 
 
@@ -1748,6 +1750,7 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_v_released");
+		backup_scrollbar_settings;
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -1773,11 +1776,13 @@ package body callbacks is
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_h_released");
+		backup_scrollbar_settings;
 		return event_handled;
 	end cb_scrollbar_h_released;
 
 
 	procedure backup_scrollbar_settings is begin
+		put_line ("backup_scrollbar_settings");
 		scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
 		scrollbar_h_backup.value := scrollbar_h_adj.get_value;
 		scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
@@ -2348,7 +2353,7 @@ package body callbacks is
 
 		show_adjustments_v;
 
-		-- CS backup_scrollbar_settings ??
+		--backup_scrollbar_settings;
 	end zoom_to_fit;
 
 

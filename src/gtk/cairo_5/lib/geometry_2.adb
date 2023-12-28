@@ -434,7 +434,7 @@ package body geometry_2 is
 
 		objects_database.append (object);
 		------------------------------------
-		goto l_end;
+		-- goto l_end;
 		
 		object.lines.clear;
 		object.circles.clear;

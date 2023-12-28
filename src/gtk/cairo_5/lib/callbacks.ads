@@ -440,7 +440,7 @@ package callbacks is
 
 	
 	scrollbar_h_backup, scrollbar_v_backup : type_scrollbar_settings;
-
+	
 	procedure backup_scrollbar_settings;
 
 	procedure restore_scrollbar_settings;
@@ -459,6 +459,7 @@ package callbacks is
 
 	
 	-- Applies the initial scrollbar settings.
+	-- Backups the settings.
 	procedure apply_initial_scrollbar_settings;
 	
 
