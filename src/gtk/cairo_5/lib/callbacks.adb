@@ -1417,22 +1417,23 @@ package body callbacks is
 			-- Approach 1:
 			-- One way to move the canvas is to change the y-component of the base_offset.
 			-- The drawback is that the aligning appears choppy:
-			-- base_offset.y := base_offset.y - dh;
+			base_offset.y := base_offset.y - dh;
+			refresh (canvas); -- less choppy
 			
-			-- Approach 2:
+			-- Approach 2: -- CS discard this approach.
 			-- This approach makes the aligning appear much more smoothly. It changes the
 			-- allocation of the canvas. It requires the global variable canvas_allocation
 			-- to track the allocation of the canvas:
-			declare
-				L : gtk_allocation;
-			begin					
-				canvas_allocation.y := canvas_allocation.y + (new_size.height - scrolled_window_size.height);
-				-- put_line ("canvas_allocation.y  : " & positive'image (canvas_allocation.y));
-
-				get_allocation (canvas, L);
-				L.y := gint (canvas_allocation.y);
-				canvas.size_allocate (L);
-			end;
+			-- declare
+			-- 	L : gtk_allocation;
+			-- begin					
+			-- 	canvas_allocation.y := canvas_allocation.y + (new_size.height - scrolled_window_size.height);
+			-- 	-- put_line ("canvas_allocation.y  : " & positive'image (canvas_allocation.y));
+   -- 
+			-- 	get_allocation (canvas, L);
+			-- 	L.y := gint (canvas_allocation.y);
+			-- 	canvas.size_allocate (L);
+			-- end;
 
 		end move_canvas_bottom;
 		
@@ -1782,7 +1783,7 @@ package body callbacks is
 
 
 	procedure backup_scrollbar_settings is begin
-		put_line ("backup_scrollbar_settings");
+		--put_line ("backup_scrollbar_settings");
 		scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
 		scrollbar_h_backup.value := scrollbar_h_adj.get_value;
 		scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
@@ -2040,7 +2041,13 @@ package body callbacks is
 	
 	procedure set_up_canvas is
 		size_x, size_y : gint;
-		-- alloc_main_window : gtk_allocation;
+
+		-- When the operator enlarges the main window, more
+		-- drawing area is exposed (in MODE_KEEP_CENTER. MODE_EXPOSE_CANVAS ?).
+		-- This is an intuitively introduced multiplier to make the canvas greater. 
+		-- CS: Explanation required.
+		-- CS: Empirically found value. Use type_scale_factor'last instead ?
+		m : constant gint := 10; -- could be too less for extremely large displays
 	begin
 		put_line ("set_up_canvas");
 		
@@ -2058,9 +2065,12 @@ package body callbacks is
 		
 		-- Set the size of the canvas (in pixels).
 		-- It is like the wooden frame around a real-world canvas. 
-		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
-		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
-
+		-- size_x := m * gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
+		-- size_y := m * gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
+		
+		size_x := 20_000; -- CS use systemwide constants ?
+		size_y := 20_000;
+		
 		canvas.set_size_request (size_x, size_y); -- unit is pixels
 
 		show_canvas_size;
