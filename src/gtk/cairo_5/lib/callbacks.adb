@@ -330,19 +330,18 @@ package body callbacks is
 	procedure cb_zoom_to_fit_2 (
 		button : access gtk_button_record'class)
 	is
-		size_x, size_y : gint;
-		-- a : gtk_allocation;
-
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
 
+		va : type_area;
+		dx, dy : type_distance_model;
 	begin
 		put_line ("cb_zoom_to_fit_2");
 
-		-- Reset the translate-offset to default:
+		-- Reset the translate-offset:
 		T := (0.0, 0.0);
-
+		
 		-- Compute the new bounding-box. Update global
 		-- variable bounding_box:
 		compute_bounding_box;
@@ -354,37 +353,46 @@ package body callbacks is
 		-- Since the bounding_box has changed, the scrollbars
 		-- must be reinitialized:
 		prepare_initial_scrollbar_settings;
-
-		-- Set the size of the canvas (in pixels).
-		-- It is like the wooden frame around a real-world canvas. 
-		size_x := gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
-		size_y := gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
-		canvas.set_size_request (size_x, size_y); -- unit is pixels
-		-- show_canvas_size;
-
-		-- Apply the scrollbar settings:
 		apply_initial_scrollbar_settings;
-		-- show_adjustments_v;
 
-		-- put_line ("T: " & to_string (T));
+		-----------------------------------------------------
+		-- Calculate the scale_factor that is required to
+		-- fit all objects into the scrolled window:
 		
-		-- The ratio of default width to current width:
-		-- sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
+		-- Get the ratio of default width to current width:
+		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
 
 		-- The ratio of default height to current height:
-		-- sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
+		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
 		
 		-- put_line ("sw: " & to_string (sw));
 		-- put_line ("sh: " & to_string (sh));
 
 		-- The smaller of sw and sh now determines the new global scale_factor:
-		-- scale_factor := type_scale_factor'min (sw, sh);
-		-- put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		scale_factor := type_scale_factor'min (sw, sh);
+		put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		-----------------------------------------------------
 
+		-- Calculate the translate_offset that is required to
+		-- "move" all objects into the visible area:
 
-		zoom_to_fit;
-		
-		-- Redraw the canvas:
+		-- Get the current visible model area:
+		va := get_visible_area (canvas);
+		put_line ("visible " & to_string (va));
+
+		-- Calculate the offset from visible area to bounding box:
+		dx := bounding_box.position.x - va.position.x;
+		dy := bounding_box.position.y - va.position.y;
+		put_line ("dx:" & to_string (dx));
+		put_line ("dy:" & to_string (dy));
+
+		-- Convert the model offset to a canvas offset
+		-- and apply it to the global translate_offset:
+		T.x := gdouble (dx) * gdouble (scale_factor);
+		T.y := gdouble (dy) * gdouble (scale_factor);
+		-- put_line ("T: " & to_string (T));
+
+		-- Schedule a redraw of the canvas:
 		refresh (canvas);
 	end cb_zoom_to_fit_2;
 
