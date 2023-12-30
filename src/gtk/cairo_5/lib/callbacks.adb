@@ -237,7 +237,7 @@ package body callbacks is
 
 
 
-	procedure cb_zoom_to_fit_2 (
+	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
 	is
 		debug : boolean := false;
@@ -249,7 +249,7 @@ package body callbacks is
 		va : type_area;
 		dx, dy : type_distance_model;
 	begin
-		put_line ("cb_zoom_to_fit_2");
+		put_line ("cb_zoom_to_fit");
 
 		-- Reset the translate-offset:
 		T := (0.0, 0.0);
@@ -314,7 +314,7 @@ package body callbacks is
 
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
-	end cb_zoom_to_fit_2;
+	end cb_zoom_to_fit;
 
 	
 
@@ -907,8 +907,7 @@ package body callbacks is
 		-- table_coordinates.set_border_width (10);
 
 		gtk_new (button_zoom_fit, "ZOOM FIT");
-		-- button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
-		button_zoom_fit.on_clicked (cb_zoom_to_fit_2'access);
+		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
 
 		gtk_new (button_add, "ADD");
 		button_add.on_clicked (cb_add'access);

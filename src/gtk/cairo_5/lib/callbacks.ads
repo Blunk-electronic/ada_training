@@ -231,7 +231,7 @@ package callbacks is
 	
 	-- This callback procedure is called each time the 
 	-- button "zoom fit" is clicked.
-	procedure cb_zoom_to_fit_2 (
+	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class);
 
 	
