@@ -301,22 +301,10 @@ package callbacks is
 
 -- SCROLLBARS:
 	
-	-- Updates the limits of the scrollbars according to
-	-- the given bounding-box area and scale factor:
-	procedure update_scrollbar_limits (
-		bounding_box_corners	: in type_area_corners;
-		scale_factor			: in type_scale_factor);
-	
-
-	procedure update_scrollbar_limits_1 (
-		bounding_box_corners	: in type_area_corners;
-		scale_factor_1			: in type_scale_factor;
-		scale_factor_2			: in type_scale_factor);
-
+	-- Updates the limits of the scrollbars.
+	-- The argument C1 provides the old corners of the 
+	-- bounding-box on the canvas and C2 the new corners:
 	procedure update_scrollbar_limits_2 (
-		-- bounding_box_corners	: in type_area_corners;
-		-- scale_factor_1			: in type_scale_factor;
-		-- scale_factor_2			: in type_scale_factor);
 		C1, C2 : in type_corners);
 	
 	
