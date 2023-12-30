@@ -304,7 +304,7 @@ package callbacks is
 	-- Updates the limits of the scrollbars.
 	-- The argument C1 provides the old corners of the 
 	-- bounding-box on the canvas and C2 the new corners:
-	procedure update_scrollbar_limits_2 (
+	procedure update_scrollbar_limits (
 		C1, C2 : in type_corners);
 	
 	

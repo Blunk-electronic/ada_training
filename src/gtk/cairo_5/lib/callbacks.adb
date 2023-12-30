@@ -488,7 +488,7 @@ package body callbacks is
 
 
 	
-	procedure update_scrollbar_limits_2 (
+	procedure update_scrollbar_limits (
 		C1, C2 : in type_corners)
 	is
 		debug : boolean := false;
@@ -607,7 +607,7 @@ package body callbacks is
 		-- scrollbar_v_adj.set_page_size (pv_bak);
 		-- scrollbar_h_adj.set_page_size (ph_bak);
 		-- show_adjustments_v;
-	end update_scrollbar_limits_2;
+	end update_scrollbar_limits;
 
 
 	
@@ -2023,7 +2023,7 @@ package body callbacks is
 		compute_translate_offset (M, Z1);
 
 		C2 := get_corners (bounding_box, scale_factor);
-		update_scrollbar_limits_2 (C1, C2);
+		update_scrollbar_limits (C1, C2);
 
 		-- show_adjustments_v;
 		
@@ -2366,10 +2366,6 @@ package body callbacks is
 			-- according to the CURRENT (old) scale_factor:
 			M : constant type_point_model := to_model (Z1, scale_factor);
 
-			-- Get the corners of the bounding-box as it is BEFORE scaling:
-			BC : constant type_area_corners := get_corners (bounding_box);
-
-			scale_factor_old : constant type_scale_factor := scale_factor;
 			C1, C2 : type_corners;
 			
 		begin -- zoom
@@ -2404,12 +2400,10 @@ package body callbacks is
 			compute_translate_offset (M, Z1);
 
 			-- show_adjustments_v;
-			-- update_scrollbar_limits (BC, scale_factor);
-			-- update_scrollbar_limits_1 (BC, scale_factor_old, scale_factor);
 			-- backup_scrollbar_settings;
 
 			C2 := get_corners (bounding_box, scale_factor);
-			update_scrollbar_limits_2 (C1, C2);
+			update_scrollbar_limits (C1, C2);
 			
 			-- schedule a redraw:
 			refresh (canvas);
