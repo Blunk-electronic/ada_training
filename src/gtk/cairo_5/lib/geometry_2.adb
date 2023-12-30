@@ -489,6 +489,8 @@ package body geometry_2 is
 		use pac_circles;
 		use pac_objects;
 
+		debug : boolean := false;
+		
 		-- The first object encountered will be the
 		-- seed for the first boundinb-box. All other objects cause 
 		-- this seed box to expand. After the first object,
@@ -558,7 +560,9 @@ package body geometry_2 is
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
 
-		put_line ("bounding-box: " & to_string (bounding_box));
+		if debug then
+			put_line ("bounding-box: " & to_string (bounding_box));
+		end if;
 	end compute_bounding_box;
 
 	

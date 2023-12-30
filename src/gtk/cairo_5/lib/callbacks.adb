@@ -53,6 +53,8 @@ with gtk.main;					use gtk.main;
 package body callbacks is
 
 	procedure compute_base_offset is
+		debug : boolean := false;
+		
 		x, y : gdouble;
 
 		-- The maximum scale factor:
@@ -65,7 +67,9 @@ package body callbacks is
 		
 		base_offset := (x, y);
 
-		put_line ("base offset: " & to_string (base_offset));
+		if debug then
+			put_line ("base offset: " & to_string (base_offset));
+		end if;
 	end compute_base_offset;
 
 	
@@ -330,6 +334,8 @@ package body callbacks is
 	procedure cb_zoom_to_fit_2 (
 		button : access gtk_button_record'class)
 	is
+		debug : boolean := false;
+		
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
@@ -370,7 +376,9 @@ package body callbacks is
 
 		-- The smaller of sw and sh now determines the new global scale_factor:
 		scale_factor := type_scale_factor'min (sw, sh);
-		put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		if debug then
+			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		end if;
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
@@ -378,19 +386,25 @@ package body callbacks is
 
 		-- Get the current visible model area:
 		va := get_visible_area (canvas);
-		put_line ("visible " & to_string (va));
+		if debug then
+			put_line ("visible " & to_string (va));
+		end if;
 
 		-- Calculate the offset from visible area to bounding box:
 		dx := bounding_box.position.x - va.position.x;
 		dy := bounding_box.position.y - va.position.y;
-		put_line ("dx:" & to_string (dx));
-		put_line ("dy:" & to_string (dy));
+		if debug then
+			put_line ("dx:" & to_string (dx));
+			put_line ("dy:" & to_string (dy));
+		end if;
 
 		-- Convert the model offset to a canvas offset
 		-- and apply it to the global translate_offset:
 		T.x := gdouble (dx) * gdouble (scale_factor);
 		T.y := gdouble (dy) * gdouble (scale_factor);
-		-- put_line ("T: " & to_string (T));
+		if debug then
+			put_line ("T: " & to_string (T));
+		end if;
 
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -792,6 +806,7 @@ package body callbacks is
 	procedure update_scrollbar_limits_2 (
 		C1, C2 : in type_corners)
 	is
+		debug : boolean := false;
 		scratch : gdouble;
 
 		HL : gdouble := scrollbar_h_adj.get_lower;
@@ -803,23 +818,27 @@ package body callbacks is
 		dHL, dHU : gdouble;
 		dVL, dVU : gdouble;
 	begin
-		put_line ("VL     " & gdouble'image (VL));
-		put_line ("VU     " & gdouble'image (VU));
+		if debug then
+			put_line ("VL     " & gdouble'image (VL));
+			put_line ("VU     " & gdouble'image (VU));
 
-		put_line ("C1.TL.y" & gdouble'image (C1.TL.y));
-		put_line ("C1.BL.y" & gdouble'image (C1.BL.y));
+			put_line ("C1.TL.y" & gdouble'image (C1.TL.y));
+			put_line ("C1.BL.y" & gdouble'image (C1.BL.y));
 
-		put_line ("C2.TL.y" & gdouble'image (C2.TL.y));
-		put_line ("C2.BL.y" & gdouble'image (C2.BL.y));
-
+			put_line ("C2.TL.y" & gdouble'image (C2.TL.y));
+			put_line ("C2.BL.y" & gdouble'image (C2.BL.y));
+		end if;
 		
 		dHL := C2.BL.x - C1.BL.x;
 		dHU := C2.BR.x - C1.BR.x;
 
 		dVL := C2.TL.y - C1.TL.y;
 		dVU := C2.BL.y - C1.BL.y;
-		put_line ("dVL    " & gdouble'image (dVL));
-		put_line ("dVU    " & gdouble'image (dVU));
+
+		if debug then
+			put_line ("dVL    " & gdouble'image (dVL));
+			put_line ("dVU    " & gdouble'image (dVU));
+		end if;
 		
 
 		-- CS clip negative values of U and L ?
@@ -2334,6 +2353,8 @@ package body callbacks is
 	
 
 	procedure zoom_to_fit is
+		debug : boolean := false;
+		
 		Z	: type_point_canvas;
 		M	: type_point_model;
 
@@ -2346,7 +2367,9 @@ package body callbacks is
 		-- The center of the scaling is the top-left corner of the
 		-- scrolled window:
 		Z := (scrollbar_h_adj.get_lower, scrollbar_v_adj.get_lower);
-		put_line ("Z1: " & to_string (Z));
+		if debug then
+			put_line ("Z1: " & to_string (Z));
+		end if;
 
 		-- Compute the virtual model point that belongs to Z:
 		M := to_model (Z, scale_factor, real => false);
@@ -2363,13 +2386,18 @@ package body callbacks is
 
 		-- The smaller of sw and sh now determines the new global scale_factor:
 		scale_factor := type_scale_factor'min (sw, sh);
-		put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		if debug then
+			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		end if;
 		
 		update_scale_display;
 		
 		compute_translate_offset (M, Z);
 
-		show_adjustments_v;
+		if debug then
+			show_adjustments_h;
+			show_adjustments_v;
+		end if;
 
 		--backup_scrollbar_settings;
 	end zoom_to_fit;
