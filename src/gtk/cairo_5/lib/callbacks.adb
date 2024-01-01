@@ -237,6 +237,9 @@ package body callbacks is
 
 
 
+
+
+	
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
 	is
@@ -246,48 +249,7 @@ package body callbacks is
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
-
-		-- A scratch variable for the visible area:
-		va : type_area;
-
-		-- The offset required to "move" all objects into
-		-- the center of the visible area:
-		dx, dy : type_distance_model;
-
-
-		-- This procedure computes the offset (dx;dy):
-		procedure compute_delta is
-			w1 : constant type_distance_model := va.width;
-			w2 : constant type_distance_model := bounding_box.width;
-
-			h1 : constant type_distance_model := va.height;
-			h2 : constant type_distance_model := bounding_box.height;
-
-			a, b : type_distance_model;
-
-			x0 : constant type_distance_model := bounding_box.position.x;
-			y0 : constant type_distance_model := bounding_box.position.y;
 			
-			x1 : constant type_distance_model := va.position.x;
-			y1 : constant type_distance_model := va.position.y;
-			
-			x2, y2 : type_distance_model;
-		begin
-			a := (w1 - w2) * 0.5;
-			x2 := x1 + a;
-			dx := x2 - x0;
-
-			b := (h1 - h2) * 0.5;
-			y2 := y1 + b;
-			dy := y2 - y0;
-
-			if debug then
-				put_line ("dx:" & to_string (dx));
-				put_line ("dy:" & to_string (dy));
-			end if;
-		end compute_delta;
-		
-	
 	begin
 		put_line ("cb_zoom_to_fit");
 
@@ -330,27 +292,8 @@ package body callbacks is
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
-		-- "move" all objects into the visible area:
-
-		-- Get the currently visible model area:
-		va := get_visible_area (canvas);
-		if debug then
-			put_line ("visible " & to_string (va));
-		end if;
-
-		-- Calculate the model offset (dx;dy) from visible 
-		-- area to bounding box.
+		-- "move" all objects to the center of the visible area:
 		compute_delta;
-
-		-- Convert the model offset (dx;dy) to a canvas offset
-		-- and apply it to the global translate_offset.
-		-- Regarding y: T is in the canvas system (CS2)
-		-- where the y-axis goes downward. So we must multiply by -1:
-		T.x :=   gdouble (dx) * gdouble (scale_factor);
-		T.y := - gdouble (dy) * gdouble (scale_factor);
-		if debug then
-			put_line ("T: " & to_string (T));
-		end if;
 
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -2017,6 +1960,64 @@ package body callbacks is
 
 
 
+	procedure compute_delta is
+		-- debug : boolean := true;
+		debug : boolean := false;
+		
+		-- The offset required to "move" all objects into
+		-- the center of the visible area:
+		dx, dy : type_distance_model;
+		
+		-- Get the currently visible model area:
+		va : constant type_area := get_visible_area (canvas);
+
+		w1 : constant type_distance_model := va.width;
+		w2 : constant type_distance_model := bounding_box.width;
+
+		h1 : constant type_distance_model := va.height;
+		h2 : constant type_distance_model := bounding_box.height;
+
+		a, b : type_distance_model;
+
+		x0 : constant type_distance_model := bounding_box.position.x;
+		y0 : constant type_distance_model := bounding_box.position.y;
+		
+		x1 : constant type_distance_model := va.position.x;
+		y1 : constant type_distance_model := va.position.y;
+		
+		x2, y2 : type_distance_model;
+	begin
+		if debug then
+			put_line ("visible " & to_string (va));
+		end if;
+		
+		a := (w1 - w2) * 0.5;
+		x2 := x1 + a;
+		dx := x2 - x0;
+
+		b := (h1 - h2) * 0.5;
+		y2 := y1 + b;
+		dy := y2 - y0;
+
+		if debug then
+			put_line ("dx:" & to_string (dx));
+			put_line ("dy:" & to_string (dy));
+		end if;
+
+		-- Convert the model offset (dx;dy) to a canvas offset
+		-- and apply it to the global translate_offset.
+		-- Regarding y: T is in the canvas system (CS2)
+		-- where the y-axis goes downward. So we must multiply by -1:
+		T.x :=   gdouble (dx) * gdouble (scale_factor);
+		T.y := - gdouble (dy) * gdouble (scale_factor);
+		if debug then
+			put_line ("T: " & to_string (T));
+		end if;
+
+	end compute_delta;
+
+
+	
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction)
 	is
@@ -2079,46 +2080,6 @@ package body callbacks is
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
-
-		-- A scratch variable for the visible area:
-		va : type_area;
-
-		-- The offset required to "move" all objects into
-		-- the center of the visible area:
-		dx, dy : type_distance_model;
-
-		
-		-- This procedure computes the offset (dx;dy):
-		procedure compute_delta is
-			w1 : constant type_distance_model := va.width;
-			w2 : constant type_distance_model := bounding_box.width;
-
-			h1 : constant type_distance_model := va.height;
-			h2 : constant type_distance_model := bounding_box.height;
-
-			a, b : type_distance_model;
-
-			x0 : constant type_distance_model := bounding_box.position.x;
-			y0 : constant type_distance_model := bounding_box.position.y;
-			
-			x1 : constant type_distance_model := va.position.x;
-			y1 : constant type_distance_model := va.position.y;
-			
-			x2, y2 : type_distance_model;
-		begin
-			a := (w1 - w2) * 0.5;
-			x2 := x1 + a;
-			dx := x2 - x0;
-
-			b := (h1 - h2) * 0.5;
-			y2 := y1 + b;
-			dy := y2 - y0;
-
-			if debug then
-				put_line ("dx:" & to_string (dx));
-				put_line ("dy:" & to_string (dy));
-			end if;
-		end compute_delta;
 		
 	begin
 		put_line ("zoom_to_fit");
@@ -2146,24 +2107,10 @@ package body callbacks is
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
-		-- "move" all objects into the visible area:
-		
-		-- Get the currently visible model area:
-		va := get_visible_area (canvas);
-
-		-- Calculate the model offset (dx;dy) from visible 
-		-- area to bounding box.
+		-- "move" all objects to the center of the visible area:
 		compute_delta;
-		
-		-- Convert the model offset (dx;dy) to a canvas offset
-		-- and apply it to the global translate_offset.
-		-- Regarding y: T is in the canvas system (CS2)
-		-- where the y-axis goes downward. So we must multiply by -1:
-		T.x :=   gdouble (dx) * gdouble (scale_factor);
-		T.y := - gdouble (dy) * gdouble (scale_factor);
 
 		if debug then
-			put_line ("T: " & to_string (T));
 			show_adjustments_h;
 			show_adjustments_v;
 		end if;
