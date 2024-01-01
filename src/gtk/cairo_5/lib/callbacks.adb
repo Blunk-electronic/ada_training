@@ -326,7 +326,7 @@ package body callbacks is
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;
 
-		-- CS update_scale_display;
+		update_scale_display;
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
