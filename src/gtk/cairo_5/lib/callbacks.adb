@@ -325,12 +325,14 @@ package body callbacks is
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;
+
+		-- CS update_scale_display;
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects into the visible area:
 
-		-- Get the current visible model area:
+		-- Get the currently visible model area:
 		va := get_visible_area (canvas);
 		if debug then
 			put_line ("visible " & to_string (va));
@@ -2073,26 +2075,57 @@ package body callbacks is
 
 	procedure zoom_to_fit is
 		debug : boolean := false;
-		
-		Z	: type_point_canvas;
-		M	: type_point_model;
 
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the current bounding-box:
 		sw, sh : type_scale_factor;
+
+		-- A scratch variable for the visible area:
+		va : type_area;
+
+		-- The offset required to "move" all objects into
+		-- the center of the visible area:
+		dx, dy : type_distance_model;
+
+		
+		-- This procedure computes the offset (dx;dy):
+		procedure compute_delta is
+			w1 : constant type_distance_model := va.width;
+			w2 : constant type_distance_model := bounding_box.width;
+
+			h1 : constant type_distance_model := va.height;
+			h2 : constant type_distance_model := bounding_box.height;
+
+			a, b : type_distance_model;
+
+			x0 : constant type_distance_model := bounding_box.position.x;
+			y0 : constant type_distance_model := bounding_box.position.y;
+			
+			x1 : constant type_distance_model := va.position.x;
+			y1 : constant type_distance_model := va.position.y;
+			
+			x2, y2 : type_distance_model;
+		begin
+			a := (w1 - w2) * 0.5;
+			x2 := x1 + a;
+			dx := x2 - x0;
+
+			b := (h1 - h2) * 0.5;
+			y2 := y1 + b;
+			dy := y2 - y0;
+
+			if debug then
+				put_line ("dx:" & to_string (dx));
+				put_line ("dy:" & to_string (dy));
+			end if;
+		end compute_delta;
+		
 	begin
 		put_line ("zoom_to_fit");
 
-		-- The center of the scaling is the top-left corner of the
-		-- scrolled window:
-		Z := (scrollbar_h_adj.get_lower, scrollbar_v_adj.get_lower);
-		if debug then
-			put_line ("Z1: " & to_string (Z));
-		end if;
-
-		-- Compute the virtual model point that belongs to Z:
-		M := to_model (Z, scale_factor, real => false);
-
+		-----------------------------------------------------
+		-- Calculate the scale_factor that is required to
+		-- fit all objects into the scrolled window:
 		
 		-- Get the ratio of default width to current width:
 		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
@@ -2108,12 +2141,29 @@ package body callbacks is
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;
-		
+
 		update_scale_display;
+		-----------------------------------------------------
+
+		-- Calculate the translate_offset that is required to
+		-- "move" all objects into the visible area:
 		
-		compute_translate_offset (M, Z);
+		-- Get the currently visible model area:
+		va := get_visible_area (canvas);
+
+		-- Calculate the model offset (dx;dy) from visible 
+		-- area to bounding box.
+		compute_delta;
+		
+		-- Convert the model offset (dx;dy) to a canvas offset
+		-- and apply it to the global translate_offset.
+		-- Regarding y: T is in the canvas system (CS2)
+		-- where the y-axis goes downward. So we must multiply by -1:
+		T.x :=   gdouble (dx) * gdouble (scale_factor);
+		T.y := - gdouble (dy) * gdouble (scale_factor);
 
 		if debug then
+			put_line ("T: " & to_string (T));
 			show_adjustments_h;
 			show_adjustments_v;
 		end if;
