@@ -293,7 +293,7 @@ package body callbacks is
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects to the center of the visible area:
-		compute_delta;
+		center_to_visible_area;
 
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -1960,7 +1960,7 @@ package body callbacks is
 
 
 
-	procedure compute_delta is
+	procedure center_to_visible_area is
 		-- debug : boolean := true;
 		debug : boolean := false;
 		
@@ -2014,7 +2014,7 @@ package body callbacks is
 			put_line ("T: " & to_string (T));
 		end if;
 
-	end compute_delta;
+	end center_to_visible_area;
 
 
 	
@@ -2108,7 +2108,7 @@ package body callbacks is
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects to the center of the visible area:
-		compute_delta;
+		center_to_visible_area;
 
 		if debug then
 			show_adjustments_h;

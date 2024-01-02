@@ -519,7 +519,7 @@ package callbacks is
 	-- This procedure sets the translate_offset so that
 	-- all objects (inside the bounding box) are "moved" inside
 	-- the visible area:
-	procedure compute_delta; -- CS rename
+	procedure center_to_visible_area;
 
 	
 
