@@ -212,6 +212,14 @@ package geometry_2 is
 		return boolean;
 
 
+
+	-- This function calculates the scale factor required to
+	-- fit the given area into the reference area:
+	function get_ratio (
+		reference	: in type_area;
+		area		: in type_area)
+		return type_scale_factor;
+	
 	
 	-- Converts a virtual model point to a real model point:
 	function to_real (

@@ -245,11 +245,6 @@ package body callbacks is
 	is
 		-- debug : boolean := true;
 		debug : boolean := false;
-		
-		-- The two scale factors: one based on the width and another
-		-- based on the height of the current bounding-box:
-		sw, sh : type_scale_factor;
-			
 	begin
 		put_line ("cb_zoom_to_fit");
 
@@ -269,27 +264,18 @@ package body callbacks is
 		prepare_initial_scrollbar_settings;
 		apply_initial_scrollbar_settings;
 
-		-----------------------------------------------------
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
+		scale_factor := get_ratio (
+						reference	=> bounding_box_min,
+						area		=> bounding_box);	
 		
-		-- Get the ratio of default width to current width:
-		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
-
-		-- The ratio of default height to current height:
-		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
-		
-		-- put_line ("sw: " & to_string (sw));
-		-- put_line ("sh: " & to_string (sh));
-
-		-- The smaller of sw and sh now determines the new global scale_factor:
-		scale_factor := type_scale_factor'min (sw, sh);
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;
 
 		update_scale_display;
-		-----------------------------------------------------
+
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects to the center of the visible area:
@@ -2076,29 +2062,15 @@ package body callbacks is
 
 	procedure zoom_to_fit is
 		debug : boolean := false;
-
-		-- The two scale factors: one based on the width and another
-		-- based on the height of the current bounding-box:
-		sw, sh : type_scale_factor;
-		
 	begin
 		put_line ("zoom_to_fit");
 
-		-----------------------------------------------------
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
-		
-		-- Get the ratio of default width to current width:
-		sw := type_scale_factor (bounding_box_min.width / bounding_box.width);
+		scale_factor := get_ratio (
+						reference	=> bounding_box_min,
+						area		=> bounding_box);
 
-		-- The ratio of default height to current height:
-		sh := type_scale_factor (bounding_box_min.height / bounding_box.height);
-		
-		-- put_line ("sw: " & to_string (sw));
-		-- put_line ("sh: " & to_string (sh));
-
-		-- The smaller of sw and sh now determines the new global scale_factor:
-		scale_factor := type_scale_factor'min (sw, sh);
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;

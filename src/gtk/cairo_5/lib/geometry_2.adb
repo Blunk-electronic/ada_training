@@ -202,7 +202,31 @@ package body geometry_2 is
 	end in_area;
 
 	
+	function get_ratio (
+		reference	: in type_area;
+		area		: in type_area)
+		return type_scale_factor
+	is
+		-- The two scale factors: one based on the width and another
+		-- based on the height of the given area:
+		sw, sh : type_scale_factor;
+	begin
+		-- put_line ("get_ratio");
 
+		-- Get the ratio of width:
+		sw := type_scale_factor (reference.width / area.width);
+
+		-- The ratio of height:
+		sh := type_scale_factor (reference.height / area.height);
+		
+		-- put_line ("sw: " & to_string (sw));
+		-- put_line ("sh: " & to_string (sh));
+
+		-- The smaller of sw and sh now determines the result:
+		return type_scale_factor'min (sw, sh);
+	end get_ratio;
+
+	
 	function to_real (
 		point : in type_point_model)
 		return type_point_model
