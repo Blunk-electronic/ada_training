@@ -266,9 +266,7 @@ package body callbacks is
 
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
-		scale_factor := get_ratio (
-						reference	=> bounding_box_min,
-						area		=> bounding_box);	
+		scale_factor := get_ratio (bounding_box);
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -1047,6 +1045,37 @@ package body callbacks is
 	
 
 
+	function get_ratio (
+		area : in type_area)
+		return type_scale_factor
+	is
+		a : gtk_allocation;
+		
+		-- The two scale factors: one based on the width and another
+		-- based on the height of the given area:
+		sw, sh : type_scale_factor;
+	begin
+		-- put_line ("get_ratio");
+		swin.get_allocation (a);
+
+		-- Get the ratio of width:
+		--sw := type_scale_factor (reference.width / area.width);
+		sw := type_scale_factor (type_distance_model (scrolled_window_size_initial.width) / area.width);
+		-- sw := type_scale_factor (type_distance_model (a.width) / area.width);
+
+		-- The ratio of height:
+		--sh := type_scale_factor (reference.height / area.height);
+		sh := type_scale_factor (type_distance_model (scrolled_window_size_initial.height) / area.height);
+		-- sh := type_scale_factor (type_distance_model (a.height) / area.height);
+		
+		-- put_line ("sw: " & to_string (sw));
+		-- put_line ("sh: " & to_string (sh));
+
+		-- The smaller of sw and sh now determines the result:
+		return type_scale_factor'min (sw, sh);
+	end get_ratio;
+	
+	
 	
 	procedure cb_scrolled_window_size_allocate (
 		window		: access gtk_widget_record'class;
@@ -1519,12 +1548,12 @@ package body callbacks is
 		--    window has a predictable and well defined size.
 		--    This is to be prefered over approach 1 (see above):
 		swin.set_size_request (
-			gint (bounding_box_min.width),
-			gint (bounding_box_min.height));
+			gint (scrolled_window_size_initial.width),
+			gint (scrolled_window_size_initial.height));
   
 		scrolled_window_size := (
-			width	=> positive (bounding_box_min.width),
-			height	=> positive (bounding_box_min.height));
+			width	=> scrolled_window_size_initial.width,
+			height	=> scrolled_window_size_initial.height);
 
 
 		
@@ -2067,9 +2096,7 @@ package body callbacks is
 
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
-		scale_factor := get_ratio (
-						reference	=> bounding_box_min,
-						area		=> bounding_box);
+		scale_factor := get_ratio (bounding_box);
 
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));

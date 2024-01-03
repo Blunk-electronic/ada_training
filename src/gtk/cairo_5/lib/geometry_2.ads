@@ -212,14 +212,6 @@ package geometry_2 is
 		return boolean;
 
 
-
-	-- This function calculates the scale factor required to
-	-- fit the given area into the reference area:
-	function get_ratio (
-		reference	: in type_area;
-		area		: in type_area)
-		return type_scale_factor;
-	
 	
 	-- Converts a virtual model point to a real model point:
 	function to_real (
@@ -242,25 +234,15 @@ package geometry_2 is
 		y	=> margin);
 
 	
-
 	
-	-- On startup a default bounding-box will be applied in order
-	-- to obtain a minimal drawning area.
-	-- IMPORTANT: The height must be greater than the sum
-	-- of the height of all other widgets in the main window !
-	-- Otherwise the canvas may freeze and stop emitting signals.
-	bounding_box_min : constant type_area := ( -- CS rename to bounding_box_default
-		position	=> (0.0, 0.0),
-		width		=> 400.0,
-		height		=> 400.0);
 
 	-- This is the bounding-box of the model. It is a rectangle
 	-- that encloses all objects of the model and the margins 
-	-- around the model. By default it assumes a minimal
-	-- widht and height:
-	-- bounding_box : type_area := bounding_box_min;
+	-- around the model:
 	bounding_box : type_area;
 	
+	
+
 	
 	
 	-- The simplest object in the model world is a line:

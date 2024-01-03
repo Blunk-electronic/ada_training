@@ -349,6 +349,23 @@ package callbacks is
 		MODE_KEEP_CENTER;
 		-- MODE_ZOOM_CENTER;
 
+
+	-- This is the initial size of the scrolled window.
+	-- IMPORTANT: The height must be greater than the sum
+	-- of the height of all other widgets in the main window !
+	-- Otherwise the canvas may freeze and stop emitting signals.
+	scrolled_window_size_initial : constant type_window_size := (
+		width	=> 400,
+		height	=> 400);
+	
+	
+	-- This function calculates the scale factor required to
+	-- fit the given area into the scrolled window:
+	-- CS which size, current or initial size ?
+	function get_ratio (
+		area : in type_area)
+		return type_scale_factor;
+	
 	
 	-- The current size of the scrolled window. It gets updated
 	-- in procedure set_up_swin_and_scrollbars and 
