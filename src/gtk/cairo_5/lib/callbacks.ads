@@ -358,19 +358,23 @@ package callbacks is
 		width	=> 400,
 		height	=> 400);
 	
+	-- The current size of the scrolled window. It gets updated
+	-- in procedure set_up_swin_and_scrollbars and 
+	-- in cb_scrolled_window_size_allocate. This variable is required
+	-- in order to detect size changes of the scrolled window:
+	scrolled_window_size : type_window_size;
+
 	
 	-- This function calculates the scale factor required to
-	-- fit the given area into the scrolled window:
-	-- CS which size, current or initial size ?
+	-- fit the given area into the current scrolled window.
+	-- The scrolled window has an initial size on startup. Later, when
+	-- the operator resizes the main window, the scrolled window gets
+	-- larger or smaller. This results in a situation depended scale_factor:
 	function get_ratio (
 		area : in type_area)
 		return type_scale_factor;
 	
 	
-	-- The current size of the scrolled window. It gets updated
-	-- in procedure set_up_swin_and_scrollbars and 
-	-- in cb_scrolled_window_size_allocate:
-	scrolled_window_size : type_window_size;
 
 	
 	-- This callback procedure is called each time the size_allocate signal
