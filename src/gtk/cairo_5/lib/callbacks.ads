@@ -541,6 +541,7 @@ package callbacks is
 	-- all objects (inside the bounding box) are "moved" inside
 	-- the visible area:
 	procedure center_to_visible_area;
+	-- CS pass the area to be centered as argument.
 
 	
 

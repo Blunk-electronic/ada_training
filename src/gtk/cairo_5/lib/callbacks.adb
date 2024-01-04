@@ -1981,6 +1981,8 @@ package body callbacks is
 
 
 	procedure center_to_visible_area is
+		-- NOTE: Assumption is: Area fits into the visible area !
+		
 		-- debug : boolean := true;
 		debug : boolean := false;
 		
@@ -1989,12 +1991,12 @@ package body callbacks is
 		dx, dy : type_distance_model;
 		
 		-- Get the currently visible model area:
-		va : constant type_area := get_visible_area (canvas);
+		v : constant type_area := get_visible_area (canvas);
 
-		w1 : constant type_distance_model := va.width;
+		w1 : constant type_distance_model := v.width;
 		w2 : constant type_distance_model := bounding_box.width;
 
-		h1 : constant type_distance_model := va.height;
+		h1 : constant type_distance_model := v.height;
 		h2 : constant type_distance_model := bounding_box.height;
 
 		a, b : type_distance_model;
@@ -2002,13 +2004,14 @@ package body callbacks is
 		x0 : constant type_distance_model := bounding_box.position.x;
 		y0 : constant type_distance_model := bounding_box.position.y;
 		
-		x1 : constant type_distance_model := va.position.x;
-		y1 : constant type_distance_model := va.position.y;
-		
+		x1 : constant type_distance_model := v.position.x;
+		y1 : constant type_distance_model := v.position.y;
+
+		-- The given area will end up at this target position:
 		x2, y2 : type_distance_model;
 	begin
 		if debug then
-			put_line ("visible " & to_string (va));
+			put_line ("visible " & to_string (v));
 		end if;
 		
 		a := (w1 - w2) * 0.5;
