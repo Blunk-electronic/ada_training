@@ -483,6 +483,13 @@ package callbacks is
 		allocation	: gtk_allocation);
 
 
+	-- This is the size of the canvas in device pixels.
+	-- CS: The numbers choosen here are empirically
+	-- and should be increased if problems arise with very large
+	-- monitors:
+	canvas_size : constant type_window_size := (
+		width	=> 20_000,
+		height	=> 20_000);
 	
 	type type_canvas_allocation is record
 		x, y : natural := 0;

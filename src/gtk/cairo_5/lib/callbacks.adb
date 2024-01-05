@@ -1751,14 +1751,6 @@ package body callbacks is
 	
 	
 	procedure set_up_canvas is
-		size_x, size_y : gint;
-
-		-- When the operator enlarges the main window, more
-		-- drawing area is exposed (in MODE_KEEP_CENTER. MODE_EXPOSE_CANVAS ?).
-		-- This is an intuitively introduced multiplier to make the canvas greater. 
-		-- CS: Explanation required.
-		-- CS: Empirically found value. Use type_scale_factor'last instead ?
-		m : constant gint := 10; -- could be too less for extremely large displays
 	begin
 		put_line ("set_up_canvas");
 		
@@ -1770,19 +1762,10 @@ package body callbacks is
 		-- Not required currently.
 
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
-		-- The canvas size never changes. So this connection is not required.
-		
 		-- canvas.set_redraw_on_allocate (false);
 		
-		-- Set the size of the canvas (in pixels).
-		-- It is like the wooden frame around a real-world canvas. 
-		-- size_x := m * gint (scrollbar_h_init.upper + scrollbar_h_init.lower);
-		-- size_y := m * gint (scrollbar_v_init.upper + scrollbar_v_init.lower);
-		
-		size_x := 20_000; -- CS use systemwide constants ?
-		size_y := 20_000;
-		
-		canvas.set_size_request (size_x, size_y); -- unit is pixels
+		-- Set the size of the canvas:
+		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
 
 		show_canvas_size;
 
