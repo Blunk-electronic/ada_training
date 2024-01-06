@@ -94,15 +94,18 @@ package callbacks is
 		Z1	: in type_point_canvas);	-- the zoom center as canvas point
 
 
-	
-	type type_corners is record
+	-- In connection with zoom-operations we need the corners of the
+	-- bounding-box in canvas coordinates. This composite type serves this
+	-- purpose:
+	type type_bounding_box_corners is record
 		BL, BR, TL, TR : type_point_canvas;
 	end record;
 
-	function get_corners (
-		B	: in type_area; -- bounding-box
-		S	: in type_scale_factor)
-		return type_corners;
+	-- This function returns the current corners of the bounding-box
+	-- in canvas-coordinates. The return depends on the current scale_factor
+	-- and translate-offset:
+	function get_bounding_box_corners
+		return type_bounding_box_corners;
 	
 	
 -- CONVERSION BETWEEN MODEL AND CANVAS:
@@ -305,7 +308,7 @@ package callbacks is
 	-- The argument C1 provides the old corners of the 
 	-- bounding-box on the canvas and C2 the new corners:
 	procedure update_scrollbar_limits (
-		C1, C2 : in type_corners);
+		C1, C2 : in type_bounding_box_corners);
 	
 	
 	-- This callback procedure is called each time the size_allocate signal
