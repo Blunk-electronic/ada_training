@@ -505,6 +505,7 @@ package body callbacks is
 		-- moves to the left. It assumes the value of the left edge
 		-- of the bounding-box:
 		HL := HL + dHL;
+		clip_min (HL, 0.0);
 		if HL <= scrollbar_h_adj.get_value then
 			scrollbar_h_adj.set_lower (HL);
 		else
@@ -519,6 +520,7 @@ package body callbacks is
 		-- and its length (page size):
 		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
 		HU := HU + dHU;
+		clip_max (HU, gdouble (scrolled_window_size.width));
 		-- If the right edge of the bounding-box is farther to the
 		-- right than the right end of the bar, then the upper limit
 		-- moves to the right. It assumes the value of the right edge
@@ -543,6 +545,7 @@ package body callbacks is
 		-- moves upwards. It assumes the value of the upper edge
 		-- of the bounding-box:
 		VL := VL + dVL;
+		clip_min (VL, 0.0);
 		if VL <= scrollbar_v_adj.get_value then
 			scrollbar_v_adj.set_lower (VL);
 		else
@@ -557,6 +560,7 @@ package body callbacks is
 		-- and its length (page size):
 		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
 		VU := VU + dVU;
+		clip_max (VU, gdouble (scrolled_window_size.height));
 		-- If the lower edge of the bounding-box is below the
 		-- lower end of the bar, then the upper limit
 		-- moves further downwards. It assumes the value of the lower edge
@@ -571,8 +575,6 @@ package body callbacks is
 			scrollbar_v_adj.set_upper (scratch);
 		end if;
 
-		-- scrollbar_v_adj.set_page_size (pv_bak);
-		-- scrollbar_h_adj.set_page_size (ph_bak);
 		-- show_adjustments_v;
 	end update_scrollbar_limits;
 
