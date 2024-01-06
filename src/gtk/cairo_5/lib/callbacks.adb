@@ -503,8 +503,8 @@ package body callbacks is
 		-- moves to the left. It assumes the value of the left edge
 		-- of the bounding-box:
 		HL := HL + dHL;
-		-- clip_min (HL, 0.0);
 		if HL <= scrollbar_h_adj.get_value then
+			clip_min (HL, 0.0); -- suppress negative value
 			scrollbar_h_adj.set_lower (HL);
 		else
 		-- If the left edge of the box is farther to the right than
@@ -543,8 +543,8 @@ package body callbacks is
 		-- moves upwards. It assumes the value of the upper edge
 		-- of the bounding-box:
 		VL := VL + dVL;
-		-- clip_min (VL, 0.0);
 		if VL <= scrollbar_v_adj.get_value then
+			clip_min (VL, 0.0); -- suppress negative value
 			scrollbar_v_adj.set_lower (VL);
 		else
 		-- If the upper edge of the box is below
