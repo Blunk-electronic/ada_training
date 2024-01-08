@@ -74,7 +74,7 @@ package body callbacks is
 
 	
 
-	procedure compute_translate_offset (
+	procedure set_translation_for_zoom (
 		MP	: in type_point_model;
 		Z1	: in type_point_canvas)
 	is 
@@ -92,7 +92,7 @@ package body callbacks is
 		T.y := -(Z2.y - Z1.y);
 		
 		-- put_line (" T offset    " & to_string (T));
-	end compute_translate_offset;
+	end set_translation_for_zoom;
 
 
 
@@ -2068,7 +2068,7 @@ package body callbacks is
 		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-		compute_translate_offset (M, Z1);
+		set_translation_for_zoom (M, Z1);
 
 		C2 := get_bounding_box_corners;
 		update_scrollbar_limits (C1, C2);
@@ -2425,7 +2425,7 @@ package body callbacks is
 			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 			-- Without applying a translate_offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-			compute_translate_offset (M, Z1);
+			set_translation_for_zoom (M, Z1);
 
 			-- show_adjustments_v;
 			-- backup_scrollbar_settings;
