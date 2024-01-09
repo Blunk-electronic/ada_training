@@ -75,18 +75,21 @@ package body callbacks is
 	
 
 	procedure set_translation_for_zoom (
-		MP	: in type_point_model;
+		S1	: in type_scale_factor;
 		Z1	: in type_point_canvas)
 	is 
+		-- Compute the virtual model-point
+		-- according to the scale factor before zoom:
+		M : constant type_point_model := to_model (Z1, S1);
+
 		Z2 : type_point_canvas;
 	begin			
 		-- Compute the prospected canvas-point according to the 
-		-- current scale_factor:
-		Z2 := to_canvas (MP, scale_factor);
-		-- put_line ("Z after scale   " & to_string (Z2));
+		-- scale factor after zoom:
+		Z2 := to_canvas (M, scale_factor);
 
-		-- This is the offset from the given canvas-point Z1 to the prospected
-		-- canvas-point Z2. The offset must be multiplied by -1 because the
+		-- This is the offset from Z1 to the prospected
+		-- point Z2. The offset must be multiplied by -1 because the
 		-- drawing must be dragged-back to the given pointer position:
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
@@ -95,6 +98,34 @@ package body callbacks is
 	end set_translation_for_zoom;
 
 
+	procedure set_translation_for_zoom (
+		S1	: in type_scale_factor;
+		MP	: in type_point_model) -- real model point
+	is 
+		-- Compute the canvas point corresponding to the given
+		-- real model point with the scale factor before zoom:
+		Z1 : constant type_point_canvas := to_canvas (MP, S1, real => true);
+
+		-- Convert the given model point to a virtual point in the model:
+		MV : constant type_point_model := to_virtual (MP);
+		
+		Z2 : type_point_canvas;
+	begin			
+		-- Compute the prospected canvas-point according to the 
+		-- scale factor after zoom:
+		Z2 := to_canvas (MV, scale_factor);
+		-- put_line ("Z2 " & to_string (Z2));
+
+		-- This is the offset from point Z1 to the prospected
+		-- point Z2. The offset must be multiplied by -1 because the
+		-- drawing must be dragged-back to the given pointer position:
+		T.x := -(Z2.x - Z1.x);
+		T.y := -(Z2.y - Z1.y);
+		
+		-- put_line (" T offset    " & to_string (T));
+	end set_translation_for_zoom;
+
+	
 
 	function get_bounding_box_corners
 		return type_bounding_box_corners
@@ -2027,24 +2058,15 @@ package body callbacks is
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction)
 	is
-		Z1	: type_point_canvas;
-		M	: type_point_model;
+		S1 : constant type_scale_factor := scale_factor;
 
 		-- The corners of the bounding-box on the canvas before 
 		-- and after zooming:
 		C1, C2 : type_bounding_box_corners;
-
 	begin
 		put_line ("zoom_on_cursor " & type_zoom_direction'image (direction));
 
 		C1 := get_bounding_box_corners;
-
-		-- Get the canvas point corresponding to the current cursor position:
-		Z1 := to_canvas (cursor.position, scale_factor, real => true);
-
-		-- Convert the cursor position to a virtual model point:
-		M := to_virtual (cursor.position);
-
 
 		case direction is
 			when ZOOM_IN =>
@@ -2068,7 +2090,7 @@ package body callbacks is
 		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-		set_translation_for_zoom (M, Z1);
+		set_translation_for_zoom (S1, cursor.position);
 
 		C2 := get_bounding_box_corners;
 		update_scrollbar_limits (C1, C2);
@@ -2386,19 +2408,14 @@ package body callbacks is
 
 		procedure zoom is
 			-- The given point on the canvas where the operator is zooming in or out:
-			Z1 : constant type_point_canvas := (event.x, event.y);
-
-			-- The corresponding virtual model-point
-			-- according to the CURRENT (old) scale_factor:
-			M : constant type_point_model := to_model (Z1, scale_factor);
+			Z : constant type_point_canvas := (event.x, event.y);
 
 			-- The corners of the bounding-box on the canvas before 
 			-- and after zooming:
 			C1, C2 : type_bounding_box_corners;
+			S1 : constant type_scale_factor := scale_factor;
 			
 		begin -- zoom
-			-- put_line (" zoom center (M)   " & to_string (M));
-			-- put_line (" zoom center (Z1) " & to_string (Z1));
 			-- put_line (" scale old" & to_string (scale_factor));
 
 			C1 := get_bounding_box_corners;
@@ -2425,7 +2442,7 @@ package body callbacks is
 			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 			-- Without applying a translate_offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-			set_translation_for_zoom (M, Z1);
+			set_translation_for_zoom (S1, Z);
 
 			-- show_adjustments_v;
 			-- backup_scrollbar_settings;
