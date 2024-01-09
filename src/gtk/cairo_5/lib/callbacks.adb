@@ -102,20 +102,20 @@ package body callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
 		S2	: in type_scale_factor;
-		MP	: in type_point_model) -- real model point
+		M	: in type_point_model) -- real model point
 	is 
 		-- Compute the canvas point corresponding to the given
 		-- real model point with the scale factor before zoom:
-		Z1 : constant type_point_canvas := to_canvas (MP, S1, real => true);
+		Z1 : constant type_point_canvas := to_canvas (M, S1, real => true);
 
 		-- Convert the given model point to a virtual point in the model:
-		MV : constant type_point_model := to_virtual (MP);
+		V : constant type_point_model := to_virtual (M);
 		
 		Z2 : type_point_canvas;
 	begin			
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
-		Z2 := to_canvas (MV, S2);
+		Z2 := to_canvas (V, S2);
 		-- put_line ("Z2 " & to_string (Z2));
 
 		-- This is the offset from point Z1 to the prospected

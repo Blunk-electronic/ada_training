@@ -99,7 +99,7 @@ package callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
 		S2	: in type_scale_factor;		-- the scale factor after zoom
-		MP	: in type_point_model);		-- the zoom center as a real model point
+		M	: in type_point_model);		-- the zoom center as a real model point
 
 
 	
