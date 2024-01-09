@@ -92,11 +92,13 @@ package callbacks is
 	-- Without applying a translate_offset the drawing would be appearing as 
 	-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;
+		S1	: in type_scale_factor;		-- the scale factor before zoom
+		S2	: in type_scale_factor;		-- the scale factor after zoom
 		Z1	: in type_point_canvas);	-- the zoom center as canvas point
 
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;
+		S1	: in type_scale_factor;		-- the scale factor before zoom
+		S2	: in type_scale_factor;		-- the scale factor after zoom
 		MP	: in type_point_model);		-- the zoom center as a real model point
 
 

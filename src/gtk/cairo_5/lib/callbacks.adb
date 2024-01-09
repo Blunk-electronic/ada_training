@@ -76,6 +76,7 @@ package body callbacks is
 
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
+		S2	: in type_scale_factor;
 		Z1	: in type_point_canvas)
 	is 
 		-- Compute the virtual model-point
@@ -86,7 +87,7 @@ package body callbacks is
 	begin			
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
-		Z2 := to_canvas (M, scale_factor);
+		Z2 := to_canvas (M, S2);
 
 		-- This is the offset from Z1 to the prospected
 		-- point Z2. The offset must be multiplied by -1 because the
@@ -100,6 +101,7 @@ package body callbacks is
 
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
+		S2	: in type_scale_factor;
 		MP	: in type_point_model) -- real model point
 	is 
 		-- Compute the canvas point corresponding to the given
@@ -113,7 +115,7 @@ package body callbacks is
 	begin			
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
-		Z2 := to_canvas (MV, scale_factor);
+		Z2 := to_canvas (MV, S2);
 		-- put_line ("Z2 " & to_string (Z2));
 
 		-- This is the offset from point Z1 to the prospected
@@ -2084,13 +2086,14 @@ package body callbacks is
 		
 		-- put_line (" scale_factor" & to_string (scale_factor));
 
-		-- After changing the scale_factor, the translate_offset must
-		-- be calculated anew. When the actual drawing takes place (see function cb_draw_objects)
-		-- then the drawing will be dragged back by the translate_offset
+		-- After changing the scale_factor, the translate-offset must
+		-- be calculated anew. When the actual drawing takes 
+		-- place (see function cb_draw_objects)
+		-- then the drawing will be dragged back by the translate-offset
 		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-		set_translation_for_zoom (S1, cursor.position);
+		set_translation_for_zoom (S1, scale_factor, cursor.position);
 
 		C2 := get_bounding_box_corners;
 		update_scrollbar_limits (C1, C2);
@@ -2437,12 +2440,13 @@ package body callbacks is
 			-- put_line (" scale_factor" & to_string (scale_factor));
 
 			-- After changing the scale_factor, the translate_offset must
-			-- be calculated anew. When the actual drawing takes place (see function cb_draw_objects)
+			-- be calculated anew. When the actual drawing takes 
+			-- place (see function cb_draw_objects)
 			-- then the drawing will be dragged back by the translate_offset
 			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 			-- Without applying a translate_offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-			set_translation_for_zoom (S1, Z);
+			set_translation_for_zoom (S1, scale_factor, Z);
 
 			-- show_adjustments_v;
 			-- backup_scrollbar_settings;
