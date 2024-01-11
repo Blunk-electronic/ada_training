@@ -337,7 +337,10 @@ package callbacks is
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
-	
+
+	-- This procedure instantiates the main window,
+	-- sets the title bar, connects signals, creates
+	-- boxes inside the window:
 	procedure set_up_main_window;
 
 	
@@ -475,7 +478,11 @@ package callbacks is
 	procedure restore_scrollbar_settings;
 
 	
-	
+	-- This procedure creates the scrolled window,
+	-- assigns to it the initial size (widht and height),
+	-- connects signals.
+	-- It also connects the signals emitted by the scrollbars,
+	-- sets the behaviour of them:
 	procedure set_up_swin_and_scrollbars;
 
 	procedure show_adjustments_v;
@@ -526,7 +533,10 @@ package callbacks is
 	
 	
 	procedure show_canvas_size;
-	
+
+	-- This procedure creates the canvas, assigns to
+	-- it a fixed size (constant canvas_size, see above)
+	-- and connects signals:
 	procedure set_up_canvas;
 		
 
