@@ -308,7 +308,7 @@ package body callbacks is
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects to the center of the visible area:
-		center_to_visible_area;
+		center_to_visible_area (bounding_box);
 
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -1996,8 +1996,11 @@ package body callbacks is
 
 
 
-	procedure center_to_visible_area is
-		-- NOTE: Assumption is: Area fits into the visible area !
+	procedure center_to_visible_area (
+		area : in type_area)
+	is
+		-- NOTE: Assumption is: Area does fit into 
+		-- the visible area !
 		
 		-- debug : boolean := true;
 		debug : boolean := false;
@@ -2010,15 +2013,15 @@ package body callbacks is
 		v : constant type_area := get_visible_area (canvas);
 
 		w1 : constant type_distance_model := v.width;
-		w2 : constant type_distance_model := bounding_box.width;
+		w2 : constant type_distance_model := area.width;
 
 		h1 : constant type_distance_model := v.height;
-		h2 : constant type_distance_model := bounding_box.height;
+		h2 : constant type_distance_model := area.height;
 
 		a, b : type_distance_model;
 
-		x0 : constant type_distance_model := bounding_box.position.x;
-		y0 : constant type_distance_model := bounding_box.position.y;
+		x0 : constant type_distance_model := area.position.x;
+		y0 : constant type_distance_model := area.position.y;
 		
 		x1 : constant type_distance_model := v.position.x;
 		y1 : constant type_distance_model := v.position.y;
@@ -2124,7 +2127,7 @@ package body callbacks is
 
 		-- Calculate the translate_offset that is required to
 		-- "move" all objects to the center of the visible area:
-		center_to_visible_area;
+		center_to_visible_area (bounding_box);
 
 		if debug then
 			show_adjustments_h;
