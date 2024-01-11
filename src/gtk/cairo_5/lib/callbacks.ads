@@ -133,6 +133,11 @@ package callbacks is
 		return type_distance_model;
 
 	
+	-- Converts a canvas point to a model point
+	-- according to the given scale factor, the current
+	-- base-offset and the current tranlate-offset.
+	-- If a real model point is required, then the position
+	-- of the current bonding-box is also taken into account:
 	function to_model (
 		point	: in type_point_canvas;
 		scale	: in type_scale_factor;
@@ -140,6 +145,12 @@ package callbacks is
 		return type_point_model;
 	
 
+	-- Converts a model point to a canvas point
+	-- according to the given scale factor and the current
+	-- base-offset.
+	-- If the given model point is real, then the current
+	-- tranlate-offset and the position of the current
+	-- bounding-box is also taken into account:
 	function to_canvas (
 		point 	: in type_point_model;
 		scale	: in type_scale_factor;
