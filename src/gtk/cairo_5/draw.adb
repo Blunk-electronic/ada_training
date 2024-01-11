@@ -77,7 +77,6 @@ begin
 	geometry_2.compute_bounding_box;
 	
 	compute_base_offset;
-	-- prepare_initial_scrollbar_settings;
 
 	
 	init; -- inits the GTK-stuff
@@ -95,8 +94,8 @@ begin
 	main_window.show_all;
 
 	
-	prepare_initial_scrollbar_settings;
-	apply_initial_scrollbar_settings;
+	set_initial_scrollbar_settings;
+
 	-- show_adjustments_v;
 	-- show_adjustments_h;
 

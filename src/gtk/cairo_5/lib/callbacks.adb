@@ -292,8 +292,8 @@ package body callbacks is
 
 		-- Since the bounding_box has changed, the scrollbars
 		-- must be reinitialized:
-		prepare_initial_scrollbar_settings;
-		apply_initial_scrollbar_settings;
+		set_initial_scrollbar_settings;
+
 
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
@@ -1683,12 +1683,11 @@ package body callbacks is
 
 	
 	
-	procedure prepare_initial_scrollbar_settings is
+	procedure set_initial_scrollbar_settings is
 		debug : boolean := false;
 		-- debug : boolean := true;
-		-- bounding_box : type_area := bounding_box_min;
 	begin
-		put_line ("prepare initial scrollbar settings");
+		put_line ("set initial scrollbar settings");
 		
 		scrollbar_v_init.upper := - base_offset.y;			
 		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
@@ -1715,14 +1714,7 @@ package body callbacks is
 			put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
 			put_line ("  value" & gdouble'image (scrollbar_h_init.value));
 		end if;
-	end prepare_initial_scrollbar_settings;
 
-
-	
-	
-	procedure apply_initial_scrollbar_settings is
-	begin
-		put_line ("apply initial scrollbar settings");
 
 		-- put_line ("vertical:");
 		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
@@ -1737,9 +1729,7 @@ package body callbacks is
 		scrollbar_h_adj.set_value (scrollbar_h_init.value);
 
 		backup_scrollbar_settings;
-	end apply_initial_scrollbar_settings;
-	
-
+	end set_initial_scrollbar_settings;
 	
 
 	
