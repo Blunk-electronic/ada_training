@@ -1160,25 +1160,13 @@ package body callbacks is
 		procedure move_canvas_bottom is begin
 			-- Approach 1:
 			-- One way to move the canvas is to change the y-component of the base_offset.
-			-- The drawback is that the aligning appears choppy:
 			base_offset.y := base_offset.y - dh;
-			refresh (canvas); -- less choppy
-			
-			-- Approach 2: -- CS discard this approach.
-			-- This approach makes the aligning appear much more smoothly. It changes the
-			-- allocation of the canvas. It requires the global variable canvas_allocation
-			-- to track the allocation of the canvas:
-			-- declare
-			-- 	L : gtk_allocation;
-			-- begin					
-			-- 	canvas_allocation.y := canvas_allocation.y + (new_size.height - scrolled_window_size.height);
-			-- 	-- put_line ("canvas_allocation.y  : " & positive'image (canvas_allocation.y));
-   -- 
-			-- 	get_allocation (canvas, L);
-			-- 	L.y := gint (canvas_allocation.y);
-			-- 	canvas.size_allocate (L);
-			-- end;
 
+			-- Schedule a refresh to make the size change appear smoothly:
+			refresh (canvas);
+			
+			-- Approach 2: -- CS never tried
+			-- Modify the y-component of the translate-offset
 		end move_canvas_bottom;
 		
 
