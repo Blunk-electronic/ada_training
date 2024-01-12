@@ -524,9 +524,6 @@ package body callbacks is
 		end if;
 		
 
-		-- CS clip negative values of U and L ?
-
-
 		-- horizontal:
 
 		-- The left end of the scrollbar is the same as the position
@@ -551,7 +548,7 @@ package body callbacks is
 		-- and its length (page size):
 		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
 		HU := HU + dHU;
-		-- clip_max (HU, gdouble (scrolled_window_size.width));
+		-- CS clip_max (HU, gdouble (scrolled_window_size.width));
 		-- If the right edge of the bounding-box is farther to the
 		-- right than the right end of the bar, then the upper limit
 		-- moves to the right. It assumes the value of the right edge
@@ -591,7 +588,7 @@ package body callbacks is
 		-- and its length (page size):
 		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
 		VU := VU + dVU;
-		-- clip_max (VU, gdouble (scrolled_window_size.height));
+		-- CS clip_max (VU, gdouble (scrolled_window_size.height));
 		-- If the lower edge of the bounding-box is below the
 		-- lower end of the bar, then the upper limit
 		-- moves further downwards. It assumes the value of the lower edge
