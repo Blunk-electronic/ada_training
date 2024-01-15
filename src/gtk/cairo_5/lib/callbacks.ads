@@ -553,7 +553,7 @@ package callbacks is
 
 	-- Returns the currently visible area of the model.
 	-- The visible area depends the current scale factor,
-	-- base-offset, translate-offset, allocation of the canvas,
+	-- base-offset, translate-offset,
 	-- allocation of the scrolled window
 	-- and the current settings of the scrollbars.
 	function get_visible_area (

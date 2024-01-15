@@ -1897,10 +1897,6 @@ package body callbacks is
 		-- The allocation of the scrolled window:
 		W : gtk_allocation;
 		
-		-- The allocation of the canvas:		
-		L : gtk_allocation;
-
-		
 		h_start, h_length, h_end : gdouble;
 		v_start, v_length, v_end : gdouble;
 
@@ -1910,10 +1906,6 @@ package body callbacks is
 		-- Inquire the allocation of the scrolled window
 		-- inside the main window:
 		get_allocation (swin, W);
-
-		-- Inquire the allocation of the canvas inside
-		-- the scrolled window:
-		get_allocation (canvas, L);
 
 		
 		-- X-AXIS:
@@ -1935,7 +1927,7 @@ package body callbacks is
 		-- The visible area along the y-axis starts at the
 		-- position of the vertical scrollbar minus the
 		-- y-position of the canvas:
-		v_start := scrollbar_v_adj.get_value - gdouble (L.y);
+		v_start := scrollbar_v_adj.get_value;
 
 		-- The visible area along the y-axis is as high as
 		-- the scrolled window:
