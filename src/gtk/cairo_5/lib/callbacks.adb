@@ -1925,8 +1925,7 @@ package body callbacks is
 		-- Y-AXIS:
 		
 		-- The visible area along the y-axis starts at the
-		-- position of the vertical scrollbar minus the
-		-- y-position of the canvas:
+		-- position of the vertical scrollbar:
 		v_start := scrollbar_v_adj.get_value;
 
 		-- The visible area along the y-axis is as high as
@@ -1937,25 +1936,30 @@ package body callbacks is
 		v_end := v_start + v_length;
 
 		
-		-- Compute the corners of the visible area:
-		BL := to_model ((h_start, v_end), scale_factor, true);
-		result.position := BL;
-
-		BR := to_model ((h_end, v_end), scale_factor, true);
+		-- Compute the corners of the visible area.
+		-- The corners are real model coordinates:
+		BL := to_model ((h_start, v_end),   scale_factor, true);
+		BR := to_model ((h_end, v_end),     scale_factor, true);
 		TL := to_model ((h_start, v_start), scale_factor, true);
-		TR := to_model ((h_end, v_start), scale_factor, true);
+		TR := to_model ((h_end, v_start),   scale_factor, true);
 
 		-- put_line ("BL " & to_string (BL));
 		-- put_line ("BR " & to_string (BR));
 		-- put_line ("TR " & to_string (TR));
-		--put_line ("TL " & to_string (TL));
+		-- put_line ("TL " & to_string (TL));
+
+		-- The position of the visible area is the lower left 
+		-- corner:
+		result.position := BL;
+		
+		-- Compute the width and the height of the
+		-- visible area:
+		result.width := TR.x - TL.x;
+		result.height := TL.y - BL.y;
 
 		-- CS: more effective ?
 		-- result.width    := type_distance_model (h_length) * type_distance_model (scale_factor);
 		-- result.height   := type_distance_model (v_length) * type_distance_model (scale_factor);
-
-		result.width := TR.x - TL.x;
-		result.height := TL.y - BL.y;
 
 		-- put_line ("visible area " & to_string (result));
 		return result;
