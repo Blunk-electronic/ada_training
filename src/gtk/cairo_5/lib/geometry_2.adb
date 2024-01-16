@@ -299,6 +299,7 @@ package body geometry_2 is
 		return boolean
 	is
 		-- CS: Optimization required. Compiler options ?
+		-- CS: rename lx, gx, ly, gy to x1, x2, y1, y2
 		
 		-- AREA A:
 		-- This is the lowest x used by area A
@@ -330,7 +331,8 @@ package body geometry_2 is
 		B_gy : constant type_distance_model := B_ly + B.height;
 
 	begin
-		-- If all of the four criteria are true then the two areas overlap:
+		-- If all of the four criteria are true then the two 
+		-- areas DO overlap:
 		if	B_lx < A_gx 
 		and	B_gx > A_lx
 		and	B_ly < A_gy
