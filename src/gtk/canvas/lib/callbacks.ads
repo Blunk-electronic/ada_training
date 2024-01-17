@@ -372,8 +372,8 @@ package callbacks is
 
 	zoom_mode : constant type_scrolled_window_zoom_mode := 
 		-- MODE_EXPOSE_CANVAS;
-		MODE_KEEP_CENTER;
-		-- MODE_ZOOM_CENTER;
+		--MODE_KEEP_CENTER;
+		MODE_ZOOM_CENTER;
 
 
 	-- This is the initial size of the scrolled window.
