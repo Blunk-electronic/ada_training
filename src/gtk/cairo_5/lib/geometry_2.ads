@@ -270,6 +270,7 @@ package geometry_2 is
 	-- Another primitive object is a circle:
 	type type_circle is record
 		c : type_point_model;
+		r : type_distance_model; -- the radius
 		w : type_distance_model; -- the linewidth
 		-- CS: fill status
 	end record;

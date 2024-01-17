@@ -2573,6 +2573,17 @@ package body callbacks is
 	end draw_line;
 
 	
+	procedure draw_circle (
+		context	: in cairo_context; -- CS make context global ?
+		circle	: in type_circle;
+		pos		: in type_point_model) -- the position of the complex object
+	is
+		-- CS: Optimization required. Compiler options ?
+	begin
+		-- CS 
+		null;
+	end draw_circle;
+
 	
 	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;
@@ -2914,10 +2925,18 @@ package body callbacks is
 				end query_line;
 
 				
+				procedure query_circle (cc : in pac_circles.cursor) is
+					circle : type_circle renames element (cc);
+				begin
+					--put_line ("query_circle");
+					draw_circle (context, circle, object.p);					
+				end query_circle;
+
+				
 			begin
 				--put_line ("query_object");
 				object.lines.iterate (query_line'access);
-				null;
+				object.circles.iterate (query_circle'access);
 			end query_object;
 			
 		begin

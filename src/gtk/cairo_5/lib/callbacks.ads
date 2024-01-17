@@ -674,8 +674,16 @@ package callbacks is
 	-- This is a primitive draw operation that draws a line:
 	procedure draw_line (
 		context	: in cairo_context; -- CS make context global ?
-		line	: in geometry_2.type_line;
-		pos		: in type_point_model);
+		line	: in type_line;
+		pos		: in type_point_model); -- the position of the complex object
+
+
+	-- This is a primitive draw operation that draws a circle:
+	procedure draw_circle (
+		context	: in cairo_context; -- CS make context global ?
+		circle	: in type_circle;
+		pos		: in type_point_model); -- the position of the complex object
+
 
 	
 	-- This function is called each time the canvas is to be refreshed:
