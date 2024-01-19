@@ -574,8 +574,7 @@ package callbacks is
 
 	-- This procedure sets the translate-offset so that
 	-- the given area gets centered in the visible area.
-	-- NOTE: Assumption is that the given area does fit
-	-- into the visible area !
+	-- The given area can be wider or higher than the visible area:
 	procedure center_to_visible_area (
 		area : in type_area);
 

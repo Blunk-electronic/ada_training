@@ -1882,9 +1882,6 @@ package body callbacks is
 	procedure center_to_visible_area (
 		area : in type_area)
 	is
-		-- NOTE: Assumption is: Area does fit into 
-		-- the visible area !
-		
 		-- debug : boolean := true;
 		debug : boolean := false;
 		
@@ -1913,6 +1910,7 @@ package body callbacks is
 		x2, y2 : type_distance_model;
 	begin
 		if debug then
+			put_line ("given   " & to_string (area));
 			put_line ("visible " & to_string (v));
 		end if;
 		
