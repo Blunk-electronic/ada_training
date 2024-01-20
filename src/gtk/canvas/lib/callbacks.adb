@@ -1219,19 +1219,19 @@ package body callbacks is
 			
 			-- Compute two new scale factors: one based on the change of width
 			-- and the other based on the change of height:
-			S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
-			put_line ("S2W:" & to_string (S2W));
+			-- S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
+			-- put_line ("S2W:" & to_string (S2W));
 
-			S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
-			put_line ("S2H:" & to_string (S2H));
+			-- S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
+			-- put_line ("S2H:" & to_string (S2H));
 
 			-- The smaller one of the two scale factors has the final say:
 			--S2 := type_scale_factor'min (S2W, S2H);
-			S2 := S2W;
-			put_line ("S2: " & to_string (S2));
+			-- S2 := S2W;
+			-- put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
-			-- S2 := get_ratio (visible_area);
+			S2 := get_ratio (visible_area);
 			-- S2 := (S2W + S2H) / 2.0;
 			
 			-- if S2 < 1.0 then
@@ -1256,6 +1256,8 @@ package body callbacks is
 			
 			-- show_adjustments_h;
 			-- show_adjustments_v;			
+
+			-- https://stackoverflow.com/questions/1060039/gtk-detecting-window-resize-from-the-user
 		end zoom_center;
 
 		
