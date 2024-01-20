@@ -1726,6 +1726,9 @@ package body callbacks is
 		canvas.add_events (gdk.event.button_press_mask);
 		canvas.on_button_press_event (cb_button_pressed_canvas'access);
 
+		canvas.add_events (gdk.event.button_release_mask);
+		canvas.on_button_release_event (cb_button_released_canvas'access);
+		
 		-- Make the canvas responding to mouse movement:
 		canvas.add_events (gdk.event.pointer_motion_mask);
 		canvas.on_motion_notify_event (cb_mouse_moved'access);
@@ -2092,17 +2095,26 @@ package body callbacks is
 
 		-- Set the focus on the canvas,
 		-- But first save the scrollbar values:
-		-- h := scrollbar_h_adj.get_value;
-		-- v := scrollbar_v_adj.get_value;
+		h := scrollbar_h_adj.get_value;
+		v := scrollbar_v_adj.get_value;
 		-- CS: backup_scrollbar_settings does not work for some reason.
 		-- put_line (gdouble'image (v));
 		
 		canvas.grab_focus;
 
-		-- scrollbar_h_adj.set_value (h);
-		-- scrollbar_v_adj.set_value (v);
+		scrollbar_h_adj.set_value (h);
+		scrollbar_v_adj.set_value (v);
 		-- CS: restore_scrollbar_settings does not work for some reason.
 		-- put_line (gdouble'image (v));
+
+
+
+		if zoom_area_active then
+			zoom_area_start := mp;
+			put_line ("zoom area start: " & to_string (zoom_area_start));
+		end if;
+
+
 		
 		refresh (canvas);
 		
@@ -2111,6 +2123,102 @@ package body callbacks is
 
 
 
+
+	function cb_button_released_canvas (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean
+	is
+		use glib;
+		event_handled : boolean := true;
+
+		debug : boolean := false;
+		
+
+		-- This is the point in the canvas where the operator
+		-- released the button:
+		cp : constant type_point_canvas := (event.x, event.y);
+
+		-- Convert the canvas point to the corresponding
+		-- real model point:
+		mp : constant type_point_model := to_model (
+			point 	=> cp,
+			scale	=> scale_factor,
+			real	=> true);
+
+		zoom_area : type_area;
+		zoom_area_end : type_point_model;
+
+		-- The corners of the bounding-box on the canvas before 
+		-- and after zooming:
+		C1, C2 : type_bounding_box_corners;
+		
+	begin
+		put_line ("cb_button_releaseed_canvas");
+
+		
+		-- Output the button id, x and y position:
+		-- put_line ("cb_button_pressed_canvas "
+		-- 	& " button" & guint'image (event.button) & " "
+		-- 	& to_string (cp));
+
+		-- Output the model point in the terminal:
+		-- put_line (to_string (mp));
+
+		-- Move the cursor to the nearest grid point:
+		-- move_cursor (snap_to_grid (mp));
+
+
+
+		if zoom_area_active then
+			C1 := get_bounding_box_corners;
+			
+			zoom_area_active := false;
+			zoom_area_end := mp;
+
+			if debug then
+				put_line ("zoom area start: " & to_string (zoom_area_start));
+				put_line ("zoom area end  : " & to_string (zoom_area_end));
+			end if;
+
+
+			if zoom_area_start.x < zoom_area_end.x then
+				zoom_area.position.x := zoom_area_start.x;
+			else
+				zoom_area.position.x := zoom_area_end.x;
+			end if;
+
+			if zoom_area_start.y < zoom_area_end.y then
+				zoom_area.position.y := zoom_area_start.y;
+			else
+				zoom_area.position.y := zoom_area_end.y;
+			end if;
+
+			zoom_area.width  := abs (zoom_area_end.x - zoom_area_start.x);
+			zoom_area.height := abs (zoom_area_end.y - zoom_area_start.y);
+
+			if debug then
+				put_line ("zoom " & to_string (zoom_area));
+			end if;
+			
+			-- Reset the translate-offset:
+			T := (0.0, 0.0);
+			
+			zoom_to_fit (zoom_area);
+
+			C2 := get_bounding_box_corners;
+			update_scrollbar_limits (C1, C2);
+			backup_scrollbar_settings;
+		end if;
+
+		
+		refresh (canvas);
+		
+		return event_handled;
+	end cb_button_released_canvas;
+
+
+	
 	
 	
 	function cb_mouse_moved (

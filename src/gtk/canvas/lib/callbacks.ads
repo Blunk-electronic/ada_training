@@ -261,6 +261,8 @@ package callbacks is
 
 	
 	zoom_area_active : boolean := false;
+	zoom_area_start : type_point_model;
+	
 	
 	-- This callback procedure is called each time the 
 	-- button "zoom area" is clicked.
@@ -653,6 +655,15 @@ package callbacks is
 		return boolean;
 
 
+	-- This callback function is called each time the operator
+	-- releases a mouse button after clicking on the canvas.
+	-- It clears the flag zoom_area_active.
+	function cb_button_released_canvas (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_button)
+		return boolean;
+
+	
 	-- This callback function is called each time the operator
 	-- moves the pointer (or the mouse) inside the canvas:
 	function cb_mouse_moved (
