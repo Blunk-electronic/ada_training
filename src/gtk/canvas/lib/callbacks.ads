@@ -625,6 +625,8 @@ package callbacks is
 	-- The zoom center is the top-left corner of the current bounding-box.
 	-- NOTE: This procedure is intended to fit all objects ON STARTUP ONLY.
 	--       It is not suitable to fit object during normal operation.
+	-- CS: Rework this description ! Procedure no longer focuses on
+	-- bounding-box, but takes an area as argument.
 	procedure zoom_to_fit (
 		area : in type_area);
 

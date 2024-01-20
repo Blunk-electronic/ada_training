@@ -1226,11 +1226,12 @@ package body callbacks is
 			put_line ("S2H:" & to_string (S2H));
 
 			-- The smaller one of the two scale factors has the final say:
-			S2 := type_scale_factor'min (S2W, S2H);
+			--S2 := type_scale_factor'min (S2W, S2H);
+			S2 := S2W;
 			put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
-			S2 := get_ratio (visible_area);
+			-- S2 := get_ratio (visible_area);
 			-- S2 := (S2W + S2H) / 2.0;
 			
 			-- if S2 < 1.0 then
