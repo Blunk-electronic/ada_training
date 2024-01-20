@@ -209,6 +209,7 @@ package callbacks is
 
 	buttons_table		: gtk_table;
 	button_zoom_fit		: gtk_button;
+	button_zoom_area	: gtk_button;
 	button_move			: gtk_button;
 	button_add			: gtk_button;
 	button_delete		: gtk_button;
@@ -255,6 +256,16 @@ package callbacks is
 	-- This callback procedure is called each time the 
 	-- button "zoom fit" is clicked.
 	procedure cb_zoom_to_fit (
+		button : access gtk_button_record'class);
+
+
+	
+	zoom_area_active : boolean := false;
+	
+	-- This callback procedure is called each time the 
+	-- button "zoom area" is clicked.
+	-- It sets the flag zoom_area_active.
+	procedure cb_zoom_area (
 		button : access gtk_button_record'class);
 
 	

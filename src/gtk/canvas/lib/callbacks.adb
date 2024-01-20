@@ -314,6 +314,23 @@ package body callbacks is
 		refresh (canvas);
 	end cb_zoom_to_fit;
 
+
+
+	procedure cb_zoom_area (
+		button : access gtk_button_record'class)
+	is
+		-- debug : boolean := true;
+		debug : boolean := false;
+	begin
+		put_line ("cb_zoom_area");
+
+		zoom_area_active := true;
+		
+
+		-- Schedule a redraw of the canvas:
+		-- refresh (canvas);
+	end cb_zoom_area;
+
 	
 
 	procedure cb_add (
@@ -685,6 +702,9 @@ package body callbacks is
 		gtk_new (button_zoom_fit, "ZOOM FIT");
 		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
 
+		gtk_new (button_zoom_area, "ZOOM AREA");
+		button_zoom_area.on_clicked (cb_zoom_area'access);
+		
 		gtk_new (button_add, "ADD");
 		button_add.on_clicked (cb_add'access);
 
@@ -708,22 +728,25 @@ package body callbacks is
 			left_attach => 0, right_attach => 1,
 			top_attach  => 0, bottom_attach => 1);
 
-		buttons_table.attach (button_add,
+		buttons_table.attach (button_zoom_area,
 			left_attach => 0, right_attach => 1,
 			top_attach  => 1, bottom_attach => 2);
-
-		buttons_table.attach (button_delete,
+		
+		buttons_table.attach (button_add,
 			left_attach => 0, right_attach => 1,
 			top_attach  => 2, bottom_attach => 3);
 
-		buttons_table.attach (button_move,
+		buttons_table.attach (button_delete,
 			left_attach => 0, right_attach => 1,
 			top_attach  => 3, bottom_attach => 4);
 
-		buttons_table.attach (button_export,
+		buttons_table.attach (button_move,
 			left_attach => 0, right_attach => 1,
 			top_attach  => 4, bottom_attach => 5);
 
+		buttons_table.attach (button_export,
+			left_attach => 0, right_attach => 1,
+			top_attach  => 5, bottom_attach => 6);
 		
 	end set_up_command_buttons;
 
