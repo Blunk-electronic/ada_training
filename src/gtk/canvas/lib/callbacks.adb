@@ -1990,14 +1990,16 @@ package body callbacks is
 
 	
 
-	procedure zoom_to_fit is
+	procedure zoom_to_fit (
+		area : in type_area)
+	is
 		debug : boolean := false;
 	begin
 		put_line ("zoom_to_fit");
 
 		-- Calculate the scale_factor that is required to
-		-- fit all objects into the scrolled window:
-		scale_factor := get_ratio (bounding_box);
+		-- fit the given area into the scrolled window:
+		scale_factor := get_ratio (area);
 
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -2007,8 +2009,8 @@ package body callbacks is
 		-----------------------------------------------------
 
 		-- Calculate the translate_offset that is required to
-		-- "move" all objects to the center of the visible area:
-		center_to_visible_area (bounding_box);
+		-- center the given area on the visible area:
+		center_to_visible_area (area);
 
 		if debug then
 			show_adjustments_h;
