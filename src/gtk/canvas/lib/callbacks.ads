@@ -273,12 +273,12 @@ package callbacks is
 		-- This is the first corner of the area. It is assigned
 		-- when the operator presses the right mouse button
 		-- on the canvas to define the start point of the zoom-area:
-		c1		: type_point_model;
+		k1		: type_point_model;
 
 		-- This is the second corner of the area. It is assigned
 		-- when the operator releases the right mouse button
 		-- on the canvas to define end point of the the zoom-area:
-		c2		: type_point_model;
+		k2		: type_point_model;
 
 		-- This is the actual area to be zoomed to. It gets fully
 		-- specified when the operator releases the right mouse button.

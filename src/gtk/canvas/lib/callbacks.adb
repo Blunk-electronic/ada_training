@@ -2111,8 +2111,8 @@ package body callbacks is
 		-- If the operator has started a zoom-to-area operation, then
 		-- set the first corner of the area:
 		if zoom_area.active then
-			zoom_area.c1 := mp;
-			put_line ("zoom area c1: " & to_string (zoom_area.c1));
+			zoom_area.k1 := mp;
+			put_line ("zoom area k1: " & to_string (zoom_area.k1));
 		end if;
 
 		
@@ -2176,34 +2176,33 @@ package body callbacks is
 			zoom_area.active := false;
 
 			-- Set the second corner of the zoom-area:
-			zoom_area.c2 := mp;
+			zoom_area.k2 := mp;
 
 			if debug then
-				put_line ("zoom area c1: " & to_string (zoom_area.c1));
-				put_line ("zoom area c2: " & to_string (zoom_area.c2));
+				put_line ("zoom area c1: " & to_string (zoom_area.k1));
+				put_line ("zoom area c2: " & to_string (zoom_area.k2));
 			end if;
 
 
-			-- Compute the area from the corner points c1 and c2 
-			-- (Do not confuse with the corners of the bounding_box !):
+			-- Compute the area from the corner points k1 and k2:
 
 			-- x-position:
-			if zoom_area.c1.x < zoom_area.c2.x then
-				zoom_area.area.position.x := zoom_area.c1.x;
+			if zoom_area.k1.x < zoom_area.k2.x then
+				zoom_area.area.position.x := zoom_area.k1.x;
 			else
-				zoom_area.area.position.x := zoom_area.c2.x;
+				zoom_area.area.position.x := zoom_area.k2.x;
 			end if;
 
 			-- y-position:
-			if zoom_area.c1.y < zoom_area.c2.y then
-				zoom_area.area.position.y := zoom_area.c1.y;
+			if zoom_area.k1.y < zoom_area.k2.y then
+				zoom_area.area.position.y := zoom_area.k1.y;
 			else
-				zoom_area.area.position.y := zoom_area.c2.y;
+				zoom_area.area.position.y := zoom_area.k2.y;
 			end if;
 
 			-- width and height:
-			zoom_area.area.width  := abs (zoom_area.c2.x - zoom_area.c1.x);
-			zoom_area.area.height := abs (zoom_area.c2.y - zoom_area.c1.y);
+			zoom_area.area.width  := abs (zoom_area.k2.x - zoom_area.k1.x);
+			zoom_area.area.height := abs (zoom_area.k2.y - zoom_area.k1.y);
 
 			if debug then
 				put_line ("zoom " & to_string (zoom_area.area));
