@@ -259,14 +259,41 @@ package callbacks is
 		button : access gtk_button_record'class);
 
 
+	-- This composite type provides the ingredients
+	-- required to do a zoom-to-area operation:
+	type type_zoom_area is record
+		-- This flag indicates that the operation is active.
+		-- As soon as the operator clicks the "Zoom Area" button,
+		-- this flag is set. It is cleared when the operator
+		-- releases the right mouse button after she/he has
+		-- defined the zoom-area. The zoom-area is a
+		-- rectangle:
+		active	: boolean := false; 
+
+		-- This is the first corner of the area. It is assigned
+		-- when the operator presses the right mouse button
+		-- on the canvas to define the start point of the zoom-area:
+		c1		: type_point_model;
+
+		-- This is the second corner of the area. It is assigned
+		-- when the operator releases the right mouse button
+		-- on the canvas to define end point of the the zoom-area:
+		c2		: type_point_model;
+
+		-- This is the actual area to be zoomed to. It gets fully
+		-- specified when the operator releases the right mouse button.
+		-- The area will then be passed to the function zoom_to_fit
+		-- in order to have the area displayed on the canvas:
+		area	: type_area;
+	end record;
+
+	-- This is the instance of the zoom-area:
+	zoom_area : type_zoom_area;
 	
-	zoom_area_active : boolean := false;
-	zoom_area_start : type_point_model;
 	
 	
 	-- This callback procedure is called each time the 
 	-- button "zoom area" is clicked.
-	-- It sets the flag zoom_area_active.
 	procedure cb_zoom_area (
 		button : access gtk_button_record'class);
 
@@ -607,6 +634,7 @@ package callbacks is
 		-- CS blink, color, ...
 	end record;
 
+	-- This is the instance of the cursor:
 	cursor : type_cursor;
 
 
@@ -634,12 +662,8 @@ package callbacks is
 	
 
 	-- This procedure sets the global scale_factor and translate-offset
-	-- so that all objects of the model fit into the scrolled window.
-	-- The zoom center is the top-left corner of the current bounding-box.
-	-- NOTE: This procedure is intended to fit all objects ON STARTUP ONLY.
-	--       It is not suitable to fit object during normal operation.
-	-- CS: Rework this description ! Procedure no longer focuses on
-	-- bounding-box, but takes an area as argument.
+	-- so that all objects of the given area fit into the scrolled window.
+	-- The zoom center is the top-left corner of the given area.
 	procedure zoom_to_fit (
 		area : in type_area);
 
@@ -657,7 +681,6 @@ package callbacks is
 
 	-- This callback function is called each time the operator
 	-- releases a mouse button after clicking on the canvas.
-	-- It clears the flag zoom_area_active.
 	function cb_button_released_canvas (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)

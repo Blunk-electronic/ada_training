@@ -324,7 +324,7 @@ package body callbacks is
 	begin
 		put_line ("cb_zoom_area");
 
-		zoom_area_active := true;
+		zoom_area.active := true;
 		
 
 		-- Schedule a redraw of the canvas:
@@ -2108,12 +2108,12 @@ package body callbacks is
 		-- put_line (gdouble'image (v));
 
 
-
-		if zoom_area_active then
-			zoom_area_start := mp;
-			put_line ("zoom area start: " & to_string (zoom_area_start));
+		-- If the operator has started a zoom-to-area operation, then
+		-- set the first corner of the area:
+		if zoom_area.active then
+			zoom_area.c1 := mp;
+			put_line ("zoom area c1: " & to_string (zoom_area.c1));
 		end if;
-
 
 		
 		refresh (canvas);
@@ -2146,9 +2146,6 @@ package body callbacks is
 			scale	=> scale_factor,
 			real	=> true);
 
-		zoom_area : type_area;
-		zoom_area_end : type_point_model;
-
 		-- The corners of the bounding-box on the canvas before 
 		-- and after zooming:
 		C1, C2 : type_bounding_box_corners;
@@ -2169,42 +2166,54 @@ package body callbacks is
 		-- move_cursor (snap_to_grid (mp));
 
 
-
-		if zoom_area_active then
+		-- If the operator is finishing a zoom-to-area operation,
+		-- then the actual area of interest is computed here
+		-- and passed to procedure zoom_to_fit:
+		if zoom_area.active then
 			C1 := get_bounding_box_corners;
-			
-			zoom_area_active := false;
-			zoom_area_end := mp;
+
+			-- The operation comes to an end here:
+			zoom_area.active := false;
+
+			-- Set the second corner of the zoom-area:
+			zoom_area.c2 := mp;
 
 			if debug then
-				put_line ("zoom area start: " & to_string (zoom_area_start));
-				put_line ("zoom area end  : " & to_string (zoom_area_end));
+				put_line ("zoom area c1: " & to_string (zoom_area.c1));
+				put_line ("zoom area c2: " & to_string (zoom_area.c2));
 			end if;
 
 
-			if zoom_area_start.x < zoom_area_end.x then
-				zoom_area.position.x := zoom_area_start.x;
+			-- Compute the area from the corner points c1 and c2 
+			-- (Do not confuse with the corners of the bounding_box !):
+
+			-- x-position:
+			if zoom_area.c1.x < zoom_area.c2.x then
+				zoom_area.area.position.x := zoom_area.c1.x;
 			else
-				zoom_area.position.x := zoom_area_end.x;
+				zoom_area.area.position.x := zoom_area.c2.x;
 			end if;
 
-			if zoom_area_start.y < zoom_area_end.y then
-				zoom_area.position.y := zoom_area_start.y;
+			-- y-position:
+			if zoom_area.c1.y < zoom_area.c2.y then
+				zoom_area.area.position.y := zoom_area.c1.y;
 			else
-				zoom_area.position.y := zoom_area_end.y;
+				zoom_area.area.position.y := zoom_area.c2.y;
 			end if;
 
-			zoom_area.width  := abs (zoom_area_end.x - zoom_area_start.x);
-			zoom_area.height := abs (zoom_area_end.y - zoom_area_start.y);
+			-- width and height:
+			zoom_area.area.width  := abs (zoom_area.c2.x - zoom_area.c1.x);
+			zoom_area.area.height := abs (zoom_area.c2.y - zoom_area.c1.y);
 
 			if debug then
-				put_line ("zoom " & to_string (zoom_area));
+				put_line ("zoom " & to_string (zoom_area.area));
 			end if;
+
+
 			
 			-- Reset the translate-offset:
-			T := (0.0, 0.0);
-			
-			zoom_to_fit (zoom_area);
+			T := (0.0, 0.0);			
+			zoom_to_fit (zoom_area.area);
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
