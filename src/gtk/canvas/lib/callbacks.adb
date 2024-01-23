@@ -2452,8 +2452,6 @@ package body callbacks is
 
 					null;
 					
-					-- Abort the zoom-to-area operation:
-					-- reset_zoom_area;
 					
 				when GDK_Right =>
 					move_cursor (DIR_RIGHT);
