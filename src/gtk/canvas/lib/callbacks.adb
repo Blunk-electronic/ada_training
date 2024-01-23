@@ -2448,10 +2448,12 @@ package body callbacks is
 			case key is
 				when GDK_ESCAPE =>
 					-- Here the commands to abort any pending 
-					-- operations should be placed:
+					-- operations related to the canvas should be placed:
+
+					null;
 					
 					-- Abort the zoom-to-area operation:
-					reset_zoom_area;
+					-- reset_zoom_area;
 					
 				when GDK_Right =>
 					move_cursor (DIR_RIGHT);
