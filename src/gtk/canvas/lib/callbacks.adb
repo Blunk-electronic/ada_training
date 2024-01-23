@@ -507,6 +507,55 @@ package body callbacks is
 
 
 
+	function cb_key_pressed_win (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_key)
+		return boolean
+	is
+		event_handled : boolean := false;
+
+		use gdk.types;		
+		use gdk.types.keysyms;
+		
+		key_ctrl	: gdk_modifier_type := event.state and control_mask;
+		key_shift	: gdk_modifier_type := event.state and shift_mask;
+		key			: gdk_key_type := event.keyval;
+
+	begin
+		-- Output the the gdk_key_type (which is
+		-- just a number (see gdk.types und gdk.types.keysyms)):
+		put_line ("cb_key_pressed_win "
+			& " key " & gdk_key_type'image (event.keyval));
+
+		if key_ctrl = control_mask then 
+			case key is
+
+				when others => null;
+			end case;
+
+		else
+			case key is
+				when GDK_ESCAPE =>
+					-- Here the commands to abort any pending 
+					-- operations should be placed:
+					
+					-- Abort the zoom-to-area operation:
+					reset_zoom_area;
+
+					-- Do not pass this event further
+					-- do widgets down the chain.
+					-- Prosssing the event stops here.
+					event_handled := true;
+					
+				
+				when others => null;
+			end case;
+		end if;
+		
+		return event_handled;
+	end cb_key_pressed_win;
+
+	
 	
 	procedure update_scrollbar_limits (
 		C1, C2 : in type_bounding_box_corners)
@@ -772,7 +821,7 @@ package body callbacks is
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_button_pressed_win'access);
-
+		main_window.on_key_press_event (cb_key_pressed_win'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
 		main_window.on_window_state_event (cb_main_window_state_change'access);
 		main_window.on_realize (cb_main_window_realize'access);
@@ -2159,7 +2208,7 @@ package body callbacks is
 		C1, C2 : type_bounding_box_corners;
 		
 	begin
-		put_line ("cb_button_releaseed_canvas");
+		put_line ("cb_button_released_canvas");
 
 		
 		-- Output the button id, x and y position:

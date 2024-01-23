@@ -358,12 +358,34 @@ package callbacks is
 	procedure cb_focus_win (
 		main_window : access gtk_window_record'class);
 
-	
+
+
+	-- This function is called each time the operator
+	-- presses a mouse button.
 	function cb_button_pressed_win (
 		window	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
 
+
+	-- This function is called each time the operator
+	-- hits a key on the keyboard. It does not matter
+	-- which widget inside the main window has the focus.
+	-- This callback function is at the top of the event-chain.
+	-- It is called at first on a key-press event.
+	-- If it returns true, then it signals to the 
+	-- next widget in the chain downwards to handle the event
+	-- further.
+	-- The return should dependi on the severity of the key.
+	-- For example in case of an "emergency-exit" 
+	-- the operator hits the ESC key, which causes the abort of
+	-- all pending operations. In this case the return would be true
+	-- and the event would not be passed on to any widgets down
+	-- the chain.
+	function cb_key_pressed_win (
+		canvas	: access gtk_widget_record'class;
+		event	: gdk_event_key)
+		return boolean;
 
 	
 
