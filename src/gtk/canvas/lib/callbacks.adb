@@ -315,6 +315,11 @@ package body callbacks is
 	end cb_zoom_to_fit;
 
 
+	procedure reset_zoom_area is begin
+		put_line ("reset_zoom_area");
+		zoom_area := (others => <>);
+	end reset_zoom_area;
+	
 
 	procedure cb_zoom_area (
 		button : access gtk_button_record'class)
@@ -2171,55 +2176,61 @@ package body callbacks is
 
 		-- If the operator is finishing a zoom-to-area operation,
 		-- then the actual area of interest is computed here
-		-- and passed to procedure zoom_to_fit:
+		-- and passed to procedure zoom_to_fit.
+		-- If start and end point of the area are equal,
+		-- then nothing happens here.
 		if zoom_area.active then
 			C1 := get_bounding_box_corners;
-
-			-- The operation comes to an end here:
-			zoom_area.active := false;
 
 			-- Set the second corner of the zoom-area:
 			zoom_area.k2 := mp;
 
-			if debug then
-				put_line ("zoom area c1: " & to_string (zoom_area.k1));
-				put_line ("zoom area c2: " & to_string (zoom_area.k2));
+			-- Compute the area from the corner points k1 and k2
+			-- if they are different. Otherwise nothing happens here:
+			if zoom_area.k1 /= zoom_area.k2 then
+				
+				if debug then
+					put_line ("zoom area c1: " & to_string (zoom_area.k1));
+					put_line ("zoom area c2: " & to_string (zoom_area.k2));
+				end if;
+
+
+				-- x-position:
+				if zoom_area.k1.x < zoom_area.k2.x then
+					zoom_area.area.position.x := zoom_area.k1.x;
+				else
+					zoom_area.area.position.x := zoom_area.k2.x;
+				end if;
+
+				-- y-position:
+				if zoom_area.k1.y < zoom_area.k2.y then
+					zoom_area.area.position.y := zoom_area.k1.y;
+				else
+					zoom_area.area.position.y := zoom_area.k2.y;
+				end if;
+
+				-- width and height:
+				zoom_area.area.width  := abs (zoom_area.k2.x - zoom_area.k1.x);
+				zoom_area.area.height := abs (zoom_area.k2.y - zoom_area.k1.y);
+
+				if debug then
+					put_line ("zoom " & to_string (zoom_area.area));
+				end if;
+
+
+				
+				-- Reset the translate-offset:
+				T := (0.0, 0.0);			
+				zoom_to_fit (zoom_area.area);
+
+				C2 := get_bounding_box_corners;
+				update_scrollbar_limits (C1, C2);
+				backup_scrollbar_settings;
+
+				-- The operation comes to an end here:
+				zoom_area.active := false;
+				
 			end if;
-
-
-			-- Compute the area from the corner points k1 and k2:
-
-			-- x-position:
-			if zoom_area.k1.x < zoom_area.k2.x then
-				zoom_area.area.position.x := zoom_area.k1.x;
-			else
-				zoom_area.area.position.x := zoom_area.k2.x;
-			end if;
-
-			-- y-position:
-			if zoom_area.k1.y < zoom_area.k2.y then
-				zoom_area.area.position.y := zoom_area.k1.y;
-			else
-				zoom_area.area.position.y := zoom_area.k2.y;
-			end if;
-
-			-- width and height:
-			zoom_area.area.width  := abs (zoom_area.k2.x - zoom_area.k1.x);
-			zoom_area.area.height := abs (zoom_area.k2.y - zoom_area.k1.y);
-
-			if debug then
-				put_line ("zoom " & to_string (zoom_area.area));
-			end if;
-
-
-			
-			-- Reset the translate-offset:
-			T := (0.0, 0.0);			
-			zoom_to_fit (zoom_area.area);
-
-			C2 := get_bounding_box_corners;
-			update_scrollbar_limits (C1, C2);
-			backup_scrollbar_settings;
 		end if;
 
 		
@@ -2386,6 +2397,13 @@ package body callbacks is
 
 		else
 			case key is
+				when GDK_ESCAPE =>
+					-- Here the commands to abort any pending 
+					-- operations should be placed:
+					
+					-- Abort the zoom-to-area operation:
+					reset_zoom_area;
+					
 				when GDK_Right =>
 					move_cursor (DIR_RIGHT);
 

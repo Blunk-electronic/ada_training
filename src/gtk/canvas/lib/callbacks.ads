@@ -289,8 +289,13 @@ package callbacks is
 
 	-- This is the instance of the zoom-area:
 	zoom_area : type_zoom_area;
+
 	
-	
+	-- This procedure resets the zoom_area (see above)
+	-- to its default values. 
+	-- Use this procedure to abort a zoom-to-area operation.
+	procedure reset_zoom_area;
+
 	
 	-- This callback procedure is called each time the 
 	-- button "zoom area" is clicked.
