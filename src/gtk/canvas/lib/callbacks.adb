@@ -2090,9 +2090,6 @@ package body callbacks is
 		-- Output the model point in the terminal:
 		put_line (to_string (mp));
 
-		-- Move the cursor to the nearest grid point:
-		move_cursor (snap_to_grid (mp));
-
 
 		-- Set the focus on the canvas,
 		-- But first save the scrollbar values:
@@ -2109,11 +2106,16 @@ package body callbacks is
 		-- put_line (gdouble'image (v));
 
 
+		-- If no zoom-to-area operation is active, then
+		-- just place the cursor where the operator has clicked the canvas.
 		-- If the operator has started a zoom-to-area operation, then
 		-- set the first corner of the area:
 		if zoom_area.active then
 			zoom_area.k1 := mp;
 			put_line ("zoom area k1: " & to_string (zoom_area.k1));
+		else
+		-- Otherwise move the cursor to the nearest grid point:
+			move_cursor (snap_to_grid (mp));
 		end if;
 
 		
