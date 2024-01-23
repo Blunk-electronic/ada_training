@@ -585,15 +585,6 @@ package callbacks is
 		width	=> 20_000,
 		height	=> 20_000);
 	
-	-- type type_canvas_allocation is record
-	-- 	x, y : natural := 0;
-	-- end record;
-
-	-- Here we track the allocation of the canvas inside the 
-	-- main window: 
-	-- CS: probably no need ?
-	-- canvas_allocation : type_canvas_allocation;
-
 	
 	
 	procedure show_canvas_size;
