@@ -267,9 +267,6 @@ package body callbacks is
 	end get_grid_spacing;
 
 
-
-
-
 	
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
@@ -279,39 +276,7 @@ package body callbacks is
 	begin
 		put_line ("cb_zoom_to_fit");
 
-		-- Reset the translate-offset:
-		T := (0.0, 0.0);
-		
-		-- Compute the new bounding-box. Update global
-		-- variable bounding_box:
-		compute_bounding_box;
-
-		-- Compute the new base-offset. Update global
-		-- variable base_offset:
-		compute_base_offset;
-
-		-- Since the bounding_box has changed, the scrollbars
-		-- must be reinitialized:
-		set_initial_scrollbar_settings;
-
-
-		-- Calculate the scale_factor that is required to
-		-- fit all objects into the scrolled window:
-		scale_factor := get_ratio (bounding_box);
-		
-		if debug then
-			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
-		end if;
-
-		update_scale_display;
-
-
-		-- Calculate the translate_offset that is required to
-		-- "move" all objects to the center of the visible area:
-		center_to_visible_area (bounding_box);
-
-		-- Schedule a redraw of the canvas:
-		refresh (canvas);
+		zoom_to_fit_all;
 	end cb_zoom_to_fit;
 
 
@@ -330,10 +295,6 @@ package body callbacks is
 		put_line ("cb_zoom_area");
 
 		zoom_area.active := true;
-		
-
-		-- Schedule a redraw of the canvas:
-		-- refresh (canvas);
 	end cb_zoom_area;
 
 	
@@ -543,11 +504,20 @@ package body callbacks is
 					reset_zoom_area;
 
 					-- Do not pass this event further
-					-- do widgets down the chain.
+					-- to widgets down the chain.
 					-- Prosssing the event stops here.
 					event_handled := true;
 					
-				
+
+				when GDK_F5 =>
+					zoom_to_fit_all;
+
+					-- Do not pass this event further
+					-- to widgets down the chain.
+					-- Prosssing the event stops here.
+					event_handled := true;
+
+					
 				when others => null;
 			end case;
 		end if;
@@ -2105,6 +2075,48 @@ package body callbacks is
 	end zoom_to_fit;
 
 
+	procedure zoom_to_fit_all is
+		-- debug : boolean := true;
+		debug : boolean := false;
+	begin
+		-- put_line ("zoom_to_fit");
+
+		-- Reset the translate-offset:
+		T := (0.0, 0.0);
+		
+		-- Compute the new bounding-box. Update global
+		-- variable bounding_box:
+		compute_bounding_box;
+
+		-- Compute the new base-offset. Update global
+		-- variable base_offset:
+		compute_base_offset;
+
+		-- Since the bounding_box has changed, the scrollbars
+		-- must be reinitialized:
+		set_initial_scrollbar_settings;
+
+
+		-- Calculate the scale_factor that is required to
+		-- fit all objects into the scrolled window:
+		scale_factor := get_ratio (bounding_box);
+		
+		if debug then
+			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+		end if;
+
+		update_scale_display;
+
+
+		-- Calculate the translate_offset that is required to
+		-- "move" all objects to the center of the visible area:
+		center_to_visible_area (bounding_box);
+
+		-- Schedule a redraw of the canvas:
+		refresh (canvas);
+	end zoom_to_fit_all;
+	
+
 	
 	
 	function cb_button_pressed_canvas (
@@ -2426,7 +2438,7 @@ package body callbacks is
 		key_ctrl	: gdk_modifier_type := event.state and control_mask;
 		key_shift	: gdk_modifier_type := event.state and shift_mask;
 		key			: gdk_key_type := event.keyval;
-
+		
 	begin
 		-- Output the the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
@@ -2471,6 +2483,9 @@ package body callbacks is
 					put_line ("move cursor to center");
 					move_cursor (snap_to_grid (get_center (visible_area)));
 					refresh (canvas);
+
+				-- when GDK_F2 =>
+
 					
 				when others => null;
 			end case;

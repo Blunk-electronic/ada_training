@@ -252,6 +252,7 @@ package callbacks is
 
 	
 -- COMMAND BUTTONS:
+
 	
 	-- This callback procedure is called each time the 
 	-- button "zoom fit" is clicked.
@@ -287,6 +288,7 @@ package callbacks is
 		area	: type_area;
 	end record;
 
+	
 	-- This is the instance of the zoom-area:
 	zoom_area : type_zoom_area;
 
@@ -694,7 +696,13 @@ package callbacks is
 	procedure zoom_to_fit (
 		area : in type_area);
 
+	
+	-- This procedure sets the global scale_factor and translate-offset
+	-- so that all objects of bounding-box fit into the scrolled window.
+	-- The zoom center is the top-left corner of bounding-box.
+	procedure zoom_to_fit_all;
 
+	
 	
 	-- This callback function is called each time the operator
 	-- clicks on the canvas.
