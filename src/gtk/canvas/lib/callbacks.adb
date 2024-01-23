@@ -1254,7 +1254,7 @@ package body callbacks is
 			-- put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
-			S2 := get_ratio (visible_area);
+			-- S2 := get_ratio (visible_area);
 			-- S2 := (S2W + S2H) / 2.0;
 			
 			-- if S2 < 1.0 then
@@ -1267,11 +1267,12 @@ package body callbacks is
 			-- of the scrolled window:
 			-- put_line ("center " & to_string (M));
 
-			set_translation_for_zoom (S1, S2, M);
+			-- set_translation_for_zoom (S1, S2, M);
 
 			-- update the global scale factor:
-			scale_factor := S2;
-			update_scale_display;
+			-- scale_factor := S2;
+			-- update_scale_display;
+			zoom_to_fit (visible_area);
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
@@ -1346,7 +1347,7 @@ package body callbacks is
 					
 				when MODE_ZOOM_CENTER =>
 					-- CS
-					move_center;
+					-- move_center;
 					zoom_center;
 
 			end case;
