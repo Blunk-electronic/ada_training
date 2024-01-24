@@ -2178,7 +2178,14 @@ package body callbacks is
 		-- set the first corner of the area:
 		if zoom_area.active then
 			zoom_area.k1 := mp;
-			put_line ("zoom area k1: " & to_string (zoom_area.k1));
+			--put_line ("zoom area k1: " & to_string (zoom_area.k1));
+
+			-- For the routine that draws a rectangle around the
+			-- selected area: Indicate that a selection has started 
+			-- and a start point has been defined:
+			zoom_area.started := true;
+			zoom_area.l1 := cp;
+			--put_line ("zoom area l1: " & to_string (zoom_area.l1));
 		else
 		-- Otherwise move the cursor to the nearest grid point:
 			move_cursor (snap_to_grid (mp));
@@ -2290,7 +2297,11 @@ package body callbacks is
 
 				-- The operation comes to an end here:
 				zoom_area.active := false;
-				
+
+				-- For the routine that draws a rectangle around the
+				-- selected area: Indicate that the rectangle shall
+				-- no longer be drawn:
+				zoom_area.started := false;
 			end if;
 		end if;
 
@@ -2336,6 +2347,20 @@ package body callbacks is
 		pointer_y_value.set_buffer (pointer_y_buf);
 
 		update_distances_display;
+
+		-- While a zoom-to-area operation is active,
+		-- set the end point of the selected area.
+		-- The routine that draws the rectangle uses this
+		-- point to compute the rectangle on the fly:
+		if zoom_area.active then
+			zoom_area.l2 := cp;
+			--put_line ("zoom area l2: " & to_string (zoom_area.l2));
+
+			-- The canvas must be refreshed in order to
+			-- show the rectangle as the mouse is being moved:
+			refresh (canvas);
+		end if;
+		
 		return event_handled;
 	end cb_mouse_moved;
 
@@ -3041,8 +3066,52 @@ package body callbacks is
 			-- all object with a thick line.
 		end draw_cursor;
 		
+
+		-- If a zoom-to-area operation has started, then
+		-- this procedure draws the rectangle around the
+		-- area to be zoomed at.
+		-- The rectangle is drawn directly on the canvas.
+		procedure draw_zoom_area is
+			x, y : gdouble;
+			w, h : gdouble;
+
+			l1 : type_point_canvas renames zoom_area.l1;
+			l2 : type_point_canvas renames zoom_area.l2;
+		begin
+			if zoom_area.started then
+
+				-- Set the color of the rectangle:
+				set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+				-- Compute the position and dimensions of
+				-- the rectangle:
+
+				-- x-position:
+				if l1.x < l2.x then
+					x := l1.x;
+				else
+					x := l2.x;
+				end if;
+
+				-- y-position:
+				if l1.y < l2.y then
+					y := l1.y;
+				else
+					y := l2.y;
+				end if;
+
+				-- width and height:
+				w := abs (l1.x - l2.x);
+				h := abs (l1.y - l2.y);
+
+				set_line_width (context, zoom_area_linewidth);
+				
+				rectangle (context, x, y, w, h);
+				stroke (context);
+			end if;
+		end draw_zoom_area;
+
 		
-	
 
 		-- Draws all model objects. Parses the model database
 		-- and draws objects one by one:
@@ -3118,12 +3187,14 @@ package body callbacks is
 		if grid.on = GRID_ON and then
 			get_grid_spacing (grid) >= grid_spacing_min then
 			draw_grid;
-		end if;
+		end if; -- CS move this stuff to procedure draw_grid.
 		
 		draw_origin;
 
 		draw_cursor;
-				
+
+		draw_zoom_area;
+		
 		draw_objects;
 		
 		

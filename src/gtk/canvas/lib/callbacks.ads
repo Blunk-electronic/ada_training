@@ -286,12 +286,33 @@ package callbacks is
 		-- The area will then be passed to the function zoom_to_fit
 		-- in order to have the area displayed on the canvas:
 		area	: type_area;
+
+		---------------------------------------------------------------
+		-- In order to display a rectangle that indicates the
+		-- currently selected area we need this stuff.
+		-- This is all in the canvas domain and has nothing to
+		-- do with the area in the model domain (see above):
+		
+		-- This flag indicates that the operator has started
+		-- the selection. It is cleared when the operator is done
+		-- with the selection by releasing the right mouse button:
+		started	: boolean := false;
+
+		-- The corners of the selected area:
+		l1		: type_point_canvas; -- the start point
+		l2		: type_point_canvas; -- the end point
 	end record;
 
 	
 	-- This is the instance of the zoom-area:
 	zoom_area : type_zoom_area;
 
+	
+	-- This is the linewidth of the rectangle that
+	-- marks the selected zoom area:
+	zoom_area_linewidth : constant gdouble := 2.0;
+
+	
 	
 	-- This procedure resets the zoom_area (see above)
 	-- to its default values. 
