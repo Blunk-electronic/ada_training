@@ -3070,7 +3070,7 @@ package body callbacks is
 		-- If a zoom-to-area operation has started, then
 		-- this procedure draws the rectangle around the
 		-- area to be zoomed at.
-		-- The rectangle is drawn directly on the canvas.
+		-- The rectangle is drawn directly on the cairo_context.
 		procedure draw_zoom_area is
 			x, y : gdouble;
 			w, h : gdouble;
