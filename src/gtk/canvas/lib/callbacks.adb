@@ -1266,16 +1266,16 @@ package body callbacks is
 			
 			-- Compute two new scale factors: one based on the change of width
 			-- and the other based on the change of height:
-			-- S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
-			-- put_line ("S2W:" & to_string (S2W));
+			S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
+			put_line ("S2W:" & to_string (S2W));
 
-			-- S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
-			-- put_line ("S2H:" & to_string (S2H));
+			S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
+			put_line ("S2H:" & to_string (S2H));
 
 			-- The smaller one of the two scale factors has the final say:
-			--S2 := type_scale_factor'min (S2W, S2H);
+			S2 := type_scale_factor'min (S2W, S2H);
 			-- S2 := S2W;
-			-- put_line ("S2: " & to_string (S2));
+			put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
 			-- S2 := get_ratio (visible_area);
@@ -1291,12 +1291,11 @@ package body callbacks is
 			-- of the scrolled window:
 			-- put_line ("center " & to_string (M));
 
-			-- set_translation_for_zoom (S1, S2, M);
+			set_translation_for_zoom (S1, S2, M);
 
 			-- update the global scale factor:
-			-- scale_factor := S2;
-			-- update_scale_display;
-			zoom_to_fit (visible_area);
+			scale_factor := S2;
+			update_scale_display;
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
@@ -1370,8 +1369,7 @@ package body callbacks is
 					move_center;
 					
 				when MODE_ZOOM_CENTER =>
-					-- CS
-					-- move_center;
+					move_center;
 					zoom_center;
 
 			end case;
