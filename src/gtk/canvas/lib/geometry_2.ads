@@ -153,8 +153,8 @@ package geometry_2 is
 	grid_spacing_min : constant gdouble := 10.0;
 	
 	type type_grid is record
-		on		: type_grid_on_off := GRID_ON;
-		-- on		: type_grid_on_off := GRID_OFF;
+		--on		: type_grid_on_off := GRID_ON;
+		on		: type_grid_on_off := GRID_OFF;
 		spacing : type_point_model := (others => grid_spacing_default);
 		style	: type_grid_style := STYLE_DOTS;
 		-- style	: type_grid_style := STYLE_LINES;

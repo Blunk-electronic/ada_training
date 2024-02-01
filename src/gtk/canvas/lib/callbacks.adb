@@ -1163,8 +1163,6 @@ package body callbacks is
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
-		-- The current scale factor:
-		S1 : constant type_scale_factor := scale_factor;
 
 		-- Each time ths procedure is called, the argument "allocation"
 		-- provides the new size of the scrolled window. Later this size will 
@@ -1220,6 +1218,10 @@ package body callbacks is
 		-- This procedure zooms on the center of the visible
 		-- area. It is required for MODE_ZOOM_CENTER:
 		procedure zoom_center is 
+
+			-- The current scale factor:
+			S1 : constant type_scale_factor := scale_factor;
+
 			-- This function computes the the new scale factor S2 from the current 
 			-- scale factor S1, length_old and length_new. The formula used is:
 			--
@@ -1227,23 +1229,23 @@ package body callbacks is
 			-- S2 = ---------------
 			--        length_old
 			--
-			function to_scale_factor (
-				length_old, length_new : in positive)
-				return type_scale_factor -- S2
-			is 
-				type type_float is digits 6 range 0.0 .. 100_000.0; 
-				-- CS: Upper limit might require adjustments for very large screens.
-				
-				L1 : type_float := type_float (length_old);
-				L2 : type_float := type_float (length_new);
-			begin
-				-- put_line ("L2:" & type_float'image (L2));
-				-- put_line ("L1:" & type_float'image (L1));
-
-				-- The return is S2:
-				return type_scale_factor (L2 / L1) * S1;
-				-- return type_scale_factor (L2 / L1);
-			end to_scale_factor;
+-- 			function to_scale_factor (
+-- 				length_old, length_new : in positive)
+-- 				return type_scale_factor -- S2
+-- 			is 
+-- 				type type_float is digits 6 range 0.0 .. 100_000.0; 
+-- 				-- CS: Upper limit might require adjustments for very large screens.
+-- 				
+-- 				L1 : type_float := type_float (length_old);
+-- 				L2 : type_float := type_float (length_new);
+-- 			begin
+-- 				-- put_line ("L2:" & type_float'image (L2));
+-- 				-- put_line ("L1:" & type_float'image (L1));
+-- 
+-- 				-- The return is S2:
+-- 				return type_scale_factor (L2 / L1) * S1;
+-- 				-- return type_scale_factor (L2 / L1);
+-- 			end to_scale_factor;
 		
 
 			-- These are the new scale factors. One is computed by the change
@@ -1266,15 +1268,22 @@ package body callbacks is
 			
 			-- Compute two new scale factors: one based on the change of width
 			-- and the other based on the change of height:
-			S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
+			-- S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
+
+			-- The dimensions of the scrolled window are expressed with
+			-- natural numbers here. In order to get a ratio as a real number, we
+			-- must convert the dimensions to floating point numbers.
+			S2W := type_scale_factor (gdouble (new_size.width) / gdouble (scrolled_window_size_initial.width));
 			put_line ("S2W:" & to_string (S2W));
 
-			S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
+			-- S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
+			S2H := type_scale_factor (gdouble (new_size.height) / gdouble (scrolled_window_size_initial.height));
 			put_line ("S2H:" & to_string (S2H));
 
 			-- The smaller one of the two scale factors has the final say:
 			S2 := type_scale_factor'min (S2W, S2H);
-			-- S2 := S2W;
+			--S2 := S2 * 0.85;
+			S2 := S2 * scale_init;
 			put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
@@ -2053,6 +2062,8 @@ package body callbacks is
 		-- fit the given area into the scrolled window:
 		scale_factor := get_ratio (area);
 
+		scale_init := scale_factor;
+		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
 		end if;
@@ -2098,6 +2109,9 @@ package body callbacks is
 		-- Calculate the scale_factor that is required to
 		-- fit all objects into the scrolled window:
 		scale_factor := get_ratio (bounding_box);
+
+		-- scale_init := scale_factor;
+		
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
