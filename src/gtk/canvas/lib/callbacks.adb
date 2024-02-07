@@ -267,6 +267,16 @@ package body callbacks is
 	end get_grid_spacing;
 
 
+	function to_string (
+		size : in type_window_size)
+		return string
+	is begin
+		return "w/h " & positive'image (size.width) 
+			& "/" & positive'image (size.height);
+	end to_string;
+		
+
+	
 	
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
@@ -1121,6 +1131,19 @@ package body callbacks is
 	end set_up_coordinates_display;
 	
 
+	procedure prepare_swin_mode_3 is begin
+		if zoom_mode = MODE_ZOOM_CENTER then
+
+			if bounding_box_changed then
+				scale_init := scale_factor;
+				scrolled_window_size_initial := scrolled_window_size;
+				put_line (" scale_init" & to_string (scale_init));
+				put_line (" swin_size_init " & to_string (scrolled_window_size_initial));
+			end if;
+		end if;
+	end prepare_swin_mode_3;
+		
+	
 
 	function get_ratio (
 		area : in type_area)
@@ -1284,6 +1307,7 @@ package body callbacks is
 			S2 := type_scale_factor'min (S2W, S2H);
 			--S2 := S2 * 0.85;
 			S2 := S2 * scale_init;
+			-- scale_init := 1.0;
 			put_line ("S2: " & to_string (S2));
 
 			-- CS: better is:
@@ -2062,7 +2086,7 @@ package body callbacks is
 		-- fit the given area into the scrolled window:
 		scale_factor := get_ratio (area);
 
-		scale_init := scale_factor;
+		prepare_swin_mode_3;
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -2110,7 +2134,6 @@ package body callbacks is
 		-- fit all objects into the scrolled window:
 		scale_factor := get_ratio (bounding_box);
 
-		-- scale_init := scale_factor;
 		
 		
 		if debug then
@@ -2124,6 +2147,8 @@ package body callbacks is
 		-- "move" all objects to the center of the visible area:
 		center_to_visible_area (bounding_box);
 
+		prepare_swin_mode_3;
+		
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
 	end zoom_to_fit_all;
@@ -2589,6 +2614,9 @@ package body callbacks is
 
 			-- put_line (" scale_factor" & to_string (scale_factor));
 
+			prepare_swin_mode_3;
+
+			
 			-- After changing the scale_factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes 
 			-- place (see function cb_draw_objects)

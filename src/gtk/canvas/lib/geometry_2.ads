@@ -240,8 +240,7 @@ package geometry_2 is
 	-- that encloses all objects of the model and the margins 
 	-- around the model:
 	bounding_box : type_area;
-	
-	
+
 
 	
 	
@@ -329,10 +328,16 @@ package geometry_2 is
 
 	-- This procedure pareses the whole database of model objects,
 	-- detects the smallest and greatest x and y values used by the model
-	-- and sets the global variable bounding_box accordingly:
+	-- and sets the global variable bounding_box accordingly.
+	-- If the bounding_box has changed, then the flag bounding_box_changed is
+	-- set (See below):
 	procedure compute_bounding_box;
 
+	-- Indicates that the bounding_box has changed after calling procedure 
+	-- compute_bounding_box:
+	bounding_box_changed : boolean := false;
 
+	
 	procedure add_object;
 
 	procedure delete_object;

@@ -492,6 +492,7 @@ package body geometry_2 is
 		use pac_objects;
 
 		debug : boolean := false;
+		--debug : boolean := true;
 		
 		-- The first object encountered will be the
 		-- seed for the first boundinb-box. All other objects cause 
@@ -499,6 +500,8 @@ package body geometry_2 is
 		-- this flag is cleared:
 		first_object : boolean := true;
 
+		bbox_old : type_area := bounding_box;
+		
 		
 		procedure query_object (oc : in pac_objects.cursor) is
 			object : type_complex_object renames element (oc);
@@ -562,8 +565,18 @@ package body geometry_2 is
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
 
+		if bounding_box /= bbox_old then
+			bounding_box_changed := true;
+		else
+			bounding_box_changed := false;
+		end if;
+		
 		if debug then
 			put_line ("bounding-box: " & to_string (bounding_box));
+
+			if bounding_box_changed then
+				put_line (" has changed");
+			end if;
 		end if;
 	end compute_bounding_box;
 

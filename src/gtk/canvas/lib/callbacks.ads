@@ -200,6 +200,11 @@ package callbacks is
 	end record;
 
 
+	function to_string (
+		size : in type_window_size)
+		return string;
+	
+
 -- GTK-BOXES:
 	
 	box_h 				: gtk_hbox;
@@ -470,7 +475,8 @@ package callbacks is
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
-	scrolled_window_size_initial : constant type_window_size := (
+	--scrolled_window_size_initial : constant type_window_size := (
+	scrolled_window_size_initial : type_window_size := (
 		width	=> 400,
 		height	=> 400);
 	
@@ -480,6 +486,9 @@ package callbacks is
 	-- in order to detect size changes of the scrolled window:
 	scrolled_window_size : type_window_size;
 
+
+	procedure prepare_swin_mode_3;
+	
 	
 	-- This function calculates the scale factor required to
 	-- fit the given area into the current scrolled window.
