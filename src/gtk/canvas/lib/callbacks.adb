@@ -1140,11 +1140,8 @@ package body callbacks is
 				put_line (" scale_init" & to_string (scale_init));
 				put_line (" swin_size_init " & to_string (scrolled_window_size_initial));
 			end if;
+			
 		end if;
-
-		am3 := get_visible_area (canvas);
-		put_line ("am3 " & to_string (am3));
-		
 	end prepare_swin_mode_3;
 		
 	
@@ -1242,38 +1239,13 @@ package body callbacks is
 		end move_canvas_bottom;
 		
 
+		
 		-- This procedure zooms on the center of the visible
 		-- area. It is required for MODE_ZOOM_CENTER:
 		procedure zoom_center is 
 
 			-- The current scale factor:
 			S1 : constant type_scale_factor := scale_factor;
-
-			-- This function computes the the new scale factor S2 from the current 
-			-- scale factor S1, length_old and length_new. The formula used is:
-			--
-			--      length_new * S1
-			-- S2 = ---------------
-			--        length_old
-			--
--- 			function to_scale_factor (
--- 				length_old, length_new : in positive)
--- 				return type_scale_factor -- S2
--- 			is 
--- 				type type_float is digits 6 range 0.0 .. 100_000.0; 
--- 				-- CS: Upper limit might require adjustments for very large screens.
--- 				
--- 				L1 : type_float := type_float (length_old);
--- 				L2 : type_float := type_float (length_new);
--- 			begin
--- 				-- put_line ("L2:" & type_float'image (L2));
--- 				-- put_line ("L1:" & type_float'image (L1));
--- 
--- 				-- The return is S2:
--- 				return type_scale_factor (L2 / L1) * S1;
--- 				-- return type_scale_factor (L2 / L1);
--- 			end to_scale_factor;
-		
 
 			-- These are the new scale factors. One is computed by the change
 			-- of the width, the other by the change of the height of the window:
@@ -1294,8 +1266,10 @@ package body callbacks is
 			C1 := get_bounding_box_corners;
 			
 			-- Compute two new scale factors: one based on the change of width
-			-- and the other based on the change of height:
-			-- S2W := to_scale_factor (scrolled_window_size.width, new_size.width);
+			-- and the other based on the change of height.
+			-- As reference for the width and height the variable
+			-- scrolled_window_size_initial is taken. It is updated
+			-- by procedure prepare_swin_mode_3.
 
 			-- The dimensions of the scrolled window are expressed with
 			-- natural numbers here. In order to get a ratio as a real number, we
@@ -1303,34 +1277,27 @@ package body callbacks is
 			S2W := type_scale_factor (gdouble (new_size.width) / gdouble (scrolled_window_size_initial.width));
 			put_line ("S2W:" & to_string (S2W));
 
-			-- S2H := to_scale_factor (scrolled_window_size.height, new_size.height);
 			S2H := type_scale_factor (gdouble (new_size.height) / gdouble (scrolled_window_size_initial.height));
 			put_line ("S2H:" & to_string (S2H));
 
 			-- The smaller one of the two scale factors has the final say:
 			S2 := type_scale_factor'min (S2W, S2H);
-			--S2 := S2 * 0.85;
-			S2 := S2 * scale_init;
-			-- scale_init := 1.0;
-			put_line ("S2: " & to_string (S2));
 
-			-- CS: better is:
-			-- S2 := get_ratio (visible_area);
-			-- S2 := (S2W + S2H) / 2.0;
-			
-			-- if S2 < 1.0 then
-			-- 	S2 := 1.0;
-			-- end if;
-			-- S2 := 1.0;
-			-- put_line ("S2:" & to_string (S2));
+			-- The reference for the scaling is the scale factor before the window
+			-- has changed its dimensions. The variable used here is scale_init. It is
+			-- updated by procedure prepare_swin_mode_3.
+			-- Multiply by the initial scale factor:
+			S2 := S2 * scale_init;
+			put_line ("S2: " & to_string (S2));
 
 			-- For debugging. M should not change during size changes
 			-- of the scrolled window:
 			-- put_line ("center " & to_string (M));
 
+			-- Compute the new translate-offset for this scale operation:
 			set_translation_for_zoom (S1, S2, M);
 
-			-- update the global scale factor:
+			-- Update the global scale factor:
 			scale_factor := S2;
 			update_scale_display;
 
@@ -1340,12 +1307,12 @@ package body callbacks is
 			
 			-- show_adjustments_h;
 			-- show_adjustments_v;			
-
-			-- https://stackoverflow.com/questions/1060039/gtk-detecting-window-resize-from-the-user
 		end zoom_center;
 
 
-		procedure zoom_center_2 is 
+		-- This procedure zooms to the area, stored in am3,
+		-- so that it fits into the current scrolled window:
+		procedure zoom_visible_area is 
 
 			-- Get the corners of the bounding-box on the canvas before 
 			-- and after zooming:
@@ -1360,9 +1327,8 @@ package body callbacks is
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
-			backup_scrollbar_settings;
-			
-		end zoom_center_2;
+			backup_scrollbar_settings;			
+		end zoom_visible_area;
 
 		
 		-- This procedure moves the canvas so that the center of the visible
@@ -1429,7 +1395,7 @@ package body callbacks is
 					-- move_center;
 					-- zoom_center;
 					
-					zoom_center_2;
+					zoom_visible_area;
 
 			end case;
 
