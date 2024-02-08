@@ -1392,10 +1392,10 @@ package body callbacks is
 					move_center;
 					
 				when MODE_ZOOM_CENTER =>
-					-- move_center;
-					-- zoom_center;
+					move_center;
+					zoom_center;
 					
-					zoom_visible_area;
+					-- zoom_visible_area;
 
 			end case;
 
@@ -2084,7 +2084,7 @@ package body callbacks is
 		-- fit the given area into the scrolled window:
 		scale_factor := get_ratio (area);
 
-		-- prepare_swin_mode_3;
+		prepare_swin_mode_3;
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -2146,6 +2146,7 @@ package body callbacks is
 		center_to_visible_area (bounding_box);
 
 		-- prepare_swin_mode_3;
+		
 		am3 := bounding_box;
 		
 		-- Schedule a redraw of the canvas:
@@ -2618,7 +2619,7 @@ package body callbacks is
 
 			-- put_line (" scale_factor" & to_string (scale_factor));
 
-			-- prepare_swin_mode_3;
+			prepare_swin_mode_3;
 			
 			-- After changing the scale_factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes 
