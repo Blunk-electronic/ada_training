@@ -475,8 +475,7 @@ package callbacks is
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
-	--scrolled_window_size_initial : constant type_window_size := (
-	scrolled_window_size_initial : type_window_size := (
+	scrolled_window_size_initial : constant type_window_size := (
 		width	=> 400,
 		height	=> 400);
 	
@@ -488,8 +487,6 @@ package callbacks is
 
 	
 	am3 : type_area;
-	
-	procedure prepare_swin_mode_3;
 	
 	
 	-- This function calculates the scale factor required to

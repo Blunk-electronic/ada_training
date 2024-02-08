@@ -1130,20 +1130,6 @@ package body callbacks is
 
 	end set_up_coordinates_display;
 	
-
-	procedure prepare_swin_mode_3 is begin
-		if zoom_mode = MODE_ZOOM_CENTER then
-
-			if bounding_box_changed then
-				scale_init := scale_factor;
-				scrolled_window_size_initial := scrolled_window_size;
-				put_line (" scale_init" & to_string (scale_init));
-				put_line (" swin_size_init " & to_string (scrolled_window_size_initial));
-			end if;
-			
-		end if;
-	end prepare_swin_mode_3;
-		
 	
 
 	function get_ratio (
@@ -1240,85 +1226,15 @@ package body callbacks is
 		
 
 		
-		-- This procedure zooms on the center of the visible
-		-- area. It is required for MODE_ZOOM_CENTER:
-		procedure zoom_center is 
-
-			-- The current scale factor:
-			S1 : constant type_scale_factor := scale_factor;
-
-			-- These are the new scale factors. One is computed by the change
-			-- of the width, the other by the change of the height of the window:
-			S2W, S2H  : type_scale_factor;
-
-			-- The new scale factor:
-			S2 : type_scale_factor;
-
-			-- Get the model point in the center of the visible area.
-			-- This point will be the center of the zoom operation:
-			M : constant type_point_model := get_center (visible_area);
-
-			-- Get the corners of the bounding-box on the canvas before 
-			-- and after zooming:
-			C1, C2 : type_bounding_box_corners;
-			
-		begin -- zoom_center
-			C1 := get_bounding_box_corners;
-			
-			-- Compute two new scale factors: one based on the change of width
-			-- and the other based on the change of height.
-			-- As reference for the width and height the variable
-			-- scrolled_window_size_initial is taken. It is updated
-			-- by procedure prepare_swin_mode_3.
-
-			-- The dimensions of the scrolled window are expressed with
-			-- natural numbers here. In order to get a ratio as a real number, we
-			-- must convert the dimensions to floating point numbers.
-			S2W := type_scale_factor (gdouble (new_size.width) / gdouble (scrolled_window_size_initial.width));
-			put_line ("S2W:" & to_string (S2W));
-
-			S2H := type_scale_factor (gdouble (new_size.height) / gdouble (scrolled_window_size_initial.height));
-			put_line ("S2H:" & to_string (S2H));
-
-			-- The smaller one of the two scale factors has the final say:
-			S2 := type_scale_factor'min (S2W, S2H);
-
-			-- The reference for the scaling is the scale factor before the window
-			-- has changed its dimensions. The variable used here is scale_init. It is
-			-- updated by procedure prepare_swin_mode_3.
-			-- Multiply by the initial scale factor:
-			S2 := S2 * scale_init;
-			put_line ("S2: " & to_string (S2));
-
-			-- For debugging. M should not change during size changes
-			-- of the scrolled window:
-			-- put_line ("center " & to_string (M));
-
-			-- Compute the new translate-offset for this scale operation:
-			set_translation_for_zoom (S1, S2, M);
-
-			-- Update the global scale factor:
-			scale_factor := S2;
-			update_scale_display;
-
-			C2 := get_bounding_box_corners;
-			update_scrollbar_limits (C1, C2);
-			backup_scrollbar_settings;
-			
-			-- show_adjustments_h;
-			-- show_adjustments_v;			
-		end zoom_center;
-
 
 		-- This procedure zooms to the area, stored in am3,
-		-- so that it fits into the current scrolled window:
+		-- so that it fits into the current scrolled window.
+		-- It is required for MODE_ZOOM_CENTER:
 		procedure zoom_visible_area is 
-
 			-- Get the corners of the bounding-box on the canvas before 
 			-- and after zooming:
-			C1, C2 : type_bounding_box_corners;
-			
-		begin -- zoom_center
+			C1, C2 : type_bounding_box_corners;			
+		begin
 			C1 := get_bounding_box_corners;
 			
 			-- update_scale_display;
@@ -1392,10 +1308,7 @@ package body callbacks is
 					move_center;
 					
 				when MODE_ZOOM_CENTER =>
-					move_center;
-					zoom_center;
-					
-					-- zoom_visible_area;
+					zoom_visible_area;
 
 			end case;
 
@@ -2083,8 +1996,6 @@ package body callbacks is
 		-- Calculate the scale_factor that is required to
 		-- fit the given area into the scrolled window:
 		scale_factor := get_ratio (area);
-
-		prepare_swin_mode_3;
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -2145,8 +2056,6 @@ package body callbacks is
 		-- "move" all objects to the center of the visible area:
 		center_to_visible_area (bounding_box);
 
-		-- prepare_swin_mode_3;
-		
 		am3 := bounding_box;
 		
 		-- Schedule a redraw of the canvas:
@@ -2618,8 +2527,6 @@ package body callbacks is
 			end case;
 
 			-- put_line (" scale_factor" & to_string (scale_factor));
-
-			prepare_swin_mode_3;
 			
 			-- After changing the scale_factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes 

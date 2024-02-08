@@ -51,7 +51,6 @@ package geometry_1 is
 	scale_factor : type_scale_factor := 1.0;
 	scale_multiplier : constant type_scale_factor := 1.2;
 
-	scale_init : type_scale_factor := scale_factor;
 	
 
 	-- Converts the given scale factor to a string.
