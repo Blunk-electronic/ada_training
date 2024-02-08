@@ -1141,6 +1141,10 @@ package body callbacks is
 				put_line (" swin_size_init " & to_string (scrolled_window_size_initial));
 			end if;
 		end if;
+
+		am3 := get_visible_area (canvas);
+		put_line ("am3 " & to_string (am3));
+		
 	end prepare_swin_mode_3;
 		
 	
@@ -1340,6 +1344,26 @@ package body callbacks is
 			-- https://stackoverflow.com/questions/1060039/gtk-detecting-window-resize-from-the-user
 		end zoom_center;
 
+
+		procedure zoom_center_2 is 
+
+			-- Get the corners of the bounding-box on the canvas before 
+			-- and after zooming:
+			C1, C2 : type_bounding_box_corners;
+			
+		begin -- zoom_center
+			C1 := get_bounding_box_corners;
+			
+			-- update_scale_display;
+			T := (0.0, 0.0);			
+			zoom_to_fit (am3);
+
+			C2 := get_bounding_box_corners;
+			update_scrollbar_limits (C1, C2);
+			backup_scrollbar_settings;
+			
+		end zoom_center_2;
+
 		
 		-- This procedure moves the canvas so that the center of the visible
 		-- area remains in the center.
@@ -1402,8 +1426,10 @@ package body callbacks is
 					move_center;
 					
 				when MODE_ZOOM_CENTER =>
-					move_center;
-					zoom_center;
+					-- move_center;
+					-- zoom_center;
+					
+					zoom_center_2;
 
 			end case;
 
@@ -1475,6 +1501,8 @@ package body callbacks is
 	begin
 		-- put_line ("cb_scrollbar_v_released");
 		backup_scrollbar_settings;
+
+		am3 := get_visible_area (canvas);
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -1501,6 +1529,8 @@ package body callbacks is
 	begin
 		-- put_line ("cb_scrollbar_h_released");
 		backup_scrollbar_settings;
+
+		am3 := get_visible_area (canvas);
 		return event_handled;
 	end cb_scrollbar_h_released;
 
@@ -2068,6 +2098,8 @@ package body callbacks is
 		update_scrollbar_limits (C1, C2);
 
 		-- show_adjustments_v;
+
+		am3 := get_visible_area (canvas);
 		
 		-- schedule a redraw:
 		refresh (canvas);		
@@ -2086,7 +2118,7 @@ package body callbacks is
 		-- fit the given area into the scrolled window:
 		scale_factor := get_ratio (area);
 
-		prepare_swin_mode_3;
+		-- prepare_swin_mode_3;
 		
 		if debug then
 			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
@@ -2147,7 +2179,8 @@ package body callbacks is
 		-- "move" all objects to the center of the visible area:
 		center_to_visible_area (bounding_box);
 
-		prepare_swin_mode_3;
+		-- prepare_swin_mode_3;
+		am3 := bounding_box;
 		
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -2339,6 +2372,9 @@ package body callbacks is
 				-- selected area: Indicate that the rectangle shall
 				-- no longer be drawn:
 				zoom_area.started := false;
+
+
+				am3 := zoom_area.area;
 			end if;
 		end if;
 
@@ -2482,6 +2518,8 @@ package body callbacks is
 
 		-- Output the cursor position on the terminal:
 		put_line ("cursor at " & to_string (cursor.position));
+
+		am3 := get_visible_area (canvas);
 	end move_cursor;
 
 
@@ -2514,7 +2552,7 @@ package body callbacks is
 
 				when GDK_KP_SUBTRACT | GDK_MINUS =>
 					zoom_on_cursor (ZOOM_OUT);
-
+					
 				when others => null;
 			end case;
 
@@ -2614,8 +2652,7 @@ package body callbacks is
 
 			-- put_line (" scale_factor" & to_string (scale_factor));
 
-			prepare_swin_mode_3;
-
+			-- prepare_swin_mode_3;
 			
 			-- After changing the scale_factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes 
@@ -2631,6 +2668,8 @@ package body callbacks is
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
+
+			am3 := get_visible_area (canvas);
 			
 			-- schedule a redraw:
 			refresh (canvas);
@@ -2679,6 +2718,8 @@ package body callbacks is
 
 				-- CS clip ?
 			end case;
+
+			am3 := get_visible_area (canvas);
 		end scroll;
 		
 		

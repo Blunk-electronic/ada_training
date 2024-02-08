@@ -108,6 +108,7 @@ begin
 
 	-- Zoom so that all objects are visible:
 	zoom_to_fit (geometry_2.bounding_box);
+	am3 := geometry_2.bounding_box;
 	
 	put_line ("start gtk main loop");
 

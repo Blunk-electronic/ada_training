@@ -486,7 +486,9 @@ package callbacks is
 	-- in order to detect size changes of the scrolled window:
 	scrolled_window_size : type_window_size;
 
-
+	
+	am3 : type_area;
+	
 	procedure prepare_swin_mode_3;
 	
 	
