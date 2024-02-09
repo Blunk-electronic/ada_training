@@ -450,23 +450,23 @@ package callbacks is
 	swin : gtk_scrolled_window;
 
 	-- When the scrolled window is resized, then the canvas can be
-	-- adjusted in several ways. Currently there are the modes known as follows:
+	-- adjusted in several ways. Currently these modes are defined:
 	type type_scrolled_window_zoom_mode is (
 		-- No zoom. No moving. Just more or less of 
 		-- the canvas area is exposed:
-		MODE_EXPOSE_CANVAS,
+		MODE_1_EXPOSE_CANVAS,
 
 		-- Center of visible canvas area remains in the center. 
 		-- Around the center more or less of the canvas area is exposed:
-		MODE_KEEP_CENTER,
+		MODE_2_KEEP_CENTER,
 
 		-- The visible area remains fit into the scrolled window.
 		MODE_3_ZOOM_FIT);
 
 
 	zoom_mode : constant type_scrolled_window_zoom_mode := 
-		-- MODE_EXPOSE_CANVAS;
-		--MODE_KEEP_CENTER;
+		-- MODE_1_EXPOSE_CANVAS;
+		-- MODE_2_KEEP_CENTER;
 		MODE_3_ZOOM_FIT;
 
 	

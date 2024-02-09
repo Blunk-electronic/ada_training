@@ -1312,10 +1312,10 @@ package body callbacks is
 			
 
 			case zoom_mode is
-				when MODE_EXPOSE_CANVAS =>
+				when MODE_1_EXPOSE_CANVAS =>
 					null; -- nothing more to do
 					
-				when MODE_KEEP_CENTER =>
+				when MODE_2_KEEP_CENTER =>
 					move_center;
 					
 				when MODE_3_ZOOM_FIT =>

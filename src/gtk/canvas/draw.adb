@@ -110,7 +110,7 @@ begin
 	zoom_to_fit (geometry_2.bounding_box);
 
 	-- Backup the currently visible area.
-	-- This is relevant for canvas mode MODE_ZOOM_CENTER only:
+	-- This is relevant for canvas mode MODE_3_ZOOM_FIT only:
 	backup_visible_area (geometry_2.bounding_box);
 	
 	put_line ("start gtk main loop");
