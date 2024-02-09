@@ -108,7 +108,10 @@ begin
 
 	-- Zoom so that all objects are visible:
 	zoom_to_fit (geometry_2.bounding_box);
-	am3 := geometry_2.bounding_box;
+
+	-- Backup the currently visible area.
+	-- This is relevant for canvas mode MODE_ZOOM_CENTER only:
+	backup_visible_area (geometry_2.bounding_box);
 	
 	put_line ("start gtk main loop");
 

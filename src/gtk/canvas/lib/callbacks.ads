@@ -470,7 +470,33 @@ package callbacks is
 		--MODE_KEEP_CENTER;
 		MODE_ZOOM_CENTER;
 
+	
+	-- In MODE_ZOOM_CENTER, here the last visible area
+	-- immediately before the dimensions of the scrolled window
+	-- change, is stored as reference.
+	-- In other canvas modi it has no meaning:
+	last_visible_area : type_area;
 
+
+	-- This procedure takes an area and stores it in
+	-- the global variable last_visible_area (see above).
+	-- Its purpose is to be prepared to fit the area into the 
+	-- scrolled window in MODE_ZOOM_CENTER.
+	-- It must be called after operations that result in a
+	-- new visibible area. Such operations are:
+	-- - scrollbar released
+	-- - scroll up/down/right/left
+	-- - move cursor
+	-- - zoom on cursor
+	-- - zoom to fit all 
+	-- - zoom to fit area
+	-- - zoom on mouse pointer
+	-- In in other canvas modi but MODE_ZOOM_CENTER this
+	-- procedure has no meaning:
+	procedure backup_visible_area (
+		area : in type_area);
+	
+	
 	-- This is the initial size of the scrolled window.
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
@@ -486,7 +512,6 @@ package callbacks is
 	scrolled_window_size : type_window_size;
 
 	
-	am3 : type_area;
 	
 	
 	-- This function calculates the scale factor required to

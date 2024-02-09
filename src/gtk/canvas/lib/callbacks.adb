@@ -1130,6 +1130,14 @@ package body callbacks is
 
 	end set_up_coordinates_display;
 	
+
+
+	procedure backup_visible_area (
+		area : in type_area)
+	is begin
+		last_visible_area := area;
+	end backup_visible_area;
+
 	
 
 	function get_ratio (
@@ -1227,7 +1235,7 @@ package body callbacks is
 
 		
 
-		-- This procedure zooms to the area, stored in am3,
+		-- This procedure zooms to the area, stored in last_visible_area,
 		-- so that it fits into the current scrolled window.
 		-- It is required for MODE_ZOOM_CENTER:
 		procedure zoom_visible_area is 
@@ -1236,10 +1244,13 @@ package body callbacks is
 			C1, C2 : type_bounding_box_corners;			
 		begin
 			C1 := get_bounding_box_corners;
-			
-			-- update_scale_display;
+
+			-- Reset the translate_offset:
 			T := (0.0, 0.0);			
-			zoom_to_fit (am3);
+
+			-- Fit the last visible area into the current
+			-- scrolled window:
+			zoom_to_fit (last_visible_area);
 
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
@@ -1381,7 +1392,7 @@ package body callbacks is
 		-- put_line ("cb_scrollbar_v_released");
 		backup_scrollbar_settings;
 
-		am3 := get_visible_area (canvas);
+		backup_visible_area (get_visible_area (canvas));
 		return event_handled;
 	end cb_scrollbar_v_released;
 
@@ -1409,7 +1420,7 @@ package body callbacks is
 		-- put_line ("cb_scrollbar_h_released");
 		backup_scrollbar_settings;
 
-		am3 := get_visible_area (canvas);
+		backup_visible_area (get_visible_area (canvas));
 		return event_handled;
 	end cb_scrollbar_h_released;
 
@@ -1978,7 +1989,7 @@ package body callbacks is
 
 		-- show_adjustments_v;
 
-		am3 := get_visible_area (canvas);
+		backup_visible_area (get_visible_area (canvas));
 		
 		-- schedule a redraw:
 		refresh (canvas);		
@@ -2056,7 +2067,7 @@ package body callbacks is
 		-- "move" all objects to the center of the visible area:
 		center_to_visible_area (bounding_box);
 
-		am3 := bounding_box;
+		backup_visible_area (bounding_box);
 		
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
@@ -2250,7 +2261,7 @@ package body callbacks is
 				zoom_area.started := false;
 
 
-				am3 := zoom_area.area;
+				backup_visible_area (zoom_area.area);
 			end if;
 		end if;
 
@@ -2395,7 +2406,7 @@ package body callbacks is
 		-- Output the cursor position on the terminal:
 		put_line ("cursor at " & to_string (cursor.position));
 
-		am3 := get_visible_area (canvas);
+		backup_visible_area (get_visible_area (canvas));
 	end move_cursor;
 
 
@@ -2543,7 +2554,7 @@ package body callbacks is
 			C2 := get_bounding_box_corners;
 			update_scrollbar_limits (C1, C2);
 
-			am3 := get_visible_area (canvas);
+			backup_visible_area (get_visible_area (canvas));
 			
 			-- schedule a redraw:
 			refresh (canvas);
@@ -2593,7 +2604,7 @@ package body callbacks is
 				-- CS clip ?
 			end case;
 
-			am3 := get_visible_area (canvas);
+			backup_visible_area (get_visible_area (canvas));
 		end scroll;
 		
 		
