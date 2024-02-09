@@ -460,18 +460,17 @@ package callbacks is
 		-- Around the center more or less of the canvas area is exposed:
 		MODE_KEEP_CENTER,
 
-		-- Zooming according to the change of widht or height.
-		-- Zoom center is the center of the visible area:
-		MODE_ZOOM_CENTER);
+		-- The visible area remains fit into the scrolled window.
+		MODE_3_ZOOM_FIT);
 
 
 	zoom_mode : constant type_scrolled_window_zoom_mode := 
 		-- MODE_EXPOSE_CANVAS;
 		--MODE_KEEP_CENTER;
-		MODE_ZOOM_CENTER;
+		MODE_3_ZOOM_FIT;
 
 	
-	-- In MODE_ZOOM_CENTER, here the last visible area
+	-- In MODE_3_ZOOM_FIT, here the last visible area
 	-- immediately before the dimensions of the scrolled window
 	-- change, is stored as reference.
 	-- In other canvas modi it has no meaning:
@@ -481,7 +480,7 @@ package callbacks is
 	-- This procedure takes an area and stores it in
 	-- the global variable last_visible_area (see above).
 	-- Its purpose is to be prepared to fit the area into the 
-	-- scrolled window in MODE_ZOOM_CENTER.
+	-- scrolled window in MODE_3_ZOOM_FIT.
 	-- It must be called after operations that result in a
 	-- new visibible area. Such operations are:
 	-- - scrollbar released
@@ -491,7 +490,7 @@ package callbacks is
 	-- - zoom to fit all 
 	-- - zoom to fit area
 	-- - zoom on mouse pointer
-	-- In in other canvas modi but MODE_ZOOM_CENTER this
+	-- In in other canvas modi but MODE_3_ZOOM_FIT this
 	-- procedure has no meaning:
 	procedure backup_visible_area (
 		area : in type_area);

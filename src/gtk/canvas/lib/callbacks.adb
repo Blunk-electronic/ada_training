@@ -1237,7 +1237,7 @@ package body callbacks is
 
 		-- This procedure zooms to the area, stored in last_visible_area,
 		-- so that it fits into the current scrolled window.
-		-- It is required for MODE_ZOOM_CENTER:
+		-- It is required for MODE_3_ZOOM_FIT:
 		procedure zoom_visible_area is 
 			-- Get the corners of the bounding-box on the canvas before 
 			-- and after zooming:
@@ -1318,7 +1318,7 @@ package body callbacks is
 				when MODE_KEEP_CENTER =>
 					move_center;
 					
-				when MODE_ZOOM_CENTER =>
+				when MODE_3_ZOOM_FIT =>
 					zoom_visible_area;
 
 			end case;
