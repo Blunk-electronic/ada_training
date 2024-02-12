@@ -65,10 +65,10 @@ package body callbacks is
 		x :=   Bx * S - Bx;
 		y := - By * S;
 		
-		base_offset := (x, y);
+		F := (x, y);
 
 		if debug then
-			put_line ("base offset: " & to_string (base_offset));
+			put_line ("base offset: " & to_string (F));
 		end if;
 	end compute_base_offset;
 
@@ -180,8 +180,8 @@ package body callbacks is
 			put_line ("T " & to_string (T));
 		end if;
 		
-		result.x := type_distance_model (( (point.x - T.x) - base_offset.x) / gdouble (scale));
-		result.y := type_distance_model ((-(point.y - T.y) - base_offset.y) / gdouble (scale));
+		result.x := type_distance_model (( (point.x - T.x) - F.x) / gdouble (scale));
+		result.y := type_distance_model ((-(point.y - T.y) - F.y) / gdouble (scale));
 
 		-- If real model coordinates are required, then the result must be compensated
 		-- by the bounding-box position:
@@ -196,7 +196,7 @@ package body callbacks is
 				put_line (" point " & to_string (point));
 				put_line (" scale " & to_string (scale));
 				put_line (" T     " & to_string (T));
-				put_line (" F     " & to_string (base_offset));
+				put_line (" F     " & to_string (F));
 				put_line (" real  " & boolean'image (real));
 				raise;						  
 	end to_model;
@@ -218,8 +218,8 @@ package body callbacks is
 			move_by (P, invert (bounding_box.position));
 		end if;
 		
-		result.x :=  (gdouble (P.x) * gdouble (scale) + base_offset.x);
-		result.y := -(gdouble (P.y) * gdouble (scale) + base_offset.y);
+		result.x :=  (gdouble (P.x) * gdouble (scale) + F.x);
+		result.y := -(gdouble (P.y) * gdouble (scale) + F.y);
 
 		if real then
 			result.x := result.x + T.x;
@@ -1222,8 +1222,8 @@ package body callbacks is
 		-- extent as the bottom of the scrolled window:
 		procedure move_canvas_bottom is begin
 			-- Approach 1:
-			-- One way to move the canvas is to change the y-component of the base_offset.
-			base_offset.y := base_offset.y - dh;
+			-- One way to move the canvas is to change the y-component of the base-offset.
+			F.y := F.y - dh;
 
 			-- Schedule a refresh to make the size change appear smoothly:
 			refresh (canvas);
@@ -1263,9 +1263,9 @@ package body callbacks is
 		-- This procedure is required when zoom mode MODE_KEEP_CENTER is enabled:
 		procedure move_center is
 		begin
-			base_offset.x := base_offset.x + dW * 0.5;
-			base_offset.y := base_offset.y + dH * 0.5;
-			-- put_line ("F : " & to_string (base_offset));
+			F.x := F.x + dW * 0.5;
+			F.y := F.y + dH * 0.5;
+			-- put_line ("F : " & to_string (F));
 		end move_center;
 
 		
@@ -1588,7 +1588,7 @@ package body callbacks is
 	begin
 		put_line ("set initial scrollbar settings");
 		
-		scrollbar_v_init.upper := - base_offset.y;			
+		scrollbar_v_init.upper := - F.y;			
 		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
 		scrollbar_v_init.page_size := gdouble (bounding_box.height);
 		scrollbar_v_init.value := scrollbar_v_init.lower;
@@ -1601,7 +1601,7 @@ package body callbacks is
 			put_line ("  value" & gdouble'image (scrollbar_v_init.value));
 		end if;
 		
-		scrollbar_h_init.lower := base_offset.x;
+		scrollbar_h_init.lower := F.x;
 		scrollbar_h_init.upper := scrollbar_h_init.lower + gdouble (bounding_box.width);
 		scrollbar_h_init.page_size := gdouble (bounding_box.width);
 		scrollbar_h_init.value := scrollbar_h_init.lower;
@@ -2041,8 +2041,7 @@ package body callbacks is
 		-- variable bounding_box:
 		compute_bounding_box;
 
-		-- Compute the new base-offset. Update global
-		-- variable base_offset:
+		-- Compute the new base-offset. Update global variable F:
 		compute_base_offset;
 
 		-- Since the bounding_box has changed, the scrollbars

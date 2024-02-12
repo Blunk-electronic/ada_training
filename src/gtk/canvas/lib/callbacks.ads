@@ -65,8 +65,9 @@ package callbacks is
 -- BASE-OFFSET:
 	
 	-- The place on the canvase where the model 
-	-- coordinates system has its origin:
-	base_offset : type_point_canvas;
+	-- coordinates system has its origin.
+	-- We call it "base-offset":
+	F : type_point_canvas;
 		
 	procedure compute_base_offset;
 
