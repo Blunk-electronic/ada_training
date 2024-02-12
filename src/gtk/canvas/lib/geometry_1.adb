@@ -50,7 +50,7 @@ package body geometry_1 is
 	
 	
 	procedure increase_scale is begin
-		S := S * scale_multiplier;
+		S := S * SM;
 		
 		exception 
 			when constraint_error =>
@@ -60,7 +60,7 @@ package body geometry_1 is
 
 	
 	procedure decrease_scale is begin
-		S := S / scale_multiplier;
+		S := S / SM;
 		
 		exception 
 			when constraint_error => 

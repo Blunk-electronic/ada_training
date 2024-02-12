@@ -54,7 +54,7 @@ package geometry_1 is
 
 	-- This is the multiplier that is used when the
 	-- global scale-factor is increased or decreased:
-	scale_multiplier : constant type_scale_factor := 1.2;
+	SM : constant type_scale_factor := 1.2;
 
 	
 
