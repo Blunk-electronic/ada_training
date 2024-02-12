@@ -119,6 +119,8 @@ package callbacks is
 	function get_bounding_box_corners
 		return type_bounding_box_corners;
 	
+
+
 	
 -- CONVERSION BETWEEN MODEL AND CANVAS:
 
@@ -393,7 +395,7 @@ package callbacks is
 
 	-- This function is called each time the operator
 	-- presses a mouse button.
-	function cb_button_pressed_win (
+	function cb_window_button_pressed (
 		window	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;

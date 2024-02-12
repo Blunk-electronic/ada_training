@@ -457,24 +457,26 @@ package body callbacks is
 	end cb_focus_win;
 
 	
-	function cb_button_pressed_win (
+	function cb_window_button_pressed (
 		window	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean
 	is
 		use glib;
 		event_handled : boolean := true;
+
+		-- The point where the operator has clicked:
 		point : constant type_point_canvas := (event.x, event.y);
 	begin
 		null;
 		
-		-- -- Output the button id, x and y position:
-		put_line ("cb_button_pressed_win ");
-		-- 	& " button " & guint'image (event.button)
-		-- 	& to_string (point));
+		-- Output the button id, x and y position:
+		put_line ("cb_window_button_pressed "
+		 	& "button" & guint'image (event.button) & " "
+		 	& to_string (point));
 		
 		return event_handled;
-	end cb_button_pressed_win;
+	end cb_window_button_pressed;
 
 
 
@@ -800,7 +802,7 @@ package body callbacks is
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_main_window_size_allocate'access);
-		main_window.on_button_press_event (cb_button_pressed_win'access);
+		main_window.on_button_press_event (cb_window_button_pressed'access);
 		main_window.on_key_press_event (cb_key_pressed_win'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
 		main_window.on_window_state_event (cb_main_window_state_change'access);
@@ -1245,7 +1247,7 @@ package body callbacks is
 		begin
 			C1 := get_bounding_box_corners;
 
-			-- Reset the translate_offset:
+			-- Reset the translate-offset:
 			T := (0.0, 0.0);			
 
 			-- Fit the last visible area into the current
@@ -1933,7 +1935,7 @@ package body callbacks is
 		end if;
 
 		-- Convert the model offset (dx;dy) to a canvas offset
-		-- and apply it to the global translate_offset.
+		-- and apply it to the global translate-offset.
 		-- Regarding y: T is in the canvas system (CS2)
 		-- where the y-axis goes downward. So we must multiply by -1:
 		T.x :=   gdouble (dx) * gdouble (S);
@@ -1980,7 +1982,7 @@ package body callbacks is
 		-- place (see function cb_draw_objects)
 		-- then the drawing will be dragged back by the translate-offset
 		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
-		-- Without applying a translate_offset the drawing would be appearing as 
+		-- Without applying a translate-offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 		set_translation_for_zoom (S1, S, cursor.position);
 
@@ -2015,7 +2017,7 @@ package body callbacks is
 		update_scale_display;
 		-----------------------------------------------------
 
-		-- Calculate the translate_offset that is required to
+		-- Calculate the translate-offset that is required to
 		-- center the given area on the visible area:
 		center_to_visible_area (area);
 
@@ -2062,7 +2064,7 @@ package body callbacks is
 		update_scale_display;
 
 
-		-- Calculate the translate_offset that is required to
+		-- Calculate the translate-offset that is required to
 		-- "move" all objects to the center of the visible area:
 		center_to_visible_area (bounding_box);
 
@@ -2538,12 +2540,12 @@ package body callbacks is
 
 			-- put_line (" S" & to_string (S));
 			
-			-- After changing the scale-factor, the translate_offset must
+			-- After changing the scale-factor, the translate-offset must
 			-- be calculated anew. When the actual drawing takes 
 			-- place (see function cb_draw_objects)
-			-- then the drawing will be dragged back by the translate_offset
+			-- then the drawing will be dragged back by the translate-offset
 			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
-			-- Without applying a translate_offset the drawing would be appearing as 
+			-- Without applying a translate-offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
 			set_translation_for_zoom (S1, S, Z);
 
