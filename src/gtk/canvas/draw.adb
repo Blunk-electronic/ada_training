@@ -76,7 +76,7 @@ begin
 		
 	geometry_2.compute_bounding_box;
 	
-	compute_base_offset;
+	set_base_offset;
 
 	
 	init; -- inits the GTK-stuff

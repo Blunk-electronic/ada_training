@@ -52,7 +52,7 @@ with gtk.main;					use gtk.main;
 
 package body callbacks is
 
-	procedure compute_base_offset is
+	procedure set_base_offset is
 		debug : boolean := false;
 		
 		x, y : gdouble;
@@ -70,7 +70,7 @@ package body callbacks is
 		if debug then
 			put_line ("base offset: " & to_string (F));
 		end if;
-	end compute_base_offset;
+	end set_base_offset;
 
 	
 
@@ -2042,7 +2042,7 @@ package body callbacks is
 		compute_bounding_box;
 
 		-- Compute the new base-offset. Update global variable F:
-		compute_base_offset;
+		set_base_offset;
 
 		-- Since the bounding_box has changed, the scrollbars
 		-- must be reinitialized:

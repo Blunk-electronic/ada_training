@@ -66,10 +66,12 @@ package callbacks is
 	
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin.
-	-- We call it "base-offset":
+	-- It is a global variable. We call it "base-offset":
 	F : type_point_canvas;
-		
-	procedure compute_base_offset;
+
+	-- Sets the global base-offset F according to the current
+	-- bounding-box and the maximal scale_factor:
+	procedure set_base_offset;
 
 
 	
