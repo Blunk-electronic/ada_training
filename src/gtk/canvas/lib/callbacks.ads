@@ -70,7 +70,7 @@ package callbacks is
 	F : type_point_canvas;
 
 	-- Sets the global base-offset F according to the current
-	-- bounding-box and the maximal scale_factor:
+	-- bounding-box and the maximal allowed scale-factor:
 	procedure set_base_offset;
 
 
@@ -83,7 +83,7 @@ package callbacks is
 
 	-- This procedure sets the global translate-offset T that is
 	-- required for a zoom-operation.
-	-- After changing the scale_factor (either by zoom on mouse pointer or
+	-- After changing the scale-factor S (either by zoom on mouse pointer or
 	-- by zoom on cursor), the translate_offset T must
 	-- be calculated anew. The computation requires as input values
 	-- the zoom center as virtual model point (CS1) or as canvas point (CS2).
@@ -114,7 +114,7 @@ package callbacks is
 	end record;
 
 	-- This function returns the current corners of the bounding-box
-	-- in canvas-coordinates. The return depends on the current scale_factor
+	-- in canvas-coordinates. The return depends on the current scale-factor S
 	-- and translate-offset:
 	function get_bounding_box_corners
 		return type_bounding_box_corners;
@@ -123,14 +123,14 @@ package callbacks is
 -- CONVERSION BETWEEN MODEL AND CANVAS:
 
 	-- Converts the given model distance to
-	-- a canvas distance according to the current scale_factor:
+	-- a canvas distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_distance_model)
 		return type_distance_canvas;
 
 	
 	-- Converts the given canvas distance to
-	-- a model distance according to the current scale_factor:
+	-- a model distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_distance_canvas)
 		return type_distance_model;
@@ -182,8 +182,8 @@ package callbacks is
 	-- the grid columns or rows. It returns the lesser
 	-- spacing of them. It calculates the spacing by this
 	-- equation:
-	-- x = grid.spacing.x * scale_factor
-	-- y = grid.spacing.y * scale_factor
+	-- x = grid.spacing.x * scale-factor
+	-- y = grid.spacing.y * scale-factor
 	-- Then the lesser one, either x or y will be returned:
 	function get_grid_spacing (
 		grid : in type_grid)
@@ -520,7 +520,7 @@ package callbacks is
 	-- fit the given area into the current scrolled window.
 	-- The scrolled window has an initial size on startup. Later, when
 	-- the operator resizes the main window, the scrolled window gets
-	-- larger or smaller. This results in a situation depended scale_factor:
+	-- larger or smaller. This results in a situation depended scale-factor:
 	function get_ratio (
 		area : in type_area)
 		return type_scale_factor;
@@ -729,7 +729,7 @@ package callbacks is
 	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
 	-- Zooms in or out at the current cursor position.
-	-- If the direction is ZOOM_IN, then the global scale_factor
+	-- If the direction is ZOOM_IN, then the global scale-factor S
 	-- is increased by multplying it with the scale_multiplier.
 	-- If direction is ZOOM_OUT then it decreases by dividing
 	-- by scale_multiplier:
@@ -737,14 +737,14 @@ package callbacks is
 		direction : type_zoom_direction);
 	
 
-	-- This procedure sets the global scale_factor and translate-offset
+	-- This procedure sets the global scale-factor S and translate-offset T
 	-- so that all objects of the given area fit into the scrolled window.
 	-- The zoom center is the top-left corner of the given area.
 	procedure zoom_to_fit (
 		area : in type_area);
 
 	
-	-- This procedure sets the global scale_factor and translate-offset
+	-- This procedure sets the global scale-factor S and translate-offset T
 	-- so that all objects of bounding-box fit into the scrolled window.
 	-- The zoom center is the top-left corner of bounding-box.
 	procedure zoom_to_fit_all;

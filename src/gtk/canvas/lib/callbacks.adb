@@ -139,10 +139,10 @@ package body callbacks is
 
 	begin
 		-- Convert the corners of the bounding-box to canvas coordinates:
-		result.TL := to_canvas (BC.TL, scale_factor, true);
-		result.TR := to_canvas (BC.TR, scale_factor, true);
-		result.BL := to_canvas (BC.BL, scale_factor, true);
-		result.BR := to_canvas (BC.BR, scale_factor, true);
+		result.TL := to_canvas (BC.TL, S, true);
+		result.TR := to_canvas (BC.TR, S, true);
+		result.BL := to_canvas (BC.BL, S, true);
+		result.BR := to_canvas (BC.BR, S, true);
 		
 		return result;
 	end get_bounding_box_corners;
@@ -153,7 +153,7 @@ package body callbacks is
 		d : in type_distance_model)
 		return type_distance_canvas
 	is begin
-		return gdouble (d) * gdouble (scale_factor);
+		return gdouble (d) * gdouble (S);
 	end to_distance;
 
 
@@ -161,7 +161,7 @@ package body callbacks is
 		d : in type_distance_canvas)
 		return type_distance_model
 	is begin
-		return type_distance_model (d / gdouble (scale_factor));
+		return type_distance_model (d / gdouble (S));
 	end to_distance;
 	
 
@@ -258,11 +258,11 @@ package body callbacks is
 		grid : in type_grid)
 		return gdouble
 	is
-		s : constant gdouble := gdouble (scale_factor);
+		sg : constant gdouble := gdouble (S);
 		x, y : gdouble;
 	begin
-		x := gdouble (grid.spacing.x) * s;
-		y := gdouble (grid.spacing.y) * s;
+		x := gdouble (grid.spacing.x) * sg;
+		y := gdouble (grid.spacing.y) * sg;
 		return gdouble'min (x, y);
 	end get_grid_spacing;
 
@@ -380,7 +380,7 @@ package body callbacks is
 		
 		-- Convert the pointer position to a real
 		-- point in the model:
-		mp := to_model (cp, scale_factor, true);
+		mp := to_model (cp, S, true);
 
 		-- Compute the relative distance from cursor
 		-- to pointer:
@@ -422,7 +422,7 @@ package body callbacks is
 
 	
 	procedure update_scale_display is begin
-		scale_buf.set_text (to_string (scale_factor));
+		scale_buf.set_text (to_string (S));
 		scale_value.set_buffer (scale_buf);
 	end update_scale_display;
 
@@ -1734,7 +1734,7 @@ package body callbacks is
 	is
 		-- Convert the given model distance to 
 		-- a canvas distance:
-		d : constant gdouble := gdouble (distance) * gdouble (scale_factor);
+		d : constant gdouble := gdouble (distance) * gdouble (S);
 
 		-- Scratch values for upper limit, lower limit and value
 		-- of scrollbars:
@@ -1855,10 +1855,10 @@ package body callbacks is
 		
 		-- Compute the corners of the visible area.
 		-- The corners are real model coordinates:
-		BL := to_model ((h_start, v_end),   scale_factor, true);
-		BR := to_model ((h_end, v_end),     scale_factor, true);
-		TL := to_model ((h_start, v_start), scale_factor, true);
-		TR := to_model ((h_end, v_start),   scale_factor, true);
+		BL := to_model ((h_start, v_end),   S, true);
+		BR := to_model ((h_end, v_end),     S, true);
+		TL := to_model ((h_start, v_start), S, true);
+		TR := to_model ((h_end, v_start),   S, true);
 
 		-- put_line ("BL " & to_string (BL));
 		-- put_line ("BR " & to_string (BR));
@@ -1875,8 +1875,8 @@ package body callbacks is
 		result.height := TL.y - BL.y;
 
 		-- CS: more effective ?
-		-- result.width    := type_distance_model (h_length) * type_distance_model (scale_factor);
-		-- result.height   := type_distance_model (v_length) * type_distance_model (scale_factor);
+		-- result.width    := type_distance_model (h_length) * type_distance_model (S);
+		-- result.height   := type_distance_model (v_length) * type_distance_model (S);
 
 		-- put_line ("visible area " & to_string (result));
 		return result;
@@ -1936,8 +1936,8 @@ package body callbacks is
 		-- and apply it to the global translate_offset.
 		-- Regarding y: T is in the canvas system (CS2)
 		-- where the y-axis goes downward. So we must multiply by -1:
-		T.x :=   gdouble (dx) * gdouble (scale_factor);
-		T.y := - gdouble (dy) * gdouble (scale_factor);
+		T.x :=   gdouble (dx) * gdouble (S);
+		T.y := - gdouble (dy) * gdouble (S);
 		if debug then
 			put_line ("T: " & to_string (T));
 		end if;
@@ -1949,7 +1949,7 @@ package body callbacks is
 	procedure zoom_on_cursor (
 		direction : type_zoom_direction)
 	is
-		S1 : constant type_scale_factor := scale_factor;
+		S1 : constant type_scale_factor := S;
 
 		-- The corners of the bounding-box on the canvas before 
 		-- and after zooming:
@@ -1973,16 +1973,16 @@ package body callbacks is
 
 		update_scale_display;
 		
-		-- put_line (" scale_factor" & to_string (scale_factor));
+		-- put_line (" S" & to_string (S));
 
-		-- After changing the scale_factor, the translate-offset must
+		-- After changing the scale-factor, the translate-offset must
 		-- be calculated anew. When the actual drawing takes 
 		-- place (see function cb_draw_objects)
 		-- then the drawing will be dragged back by the translate-offset
 		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 		-- Without applying a translate_offset the drawing would be appearing as 
 		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-		set_translation_for_zoom (S1, scale_factor, cursor.position);
+		set_translation_for_zoom (S1, S, cursor.position);
 
 		C2 := get_bounding_box_corners;
 		update_scrollbar_limits (C1, C2);
@@ -2004,12 +2004,12 @@ package body callbacks is
 	begin
 		put_line ("zoom_to_fit");
 
-		-- Calculate the scale_factor that is required to
+		-- Calculate the scale-factor that is required to
 		-- fit the given area into the scrolled window:
-		scale_factor := get_ratio (area);
+		S := get_ratio (area);
 		
 		if debug then
-			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+			put_line (" S: " & type_scale_factor'image (S));
 		end if;
 
 		update_scale_display;
@@ -2049,14 +2049,14 @@ package body callbacks is
 		set_initial_scrollbar_settings;
 
 
-		-- Calculate the scale_factor that is required to
+		-- Calculate the scale-factor that is required to
 		-- fit all objects into the scrolled window:
-		scale_factor := get_ratio (bounding_box);
+		S := get_ratio (bounding_box);
 
 		
 		
 		if debug then
-			put_line (" scale_factor: " & type_scale_factor'image (scale_factor));
+			put_line (" S: " & type_scale_factor'image (S));
 		end if;
 
 		update_scale_display;
@@ -2091,7 +2091,7 @@ package body callbacks is
 		-- real model point:
 		mp : constant type_point_model := to_model (
 			point 	=> cp,
-			scale	=> scale_factor,
+			scale	=> S,
 			real	=> true);
 
 		-- CS: For some reason the value of the scrollbars
@@ -2175,7 +2175,7 @@ package body callbacks is
 		-- real model point:
 		mp : constant type_point_model := to_model (
 			point 	=> cp,
-			scale	=> scale_factor,
+			scale	=> S,
 			real	=> true);
 
 		-- The corners of the bounding-box on the canvas before 
@@ -2285,7 +2285,7 @@ package body callbacks is
 		cp : constant type_point_canvas := (event.x, event.y);
 
 		-- Get the real model coordinates:
-		mp : constant type_point_model := to_model (cp, scale_factor, true);
+		mp : constant type_point_model := to_model (cp, S, true);
 	begin
 		-- put_line ("cb_mouse_moved");
 
@@ -2515,10 +2515,10 @@ package body callbacks is
 			-- The corners of the bounding-box on the canvas before 
 			-- and after zooming:
 			C1, C2 : type_bounding_box_corners;
-			S1 : constant type_scale_factor := scale_factor;
+			S1 : constant type_scale_factor := S;
 			
 		begin -- zoom
-			-- put_line (" scale old" & to_string (scale_factor));
+			-- put_line (" scale old" & to_string (S));
 
 			C1 := get_bounding_box_corners;
 			
@@ -2536,16 +2536,16 @@ package body callbacks is
 				when others => null;
 			end case;
 
-			-- put_line (" scale_factor" & to_string (scale_factor));
+			-- put_line (" S" & to_string (S));
 			
-			-- After changing the scale_factor, the translate_offset must
+			-- After changing the scale-factor, the translate_offset must
 			-- be calculated anew. When the actual drawing takes 
 			-- place (see function cb_draw_objects)
 			-- then the drawing will be dragged back by the translate_offset
 			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
 			-- Without applying a translate_offset the drawing would be appearing as 
 			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
-			set_translation_for_zoom (S1, scale_factor, Z);
+			set_translation_for_zoom (S1, S, Z);
 
 			-- show_adjustments_v;
 			-- backup_scrollbar_settings;
@@ -2569,7 +2569,7 @@ package body callbacks is
 				null;
 				-- CS: This is emperical for the time being.
 				-- Rework required.
-				dv := 10.0 * gdouble (scale_factor);
+				dv := 10.0 * gdouble (S);
 			end set_delta;
 			
 		begin
@@ -2693,8 +2693,8 @@ package body callbacks is
 
 			set_line_width (context, to_distance (line.w));
 
-			c1 := to_canvas (l.s, scale_factor, real => true);
-			c2 := to_canvas (l.e, scale_factor, real => true);
+			c1 := to_canvas (l.s, S, real => true);
+			c2 := to_canvas (l.e, S, real => true);
 			move_to (context, c1.x, c1.y);
 			line_to (context, c2.x, c2.y);
 			stroke (context);
@@ -2727,7 +2727,7 @@ package body callbacks is
 		-- area. Since it is about two simple lines we draw them
 		-- always:
 		procedure draw_origin is
-			cp : type_point_canvas := to_canvas (origin, scale_factor, true);
+			cp : type_point_canvas := to_canvas (origin, S, true);
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 			set_line_width (context, origin_linewidth);
@@ -2845,7 +2845,7 @@ package body callbacks is
 					while MP.y <= y2 loop
 						-- Convert the current real model point MP to a
 						-- point on the canvas:
-						CP := to_canvas (MP, scale_factor, true);
+						CP := to_canvas (MP, S, true);
 
 						-- Draw a very small circle with its center at CP:
 						arc (context, CP.x, CP.y, 
@@ -2896,8 +2896,8 @@ package body callbacks is
 				-- This loop advances from one column to the next and
 				-- draws a vertical line:
 				while MP1.x <= x2 loop
-					CP1 := to_canvas (MP1, scale_factor, true);
-					CP2 := to_canvas (MP2, scale_factor, true);
+					CP1 := to_canvas (MP1, S, true);
+					CP2 := to_canvas (MP2, S, true);
 					
 					move_to (context, CP1.x, CP1.y);
 					line_to (context, CP2.x, CP2.y);
@@ -2921,8 +2921,8 @@ package body callbacks is
 				-- This loop advances from one row to the next and
 				-- draws a horizontal line:
 				while MP1.y <= y2 loop
-					CP1 := to_canvas (MP1, scale_factor, true);
-					CP2 := to_canvas (MP2, scale_factor, true);
+					CP1 := to_canvas (MP1, S, true);
+					CP2 := to_canvas (MP2, S, true);
 					
 					move_to (context, CP1.x, CP1.y);
 					line_to (context, CP2.x, CP2.y);
@@ -2957,7 +2957,7 @@ package body callbacks is
 		-- drawn always, regardless whether it is in the visible
 		-- area or not:
 		procedure draw_cursor is
-			cp : type_point_canvas := to_canvas (cursor.position, scale_factor, true);
+			cp : type_point_canvas := to_canvas (cursor.position, S, true);
 
 			-- These are the start and stop positions for the
 			-- horizontal lines:

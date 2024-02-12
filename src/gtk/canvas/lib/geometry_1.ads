@@ -48,7 +48,12 @@ package geometry_1 is
 -- SCALE:
 
 	type type_scale_factor is digits 3 range 0.10 .. 20.0;
-	scale_factor : type_scale_factor := 1.0;
+
+	-- This is the global scale-factor:
+	S : type_scale_factor := 1.0;
+
+	-- This is the multiplier that is used when the
+	-- global scale-factor is increased or decreased:
 	scale_multiplier : constant type_scale_factor := 1.2;
 
 	
