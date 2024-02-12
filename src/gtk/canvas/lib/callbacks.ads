@@ -388,8 +388,8 @@ package callbacks is
 		main_window : access gtk_widget_record'class);
 
 
-	procedure cb_focus_win (
-		main_window : access gtk_window_record'class);
+	procedure cb_window_focus (
+		window : access gtk_window_record'class);
 
 
 

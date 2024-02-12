@@ -450,11 +450,11 @@ package body callbacks is
 	end cb_terminate;
 
 
-	procedure cb_focus_win (
-		main_window : access gtk_window_record'class) 
+	procedure cb_window_focus (
+		window : access gtk_window_record'class) 
 	is begin
-		put_line ("cb_focus_win");
-	end cb_focus_win;
+		put_line ("cb_window_focus");
+	end cb_window_focus;
 
 	
 	function cb_window_button_pressed (
@@ -809,7 +809,7 @@ package body callbacks is
 		main_window.on_realize (cb_main_window_realize'access);
 		main_window.on_activate_default (cb_main_window_activate'access);
 		
-		-- main_window.on_activate_focus (cb_focus_win'access);
+		--main_window.on_activate_focus (cb_window_focus'access);
 		-- main_window.set_has_window (false);
 		-- main_window.set_redraw_on_allocate (false);
 
