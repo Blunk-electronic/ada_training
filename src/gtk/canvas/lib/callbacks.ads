@@ -521,7 +521,7 @@ package callbacks is
 	-- in procedure set_up_swin_and_scrollbars and 
 	-- in cb_scrolled_window_size_allocate. This variable is required
 	-- in order to detect size changes of the scrolled window:
-	scrolled_window_size : type_window_size;
+	swin_size : type_window_size;
 
 	
 	

@@ -1204,8 +1204,8 @@ package body callbacks is
 		-- changes of the main window:
 		procedure show_size is begin
 			put_line (" size old (w/h): " 
-				& positive'image (scrolled_window_size.width)
-				& " /" & positive'image (scrolled_window_size.height));
+				& positive'image (swin_size.width)
+				& " /" & positive'image (swin_size.height));
 			
 			put_line (" size new (w/h): " 
 				& positive'image (new_size.width)
@@ -1286,11 +1286,11 @@ package body callbacks is
 		-- So we watch for changes of width and height only:
 		
 		-- Compare the new size with the old size. The global variable 
-		-- scrolled_window_size provides the size of the window BEFORE this
+		-- swin_size provides the size of the window BEFORE this
 		-- procedure has been called. If the size has changed, then we start 
 		-- zooming in or out. The zoom center is ths canvas point in the 
 		-- center of the visible area:
-		if new_size /= scrolled_window_size then
+		if new_size /= swin_size then
 			new_line;
 			put_line ("scrolled window size changed");
 
@@ -1303,8 +1303,8 @@ package body callbacks is
 			-- show_adjustments_v;
 			
 			-- Compute the change of width and height:
-			dW := gdouble (new_size.width - scrolled_window_size.width);
-			dH := gdouble (new_size.height - scrolled_window_size.height);
+			dW := gdouble (new_size.width - swin_size.width);
+			dH := gdouble (new_size.height - swin_size.height);
 
 			-- for debugging:
 			-- show_size;
@@ -1332,9 +1332,9 @@ package body callbacks is
 
 			-- show_adjustments_v;
 
-			-- Update the scrolled_window_size which is required
+			-- Update the swin_size which is required
 			-- for the next time this procedure is called:
-			scrolled_window_size := new_size;
+			swin_size := new_size;
 
 		end if;
 	end cb_scrolled_window_size_allocate;
@@ -1464,7 +1464,7 @@ package body callbacks is
 		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
 
 		-- Set the minimum size of the scrolled window and
-		-- the global scrolled_window_size variable.
+		-- the global swin_size variable.
 		-- There are two ways to do that:
 		--
 		-- 1. Basing on the global bounding-box which has been calculated
@@ -1478,7 +1478,7 @@ package body callbacks is
 		-- 	gint (bounding_box.width),
 		-- 	gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
 		-- 
-		-- scrolled_window_size := (
+		-- swin_size := (
 		-- 	width	=> positive (bounding_box.width),
 		-- 	height	=> positive (bounding_box.height));
 
@@ -1491,7 +1491,7 @@ package body callbacks is
 			gint (swin_size_initial.width),
 			gint (swin_size_initial.height));
   
-		scrolled_window_size := (
+		swin_size := (
 			width	=> swin_size_initial.width,
 			height	=> swin_size_initial.height);
 
