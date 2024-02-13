@@ -558,42 +558,52 @@ package callbacks is
 		SCROLL_LEFT);
 	
 	
-	-- Called whenever the horizontal scrollbar is moved, either
+	-- This procedure is called whenever the horizontal scrollbar is moved, either
 	-- by the operator or by internal calls.
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
 	
-	-- Called whenever the vertical scrollbar is moved, either
+	-- This procedure is called whenever the vertical scrollbar is moved, either
 	-- by the operator or by internal calls.
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
 
+	-- This procedure is called when the operator clicks
+	-- on the vertical scrollbar:
 	function cb_scrollbar_v_pressed (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
 	
-	
+
+	-- This procedure is called when the operator releases
+	-- the mouse button after clicking on the vertical scrollbar:
 	function cb_scrollbar_v_released (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
 
 
+	-- This procedure is called when the operator clicks
+	-- on the horizontal scrollbar:
 	function cb_scrollbar_h_pressed (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
 	
 	
+	-- This procedure is called when the operator releases
+	-- the mouse button after clicking on the horizontal scrollbar:
 	function cb_scrollbar_h_released (
 		bar		: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean;
 
-	
+
+	-- This composite type contains the settings
+	-- of a scrollbar:
 	type type_scrollbar_settings is record
 		lower		: gdouble;
 		upper		: gdouble;
@@ -601,15 +611,22 @@ package callbacks is
 		page_size	: gdouble;
 	end record;
 
+	-- These are the places where the initial settings of
+	-- the scrollbars are stored:
 	scrollbar_v_init : type_scrollbar_settings;
 	scrollbar_h_init : type_scrollbar_settings;
 
-
-	
+	-- These are the places where we backup the settings of
+	-- the scrollbars:
 	scrollbar_h_backup, scrollbar_v_backup : type_scrollbar_settings;
-	
+
+	-- This procedure does a backup of the current settings
+	-- of both the horizontal and the vertical scrollbar:
 	procedure backup_scrollbar_settings;
 
+
+	-- This procedure restores the settings of the vertical
+	-- and horizontal scrollbar from the backup:
 	procedure restore_scrollbar_settings;
 
 	
@@ -620,6 +637,9 @@ package callbacks is
 	-- sets the behaviour of them:
 	procedure set_up_swin_and_scrollbars;
 
+
+	-- For debugging, these procedure output the settings
+	-- of the scrollbars on the console:
 	procedure show_adjustments_v;
 	procedure show_adjustments_h;
 
