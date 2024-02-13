@@ -1180,7 +1180,7 @@ package body callbacks is
 	
 	
 	
-	procedure cb_scrolled_window_size_allocate (
+	procedure cb_swin_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
@@ -1272,10 +1272,10 @@ package body callbacks is
 		end move_center;
 
 		
-	begin -- cb_scrolled_window_size_allocate
+	begin -- cb_swin_size_allocate
 		
-		-- put_line ("cb_scrolled_window_size_allocate " & image (clock)); 
-		-- put_line ("cb_scrolled_window_size_allocate. (x/y/w/h): " 
+		-- put_line ("cb_swin_size_allocate " & image (clock)); 
+		-- put_line ("cb_swin_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
@@ -1337,7 +1337,7 @@ package body callbacks is
 			swin_size := new_size;
 
 		end if;
-	end cb_scrolled_window_size_allocate;
+	end cb_swin_size_allocate;
 	
 
 
@@ -1512,8 +1512,8 @@ package body callbacks is
 
 		
 		-- connect signals:
-		swin.on_size_allocate (cb_scrolled_window_size_allocate'access);
-		-- After executing procedure cb_scrolled_window_size_allocate
+		swin.on_size_allocate (cb_swin_size_allocate'access);
+		-- After executing procedure cb_swin_size_allocate
 		-- the canvas is refreshed (similar to refresh (canvas)) automatically..
 
 		-- Connect the signal "value-changed" of the scrollbars with 

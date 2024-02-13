@@ -519,7 +519,7 @@ package callbacks is
 	
 	-- The current size of the scrolled window. It gets updated
 	-- in procedure set_up_swin_and_scrollbars and 
-	-- in cb_scrolled_window_size_allocate. This variable is required
+	-- in cb_swin_size_allocate. This variable is required
 	-- in order to detect size changes of the scrolled window:
 	swin_size : type_window_size;
 
@@ -540,7 +540,7 @@ package callbacks is
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the scrolled window.
-	procedure cb_scrolled_window_size_allocate (
+	procedure cb_swin_size_allocate (
 		window		: access gtk_widget_record'class; -- CS rename to swin
 		allocation	: gtk_allocation);
 	
