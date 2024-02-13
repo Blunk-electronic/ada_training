@@ -454,11 +454,16 @@ package callbacks is
 	
 	
 -- SCROLLED WINDOW:
-	
+
+	-- This is the scrolled window:
 	swin : gtk_scrolled_window;
 
-	-- When the scrolled window is resized, then the canvas can be
-	-- adjusted in several ways. Currently these modes are defined:
+	-- Inside the scrolled window the canvas exists.
+	
+
+	
+	-- When the scrolled window is resized, then the canvas can
+	-- operate in in several ways. Currently these modes are defined:
 	type type_scrolled_window_zoom_mode is (
 		-- No zoom. No moving. Just more or less of 
 		-- the canvas area is exposed:
@@ -508,7 +513,7 @@ package callbacks is
 	-- IMPORTANT: The height must be greater than the sum
 	-- of the height of all other widgets in the main window !
 	-- Otherwise the canvas may freeze and stop emitting signals.
-	scrolled_window_size_initial : constant type_window_size := (
+	swin_size_initial : constant type_window_size := (
 		width	=> 400,
 		height	=> 400);
 	

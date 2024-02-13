@@ -1168,8 +1168,8 @@ package body callbacks is
 		-- CS: Alternatively the ratio can be based on the initial dimensions
 		-- of the scrolled window. A boolean argument for this function could be
 		-- used to switch between current dimensions and initial dimensions:
-		-- sw := type_scale_factor (type_distance_model (scrolled_window_size_initial.width) / area.width);
-		-- sh := type_scale_factor (type_distance_model (scrolled_window_size_initial.height) / area.height);
+		-- sw := type_scale_factor (type_distance_model (swin_size_initial.width) / area.width);
+		-- sh := type_scale_factor (type_distance_model (swin_size_initial.height) / area.height);
 		
 		-- put_line ("sw: " & to_string (sw));
 		-- put_line ("sh: " & to_string (sh));
@@ -1488,12 +1488,12 @@ package body callbacks is
 		--    window has a predictable and well defined size.
 		--    This is to be prefered over approach 1 (see above):
 		swin.set_size_request (
-			gint (scrolled_window_size_initial.width),
-			gint (scrolled_window_size_initial.height));
+			gint (swin_size_initial.width),
+			gint (swin_size_initial.height));
   
 		scrolled_window_size := (
-			width	=> scrolled_window_size_initial.width,
-			height	=> scrolled_window_size_initial.height);
+			width	=> swin_size_initial.width,
+			height	=> swin_size_initial.height);
 
 
 		
