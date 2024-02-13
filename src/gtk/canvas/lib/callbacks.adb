@@ -1181,7 +1181,7 @@ package body callbacks is
 	
 	
 	procedure cb_swin_size_allocate (
-		window		: access gtk_widget_record'class;
+		swin		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
 
