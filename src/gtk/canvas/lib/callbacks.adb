@@ -443,7 +443,7 @@ package body callbacks is
 -- MAIN WINDOW:
 	
 	procedure cb_terminate (
-		main_window : access gtk_widget_record'class) 
+		window : access gtk_widget_record'class) 
 	is begin
 		put_line ("cb_terminate");
 		gtk.main.main_quit;
@@ -480,8 +480,8 @@ package body callbacks is
 
 
 
-	function cb_key_pressed_win (
-		canvas	: access gtk_widget_record'class;
+	function cb_window_key_pressed (
+		window	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean
 	is
@@ -497,7 +497,7 @@ package body callbacks is
 	begin
 		-- Output the the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
-		put_line ("cb_key_pressed_win "
+		put_line ("cb_window_key_pressed "
 			& " key " & gdk_key_type'image (event.keyval));
 
 		if key_ctrl = control_mask then 
@@ -535,7 +535,7 @@ package body callbacks is
 		end if;
 		
 		return event_handled;
-	end cb_key_pressed_win;
+	end cb_window_key_pressed;
 
 	
 	
@@ -803,14 +803,15 @@ package body callbacks is
 		main_window.on_destroy (cb_terminate'access);
 		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_window_button_pressed'access);
-		main_window.on_key_press_event (cb_key_pressed_win'access);
+		main_window.on_key_press_event (cb_window_key_pressed'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
 		main_window.on_window_state_event (cb_main_window_state_change'access);
 		main_window.on_realize (cb_main_window_realize'access);
 		main_window.on_activate_default (cb_main_window_activate'access);
-		
-		--main_window.on_activate_focus (cb_window_focus'access);
-		-- main_window.set_has_window (false);
+
+		-- Not used:
+		-- main_window.on_activate_focus (cb_window_focus'access);
+
 		-- main_window.set_redraw_on_allocate (false);
 
 		gtk_new_hbox (box_h);

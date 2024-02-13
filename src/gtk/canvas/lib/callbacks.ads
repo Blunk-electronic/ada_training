@@ -383,9 +383,12 @@ package callbacks is
 	
 
 -- MAIN WINDOW:
-	
+
+	-- This procedure is called when the operator terminates
+	-- the demo program by clicking the X in the upper right corner
+	-- of the main window:
 	procedure cb_terminate (
-		main_window : access gtk_widget_record'class);
+		window : access gtk_widget_record'class);
 
 
 	procedure cb_window_focus (
@@ -409,14 +412,14 @@ package callbacks is
 	-- If it returns true, then it signals to the 
 	-- next widget in the chain downwards to handle the event
 	-- further.
-	-- The return should dependi on the severity of the key.
+	-- The return should depend on the severity of the key.
 	-- For example in case of an "emergency-exit" 
 	-- the operator hits the ESC key, which causes the abort of
 	-- all pending operations. In this case the return would be true
 	-- and the event would not be passed on to any widgets down
 	-- the chain.
-	function cb_key_pressed_win (
-		canvas	: access gtk_widget_record'class;
+	function cb_window_key_pressed (
+		window	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean;
 
