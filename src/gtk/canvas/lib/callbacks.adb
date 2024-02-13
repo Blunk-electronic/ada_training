@@ -662,22 +662,22 @@ package body callbacks is
 
 	
 		
-	procedure cb_main_window_size_allocate (
+	procedure cb_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
-	begin -- cb_main_window_size_allocate
+	begin
 		null;
 		
-		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
+		-- put_line ("cb_window_size_allocate " & image (clock)); 
 
-		-- put_line ("cb_main_window_size_allocate. (x/y/w/h): " 
+		-- put_line ("cb_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
 		
-	end cb_main_window_size_allocate;
+	end cb_window_size_allocate;
 
 
 
@@ -801,7 +801,7 @@ package body callbacks is
 		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
-		main_window.on_size_allocate (cb_main_window_size_allocate'access);
+		main_window.on_size_allocate (cb_window_size_allocate'access);
 		main_window.on_button_press_event (cb_window_button_pressed'access);
 		main_window.on_key_press_event (cb_window_key_pressed'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
