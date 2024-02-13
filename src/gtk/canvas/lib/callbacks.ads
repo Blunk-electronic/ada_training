@@ -638,26 +638,33 @@ package callbacks is
 	procedure set_up_swin_and_scrollbars;
 
 
-	-- For debugging, these procedure output the settings
+	-- For debugging, these procedures output the settings
 	-- of the scrollbars on the console:
 	procedure show_adjustments_v;
 	procedure show_adjustments_h;
 
 	
 	-- Sets the initial scrollbar settings based on
-	-- current base_offset and bounding-box:
+	-- current base-offset and bounding-box:
 	procedure set_initial_scrollbar_settings;
 	
 
 	
 -- CANVAS:
-	
+
+	-- This is the canvas where all the drawing takes place:
 	canvas : gtk_drawing_area;
 
+
+	-- This procedure should be called in order to schedule
+	-- a refresh (or redraw) of the canvas:
 	procedure refresh (
 		canvas	: access gtk_widget_record'class);
 
 
+	-- This procedure is called when the canvas changes
+	-- its size. It is not used currently because the canvas
+	-- has a fixed size in this demo program (see below):
 	procedure cb_canvas_size_allocate (
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);

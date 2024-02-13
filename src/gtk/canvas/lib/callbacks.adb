@@ -1683,9 +1683,9 @@ package body callbacks is
 		gtk_new (canvas);
 
 		-- Connect signals:
-		-- canvas.on_realize (cb_canvas_realized'access);
-		-- Not required currently.
 
+		-- Not used:
+		-- canvas.on_realize (cb_canvas_realized'access);
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 		
