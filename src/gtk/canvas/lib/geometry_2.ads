@@ -69,11 +69,14 @@ package geometry_2 is
 		range -100_000.00 .. 100_000.00;
 
 
+	-- This function returns the given distance 
+	-- as string:	
 	function to_string (
 		distance : in type_distance_model)
 		return string;
 
 	
+
 -- ROTATION / ANGLE:
 	
 	-- The model coordinates system uses so called
@@ -97,13 +100,16 @@ package geometry_2 is
 		x, y : type_distance_model := 0.0;
 	end record;
 
-	
+
+	-- This function returns the given vector
+	-- as string:
 	function to_string (
-		point	: in type_vector_model)
+		v : in type_vector_model)
 		return string;
 
 
-	
+	-- This function inverts a vector by multiplying
+	-- its components by -1:
 	function invert (
 		point	: in type_vector_model)
 		return type_vector_model;
@@ -174,6 +180,7 @@ package geometry_2 is
 	
 	grid : type_grid;
 
+	
 	-- This function returns the grid point that is
 	-- closest to the given model point;
 	function snap_to_grid (
@@ -191,12 +198,15 @@ package geometry_2 is
 		position	: type_vector_model; -- lower left corner
 	end record;
 
+	
 	-- Returns the position and dimensions of the given area as string:
 	function to_string (
 		box : in type_area)
 		return string;
 
-	
+
+	-- In order to handle the four corners of an
+	-- area this type is required:
 	type type_area_corners is record
 		BL, BR, TL, TR : type_vector_model;
 	end record;

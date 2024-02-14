@@ -59,11 +59,11 @@ package body geometry_2 is
 	
 	
 	function to_string (
-		point	: in type_vector_model)
+		v : in type_vector_model)
 		return string
 	is begin
 		return "vector model x/y: "
-			& to_string (point.x) & "/" & to_string (point.y);
+			& to_string (v.x) & "/" & to_string (v.y);
 	end to_string;
 
 
