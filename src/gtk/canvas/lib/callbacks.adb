@@ -1950,7 +1950,7 @@ package body callbacks is
 
 	
 	procedure zoom_on_cursor (
-		direction : type_zoom_direction)
+		direction : in type_zoom_direction)
 	is
 		S1 : constant type_scale_factor := S;
 

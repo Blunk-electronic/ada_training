@@ -679,9 +679,11 @@ package callbacks is
 		height	=> 20_000);
 	
 	
-	
+	-- This procedure outputs the current dimensions
+	-- of the canvas on the console:
 	procedure show_canvas_size;
 
+	
 	-- This procedure creates the canvas, assigns to
 	-- it a fixed size (constant canvas_size, see above)
 	-- and connects signals:
@@ -705,9 +707,8 @@ package callbacks is
 -- VISIBLE AREA:	
 
 	-- Returns the currently visible area of the model.
-	-- The visible area depends the current scale factor,
-	-- base-offset, translate-offset,
-	-- allocation of the scrolled window
+	-- The visible area depends the current scale-factor,
+	-- base-offset, translate-offset, dimensions of the scrolled window
 	-- and the current settings of the scrollbars.
 	function get_visible_area (
 		canvas	: access gtk_widget_record'class)
@@ -717,12 +718,15 @@ package callbacks is
 
 	-- This visible area is a global variable.
 	-- It is updated by procedure cb_draw_objects.
-	-- The reason why it is global: If the user searches for a
+	-- Some subprograms rely on it, for example those which
+	-- move the cursor. For this reason the visible area is
+	-- stored in a global variable.
+	-- For the future: If the operator searches for a
 	-- particular object, then the result of a search could be
 	-- a message like "The object is outside the visible
 	-- area at position (x/y)."
 	visible_area : type_area;
-	
+
 
 
 	-- This procedure sets the translate-offset so that
@@ -739,14 +743,18 @@ package callbacks is
 	-- cursor keys (arrow keys) about the canvas:
 	type type_cursor is record
 		position	: type_point_model := origin;
+
+		-- For drawing the cursor:
 		linewidth_1	: gdouble := 1.0;
 		linewidth_2	: gdouble := 4.0;
 		length_1	: gdouble := 20.0;
 		length_2	: gdouble := 20.0;
 		radius		: gdouble := 25.0;
-		-- CS blink, color, ...
+		
+		-- CS: blink, color, ...
 	end record;
 
+	
 	-- This is the instance of the cursor:
 	cursor : type_cursor;
 
@@ -763,15 +771,21 @@ package callbacks is
 		direction : type_direction);
 
 
+	
+
+-- ZOOMING:
+	
+	-- There are two kinds of zoom-operations:
 	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
+	
 	-- Zooms in or out at the current cursor position.
 	-- If the direction is ZOOM_IN, then the global scale-factor S
 	-- is increased by multplying it with the scale_multiplier.
 	-- If direction is ZOOM_OUT then it decreases by dividing
 	-- by scale_multiplier:
 	procedure zoom_on_cursor (
-		direction : type_zoom_direction);
+		direction : in type_zoom_direction);
 	
 
 	-- This procedure sets the global scale-factor S and translate-offset T
