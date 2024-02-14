@@ -1703,10 +1703,10 @@ package body callbacks is
 		
 		-- Make the canvas responding to mouse button clicks:
 		canvas.add_events (gdk.event.button_press_mask);
-		canvas.on_button_press_event (cb_button_pressed_canvas'access);
+		canvas.on_button_press_event (cb_canvas_button_pressed'access);
 
 		canvas.add_events (gdk.event.button_release_mask);
-		canvas.on_button_release_event (cb_button_released_canvas'access);
+		canvas.on_button_release_event (cb_canvas_button_released'access);
 		
 		-- Make the canvas responding to mouse movement:
 		canvas.add_events (gdk.event.pointer_motion_mask);
@@ -1719,7 +1719,7 @@ package body callbacks is
 		-- Make the canvas responding to the keyboard:
 		canvas.set_can_focus (true);
 		canvas.add_events (key_press_mask);
-		canvas.on_key_press_event (cb_key_pressed_canvas'access);
+		canvas.on_key_press_event (cb_canvas_key_pressed'access);
 
 		-- Add the canvas as a child to the scrolled window:
 		put_line ("add canvas to scrolled window");
@@ -2078,7 +2078,7 @@ package body callbacks is
 
 	
 	
-	function cb_button_pressed_canvas (
+	function cb_canvas_button_pressed (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean
@@ -2105,10 +2105,10 @@ package body callbacks is
 		-- or
 		-- <https://discourse.gnome.org/t/disable-auto-scrolling-in-gtkscrolledwindow-when-grab-focus-in-children/13058>
 	begin
-		put_line ("cb_button_pressed_canvas");
+		put_line ("cb_canvas_button_pressed");
 
 		-- Output the button id, x and y position:
-		-- put_line ("cb_button_pressed_canvas "
+		-- put_line ("cb_canvas_button_pressed "
 		-- 	& " button" & guint'image (event.button) & " "
 		-- 	& to_string (cp));
 
@@ -2154,12 +2154,12 @@ package body callbacks is
 		refresh (canvas);
 		
 		return event_handled;
-	end cb_button_pressed_canvas;
+	end cb_canvas_button_pressed;
 
 
 
 
-	function cb_button_released_canvas (
+	function cb_canvas_button_released (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_button)
 		return boolean
@@ -2186,11 +2186,11 @@ package body callbacks is
 		C1, C2 : type_bounding_box_corners;
 		
 	begin
-		put_line ("cb_button_released_canvas");
+		put_line ("cb_canvas_button_released");
 
 		
 		-- Output the button id, x and y position:
-		-- put_line ("cb_button_pressed_canvas "
+		-- put_line ("cb_canvas_button_pressed "
 		-- 	& " button" & guint'image (event.button) & " "
 		-- 	& to_string (cp));
 
@@ -2271,7 +2271,7 @@ package body callbacks is
 		refresh (canvas);
 		
 		return event_handled;
-	end cb_button_released_canvas;
+	end cb_canvas_button_released;
 
 
 	
@@ -2414,7 +2414,7 @@ package body callbacks is
 
 	
 	
-	function cb_key_pressed_canvas (
+	function cb_canvas_key_pressed (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean
@@ -2431,7 +2431,7 @@ package body callbacks is
 	begin
 		-- Output the the gdk_key_type (which is
 		-- just a number (see gdk.types und gdk.types.keysyms)):
-		put_line ("cb_key_pressed_canvas "
+		put_line ("cb_canvas_key_pressed "
 			& " key " & gdk_key_type'image (event.keyval));
 
 		if key_ctrl = control_mask then 
@@ -2481,7 +2481,7 @@ package body callbacks is
 		end if;
 		
 		return event_handled;
-	end cb_key_pressed_canvas;
+	end cb_canvas_key_pressed;
 
 
 	procedure cb_canvas_realized (
