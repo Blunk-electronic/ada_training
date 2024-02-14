@@ -73,10 +73,11 @@ package body geometry_1 is
 
 
 	function to_string (
-		point	: in type_point_canvas)
+		v : in type_vector_gdouble)
 		return string
 	is begin
-		return "canvas x/y: " & gdouble'image (point.x) & "/" & gdouble'image (point.y);
+		return "vector gdouble x/y: " 
+			& gdouble'image (v.x) & "/" & gdouble'image (v.y);
 	end to_string;
 
 

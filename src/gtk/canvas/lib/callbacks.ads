@@ -67,7 +67,7 @@ package callbacks is
 	-- The place on the canvase where the model 
 	-- coordinates system has its origin.
 	-- It is a global variable. We call it "base-offset":
-	F : type_point_canvas;
+	F : type_vector_gdouble;
 
 	-- Sets the global base-offset F according to the current
 	-- bounding-box and the maximal allowed scale-factor:
@@ -79,7 +79,7 @@ package callbacks is
 	
 	-- The global translate-offset by which all draw operations on the canvas
 	-- are translated when the operator zooms on the pointer or the cursor:
-	T : type_point_canvas := (0.0, 0.0);
+	T : type_vector_gdouble := (0.0, 0.0);
 
 	-- This procedure sets the global translate-offset T that is
 	-- required for a zoom-operation.
@@ -97,7 +97,7 @@ package callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
 		S2	: in type_scale_factor;		-- the scale factor after zoom
-		Z1	: in type_point_canvas);	-- the zoom center as canvas point
+		Z1	: in type_vector_gdouble);	-- the zoom center as canvas point
 
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
@@ -110,7 +110,7 @@ package callbacks is
 	-- bounding-box in canvas coordinates. This composite type serves this
 	-- purpose:
 	type type_bounding_box_corners is record
-		BL, BR, TL, TR : type_point_canvas;
+		BL, BR, TL, TR : type_vector_gdouble;
 	end record;
 
 	-- This function returns the current corners of the bounding-box
@@ -128,13 +128,13 @@ package callbacks is
 	-- a canvas distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_distance_model)
-		return type_distance_canvas;
+		return type_distance_gdouble;
 
 	
 	-- Converts the given canvas distance to
 	-- a model distance according to the current scale-factor S:
 	function to_distance (
-		d : in type_distance_canvas)
+		d : in type_distance_gdouble)
 		return type_distance_model;
 
 	
@@ -144,7 +144,7 @@ package callbacks is
 	-- If a real model point is required, then the position
 	-- of the current bonding-box is also taken into account:
 	function to_model (
-		point	: in type_point_canvas;
+		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false) -- if real model coordinates are required
 		return type_point_model;
@@ -160,7 +160,7 @@ package callbacks is
 		point 	: in type_point_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false) -- if real model coordinates are given
-		return type_point_canvas;
+		return type_vector_gdouble;
 
 
 
@@ -309,8 +309,8 @@ package callbacks is
 		started	: boolean := false;
 
 		-- The corners of the selected area:
-		l1		: type_point_canvas; -- the start point
-		l2		: type_point_canvas; -- the end point
+		l1		: type_vector_gdouble; -- the start point
+		l2		: type_vector_gdouble; -- the end point
 	end record;
 
 	

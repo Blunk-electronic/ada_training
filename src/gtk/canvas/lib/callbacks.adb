@@ -77,13 +77,13 @@ package body callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
 		S2	: in type_scale_factor;
-		Z1	: in type_point_canvas)
+		Z1	: in type_vector_gdouble)
 	is 
 		-- Compute the virtual model-point
 		-- according to the scale factor before zoom:
 		M : constant type_point_model := to_model (Z1, S1);
 
-		Z2 : type_point_canvas;
+		Z2 : type_vector_gdouble;
 	begin			
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
@@ -106,12 +106,12 @@ package body callbacks is
 	is 
 		-- Compute the canvas point corresponding to the given
 		-- real model point with the scale factor before zoom:
-		Z1 : constant type_point_canvas := to_canvas (M, S1, real => true);
+		Z1 : constant type_vector_gdouble := to_canvas (M, S1, real => true);
 
 		-- Convert the given model point to a virtual point in the model:
 		V : constant type_point_model := to_virtual (M);
 		
-		Z2 : type_point_canvas;
+		Z2 : type_vector_gdouble;
 	begin			
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
@@ -151,14 +151,14 @@ package body callbacks is
 
 	function to_distance (
 		d : in type_distance_model)
-		return type_distance_canvas
+		return type_distance_gdouble
 	is begin
 		return gdouble (d) * gdouble (S);
 	end to_distance;
 
 
 	function to_distance (
-		d : in type_distance_canvas)
+		d : in type_distance_gdouble)
 		return type_distance_model
 	is begin
 		return type_distance_model (d / gdouble (S));
@@ -167,7 +167,7 @@ package body callbacks is
 
 	
 	function to_model (
-		point	: in type_point_canvas;
+		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false)
 		return type_point_model
@@ -206,10 +206,10 @@ package body callbacks is
 		point 	: in type_point_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false)
-		return type_point_canvas
+		return type_vector_gdouble
 	is
 		P : type_point_model := point;
-		result : type_point_canvas;
+		result : type_vector_gdouble;
 	begin
 		-- If real model coordinates are given, then they must
 		-- be compensated by the inverted bounding-box position
@@ -367,7 +367,7 @@ package body callbacks is
 	
 	procedure update_distances_display is 
 		px, py : gint; -- the pointer position
-		cp : type_point_canvas;
+		cp : type_vector_gdouble;
 		mp : type_point_model;
 
 		dx, dy : type_distance_model;
@@ -466,7 +466,7 @@ package body callbacks is
 		event_handled : boolean := true;
 
 		-- The point where the operator has clicked:
-		point : constant type_point_canvas := (event.x, event.y);
+		point : constant type_vector_gdouble := (event.x, event.y);
 	begin
 		null;
 		
@@ -2087,7 +2087,7 @@ package body callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- has clicked:
-		cp : constant type_point_canvas := (event.x, event.y);
+		cp : constant type_vector_gdouble := (event.x, event.y);
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
@@ -2171,7 +2171,7 @@ package body callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- released the button:
-		cp : constant type_point_canvas := (event.x, event.y);
+		cp : constant type_vector_gdouble := (event.x, event.y);
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
@@ -2284,7 +2284,7 @@ package body callbacks is
 		use glib;
 		event_handled : boolean := true;
 
-		cp : constant type_point_canvas := (event.x, event.y);
+		cp : constant type_vector_gdouble := (event.x, event.y);
 
 		-- Get the real model coordinates:
 		mp : constant type_point_model := to_model (cp, S, true);
@@ -2504,7 +2504,7 @@ package body callbacks is
 
 		procedure zoom is
 			-- The given point on the canvas where the operator is zooming in or out:
-			Z : constant type_point_canvas := (event.x, event.y);
+			Z : constant type_vector_gdouble := (event.x, event.y);
 
 			-- The corners of the bounding-box on the canvas before 
 			-- and after zooming:
@@ -2659,7 +2659,7 @@ package body callbacks is
 
 		-- When the line is drawn, we need canvas points
 		-- for start and end:
-		c1, c2 : type_point_canvas; -- start and end of the line
+		c1, c2 : type_vector_gdouble; -- start and end of the line
 
 		-- The bounding-box of the line. It is required
 		-- for the area and size check:
@@ -2721,7 +2721,7 @@ package body callbacks is
 		-- area. Since it is about two simple lines we draw them
 		-- always:
 		procedure draw_origin is
-			cp : type_point_canvas := to_canvas (origin, S, true);
+			cp : type_vector_gdouble := to_canvas (origin, S, true);
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 			set_line_width (context, origin_linewidth);
@@ -2822,7 +2822,7 @@ package body callbacks is
 			--    (or alternatively a crosshair) at PM.
 			procedure draw_dots is 
 				MP : type_point_model;
-				CP : type_point_canvas;
+				CP : type_vector_gdouble;
 			begin
 				-- Set the linewidth of the dots:
 				set_line_width (context, grid_width_dots);
@@ -2865,8 +2865,8 @@ package body callbacks is
 				MP1 : type_point_model;
 				MP2 : type_point_model;
 
-				CP1 : type_point_canvas;
-				CP2 : type_point_canvas;
+				CP1 : type_vector_gdouble;
+				CP2 : type_vector_gdouble;
 
 				ax1f : type_distance_model := visible_area.position.x;
 				ax2f : type_distance_model := ax1f + visible_area.width;
@@ -2951,7 +2951,7 @@ package body callbacks is
 		-- drawn always, regardless whether it is in the visible
 		-- area or not:
 		procedure draw_cursor is
-			cp : type_point_canvas := to_canvas (cursor.position, S, true);
+			cp : type_vector_gdouble := to_canvas (cursor.position, S, true);
 
 			-- These are the start and stop positions for the
 			-- horizontal lines:
@@ -3034,8 +3034,8 @@ package body callbacks is
 			x, y : gdouble;
 			w, h : gdouble;
 
-			l1 : type_point_canvas renames zoom_area.l1;
-			l2 : type_point_canvas renames zoom_area.l2;
+			l1 : type_vector_gdouble renames zoom_area.l1;
+			l2 : type_vector_gdouble renames zoom_area.l2;
 		begin
 			if zoom_area.started then
 
@@ -3079,7 +3079,7 @@ package body callbacks is
 			use pac_circles;
 			use pac_objects;
 			
-			c : type_point_canvas;
+			c : type_vector_gdouble;
 
 			procedure query_object (oc : in pac_objects.cursor) is
 				object : type_complex_object renames element (oc);

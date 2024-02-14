@@ -86,17 +86,29 @@ package geometry_1 is
 
 
 	
--- CANVAS:
+-- DISTANCE AND VECTORS ON THE SCREEN:
 
-	subtype type_distance_canvas is gdouble range 0.0 .. gdouble'last;
+	-- GTK3 uses the type gdouble for primitive draw operations
+	-- on the canvas. It also uses gdouble for scrollbar settings.
+	-- A point, a vector or a distance is expressed in
+	-- so called "logical pixels".	
+
+	-- The total distance between two gdouble numbers is
+	-- always positive. So we define the distance as:
+	subtype type_distance_gdouble is gdouble range 0.0 .. gdouble'last;
+
 	
-	type type_point_canvas is record
+	-- A point, a location vector or a distance vector is
+	-- defined by this type:
+	type type_vector_gdouble is record
 		x, y : gdouble := 0.0;
 	end record;
 
-		
+
+	-- This function outputs the x and y component of a vector
+	-- on the console:
 	function to_string (
-		point	: in type_point_canvas)
+		v : in type_vector_gdouble)
 		return string;
 
 
