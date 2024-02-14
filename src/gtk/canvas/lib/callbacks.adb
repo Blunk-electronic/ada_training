@@ -1287,15 +1287,14 @@ package body callbacks is
 		
 		-- Compare the new size with the old size. The global variable 
 		-- swin_size provides the size of the window BEFORE this
-		-- procedure has been called. If the size has changed, then we start 
-		-- zooming in or out. The zoom center is ths canvas point in the 
-		-- center of the visible area:
+		-- procedure has been called. If the size has changed, then proceed
+		-- with other action. If the size has not changed, then nothing happens:
 		if new_size /= swin_size then
 			new_line;
 			put_line ("scrolled window size changed");
 
 			-- Opon resizing the scrolled window, the settings of the scrollbars 
-			-- (upper, lower and page size) adapt to the size of the canvas. 
+			-- (upper, lower and page size) adapt to the size of the scrolled window. 
 			-- But we do NOT want this behaviour. Instead we restore the settings
 			-- as they where BEFORE this procedure has been called:
 			restore_scrollbar_settings;
@@ -1325,12 +1324,7 @@ package body callbacks is
 					zoom_visible_area;
 
 			end case;
-
 			
-			-- Adjust scrollbars:
-			-- backup_scrollbar_settings;
-
-			-- show_adjustments_v;
 
 			-- Update the swin_size which is required
 			-- for the next time this procedure is called:
