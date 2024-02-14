@@ -62,8 +62,15 @@ package geometry_1 is
 	function to_string (
 		scale : in type_scale_factor)
 		return string;
-	
+
+
+	-- This procedure increases the global scale-factor
+	-- by multiplying it by SM:
 	procedure increase_scale;
+
+	
+	-- This procedure decreases the global scale-factor
+	-- by dividing it by SM:
 	procedure decrease_scale;
 
 	
