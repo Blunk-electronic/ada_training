@@ -1685,7 +1685,6 @@ package body callbacks is
 		-- Connect signals:
 
 		-- Not used:
-		-- canvas.on_realize (cb_canvas_realized'access);
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 		
@@ -2483,14 +2482,6 @@ package body callbacks is
 		return event_handled;
 	end cb_canvas_key_pressed;
 
-
-	procedure cb_canvas_realized (
-		canvas	: access gtk_widget_record'class)
-	is
-	begin
-		null;
-		-- put_line ("cb_canvas_realized");
-	end cb_canvas_realized;
 
 
 

@@ -836,9 +836,6 @@ package callbacks is
 		return boolean;
 
 
-	procedure cb_canvas_realized (
-		canvas	: access gtk_widget_record'class);
-	
 
 
 
