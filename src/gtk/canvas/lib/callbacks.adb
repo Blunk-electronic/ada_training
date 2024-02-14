@@ -1288,7 +1288,7 @@ package body callbacks is
 		-- Compare the new size with the old size. The global variable 
 		-- swin_size provides the size of the window BEFORE this
 		-- procedure has been called. If the size has changed, then proceed
-		-- with other action. If the size has not changed, then nothing happens:
+		-- with other actions. If the size has not changed, then nothing happens:
 		if new_size /= swin_size then
 			new_line;
 			put_line ("scrolled window size changed");
