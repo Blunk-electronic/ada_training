@@ -841,13 +841,17 @@ package callbacks is
 
 
 	-- This function is called each time the mouse wheel is
-	-- rolled by the operator:
+	-- rolled inside the canvas by the operator:
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)
 		return boolean;
 
 
+	
+
+-- DRAW OPERATIONS:
+	
 	-- This is a primitive draw operation that draws a line:
 	procedure draw_line (
 		context	: in cairo_context; -- CS make context global ?
