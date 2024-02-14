@@ -38,9 +38,6 @@
 
 with glib;						use glib;
 
-with ada.numerics;
-with ada.numerics.generic_elementary_functions;
-
 package geometry_1 is
 
 
@@ -71,17 +68,6 @@ package geometry_1 is
 
 	
 
-	
--- INTERNAL FLOAT TYPE:
-
-	-- This float type is used for internal computations only:
-	type type_float is new float; -- CS refinement required
-
-	
-	package pac_float_numbers_functions is new 
-		ada.numerics.generic_elementary_functions (type_float);
-	
-	
 
 
 

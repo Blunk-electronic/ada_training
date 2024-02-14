@@ -49,6 +49,18 @@ with geometry_1;				use geometry_1;
 
 package geometry_2 is
 
+
+-- INTERNAL FLOAT TYPE:
+
+	-- This float type is used for internal computations only:
+	type type_float is new float; -- CS refinement required
+
+	
+	package pac_float_numbers_functions is new 
+		ada.numerics.generic_elementary_functions (type_float);
+
+
+		
 -- DISTANCE:
 	
 	-- The model coordinates system uses so called
