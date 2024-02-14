@@ -102,7 +102,7 @@ package callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
 		S2	: in type_scale_factor;		-- the scale factor after zoom
-		M	: in type_point_model);		-- the zoom center as a real model point
+		M	: in type_vector_model);		-- the zoom center as a real model point
 
 
 	
@@ -147,7 +147,7 @@ package callbacks is
 		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false) -- if real model coordinates are required
-		return type_point_model;
+		return type_vector_model;
 	
 
 	-- Converts a model point to a canvas point
@@ -157,7 +157,7 @@ package callbacks is
 	-- tranlate-offset and the position of the current
 	-- bounding-box is also taken into account:
 	function to_canvas (
-		point 	: in type_point_model;
+		point 	: in type_vector_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false) -- if real model coordinates are given
 		return type_vector_gdouble;
@@ -284,12 +284,12 @@ package callbacks is
 		-- This is the first corner of the area. It is assigned
 		-- when the operator presses the right mouse button
 		-- on the canvas to define the start point of the zoom-area:
-		k1		: type_point_model;
+		k1		: type_vector_model;
 
 		-- This is the second corner of the area. It is assigned
 		-- when the operator releases the right mouse button
 		-- on the canvas to define end point of the the zoom-area:
-		k2		: type_point_model;
+		k2		: type_vector_model;
 
 		-- This is the actual area to be zoomed to. It gets fully
 		-- specified when the operator releases the right mouse button.
@@ -742,7 +742,7 @@ package callbacks is
 	-- The cursor is a crosshair that can be moved by the
 	-- cursor keys (arrow keys) about the canvas:
 	type type_cursor is record
-		position	: type_point_model := origin;
+		position	: type_vector_model := origin;
 
 		-- For drawing the cursor:
 		linewidth_1	: gdouble := 1.0;
@@ -763,7 +763,7 @@ package callbacks is
 	
 	-- This procedure moves the cursor to the given destination:
 	procedure move_cursor (
-		destination : type_point_model);
+		destination : type_vector_model);
 
 
 	-- This procedure moves the cursor into the given direction:
@@ -856,14 +856,14 @@ package callbacks is
 	procedure draw_line (
 		context	: in cairo_context; -- CS make context global ?
 		line	: in type_line;
-		pos		: in type_point_model); -- the position of the complex object
+		pos		: in type_vector_model); -- the position of the complex object
 
 
 	-- This is a primitive draw operation that draws a circle:
 	procedure draw_circle (
 		context	: in cairo_context; -- CS make context global ?
 		circle	: in type_circle;
-		pos		: in type_point_model); -- the position of the complex object
+		pos		: in type_vector_model); -- the position of the complex object
 
 
 	

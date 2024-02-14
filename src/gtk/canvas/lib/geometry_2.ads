@@ -91,28 +91,28 @@ package geometry_2 is
 
 	
 	
--- POINT / POSITION / LOCATION:
+-- POINT / POSITION / LOCATION / LOCATION VECTOR / DISTANCE VECTOR:
 	
-	type type_point_model is record
+	type type_vector_model is record
 		x, y : type_distance_model := 0.0;
 	end record;
 
 	
 	function to_string (
-		point	: in type_point_model)
+		point	: in type_vector_model)
 		return string;
 
 
 	
 	function invert (
-		point	: in type_point_model)
-		return type_point_model;
+		point	: in type_vector_model)
+		return type_vector_model;
 	
 						 
 	-- Moves a model point by the given offset:
 	procedure move_by (
-		point	: in out type_point_model;
-		offset	: in type_point_model);
+		point	: in out type_vector_model;
+		offset	: in type_vector_model);
 
 
 
@@ -120,14 +120,14 @@ package geometry_2 is
 	-- Returns the absolute distance between the given
 	-- model points. Uses internally a float type:
 	function get_distance (
-		p1, p2 : in type_point_model)
+		p1, p2 : in type_vector_model)
 		return type_distance_model;
 	
 
 	-- Returns the angle of direection from the given 
 	-- point p1 to the point p2. Uses internally a float type:
 	function get_angle (
-		p1, p2 : in type_point_model)
+		p1, p2 : in type_vector_model)
 		return type_rotation_model;
 
 
@@ -135,7 +135,7 @@ package geometry_2 is
 -- ORIGIN:
 	
 	-- The origin is a small cross at model position (0;0).
-	origin				: constant type_point_model := (0.0, 0.0);
+	origin				: constant type_vector_model := (0.0, 0.0);
 	origin_size			: constant gdouble := 10.0; -- the arm-length of the cross
 	origin_linewidth	: constant gdouble := 1.0;
 
@@ -167,7 +167,7 @@ package geometry_2 is
 	type type_grid is record
 		--on		: type_grid_on_off := GRID_ON;
 		on		: type_grid_on_off := GRID_OFF;
-		spacing : type_point_model := (others => grid_spacing_default);
+		spacing : type_vector_model := (others => grid_spacing_default);
 		style	: type_grid_style := STYLE_DOTS;
 		-- style	: type_grid_style := STYLE_LINES;
 	end record;
@@ -177,8 +177,8 @@ package geometry_2 is
 	-- This function returns the grid point that is
 	-- closest to the given model point;
 	function snap_to_grid (
-		point : in type_point_model)
-		return type_point_model;
+		point : in type_vector_model)
+		return type_vector_model;
 
 
 
@@ -188,7 +188,7 @@ package geometry_2 is
 	type type_area is record
 		width		: type_distance_model := 0.0; -- CS should be positive
 		height		: type_distance_model := 0.0; -- CS should be positive
-		position	: type_point_model; -- lower left corner
+		position	: type_vector_model; -- lower left corner
 	end record;
 
 	-- Returns the position and dimensions of the given area as string:
@@ -198,7 +198,7 @@ package geometry_2 is
 
 	
 	type type_area_corners is record
-		BL, BR, TL, TR : type_point_model;
+		BL, BR, TL, TR : type_vector_model;
 	end record;
 
 
@@ -212,14 +212,14 @@ package geometry_2 is
 	-- Returns the center of the given area:
 	function get_center (
 		area	: in type_area)
-		return type_point_model;
+		return type_vector_model;
 	
 
 	
 	-- Returns true if the given point lies inside the given
 	-- area or on its border. 
 	function in_area (
-		point	: in type_point_model;
+		point	: in type_vector_model;
 		area	: in type_area)
 		return boolean;
 
@@ -227,13 +227,13 @@ package geometry_2 is
 	
 	-- Converts a virtual model point to a real model point:
 	function to_real (
-		point : in type_point_model)
-		return type_point_model;
+		point : in type_vector_model)
+		return type_vector_model;
 
 	-- Converts a real model point to a virtual model point:
 	function to_virtual (
-		point : in type_point_model)
-		return type_point_model;
+		point : in type_vector_model)
+		return type_vector_model;
 
 
 
@@ -241,7 +241,7 @@ package geometry_2 is
 	-- The bounding box includes the margin:
 	margin : constant type_distance_model := 5.0;
 	
-	margin_offset : constant type_point_model := (
+	margin_offset : constant type_vector_model := (
 		x	=> margin,
 		y	=> margin);
 
@@ -258,7 +258,7 @@ package geometry_2 is
 	
 	-- The simplest object in the model world is a line:
 	type type_line is record
-		s, e : type_point_model; -- start and end point
+		s, e : type_vector_model; -- start and end point
 		w : type_distance_model; -- linewidth
 	end record;
 
@@ -274,13 +274,13 @@ package geometry_2 is
 	-- Moves a line by the given offset:
 	procedure move_line (
 		line	: in out type_line;
-		offset	: in type_point_model);
+		offset	: in type_vector_model);
 
 	
 	
 	-- Another primitive object is a circle:
 	type type_circle is record
-		c : type_point_model;
+		c : type_vector_model;
 		r : type_distance_model; -- the radius
 		w : type_distance_model; -- the linewidth
 		-- CS: fill status
@@ -319,7 +319,7 @@ package geometry_2 is
 	
 	
 	type type_object is abstract tagged record
-		p : type_point_model;
+		p : type_vector_model;
 	end record;
 
 	

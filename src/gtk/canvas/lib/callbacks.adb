@@ -81,7 +81,7 @@ package body callbacks is
 	is 
 		-- Compute the virtual model-point
 		-- according to the scale factor before zoom:
-		M : constant type_point_model := to_model (Z1, S1);
+		M : constant type_vector_model := to_model (Z1, S1);
 
 		Z2 : type_vector_gdouble;
 	begin			
@@ -102,14 +102,14 @@ package body callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
 		S2	: in type_scale_factor;
-		M	: in type_point_model) -- real model point
+		M	: in type_vector_model) -- real model point
 	is 
 		-- Compute the canvas point corresponding to the given
 		-- real model point with the scale factor before zoom:
 		Z1 : constant type_vector_gdouble := to_canvas (M, S1, real => true);
 
 		-- Convert the given model point to a virtual point in the model:
-		V : constant type_point_model := to_virtual (M);
+		V : constant type_vector_model := to_virtual (M);
 		
 		Z2 : type_vector_gdouble;
 	begin			
@@ -170,9 +170,9 @@ package body callbacks is
 		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false)
-		return type_point_model
+		return type_vector_model
 	is 
-		result : type_point_model;
+		result : type_vector_model;
 		debug : boolean := false;
 	begin
 		if debug then
@@ -203,12 +203,12 @@ package body callbacks is
 	
 
 	function to_canvas (
-		point 	: in type_point_model;
+		point 	: in type_vector_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false)
 		return type_vector_gdouble
 	is
-		P : type_point_model := point;
+		P : type_vector_model := point;
 		result : type_vector_gdouble;
 	begin
 		-- If real model coordinates are given, then they must
@@ -368,7 +368,7 @@ package body callbacks is
 	procedure update_distances_display is 
 		px, py : gint; -- the pointer position
 		cp : type_vector_gdouble;
-		mp : type_point_model;
+		mp : type_vector_model;
 
 		dx, dy : type_distance_model;
 		dabs : type_distance_model;
@@ -1820,7 +1820,7 @@ package body callbacks is
 		v_start, v_length, v_end : gdouble;
 
 		-- The four corners of the visible area:
-		BL, BR, TL, TR : type_point_model;
+		BL, BR, TL, TR : type_vector_model;
 	begin
 		-- Inquire the allocation of the scrolled window
 		-- inside the main window:
@@ -2091,7 +2091,7 @@ package body callbacks is
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
-		mp : constant type_point_model := to_model (
+		mp : constant type_vector_model := to_model (
 			point 	=> cp,
 			scale	=> S,
 			real	=> true);
@@ -2175,7 +2175,7 @@ package body callbacks is
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
-		mp : constant type_point_model := to_model (
+		mp : constant type_vector_model := to_model (
 			point 	=> cp,
 			scale	=> S,
 			real	=> true);
@@ -2287,7 +2287,7 @@ package body callbacks is
 		cp : constant type_vector_gdouble := (event.x, event.y);
 
 		-- Get the real model coordinates:
-		mp : constant type_point_model := to_model (cp, S, true);
+		mp : constant type_vector_model := to_model (cp, S, true);
 	begin
 		-- put_line ("cb_mouse_moved");
 
@@ -2328,7 +2328,7 @@ package body callbacks is
 
 
 	procedure move_cursor (
-		destination : type_point_model)
+		destination : type_vector_model)
 	is
 	begin
 		cursor.position := destination;
@@ -2650,7 +2650,7 @@ package body callbacks is
 	procedure draw_line (
 		context	: in cairo_context; -- CS make context global ?
 		line	: in type_line;
-		pos		: in type_point_model)
+		pos		: in type_vector_model)
 	is
 		-- CS: Optimization required. Compiler options ?
 		
@@ -2699,7 +2699,7 @@ package body callbacks is
 	procedure draw_circle (
 		context	: in cairo_context; -- CS make context global ?
 		circle	: in type_circle;
-		pos		: in type_point_model) -- the position of the complex object
+		pos		: in type_vector_model) -- the position of the complex object
 	is
 		-- CS: Optimization required. Compiler options ?
 	begin
@@ -2821,7 +2821,7 @@ package body callbacks is
 			-- 3. Draw a very small circle, which will appear like a dot,
 			--    (or alternatively a crosshair) at PM.
 			procedure draw_dots is 
-				MP : type_point_model;
+				MP : type_vector_model;
 				CP : type_vector_gdouble;
 			begin
 				-- Set the linewidth of the dots:
@@ -2862,8 +2862,8 @@ package body callbacks is
 
 			-- This procedure draws the lines of the grid:
 			procedure draw_lines is 
-				MP1 : type_point_model;
-				MP2 : type_point_model;
+				MP1 : type_vector_model;
+				MP2 : type_vector_model;
 
 				CP1 : type_vector_gdouble;
 				CP2 : type_vector_gdouble;

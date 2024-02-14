@@ -59,16 +59,17 @@ package body geometry_2 is
 	
 	
 	function to_string (
-		point	: in type_point_model)
+		point	: in type_vector_model)
 		return string
 	is begin
-		return "model x/y: " & to_string (point.x) & "/" & to_string (point.y);
+		return "vector model x/y: "
+			& to_string (point.x) & "/" & to_string (point.y);
 	end to_string;
 
 
 	function invert (
-		point	: in type_point_model)
-		return type_point_model
+		point	: in type_vector_model)
+		return type_vector_model
 	is begin
 		return (- point.x, - point.y);
 	end invert;
@@ -76,8 +77,8 @@ package body geometry_2 is
 	
 
 	procedure move_by (
-		point	: in out type_point_model;
-		offset	: in type_point_model)
+		point	: in out type_vector_model;
+		offset	: in type_vector_model)
 	is begin
 		point.x := point.x + offset.x;
 		point.y := point.y + offset.y;
@@ -86,7 +87,7 @@ package body geometry_2 is
 
 	
 	function get_distance (
-		p1, p2 : in type_point_model)
+		p1, p2 : in type_vector_model)
 		return type_distance_model
 	is
 		use pac_float_numbers_functions;
@@ -101,7 +102,7 @@ package body geometry_2 is
 	
 
 	function get_angle (
-		p1, p2 : in type_point_model)
+		p1, p2 : in type_vector_model)
 		return type_rotation_model
 	is
 		use pac_float_numbers_functions;
@@ -116,13 +117,13 @@ package body geometry_2 is
 
 
 	function snap_to_grid (
-		point : in type_point_model)
-		return type_point_model
+		point : in type_vector_model)
+		return type_vector_model
 	is
 		n : integer;
 		type type_float is new float; -- CS refinement required
 		f : type_float;
-		result : type_point_model;
+		result : type_vector_model;
 	begin
 		n := integer (point.x / grid.spacing.x);
 		f := type_float (n) * type_float (grid.spacing.x);
@@ -166,9 +167,9 @@ package body geometry_2 is
 	
 	function get_center (
 		area	: in type_area)
-		return type_point_model
+		return type_vector_model
 	is
-		result : type_point_model;
+		result : type_vector_model;
 	begin
 		result.x := area.position.x + area.width  * 0.5;
 		result.y := area.position.y + area.height * 0.5;
@@ -178,7 +179,7 @@ package body geometry_2 is
 
 	
 	function in_area (
-		point	: type_point_model;
+		point	: type_vector_model;
 		area	: type_area)
 		return boolean
 	is
@@ -204,10 +205,10 @@ package body geometry_2 is
 
 	
 	function to_real (
-		point : in type_point_model)
-		return type_point_model
+		point : in type_vector_model)
+		return type_vector_model
 	is	
-		result : type_point_model := point;
+		result : type_vector_model := point;
 	begin
 		move_by (result, bounding_box.position);
 		return result;
@@ -215,10 +216,10 @@ package body geometry_2 is
 
 
 	function to_virtual (
-		point : in type_point_model)
-		return type_point_model
+		point : in type_vector_model)
+		return type_vector_model
 	is
-		result : type_point_model := point;
+		result : type_vector_model := point;
 	begin
 		move_by (result, invert (bounding_box.position));
 		return result;
@@ -273,7 +274,7 @@ package body geometry_2 is
 
 	procedure move_line (
 		line	: in out type_line;
-		offset	: in type_point_model)
+		offset	: in type_vector_model)
 	is begin
 		-- CS: Optimization required. Compiler options ?
 		move_by (line.s, offset);
