@@ -473,10 +473,10 @@ package body geometry_2 is
 		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 2.0);
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 2.0);
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
 		objects_database.append (object);
@@ -602,10 +602,10 @@ package body geometry_2 is
 		line := (s => (10.0, -10.0), e => (10.0, 10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 2.0);
+		line := (s => (10.0, 10.0), e => (-10.0, 10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 2.0);
+		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
 		objects_database.append (object);
