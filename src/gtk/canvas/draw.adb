@@ -91,7 +91,7 @@ begin
 		
 
 	put_line ("show all widgets");
-	main_window.show_all;
+	main_window.show_all; -- assigns the allocation to the canvas
 
 	
 	set_initial_scrollbar_settings;
@@ -106,9 +106,11 @@ begin
 	-- to move the cursor with the cursor-keys from the beginning:
 	canvas.grab_focus;
 
+	
 	-- Zoom so that all objects are visible:
 	zoom_to_fit (geometry_2.bounding_box);
 
+	
 	-- Backup the currently visible area.
 	-- This is relevant for canvas mode MODE_3_ZOOM_FIT only:
 	backup_visible_area (geometry_2.bounding_box);

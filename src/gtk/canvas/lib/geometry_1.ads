@@ -44,7 +44,7 @@ package geometry_1 is
 
 -- SCALE:
 
-	type type_scale_factor is digits 3 range 0.10 .. 20.0;
+	type type_scale_factor is digits 3 range 0.10 .. 100.0;
 
 	-- This is the global scale-factor:
 	S : type_scale_factor := 1.0;

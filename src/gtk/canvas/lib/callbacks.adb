@@ -58,14 +58,24 @@ package body callbacks is
 		x, y : gdouble;
 
 		-- The maximum scale factor:
-		S : constant gdouble := gdouble (type_scale_factor'last);
+		S_max : constant gdouble := gdouble (type_scale_factor'last);
 		By : constant gdouble := gdouble (bounding_box.height);
 		Bx : constant gdouble := gdouble (bounding_box.width);
 	begin
-		x :=   Bx * S - Bx;
-		y := - By * S;
-		
+		x :=   Bx * S_max - Bx;
+		y := - By * S_max;
+
 		F := (x, y);
+
+		-- Output a warning if the base-offset is outside
+		-- the canvas dimensions:
+		if  x >   gdouble (canvas_size_min.width) or
+			y < - gdouble (canvas_size_min.height) then
+
+			put_line ("WARNING: base-offset outside canvas !");
+			put_line (" F: " & to_string (F));
+		end if;
+		
 
 		if debug then
 			put_line ("base offset: " & to_string (F));
@@ -1611,7 +1621,33 @@ package body callbacks is
 			put_line ("  value" & gdouble'image (scrollbar_h_init.value));
 		end if;
 
+	
 
+		-- CS: This code is experimental in order to make the canvas
+		-- dimensions adjust to the scrollbar limits. So far this
+		-- was not successful.
+-- 		declare
+-- 			w, h : gint;
+-- 			a : gtk_allocation;
+-- 		begin
+-- 			w := gint (scrollbar_h_init.lower + scrollbar_h_init.upper);
+-- 			h := gint (scrollbar_v_init.lower + scrollbar_v_init.upper);
+-- 
+-- 			canvas.get_allocation (a);
+-- 			a.width := w;
+-- 			a.height := h;
+-- 			-- canvas.set_allocation (a);
+-- 			-- canvas.size_allocate (a);
+-- 			-- canvas.set_size_request (w, h);
+-- 			
+-- 			if debug then
+-- 				show_canvas_size;
+-- 				-- put_line ("x/y : " & gint'image (a.x) & "/" & gint'image (a.y));
+-- 			end if;
+-- 		end;
+
+
+		
 		-- put_line ("vertical:");
 		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
 		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
@@ -1624,7 +1660,11 @@ package body callbacks is
 		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
 		scrollbar_h_adj.set_value (scrollbar_h_init.value);
 
+		-- show_adjustments_h;
+		-- show_adjustments_v;
+		
 		backup_scrollbar_settings;
+		
 	end set_initial_scrollbar_settings;
 	
 
@@ -1661,10 +1701,16 @@ package body callbacks is
 	
 
 	procedure show_canvas_size is 
+		a : gtk_allocation;
 		width, height : gint;
 	begin
+		canvas.get_allocation (a);
+		put_line ("canvas size allocated (w/h):" 
+			& gint'image (a.width) & " /" & gint'image (a.height));
+		
 		canvas.get_size_request (width, height);
-		put_line ("canvas size (w/h):" & gint'image (width) & " /" & gint'image (height));
+		put_line ("canvas size minimum   (w/h):" 
+			& gint'image (width) & " /" & gint'image (height));
 	end show_canvas_size;
 
 	
@@ -1682,9 +1728,9 @@ package body callbacks is
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 		
-		-- Set the size of the canvas:
-		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
-
+		-- Set the minimal size of the canvas:
+		canvas.set_size_request (gint (canvas_size_min.width), gint (canvas_size_min.height));
+		
 		show_canvas_size;
 
 		
@@ -1721,6 +1767,7 @@ package body callbacks is
 		-- Insert the scrolled window in box_h:
 		put_line ("add scrolled window to box_h");
 		box_h.pack_start (swin);
+
 	end set_up_canvas;
 
 
@@ -2043,7 +2090,6 @@ package body callbacks is
 		-- Since the bounding_box has changed, the scrollbars
 		-- must be reinitialized:
 		set_initial_scrollbar_settings;
-
 
 		-- Calculate the scale-factor that is required to
 		-- fit all objects into the scrolled window:

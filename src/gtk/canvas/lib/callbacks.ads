@@ -670,14 +670,17 @@ package callbacks is
 		allocation	: gtk_allocation);
 
 
-	-- This is the size of the canvas in device pixels.
+	-- This is the minimal size of the canvas in device pixels.
 	-- CS: The numbers choosen here are empirically
 	-- and should be increased if problems arise with very large
 	-- monitors:
-	canvas_size : constant type_window_size := (
-		width	=> 20_000,
-		height	=> 20_000);
-	
+	canvas_size_min : constant type_window_size := (
+		-- width	=> 20_000,
+		-- height	=> 20_000);
+		width	=> 1_000_000,
+		height	=> 1_000_000);
+
+
 	
 	-- This procedure outputs the current dimensions
 	-- of the canvas on the console:
