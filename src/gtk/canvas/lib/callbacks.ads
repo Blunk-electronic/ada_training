@@ -670,23 +670,19 @@ package callbacks is
 		allocation	: gtk_allocation);
 
 
-	-- This is the minimal size of the canvas in device pixels.
-	-- CS: The numbers choosen here are empirically
-	-- and should be increased if problems arise with very large
-	-- monitors:
-	-- canvas_size_min : constant type_window_size := (
-	-- 	-- width	=> 20_000,
-	-- 	-- height	=> 20_000);
-	-- 	width	=> 1_000_000,
-	-- 	height	=> 1_000_000);
-	canvas_size_min : type_window_size;
+
+	-- This is the size of the canvas in device pixels.
+	-- It is set by procedure compute_canvas_size on system startup:
+	canvas_size : type_window_size;
 
 	
 	-- This procedure computes the dimensions of the canvas
 	-- and assigns them to variable canvas_size_min.
 	-- The computation bases on the maximum allowed width
 	-- and height of the bounding-box and the maximal
-	-- scale-factor:
+	-- scale-factor.
+	-- CS: The computed dimensions may be not sufficient
+	-- with very very large screens:
 	procedure compute_canvas_size;
 	
 	
@@ -696,7 +692,7 @@ package callbacks is
 
 	
 	-- This procedure creates the canvas, assigns to
-	-- it a fixed size (constant canvas_size, see above)
+	-- it a fixed size (variable canvas_size, see above)
 	-- and connects signals:
 	procedure set_up_canvas;
 		

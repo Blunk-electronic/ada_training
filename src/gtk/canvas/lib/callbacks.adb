@@ -72,8 +72,8 @@ package body callbacks is
 
 		-- Output a warning if the base-offset is outside
 		-- the canvas dimensions:
-		if  x >   gdouble (canvas_size_min.width) or
-			y < - gdouble (canvas_size_min.height) then
+		if  x >   gdouble (canvas_size.width) or
+			y < - gdouble (canvas_size.height) then
 
 			put_line ("WARNING: base-offset outside canvas !");
 			put_line (" F: " & to_string (F));
@@ -1701,31 +1701,41 @@ package body callbacks is
 
 
 	procedure compute_canvas_size is
-		debug : boolean := false;
-		
+		debug : boolean := true;
+
+		-- The maximal base-offset:
 		F_max : type_vector_gdouble;
 		
 		-- The maximum scale factor:
 		S_max : constant gdouble := gdouble (type_scale_factor'last);
-		
+
+		-- The maximum width and height of the bounding-box:
 		Bw : constant gdouble := gdouble (bounding_box_width_max);
 		Bh : constant gdouble := gdouble (bounding_box_height_max);
 	begin
-		put_line ("compute canvas size");
-		put_line (" S_max : " & gdouble'image (S_max));
-		put_line (" Bw_max: " & gdouble'image (Bw));
-		put_line (" Bh_max: " & gdouble'image (Bh));
-		
+		if debug then
+			put_line ("compute canvas size");
+			put_line (" S_max : " & gdouble'image (S_max));
+			put_line (" Bw_max: " & gdouble'image (Bw));
+			put_line (" Bh_max: " & gdouble'image (Bh));
+		end if;
+
+		-- compute the maximal base-offset:
 		F_max.x :=   Bw * S_max - Bw;
 		F_max.y := - Bh * S_max;
 
-		put_line (" F_max : " & to_string (F_max));
-		
-		canvas_size_min.width := positive (F_max.x + Bw * S_max);
-		canvas_size_min.height := positive (- F_max.y + (Bh * S_max) - Bh);
+		if debug then
+			put_line (" F_max : " & to_string (F_max));
+		end if;
 
-		put_line (" Cw    : " & positive'image (canvas_size_min.width));
-		put_line (" Ch    : " & positive'image (canvas_size_min.height));
+		-- compute the canvas width and height:
+		canvas_size.width  := positive (F_max.x + Bw * S_max);
+		canvas_size.height := positive (- F_max.y + (Bh * S_max) - Bh);
+
+		if debug then
+			put_line (" Cw    : " & positive'image (canvas_size.width));
+			put_line (" Ch    : " & positive'image (canvas_size.height));
+		end if;
 	end compute_canvas_size;
 
 	
@@ -1758,8 +1768,8 @@ package body callbacks is
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 		
-		-- Set the minimal size of the canvas:
-		canvas.set_size_request (gint (canvas_size_min.width), gint (canvas_size_min.height));
+		-- Set the size (width and height) of the canvas:
+		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
 		
 		show_canvas_size;
 

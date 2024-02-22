@@ -263,8 +263,11 @@ package geometry_2 is
 	-- around the model:
 	bounding_box : type_area;
 
+	-- These are the system limits for the width and height
+	-- of the bounding-box of the model:
 	bounding_box_width_max  : constant type_distance_model := 2_000.0;
 	bounding_box_height_max : constant type_distance_model := 1_000.0;
+
 	
 	
 	-- The simplest object in the model world is a line:
