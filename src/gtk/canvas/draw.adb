@@ -73,7 +73,9 @@ procedure draw is
 begin
 
 	geometry_2.make_database;
-		
+
+	compute_canvas_size;
+	
 	geometry_2.compute_bounding_box;
 	
 	set_base_offset;

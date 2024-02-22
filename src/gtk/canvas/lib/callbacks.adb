@@ -1697,7 +1697,34 @@ package body callbacks is
 	end cb_canvas_size_allocate;
 
 
-	
+	procedure compute_canvas_size is
+		debug : boolean := false;
+		
+		F_max : type_vector_gdouble;
+		
+		-- The maximum scale factor:
+		S_max : constant gdouble := gdouble (type_scale_factor'last);
+		
+		Bw : constant gdouble := gdouble (bounding_box_width_max);
+		Bh : constant gdouble := gdouble (bounding_box_height_max);
+	begin
+		put_line ("compute canvas size");
+		put_line (" S_max : " & gdouble'image (S_max));
+		put_line (" Bw_max: " & gdouble'image (Bw));
+		put_line (" Bh_max: " & gdouble'image (Bh));
+		
+		F_max.x :=   Bw * S_max - Bw;
+		F_max.y := - Bh * S_max;
+
+		put_line (" F_max : " & to_string (F_max));
+		
+		canvas_size_min.width := positive (F_max.x + Bw * S_max);
+		canvas_size_min.height := positive (- F_max.y + (Bh * S_max) - Bh);
+
+		put_line (" Cw    : " & positive'image (canvas_size_min.width));
+		put_line (" Ch    : " & positive'image (canvas_size_min.height));
+	end compute_canvas_size;
+
 	
 
 	procedure show_canvas_size is 

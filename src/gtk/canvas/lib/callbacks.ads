@@ -674,13 +674,21 @@ package callbacks is
 	-- CS: The numbers choosen here are empirically
 	-- and should be increased if problems arise with very large
 	-- monitors:
-	canvas_size_min : constant type_window_size := (
-		-- width	=> 20_000,
-		-- height	=> 20_000);
-		width	=> 1_000_000,
-		height	=> 1_000_000);
+	-- canvas_size_min : constant type_window_size := (
+	-- 	-- width	=> 20_000,
+	-- 	-- height	=> 20_000);
+	-- 	width	=> 1_000_000,
+	-- 	height	=> 1_000_000);
+	canvas_size_min : type_window_size;
 
-
+	
+	-- This procedure computes the dimensions of the canvas
+	-- and assigns them to variable canvas_size_min.
+	-- The computation bases on the maximum allowed width
+	-- and height of the bounding-box and the maximal
+	-- scale-factor:
+	procedure compute_canvas_size;
+	
 	
 	-- This procedure outputs the current dimensions
 	-- of the canvas on the console:
