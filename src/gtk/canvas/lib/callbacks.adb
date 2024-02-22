@@ -1714,7 +1714,7 @@ package body callbacks is
 		Bh : constant gdouble := gdouble (bounding_box_height_max);
 	begin
 		if debug then
-			put_line ("compute canvas size");
+			put_line ("compute_canvas_size");
 			put_line (" S_max : " & gdouble'image (S_max));
 			put_line (" Bw_max: " & gdouble'image (Bw));
 			put_line (" Bh_max: " & gdouble'image (Bh));
