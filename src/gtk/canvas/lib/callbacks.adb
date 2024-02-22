@@ -59,12 +59,15 @@ package body callbacks is
 
 		-- The maximum scale factor:
 		S_max : constant gdouble := gdouble (type_scale_factor'last);
-		By : constant gdouble := gdouble (bounding_box.height);
-		Bx : constant gdouble := gdouble (bounding_box.width);
-	begin
-		x :=   Bx * S_max - Bx;
-		y := - By * S_max;
 
+		-- The width and height of the bounding-box:
+		Bh : constant gdouble := gdouble (bounding_box.height);
+		Bw : constant gdouble := gdouble (bounding_box.width);
+	begin
+		x :=   Bw * S_max - Bw;
+		y := - Bh * S_max;
+
+		-- Set the base-offset:
 		F := (x, y);
 
 		-- Output a warning if the base-offset is outside
