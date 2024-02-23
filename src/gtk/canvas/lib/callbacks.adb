@@ -92,12 +92,18 @@ package body callbacks is
 		S2	: in type_scale_factor;
 		Z1	: in type_vector_gdouble)
 	is 
+		debug : boolean := false;
+		
 		-- Compute the virtual model-point
 		-- according to the scale factor before zoom:
 		M : constant type_vector_model := to_model (Z1, S1);
 
 		Z2 : type_vector_gdouble;
 	begin			
+		if debug then
+			put_line ("set_translation_for_zoom");
+		end if;
+		
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
 		Z2 := to_canvas (M, S2);
@@ -107,8 +113,10 @@ package body callbacks is
 		-- drawing must be dragged-back to the given pointer position:
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
-		
-		-- put_line (" T offset    " & to_string (T));
+
+		if debug then
+			put_line (" T: " & to_string (T));
+		end if;
 	end set_translation_for_zoom;
 
 
@@ -117,6 +125,8 @@ package body callbacks is
 		S2	: in type_scale_factor;
 		M	: in type_vector_model) -- real model point
 	is 
+		debug : boolean := false;
+		
 		-- Compute the canvas point corresponding to the given
 		-- real model point with the scale factor before zoom:
 		Z1 : constant type_vector_gdouble := to_canvas (M, S1, real => true);
@@ -126,6 +136,10 @@ package body callbacks is
 		
 		Z2 : type_vector_gdouble;
 	begin			
+		if debug then
+			put_line ("set_translation_for_zoom");
+		end if;
+		
 		-- Compute the prospected canvas-point according to the 
 		-- scale factor after zoom:
 		Z2 := to_canvas (V, S2);
@@ -137,7 +151,9 @@ package body callbacks is
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
 		
-		-- put_line (" T offset    " & to_string (T));
+		if debug then
+			put_line (" T: " & to_string (T));
+		end if;
 	end set_translation_for_zoom;
 
 	
