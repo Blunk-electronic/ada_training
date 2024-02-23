@@ -1625,10 +1625,12 @@ package body callbacks is
 		end if;
 
 	
-
+		--------------------------------------------------------------------------------
 		-- CS: This code is experimental in order to make the canvas
-		-- dimensions adjust to the scrollbar limits. So far this
-		-- was not successful.
+		-- dimensions adjust DYNAMICALLY to the scrollbar limits. So far this
+		-- was not successful because the canvas size can not be changed
+		-- for some unknown reason after initialization:
+		
 -- 		declare
 -- 			w, h : gint;
 -- 			a : gtk_allocation;
@@ -1648,7 +1650,7 @@ package body callbacks is
 -- 				-- put_line ("x/y : " & gint'image (a.x) & "/" & gint'image (a.y));
 -- 			end if;
 -- 		end;
-
+		--------------------------------------------------------------------------------
 
 		
 		-- put_line ("vertical:");
