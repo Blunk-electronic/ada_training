@@ -64,7 +64,7 @@ package body callbacks is
 		Bh : constant gdouble := gdouble (bounding_box.height);
 		Bw : constant gdouble := gdouble (bounding_box.width);
 	begin
-		x :=   Bw * S_max - Bw;
+		x :=   Bw * (S_max - 1.0);
 		y := - Bh * S_max;
 
 		-- Set the base-offset:
@@ -1723,7 +1723,7 @@ package body callbacks is
 		end if;
 
 		-- compute the maximal base-offset:
-		F_max.x :=   Bw * S_max - Bw;
+		F_max.x :=   Bw * (S_max - 1.0);
 		F_max.y := - Bh * S_max;
 
 		if debug then
@@ -1731,8 +1731,8 @@ package body callbacks is
 		end if;
 
 		-- compute the canvas width and height:
-		canvas_size.width  := positive (F_max.x + Bw * S_max);
-		canvas_size.height := positive (- F_max.y + (Bh * S_max) - Bh);
+		canvas_size.width  := positive (  F_max.x + Bw * S_max);
+		canvas_size.height := positive (- F_max.y + Bh * (S_max - 1.0));
 
 		if debug then
 			put_line (" Cw    : " & positive'image (canvas_size.width));
