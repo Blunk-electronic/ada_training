@@ -496,11 +496,13 @@ package body geometry_2 is
 		--debug : boolean := true;
 		
 		-- The first object encountered will be the
-		-- seed for the first boundinb-box. All other objects cause 
+		-- seed for the first bounding-box. All other objects cause 
 		-- this seed box to expand. After the first object,
 		-- this flag is cleared:
 		first_object : boolean := true;
 
+		-- In order to detect whether the bounding-box has
+		-- changed we take a copy of the current bounding-box:
 		bbox_old : type_area := bounding_box;
 		
 		
@@ -566,11 +568,35 @@ package body geometry_2 is
 		-- by the inverted margin_offset:
 		move_by (bounding_box.position, invert (margin_offset));
 
+		
+		-- Compare the new bounding box with the old one to
+		-- detect a change:
 		if bounding_box /= bbox_old then
+			-- The new bounding-box differs from the old one.
+			-- Set the global flag bounding_box_changed:
 			bounding_box_changed := true;
+
+			-- Do the size check of the new bounding-box. If it is
+			-- too large, then restore the old bounding-box:
+			if bounding_box.width  >= bounding_box_width_max or
+			   bounding_box.height >= bounding_box_height_max then
+
+			   put_line ("WARNING: Bounding-box size limit exceeded !");
+			   -- CS output limits and computed box dimensions
+
+			   -- Restore from old bounding-box:
+			   bounding_box := bbox_old;
+
+			   -- Clear the global flag bounding_box_changed
+			   -- because we just have restored the old bounding-box:
+			   bounding_box_changed := false;
+			end if;
+			
 		else
+			-- No change. Clear the global flag bounding_box_changed:
 			bounding_box_changed := false;
 		end if;
+
 		
 		if debug then
 			put_line ("bounding-box: " & to_string (bounding_box));
