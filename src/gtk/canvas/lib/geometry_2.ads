@@ -352,12 +352,6 @@ package geometry_2 is
 
 	procedure make_database;
 
-	-- This procedure pareses the whole database of model objects,
-	-- detects the smallest and greatest x and y values used by the model
-	-- and sets the global variable bounding_box accordingly.
-	-- If the bounding_box has changed, then the flag bounding_box_changed is
-	-- set (See below):
-	procedure compute_bounding_box;
 
 	-- This procedure pareses the whole database of model objects,
 	-- detects the smallest and greatest x and y values used by the model
@@ -380,7 +374,7 @@ package geometry_2 is
 	--   dimensions.
 	-- - Test only. Means to simulate the compuation of the bounding-box only.
 	--   The global variable bounding_box will NOT be touched in any case.
-	procedure compute_bounding_box_2 (
+	procedure compute_bounding_box (
 		abort_on_first_error	: in boolean := false; -- CS currently not implemented
 		ignore_errors			: in boolean := false;
 		test_only				: in boolean := false);

@@ -487,128 +487,8 @@ package body geometry_2 is
 	
 
 	
-	procedure compute_bounding_box is
-		use pac_lines;
-		use pac_circles;
-		use pac_objects;
 
-		debug : boolean := false;
-		--debug : boolean := true;
-		
-		-- The first object encountered will be the
-		-- seed for the first bounding-box. All other objects cause 
-		-- this seed box to expand. After the first object,
-		-- this flag is cleared:
-		first_object : boolean := true;
-
-		-- In order to detect whether the bounding-box has
-		-- changed we take a copy of the current bounding-box:
-		bbox_old : type_area := bounding_box;
-		
-		
-		procedure query_object (oc : in pac_objects.cursor) is
-			object : type_complex_object renames element (oc);
-
-			procedure query_line (lc : in pac_lines.cursor) is
-				line : type_line renames element (lc);
-				b : type_area;
-			begin
-				b := get_bounding_box (line);
-				move_by (b.position, object.p);
-				
-				if first_object then
-					bounding_box := b;
-					first_object := false;
-				else
-					merge_areas (bounding_box, b);
-				end if;
-			end query_line;
-
-			
-			procedure query_circle (cc : in pac_circles.cursor) is
-				circle : type_circle renames element (cc);
-				b : type_area;
-			begin
-				b := get_bounding_box (circle);
-				move_by (b.position, object.p);
-
-				if first_object then
-					bounding_box := b;
-					first_object := false;
-				else
-					merge_areas (bounding_box, b);
-				end if;
-			end query_circle;
-
-			
-		begin
-			-- Iterate the lines, circles and other primitive
-			-- components of the current object:
-			object.lines.iterate (query_line'access);
-			object.circles.iterate (query_circle'access);
-			-- CS arcs
-		end query_object;
-
-		
-	begin
-		put_line ("compute_bounding_box");
-
-		-- The database that contains all objects of the model
-		-- must be parsed here:
-		objects_database.iterate (query_object'access);
-		
-		-- Expand the bounding-box by the margin. 
-		-- The margin is part of the model and thus part 
-		-- of the bounding box:
-		bounding_box.width  := bounding_box.width  + 2.0 * margin;
-		bounding_box.height := bounding_box.height + 2.0 * margin;
-		
-		-- Since we regard the margin as inside the bounding-box,
-		-- we must move the bounding-box position towards bottom-left
-		-- by the inverted margin_offset:
-		move_by (bounding_box.position, invert (margin_offset));
-
-		
-		-- Compare the new bounding box with the old one to
-		-- detect a change:
-		if bounding_box /= bbox_old then
-			-- The new bounding-box differs from the old one.
-			-- Set the global flag bounding_box_changed:
-			bounding_box_changed := true;
-
-			-- Do the size check of the new bounding-box. If it is
-			-- too large, then restore the old bounding-box:
-			if bounding_box.width  >= bounding_box_width_max or
-			   bounding_box.height >= bounding_box_height_max then
-
-			   put_line ("WARNING: Bounding-box size limit exceeded !");
-			   -- CS output limits and computed box dimensions
-
-			   -- Restore from old bounding-box:
-			   bounding_box := bbox_old;
-
-			   -- Clear the global flag bounding_box_changed
-			   -- because we just have restored the old bounding-box:
-			   bounding_box_changed := false;
-			end if;
-			
-		else
-			-- No change. Clear the global flag bounding_box_changed:
-			bounding_box_changed := false;
-		end if;
-
-		
-		if debug then
-			put_line ("bounding-box: " & to_string (bounding_box));
-
-			if bounding_box_changed then
-				put_line (" has changed");
-			end if;
-		end if;
-	end compute_bounding_box;
-
-
-	procedure compute_bounding_box_2 (
+	procedure compute_bounding_box (
 		abort_on_first_error	: in boolean := false;
 		ignore_errors			: in boolean := false;
 		test_only				: in boolean := false)		
@@ -700,16 +580,25 @@ package body geometry_2 is
 		end query_object;
 
 
+		-- This procedure updates the bounding-box, resets
+		-- the bounding_box_error flag and sets the bounding_box_changed flag
+		-- in NON-TEST-MODE (which is default by argument test_only).
+		-- In TEST-mode nothing happens here:
 		procedure update_global_bounding_box is begin
-			-- Reset error flag:
-			bounding_box_error := (others => <>);
-					
-			-- Update the global bounding-box:
-			bounding_box := bbox_new;
+			if test_only then
+				put_line ("TEST ONLY mode. Bounding-box not changed.");
+				bounding_box_changed := false;
+			else
+				-- Reset error flag:
+				bounding_box_error := (others => <>);
+						
+				-- Update the global bounding-box:
+				bounding_box := bbox_new;
 
-			-- The new bounding-box differs from the old one.
-			-- Set the global flag bounding_box_changed:
-			bounding_box_changed := true;
+				-- The new bounding-box differs from the old one.
+				-- Set the global flag bounding_box_changed:
+				bounding_box_changed := true;
+			end if;
 		end update_global_bounding_box;
 		
 		
@@ -792,7 +681,7 @@ package body geometry_2 is
 				put_line (" has changed");
 			end if;
 		end if;
-	end compute_bounding_box_2;
+	end compute_bounding_box;
 
 	
 
