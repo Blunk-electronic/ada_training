@@ -2140,12 +2140,12 @@ package body callbacks is
 		
 		-- Compute the new bounding-box. Update global
 		-- variable bounding_box:
-		-- compute_bounding_box;
+		compute_bounding_box;
 
 		-- In order to simulate a violation of the maximal
 		-- size of the bounding-box try this:
 		-- compute_bounding_box (ignore_errors => true);
-		compute_bounding_box (test_only => true, ignore_errors => true);
+		-- compute_bounding_box (test_only => true, ignore_errors => true);
 
 		-- Compute the new base-offset. Update global variable F:
 		set_base_offset;

@@ -515,7 +515,9 @@ package body geometry_2 is
 		-- this flag is cleared:
 		first_object : boolean := true;
 
-		
+
+		-- This procedure is called each time an object of the database
+		-- is processed:
 		procedure query_object (oc : in pac_objects.cursor) is
 			-- This is the complex candidate object being handled:
 			object : type_complex_object renames element (oc);
@@ -603,7 +605,8 @@ package body geometry_2 is
 		put_line ("compute_bounding_box");
 
 		-- The database that contains all objects of the model
-		-- must be parsed here:
+		-- must be parsed. This is the call of an iteration through
+		-- all objects of the database:
 		objects_database.iterate (query_object'access);
 		
 		-- Expand the temporary bounding-box by the margin. 

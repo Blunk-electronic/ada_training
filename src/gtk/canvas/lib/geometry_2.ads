@@ -353,7 +353,7 @@ package geometry_2 is
 	procedure make_database;
 
 
-	-- This procedure pareses the whole database of model objects,
+	-- This procedure parses the whole database of model objects,
 	-- detects the smallest and greatest x and y values used by the model
 	-- and sets the global variable bounding_box accordingly.
 	-- If the bounding_box has changed, then the flag bounding_box_changed is
