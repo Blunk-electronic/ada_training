@@ -580,18 +580,15 @@ package body geometry_2 is
 		end query_object;
 
 
-		-- This procedure updates the bounding-box, resets
-		-- the bounding_box_error flag and sets the bounding_box_changed flag
+		-- This procedure updates the bounding-box and
+		-- sets the bounding_box_changed flag
 		-- in NON-TEST-MODE (which is default by argument test_only).
-		-- In TEST-mode nothing happens here:
+		-- In TEST-mode the bounding_box_changed flag is cleared:
 		procedure update_global_bounding_box is begin
 			if test_only then
 				put_line ("TEST ONLY mode. Bounding-box not changed.");
 				bounding_box_changed := false;
 			else
-				-- Reset error flag:
-				bounding_box_error := (others => <>);
-						
 				-- Update the global bounding-box:
 				bounding_box := bbox_new;
 
@@ -635,7 +632,14 @@ package body geometry_2 is
 				put_line (" max. width : " & to_string (bounding_box_width_max));
 				put_line (" max. height: " & to_string (bounding_box_height_max));
 				put_line (" detected   : " & to_string (bbox_new));
-			   
+
+				-- Set the error flag:
+				bounding_box_error := (
+					size_exceeded => true,
+					width  => bbox_new.width,
+					height => bbox_new.height);
+
+				
 				if ignore_errors then
 					put_line (" Errors ignored !");
 					
@@ -652,15 +656,13 @@ package body geometry_2 is
 					-- leave the current global bounding-box untouched:
 					bounding_box_changed := false;
 
-					-- Set the error flag:
-					bounding_box_error := (
-						size_exceeded => true,
-						width  => bbox_new.width,
-						height => bbox_new.height);
 				end if;
 
 				
 			else -- size ok, no errors
+				-- Reset error flag:
+				bounding_box_error := (others => <>);
+
 				update_global_bounding_box;
 			end if;
 			
