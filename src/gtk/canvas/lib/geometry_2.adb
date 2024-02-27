@@ -617,8 +617,8 @@ package body geometry_2 is
 		use pac_circles;
 		use pac_objects;
 
-		debug : boolean := false;
-		--debug : boolean := true;
+		-- debug : boolean := false;
+		debug : boolean := true;
 		
 
 		-- In order to detect whether the bounding-box has
@@ -739,18 +739,23 @@ package body geometry_2 is
 			-- Do the size check of the new bounding-box. If it is
 			-- too large, then restore the old bounding-box:
 			if bbox_new.width  >= bounding_box_width_max or
-			   bbox_new.height >= bounding_box_height_max then
+				bbox_new.height >= bounding_box_height_max then
 
+				-- output limits and computed box dimensions:
 				put_line ("WARNING: Bounding-box size limit exceeded !");
-				-- CS output limits and computed box dimensions
-
+				put_line (" max. width : " & to_string (bounding_box_width_max));
+				put_line (" max. height: " & to_string (bounding_box_height_max));
+				put_line (" detected   : " & to_string (bbox_new));
 			   
 				if ignore_errors then
+					put_line (" Errors ignored !");
+					
 					-- Override old global bounding-box with
 					-- the faulty box bbox_new:
 					update_global_bounding_box;
 					
 				else -- By default errors are NOT ignored.
+					put_line (" Discarded. Global bounding-box NOT changed.");
 					
 					-- Clear the global flag bounding_box_changed
 					-- because we discard the new bounding-box (due to 
@@ -803,6 +808,11 @@ package body geometry_2 is
 		-- put_line ("add_object");
 
 		object.p := (500.0, -250.0);
+		
+		-- In order to simulate a violation of the maximum
+		-- allowed bounding-box dimensions try this:
+		-- object.p := (2500.0, -250.0); -- width exceeded
+		object.p := (500.0, -1000.0); -- height exceeded
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);

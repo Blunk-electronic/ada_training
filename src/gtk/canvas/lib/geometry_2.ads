@@ -375,7 +375,9 @@ package geometry_2 is
 	--   abort the parsing on the first violation of the maximal allowed 
 	--   dimensions (width and height).
 	-- - Ignore errors. Means to generate a bounding-box that might be
-	--   wider or taller than actually allowed.
+	--   wider or taller than actually allowed. This is useful for debugging
+	--   and testing the effects of violations of maximal bounding-box 
+	--   dimensions.
 	-- - Test only. Means to simulate the compuation of the bounding-box only.
 	--   The global variable bounding_box will NOT be touched in any case.
 	procedure compute_bounding_box_2 (
