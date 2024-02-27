@@ -607,6 +607,188 @@ package body geometry_2 is
 		end if;
 	end compute_bounding_box;
 
+
+	procedure compute_bounding_box_2 (
+		abort_on_first_error	: in boolean := false;
+		ignore_errors			: in boolean := false;
+		test_only				: in boolean := false)		
+	is
+		use pac_lines;
+		use pac_circles;
+		use pac_objects;
+
+		debug : boolean := false;
+		--debug : boolean := true;
+		
+
+		-- In order to detect whether the bounding-box has
+		-- changed we take a copy of the current bounding-box:
+		bbox_old : type_area := bounding_box;
+
+		-- This is the temporary bounding-box we are going to build
+		-- in the course of this procedure:
+		bbox_new : type_area;
+		
+		-- The first primitie object encountered will be the
+		-- seed for bbox_new. All other objects cause 
+		-- this bbox_new to expand. After the first object,
+		-- this flag is cleared:
+		first_object : boolean := true;
+
+		
+		procedure query_object (oc : in pac_objects.cursor) is
+			-- This is the complex candidate object being handled:
+			object : type_complex_object renames element (oc);
+
+			
+			-- This procedure computes the bounding-box of a line:
+			procedure query_line (lc : in pac_lines.cursor) is
+				-- The candidate line being handled:
+				line : type_line renames element (lc);
+
+				-- Compute the preliminary bounding-box of the line:
+				b : type_area := get_bounding_box (line);
+			begin
+				-- Move the box by the position of the
+				-- complex object to get the final bounding-box
+				-- of the line candidate:
+				move_by (b.position, object.p);
+
+				-- If this is the first primitive object,
+				-- then use its bounding-box as seed to start from:
+				if first_object then
+					bbox_new := b;
+					first_object := false;
+				else
+				-- Otherwise, merge the box b with the box being built:
+					merge_areas (bbox_new, b);
+				end if;
+			end query_line;
+
+
+			-- This procedure computes the bounding-box of a circle:
+			procedure query_circle (cc : in pac_circles.cursor) is
+				-- The candidate circle being handled:
+				circle : type_circle renames element (cc);
+
+				-- Compute the preliminary bounding-box of the circle:
+				b : type_area := get_bounding_box (circle);
+			begin				
+				-- Move the box by the position of the
+				-- complex object to get the final bounding-box
+				-- of the circle candidate:
+				move_by (b.position, object.p);
+
+				-- If this is the first primitive object,
+				-- then use its bounding-box as seed to start from:
+				if first_object then
+					bbox_new := b;
+					first_object := false;
+				else
+				-- Otherwise, merge the box b with the box being built:
+					merge_areas (bbox_new, b);
+				end if;
+			end query_circle;
+
+			
+		begin
+			-- Iterate the lines, circles and other primitive
+			-- components of the current object:
+			object.lines.iterate (query_line'access);
+			object.circles.iterate (query_circle'access);
+			-- CS arcs
+		end query_object;
+
+
+		procedure update_global_bounding_box is begin
+			-- Reset error flag:
+			bounding_box_error := (others => <>);
+					
+			-- Update the global bounding-box:
+			bounding_box := bbox_new;
+
+			-- The new bounding-box differs from the old one.
+			-- Set the global flag bounding_box_changed:
+			bounding_box_changed := true;
+		end update_global_bounding_box;
+		
+		
+	begin
+		put_line ("compute_bounding_box");
+
+		-- The database that contains all objects of the model
+		-- must be parsed here:
+		objects_database.iterate (query_object'access);
+		
+		-- Expand the temporary bounding-box by the margin. 
+		-- The margin is part of the model and thus part 
+		-- of the bounding-box:
+		bbox_new.width  := bbox_new.width  + 2.0 * margin;
+		bbox_new.height := bbox_new.height + 2.0 * margin;
+		
+		-- Since we regard the margin as inside the bounding-box,
+		-- we must move the bounding-box position towards bottom-left
+		-- by the inverted margin_offset:
+		move_by (bbox_new.position, invert (margin_offset));
+
+		
+		-- Compare the new bounding-box with the old 
+		-- bounding-box to detect a change:
+		if bbox_new /= bbox_old then
+
+			-- Do the size check of the new bounding-box. If it is
+			-- too large, then restore the old bounding-box:
+			if bbox_new.width  >= bounding_box_width_max or
+			   bbox_new.height >= bounding_box_height_max then
+
+				put_line ("WARNING: Bounding-box size limit exceeded !");
+				-- CS output limits and computed box dimensions
+
+			   
+				if ignore_errors then
+					-- Override old global bounding-box with
+					-- the faulty box bbox_new:
+					update_global_bounding_box;
+					
+				else -- By default errors are NOT ignored.
+					
+					-- Clear the global flag bounding_box_changed
+					-- because we discard the new bounding-box (due to 
+					-- a size error) and
+					-- leave the current global bounding-box untouched:
+					bounding_box_changed := false;
+
+					-- Set the error flag:
+					bounding_box_error := (
+						size_exceeded => true,
+						width  => bbox_new.width,
+						height => bbox_new.height);
+				end if;
+
+				
+			else -- size ok, no errors
+				update_global_bounding_box;
+			end if;
+			
+			
+		else -- No change. 
+			-- Clear the global flag bounding_box_changed:
+			bounding_box_changed := false;
+
+			-- Reset error flag:
+			bounding_box_error := (others => <>);
+		end if;
+
+		
+		if debug then
+			put_line ("bounding-box: " & to_string (bounding_box));
+
+			if bounding_box_changed then
+				put_line (" has changed");
+			end if;
+		end if;
+	end compute_bounding_box_2;
+
 	
 
 	procedure add_object is

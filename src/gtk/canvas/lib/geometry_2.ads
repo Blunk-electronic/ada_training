@@ -359,9 +359,44 @@ package geometry_2 is
 	-- set (See below):
 	procedure compute_bounding_box;
 
+	-- This procedure pareses the whole database of model objects,
+	-- detects the smallest and greatest x and y values used by the model
+	-- and sets the global variable bounding_box accordingly.
+	-- If the bounding_box has changed, then the flag bounding_box_changed is
+	-- set (See below).
+	--
+	-- It modifies following global veriables:
+	-- - bounding_box
+	-- - bounding_box_changed
+	-- - bounding_box_error
+	--
+	-- The arguments can be used to:
+	-- - Abort on first error. Means NOT to parse the whole database but to
+	--   abort the parsing on the first violation of the maximal allowed 
+	--   dimensions (width and height).
+	-- - Ignore errors. Means to generate a bounding-box that might be
+	--   wider or taller than actually allowed.
+	-- - Test only. Means to simulate the compuation of the bounding-box only.
+	--   The global variable bounding_box will NOT be touched in any case.
+	procedure compute_bounding_box_2 (
+		abort_on_first_error	: in boolean := false; -- CS currently not implemented
+		ignore_errors			: in boolean := false;
+		test_only				: in boolean := false);
+
+
 	-- Indicates that the bounding_box has changed after calling procedure 
 	-- compute_bounding_box:
 	bounding_box_changed : boolean := false;
+
+	type type_bounding_box_error is record
+		size_exceeded	: boolean := false;
+		width			: type_distance_model := 0.0;
+		height			: type_distance_model := 0.0;
+		-- CS ? position : type_vector_model;
+	end record;
+
+	bounding_box_error : type_bounding_box_error;
+
 
 	
 	procedure add_object;
