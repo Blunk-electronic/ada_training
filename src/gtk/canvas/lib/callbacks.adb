@@ -2774,7 +2774,7 @@ package body callbacks is
 		
 		-- Get the bounding-box of line:
 		b := get_bounding_box (l);
-		-- put_line ("b" & to_string (b));
+		-- put_line ("b " & to_string (b));
 		
 		-- Do the area check. If the bounding-box of the line
 		-- is inside the visible area then draw the line. Otherwise
@@ -2805,10 +2805,49 @@ package body callbacks is
 		pos		: in type_vector_model) -- the position of the complex object
 	is
 		-- CS: Optimization required. Compiler options ?
+		
+		-- Make a copy of the given circle:
+		c : type_circle := circle;
+
+		-- When the circle is drawn, we need a canvas point
+		-- for the center:
+		m : type_vector_gdouble;
+
+		r : type_distance_gdouble;
+		
+		-- The bounding-box of the circle. It is required
+		-- for the area and size check:
+		b : type_area;
+		
 	begin
-		-- CS 
-		null;
+		-- Move the circle to the given position:
+		move_circle (c, pos);
+		
+		-- Get the bounding-box of circle:
+		b := get_bounding_box (c);
+		-- put_line ("b " & to_string (b));
+		
+		-- Do the area check. If the bounding-box of the circle
+		-- is inside the visible area then draw the circle. Otherwise
+		-- nothing will be drawn:
+		if areas_overlap (visible_area, b) and then
+
+			-- Do the size check. If the bounding-box is greater
+			-- (either in width or heigth) than the visiblity threshold
+			-- then draw the line. Otherwise nothing will be drawn:
+			above_visibility_threshold (b) then
+
+			-- put_line ("draw circle");
+
+			set_line_width (context, to_distance (circle.w));
+
+			m := to_canvas (c.c, S, real => true);
+			r := to_distance (c.r);
+			arc (context, m.x, m.y, r, 0.0, 6.3 );
+			stroke (context);
+		end if;
 	end draw_circle;
+	
 
 	
 	function cb_draw_objects (
@@ -3226,7 +3265,7 @@ package body callbacks is
 				procedure query_circle (cc : in pac_circles.cursor) is
 					circle : type_circle renames element (cc);
 				begin
-					--put_line ("query_circle");
+					-- put_line ("query_circle");
 					draw_circle (context, circle, object.p);					
 				end query_circle;
 

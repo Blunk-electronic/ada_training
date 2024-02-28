@@ -294,7 +294,7 @@ package geometry_2 is
 	
 	-- Another primitive object is a circle:
 	type type_circle is record
-		c : type_vector_model;
+		c : type_vector_model;   -- the center
 		r : type_distance_model; -- the radius
 		w : type_distance_model; -- the linewidth
 		-- CS: fill status
@@ -306,6 +306,13 @@ package geometry_2 is
 	function get_bounding_box (
 		circle : in type_circle)
 		return type_area;
+
+	
+	-- Moves a circle by the given offset:
+	procedure move_circle (
+		circle	: in out type_circle;
+		offset	: in type_vector_model);
+
 	
 	-- CS arc ?
 
@@ -359,7 +366,7 @@ package geometry_2 is
 
 	-- The place where the lower left corner of the 
 	-- drawing frame frame is:
-	drawing_frame_position : type_vector_model := (-50.0, -50.0);
+	drawing_frame_position : type_vector_model := (-150.0, -105.0);
 
 
 	-- This procedure generates a very simple
