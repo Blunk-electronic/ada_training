@@ -357,6 +357,10 @@ package geometry_2 is
 
 	drawing_frame : type_drawing_frame;
 
+	-- The place where the lower left corner of the 
+	-- drawing frame frame is:
+	drawing_frame_position : type_vector_model := (-50.0, -50.0);
+
 
 	-- This procedure generates a very simple
 	-- dummy drawing frame:

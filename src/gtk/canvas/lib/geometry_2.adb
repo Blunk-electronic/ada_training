@@ -416,6 +416,12 @@ package body geometry_2 is
 	begin
 		put_line ("make_drawing_frame");
 
+		-- Set the position of the frame (lower left corner):
+		drawing_frame.p := drawing_frame_position;
+		
+		put_line (" frame position:" & to_string (drawing_frame.p));
+
+		
 		-- These are the four lines that make the 
 		-- main rectangle (landscape format):
 		line := (s => (0.0, 0.0), e => (297.0, 0.0), w => w);
