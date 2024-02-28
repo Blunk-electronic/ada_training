@@ -331,7 +331,7 @@ package geometry_2 is
 
 
 	
-	
+	-- An object in general has a position in x and y:
 	type type_object is abstract tagged record
 		p : type_vector_model;
 	end record;
@@ -350,6 +350,21 @@ package geometry_2 is
 	objects_database : pac_objects.list;
 
 
+	type type_drawing_frame is new type_object with record
+		lines	: pac_lines.list;
+		-- CS texts
+	end record;
+
+	drawing_frame : type_drawing_frame;
+
+
+	-- This procedure generates a very simple
+	-- dummy drawing frame:
+	procedure make_drawing_frame;
+
+
+	-- This procedure generates a dummy database with 
+	-- some useless dummy objects:
 	procedure make_database;
 
 

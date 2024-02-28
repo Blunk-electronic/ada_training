@@ -406,7 +406,50 @@ package body geometry_2 is
 	
 
 
+	procedure make_drawing_frame is
+		use pac_lines;
 
+		-- This simple drawing frame consists of lines
+		-- which have a linewidth of 1mm:
+		line : type_line;
+		w : type_distance_model := 1.0;
+	begin
+		put_line ("make_drawing_frame");
+
+		-- These are the four lines that make the 
+		-- main rectangle (landscape format):
+		line := (s => (0.0, 0.0), e => (297.0, 0.0), w => w);
+		drawing_frame.lines.append (line);
+
+		line := (s => (297.0, 0.0), e => (297.0, 210.0), w => w);
+		drawing_frame.lines.append (line);
+
+		line := (s => (297.0, 210.0), e => (0.0, 210.0), w => w);
+		drawing_frame.lines.append (line);
+
+		line := (s => (0.0, 210.0), e => (0.0, 0.0), w => w);
+		drawing_frame.lines.append (line);
+
+
+		
+		-- The lines of the title block:
+		line := (s => (200.0, 0.0), e => (200.0, 50.0), w => w);
+		drawing_frame.lines.append (line);
+
+		line := (s => (230.0, 0.0), e => (230.0, 50.0), w => w);
+		drawing_frame.lines.append (line);
+
+		
+		line := (s => (200.0, 50.0), e => (297.0, 50.0), w => w);
+		drawing_frame.lines.append (line);
+
+		line := (s => (200.0, 40.0), e => (297.0, 40.0), w => w);
+		drawing_frame.lines.append (line);
+		
+	end make_drawing_frame;
+
+
+	
 	
 	procedure make_database is
 		use pac_lines;
@@ -516,6 +559,42 @@ package body geometry_2 is
 		first_object : boolean := true;
 
 
+		-- This procedure iterates through all primitive objects
+		-- of the drawing frame and adds them to the temporary
+		-- bounding-box bbox_new:
+		procedure parse_drawing_frame is
+
+			procedure query_line (l : in pac_lines.cursor) is
+				-- The candidate line being handled:
+				line : type_line renames element (l);
+
+				-- Compute the preliminary bounding-box of the line:
+				b : type_area := get_bounding_box (line);
+			begin
+				-- Move the box by the position of the
+				-- drawing frame to get the final bounding-box
+				-- of the line candidate:
+				move_by (b.position, drawing_frame.p);
+
+				-- If this is the first primitive object,
+				-- then use its bounding-box as seed to start from:
+				if first_object then
+					bbox_new := b;
+					first_object := false;
+				else
+				-- Otherwise, merge the box b with the box being built:
+					merge_areas (bbox_new, b);
+				end if;
+			end query_line;
+
+			
+		begin
+			drawing_frame.lines.iterate (query_line'access);
+			-- CS texts
+		end parse_drawing_frame;
+
+
+		
 		-- This procedure is called each time an object of the database
 		-- is processed:
 		procedure query_object (oc : in pac_objects.cursor) is
@@ -604,6 +683,10 @@ package body geometry_2 is
 	begin
 		put_line ("compute_bounding_box");
 
+		-- Iterate through all primitive objects of the 
+		-- drawing frame:
+		parse_drawing_frame;
+		
 		-- The database that contains all objects of the model
 		-- must be parsed. This is the call of an iteration through
 		-- all objects of the database:

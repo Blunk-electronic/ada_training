@@ -3175,14 +3175,42 @@ package body callbacks is
 
 		
 
+		-- Draws all primitive objects of the drawing frame
+		-- and draws them one by one:
+		procedure draw_drawing_frame is
+			use pac_lines;
+			
+
+			procedure query_line (lc : in pac_lines.cursor) is
+				-- The candidate line being handled:
+				line : type_line renames element (lc);
+			begin
+				--put_line ("query_line");
+				draw_line (context, line, drawing_frame.p);					
+			end query_line;
+	
+			
+		begin
+			--put_line ("draw_drawing_frame");
+
+			-- Set the color:
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+			drawing_frame.lines.iterate (query_line'access);			
+			-- CS texts
+			
+		end draw_drawing_frame;
+
+
+		
+
 		-- Draws all model objects. Parses the model database
 		-- and draws objects one by one:
 		procedure draw_objects is
 			use pac_lines;
 			use pac_circles;
 			use pac_objects;
-			
-			c : type_vector_gdouble;
+
 
 			procedure query_object (oc : in pac_objects.cursor) is
 				object : type_complex_object renames element (oc);
@@ -3256,6 +3284,8 @@ package body callbacks is
 		draw_cursor;
 
 		draw_zoom_area;
+
+		draw_drawing_frame;
 		
 		draw_objects;
 		

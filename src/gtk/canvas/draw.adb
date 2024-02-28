@@ -72,13 +72,20 @@ procedure draw is
 
 begin
 
+	-- Generate a simple drawing frame:
+	geometry_2.make_drawing_frame;
+
+	-- Generate a database with some useless dummy
+	-- objects:
 	geometry_2.make_database;
 
+	-- Compute the maximal dimensions of the canvas:
 	compute_canvas_size;
 
 	-- Compute the initial bounding-box:
 	geometry_2.compute_bounding_box;
-	
+
+	-- Compute the base-offset F:
 	set_base_offset;
 
 	
