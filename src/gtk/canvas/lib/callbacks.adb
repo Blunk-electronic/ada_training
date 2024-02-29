@@ -2987,7 +2987,7 @@ package body callbacks is
 			-- 1. Assemble from the first row and the first colum a real model point MP.
 			-- 2. Advance PM from row to row and column to column in a matrix like order.
 			-- 3. Draw a very small circle, which will appear like a dot,
-			--    (or alternatively a crosshair) at PM.
+			--    (or alternatively a very small cross) at MP.
 			procedure draw_dots is 
 				MP : type_vector_model;
 				CP : type_vector_gdouble;
@@ -3010,14 +3010,20 @@ package body callbacks is
 						CP := to_canvas (MP, S, true);
 
 						-- Draw a very small circle with its center at CP:
-						arc (context, CP.x, CP.y, 
-							radius => grid_radius_dots, angle1 => 0.0, angle2 => 6.3);
-						
-						stroke (context);
+						-- arc (context, CP.x, CP.y, 
+						-- 	 radius => grid_radius_dots, angle1 => 0.0, angle2 => 6.3);
+						-- stroke (context);
 
-						-- CS: As an alternative a small crosshair could
-						-- be drawn at CP. This could be more efficient than a circle.
+						-- Alternatively, draw a very small cross at CP:
+						-- This could be more efficient than a circle.
+						move_to (context, CP.x - 1.0, CP.y);
+						line_to (context, CP.x + 1.0, CP.y);
+						stroke (context);
 						
+						move_to (context, CP.x, CP.y - 1.0);
+						line_to (context, CP.x, CP.y + 1.0);
+						stroke (context);
+												
 						-- Advance one row up:
 						MP.y := MP.y + grid.spacing.y;
 					end loop;
