@@ -2594,6 +2594,9 @@ package body callbacks is
 		event	: gdk_event_scroll)
 		return boolean
 	is
+		--debug : boolean := false;
+		debug : boolean := true;
+		
 		use glib;		
 		use gdk.types;
 		use gtk.accel_group;
@@ -2622,18 +2625,25 @@ package body callbacks is
 			case wheel_direction is
 				when SCROLL_UP =>
 					increase_scale;
-					put_line (" zoom in");
+					if debug then
+						put_line (" zoom in");
+					end if;
 					update_scale_display;
 					
 				when SCROLL_DOWN => 
 					decrease_scale;
-					put_line (" zoom out");
+					if debug then
+						put_line (" zoom out");
+					end if;
 					update_scale_display;
 					
 				when others => null;
 			end case;
 
-			-- put_line (" S" & to_string (S));
+			
+			if debug then
+				put_line (" S" & to_string (S));
+			end if;
 			
 			-- After changing the scale-factor, the translate-offset must
 			-- be calculated anew. When the actual drawing takes 
@@ -2662,6 +2672,8 @@ package body callbacks is
 		is
 			v1, dv, v2 : gdouble;
 
+			-- This procedure computes the amount
+			-- by which the scrollbar value is to be changed:
 			procedure set_delta is begin
 				null;
 				-- CS: This is emperical for the time being.
@@ -2670,16 +2682,28 @@ package body callbacks is
 			end set_delta;
 			
 		begin
-			put_line (type_scroll_direction'image (direction));
+			if debug then
+				put_line (" " & type_scroll_direction'image (direction));
+			end if;
+			
 
 			case direction is
-				when SCROLL_UP =>
-					v1 := scrollbar_v_adj.get_value;
-					set_delta;
-					v2 := v1 + dv;
-					scrollbar_v_adj.set_value (v2);
-					
 				when SCROLL_DOWN =>
+					-- Get the current value of the scrollbar:
+					v1 := scrollbar_v_adj.get_value;
+
+					-- Compute the amout by which the 
+					-- scrollbar is to be moved:
+					set_delta;
+					
+					-- Compute the new value of the scrollbar:
+					v2 := v1 + dv;
+
+					-- Set the new value of the scrollbar:
+					scrollbar_v_adj.set_value (v2);
+
+					
+				when SCROLL_UP =>
 					v1 := scrollbar_v_adj.get_value;
 					set_delta;
 					v2 := v1 - dv;
@@ -2705,9 +2729,11 @@ package body callbacks is
 		
 		
 	begin -- cb_mouse_wheel_rolled
-		-- new_line;
-		put_line ("mouse_wheel_rolled");
-		-- put_line (" direction " & gdk_scroll_direction'image (direction));
+
+		if debug then
+			put_line ("cb_mouse_wheel_rolled");
+			-- put_line (" direction " & gdk_scroll_direction'image (wheel_direction));
+		end if;
 
 
 		-- If CTRL is being pressed, then zoom in or out:
