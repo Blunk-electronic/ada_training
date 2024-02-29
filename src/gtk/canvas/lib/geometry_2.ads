@@ -420,9 +420,13 @@ package geometry_2 is
 	bounding_box_error : type_bounding_box_error;
 
 
-	
+	-- This procedure adds a new object to the database.
+	-- The object is a simple square:
 	procedure add_object;
 
+	
+	-- This procedure deletes the last object that has been
+	-- added to the database:
 	procedure delete_object;
 	
 end geometry_2;

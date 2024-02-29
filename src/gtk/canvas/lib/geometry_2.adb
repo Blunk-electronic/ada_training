@@ -806,12 +806,15 @@ package body geometry_2 is
 	begin
 		-- put_line ("add_object");
 
+		-- The object is a square:
+
+		-- Define the position of the square:
 		object.p := (500.0, -250.0);
 		
 		-- In order to simulate a violation of the maximum
 		-- allowed bounding-box dimensions try this:
 		-- object.p := (2500.0, -250.0); -- width exceeded
-		object.p := (500.0, -1000.0); -- height exceeded
+		-- object.p := (500.0, -1000.0); -- height exceeded
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -825,9 +828,7 @@ package body geometry_2 is
 		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
-		objects_database.append (object);
-
-		
+		objects_database.append (object);		
 	end add_object;
 
 	
