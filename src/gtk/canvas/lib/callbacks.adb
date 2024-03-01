@@ -51,7 +51,8 @@ with gtk.main;					use gtk.main;
 
 with demo_grid;
 with demo_frame;
-with demo_bounding_box;
+with demo_bounding_box;			use demo_bounding_box;
+with demo_conversions;
 
 
 package body callbacks is
@@ -129,6 +130,7 @@ package body callbacks is
 		S2	: in type_scale_factor;
 		M	: in type_vector_model) -- real model point
 	is 
+		use demo_conversions;
 		debug : boolean := false;
 		
 		-- Compute the canvas point corresponding to the given

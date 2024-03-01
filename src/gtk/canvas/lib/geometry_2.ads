@@ -193,45 +193,6 @@ package geometry_2 is
 		return boolean;
 
 
-	
-	-- Converts a virtual model point to a real model point:
-	function to_real (
-		point : in type_vector_model)
-		return type_vector_model;
-
-	-- Converts a real model point to a virtual model point:
-	function to_virtual (
-		point : in type_vector_model)
-		return type_vector_model;
-
-
-
-	-- The margin around the drawing is part of the model.
-	-- The bounding box includes the margin:
-	margin : constant type_distance_model := 5.0;
-	
-	margin_offset : constant type_vector_model := (
-		x	=> margin,
-		y	=> margin);
-
-	
-	
-
-	-- This is the bounding-box of the model. It is a rectangle
-	-- that encloses all objects of the model and the margins 
-	-- around the model:
-	bounding_box : type_area;
-
-	-- These are the system limits for the width and height
-	-- of the bounding-box of the model:
-	bounding_box_width_max  : constant type_distance_model := 2_000.0;
-	bounding_box_height_max : constant type_distance_model := 1_000.0;
-
-	
-
-	
-
-	
 	-- Returns true if the given areas overlap each other:
 	function areas_overlap (
 		A, B : in type_area)

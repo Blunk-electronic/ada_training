@@ -45,6 +45,32 @@
 with geometry_2;				use geometry_2;
 
 package demo_bounding_box is
+
+
+	-- The margin around the drawing is part of the model.
+	-- The bounding box includes the margin:
+	margin : constant type_distance_model := 5.0;
+	
+	margin_offset : constant type_vector_model := (
+		x	=> margin,
+		y	=> margin);
+
+
+
+	
+	-- This is the bounding-box of the model. It is a rectangle
+	-- that encloses all objects of the model and the margins 
+	-- around the model:
+	bounding_box : type_area;
+
+	-- These are the system limits for the width and height
+	-- of the bounding-box of the model:
+	bounding_box_width_max  : constant type_distance_model := 2_000.0;
+	bounding_box_height_max : constant type_distance_model := 1_000.0;
+
+
+
+
 	
 	-- Indicates that the bounding_box has changed after calling procedure 
 	-- compute_bounding_box:

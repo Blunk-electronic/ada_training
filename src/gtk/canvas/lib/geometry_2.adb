@@ -183,28 +183,6 @@ package body geometry_2 is
 	end in_area;
 
 
-	
-	function to_real (
-		point : in type_vector_model)
-		return type_vector_model
-	is	
-		result : type_vector_model := point;
-	begin
-		move_by (result, bounding_box.position);
-		return result;
-	end to_real;
-
-
-	function to_virtual (
-		point : in type_vector_model)
-		return type_vector_model
-	is
-		result : type_vector_model := point;
-	begin
-		move_by (result, invert (bounding_box.position));
-		return result;
-	end to_virtual;
-
 
 	
 

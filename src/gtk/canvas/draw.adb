@@ -121,12 +121,12 @@ begin
 
 	
 	-- Zoom so that all objects are visible:
-	zoom_to_fit (geometry_2.bounding_box);
+	zoom_to_fit (demo_bounding_box.bounding_box);
 
 	
 	-- Backup the currently visible area.
 	-- This is relevant for canvas mode MODE_3_ZOOM_FIT only:
-	backup_visible_area (geometry_2.bounding_box);
+	backup_visible_area (demo_bounding_box.bounding_box);
 	
 	put_line ("start gtk main loop");
 
