@@ -53,43 +53,11 @@ with demo_grid;
 with demo_frame;
 with demo_bounding_box;			use demo_bounding_box;
 with demo_conversions;
+with demo_base_offset;			use demo_base_offset;
+
 
 
 package body callbacks is
-
-	procedure set_base_offset is
-		debug : boolean := false;
-		
-		x, y : gdouble;
-
-		-- The maximum scale factor:
-		S_max : constant gdouble := gdouble (type_scale_factor'last);
-
-		-- The width and height of the bounding-box:
-		Bh : constant gdouble := gdouble (bounding_box.height);
-		Bw : constant gdouble := gdouble (bounding_box.width);
-	begin
-		x :=   Bw * (S_max - 1.0);
-		y := - Bh * S_max;
-
-		-- Set the base-offset:
-		F := (x, y);
-
-		-- Output a warning if the base-offset is outside
-		-- the canvas dimensions:
-		if  x >   gdouble (canvas_size.width) or
-			y < - gdouble (canvas_size.height) then
-
-			put_line ("WARNING: base-offset outside canvas !");
-			put_line (" F: " & to_string (F));
-		end if;
-		
-
-		if debug then
-			put_line ("base offset: " & to_string (F));
-		end if;
-	end set_base_offset;
-
 	
 
 	procedure set_translation_for_zoom (
@@ -288,17 +256,6 @@ package body callbacks is
 
 
 	
-
-
-
-	function to_string (
-		size : in type_window_size)
-		return string
-	is begin
-		return "w/h " & positive'image (size.width) 
-			& "/" & positive'image (size.height);
-	end to_string;
-		
 
 	
 	
@@ -1689,14 +1646,6 @@ package body callbacks is
 	
 -- CANVAS:
 	
-	procedure refresh (
-		canvas	: access gtk_widget_record'class)
-	is
-		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
-	begin
-		-- put_line ("refresh " & image (clock)); 
-		drawing_area.queue_draw;
-	end refresh;
 
 
 	procedure cb_canvas_size_allocate (

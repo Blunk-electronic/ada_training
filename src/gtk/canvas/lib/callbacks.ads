@@ -59,20 +59,11 @@ with cairo;						use cairo;
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
 with demo_objects;				use demo_objects;
+with demo_window_dimensions;	use demo_window_dimensions;
+with demo_canvas;				use demo_canvas;
 
 
 package callbacks is
-
--- BASE-OFFSET:
-	
-	-- The place on the canvase where the model 
-	-- coordinates system has its origin.
-	-- It is a global variable. We call it "base-offset":
-	F : type_vector_gdouble;
-
-	-- Sets the global base-offset F according to the current
-	-- bounding-box and the maximal allowed scale-factor:
-	procedure set_base_offset;
 
 
 	
@@ -185,14 +176,6 @@ package callbacks is
 	
 	main_window	: gtk_window;
 
-	type type_window_size is record
-		width, height : positive := 1;
-	end record;
-
-
-	function to_string (
-		size : in type_window_size)
-		return string;
 	
 
 -- GTK-BOXES:
@@ -637,14 +620,6 @@ package callbacks is
 	
 -- CANVAS:
 
-	-- This is the canvas where all the drawing takes place:
-	canvas : gtk_drawing_area;
-
-
-	-- This procedure should be called in order to schedule
-	-- a refresh (or redraw) of the canvas:
-	procedure refresh (
-		canvas	: access gtk_widget_record'class);
 
 
 	-- This procedure is called when the canvas changes
@@ -654,11 +629,6 @@ package callbacks is
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
-
-
-	-- This is the size of the canvas in device pixels.
-	-- It is set by procedure compute_canvas_size on system startup:
-	canvas_size : type_window_size;
 
 	
 	-- This procedure computes the dimensions of the canvas
