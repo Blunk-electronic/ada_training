@@ -69,6 +69,7 @@ with geometry_1;				use geometry_1;
 with geometry_2;
 with demo_objects;
 with demo_frame;
+with demo_bounding_box;
 
 procedure draw is
 
@@ -85,7 +86,7 @@ begin
 	compute_canvas_size;
 
 	-- Compute the initial bounding-box:
-	compute_bounding_box;
+	demo_bounding_box.compute_bounding_box;
 
 	-- Compute the base-offset F:
 	set_base_offset;
