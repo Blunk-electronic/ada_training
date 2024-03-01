@@ -68,13 +68,14 @@ with callbacks;					use callbacks;
 with geometry_1;				use geometry_1;
 with geometry_2;
 with demo_objects;
+with demo_frame;
 
 procedure draw is
 
 begin
 
 	-- Generate a simple drawing frame:
-	demo_objects.make_drawing_frame;
+	demo_frame.make_drawing_frame;
 
 	-- Generate a database with some useless dummy
 	-- objects:
@@ -84,7 +85,7 @@ begin
 	compute_canvas_size;
 
 	-- Compute the initial bounding-box:
-	demo_objects.compute_bounding_box;
+	compute_bounding_box;
 
 	-- Compute the base-offset F:
 	set_base_offset;
