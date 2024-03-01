@@ -66,13 +66,6 @@ with demo_canvas;				use demo_canvas;
 package callbacks is
 
 
-	
--- TRANSLATE-OFFSET:
-	
-	-- The global translate-offset by which all draw operations on the canvas
-	-- are translated when the operator zooms on the pointer or the cursor:
-	T : type_vector_gdouble := (0.0, 0.0);
-
 	-- This procedure sets the global translate-offset T that is
 	-- required for a zoom-operation.
 	-- After changing the scale-factor S (either by zoom on mouse pointer or
@@ -128,31 +121,6 @@ package callbacks is
 	function to_distance (
 		d : in type_distance_gdouble)
 		return type_distance_model;
-
-	
-	-- Converts a canvas point to a model point
-	-- according to the given scale factor, the current
-	-- base-offset and the current tranlate-offset.
-	-- If a real model point is required, then the position
-	-- of the current bonding-box is also taken into account:
-	function to_model (
-		point	: in type_vector_gdouble;
-		scale	: in type_scale_factor;
-		real 	: in boolean := false) -- if real model coordinates are required
-		return type_vector_model;
-	
-
-	-- Converts a model point to a canvas point
-	-- according to the given scale factor and the current
-	-- base-offset.
-	-- If the given model point is real, then the current
-	-- tranlate-offset and the position of the current
-	-- bounding-box is also taken into account:
-	function to_canvas (
-		point 	: in type_vector_model;
-		scale	: in type_scale_factor;
-		real	: in boolean := false) -- if real model coordinates are given
-		return type_vector_gdouble;
 
 
 

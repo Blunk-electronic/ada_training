@@ -52,9 +52,9 @@ with gtk.main;					use gtk.main;
 with demo_grid;
 with demo_frame;
 with demo_bounding_box;			use demo_bounding_box;
-with demo_conversions;
+with demo_conversions;			use demo_conversions;
 with demo_base_offset;			use demo_base_offset;
-
+with demo_translate_offset;		use demo_translate_offset;
 
 
 package body callbacks is
@@ -169,69 +169,6 @@ package body callbacks is
 	
 
 	
-	function to_model (
-		point	: in type_vector_gdouble;
-		scale	: in type_scale_factor;
-		real 	: in boolean := false)
-		return type_vector_model
-	is 
-		result : type_vector_model;
-		debug : boolean := false;
-	begin
-		if debug then
-			put_line ("to_model");
-			put_line ("T " & to_string (T));
-		end if;
-		
-		result.x := type_distance_model (( (point.x - T.x) - F.x) / gdouble (scale));
-		result.y := type_distance_model ((-(point.y - T.y) - F.y) / gdouble (scale));
-
-		-- If real model coordinates are required, then the result must be compensated
-		-- by the bounding-box position:
-		if real then
-			move_by (result, bounding_box.position);
-		end if;
-		return result;
-
-		exception
-			when constraint_error =>
-				put_line ("ERROR: conversion from canvas point to model point failed !");
-				put_line (" point " & to_string (point));
-				put_line (" scale " & to_string (scale));
-				put_line (" T     " & to_string (T));
-				put_line (" F     " & to_string (F));
-				put_line (" real  " & boolean'image (real));
-				raise;						  
-	end to_model;
-	
-
-	function to_canvas (
-		point 	: in type_vector_model;
-		scale	: in type_scale_factor;
-		real	: in boolean := false)
-		return type_vector_gdouble
-	is
-		P : type_vector_model := point;
-		result : type_vector_gdouble;
-	begin
-		-- If real model coordinates are given, then they must
-		-- be compensated by the inverted bounding-box position
-		-- in order to get virtual model coordinates:
-		if real then
-			move_by (P, invert (bounding_box.position));
-		end if;
-		
-		result.x :=  (gdouble (P.x) * gdouble (scale) + F.x);
-		result.y := -(gdouble (P.y) * gdouble (scale) + F.y);
-
-		if real then
-			result.x := result.x + T.x;
-			result.y := result.y + T.y;
-		end if;
-		
-		return result;
-	end to_canvas;
-
 
 
 	function above_visibility_threshold (

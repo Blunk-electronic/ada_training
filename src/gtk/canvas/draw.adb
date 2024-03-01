@@ -70,6 +70,9 @@ with geometry_2;
 with demo_objects;
 with demo_frame;
 with demo_bounding_box;
+with demo_canvas;
+with demo_base_offset;
+
 
 procedure draw is
 
@@ -89,7 +92,7 @@ begin
 	demo_bounding_box.compute_bounding_box;
 
 	-- Compute the base-offset F:
-	set_base_offset;
+	demo_base_offset.set_base_offset;
 
 	
 	init; -- inits the GTK-stuff
@@ -117,7 +120,7 @@ begin
 
 	-- On startup the canvas has the focus. This enables the operator
 	-- to move the cursor with the cursor-keys from the beginning:
-	canvas.grab_focus;
+	demo_canvas.canvas.grab_focus;
 
 	
 	-- Zoom so that all objects are visible:
