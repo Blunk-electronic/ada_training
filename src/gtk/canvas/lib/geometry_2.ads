@@ -147,47 +147,6 @@ package geometry_2 is
 
 
 
-	
--- GRID:
-	
-	-- The grid helps the operator to align or place objects:
-	type type_grid_on_off is (GRID_ON, GRID_OFF);
-	type type_grid_style is (STYLE_DOTS, STYLE_LINES);
-
-	-- The linewidth of the grid lines:
-	grid_width_lines : constant gdouble := 0.5;
-
-	-- The linewidth of the circles which form the grid dots:
-	grid_width_dots : constant gdouble := 1.0;
-	grid_radius_dots : constant gdouble := 0.5;
-
-	-- The default grid size in in the model domain:
-	grid_spacing_default : constant type_distance_model := 10.0;
-
-	-- If the displayed grid is too dense, then it makes no
-	-- sense to draw a grid. For this reason we define a minimum
-	-- distance between grid rows and columns. If the spacing becomes
-	-- greater than this threshold then the grid will be drawn:
-	grid_spacing_min : constant gdouble := 10.0;
-	
-	type type_grid is record
-		on		: type_grid_on_off := GRID_ON;
-		-- on		: type_grid_on_off := GRID_OFF;
-		spacing : type_vector_model := (others => grid_spacing_default);
-		style	: type_grid_style := STYLE_DOTS;
-		-- style	: type_grid_style := STYLE_LINES;
-	end record;
-	
-	grid : type_grid;
-
-	
-	-- This function returns the grid point that is
-	-- closest to the given model point;
-	function snap_to_grid (
-		point : in type_vector_model)
-		return type_vector_model;
-
-
 
 	
 -- AREA:

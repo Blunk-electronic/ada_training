@@ -49,6 +49,8 @@ with ada.calendar.formatting;	use ada.calendar.formatting;
 
 with gtk.main;					use gtk.main;
 
+with demo_grid;
+
 
 package body callbacks is
 
@@ -283,17 +285,6 @@ package body callbacks is
 
 	
 
-	function get_grid_spacing (
-		grid : in type_grid)
-		return gdouble
-	is
-		sg : constant gdouble := gdouble (S);
-		x, y : gdouble;
-	begin
-		x := gdouble (grid.spacing.x) * sg;
-		y := gdouble (grid.spacing.y) * sg;
-		return gdouble'min (x, y);
-	end get_grid_spacing;
 
 
 	function to_string (
@@ -457,7 +448,9 @@ package body callbacks is
 
 	
 
-	procedure update_grid_display is begin
+	procedure update_grid_display is 
+		use demo_grid;
+	begin
 		-- x-axis:
 		grid_x_buf.set_text (to_string (grid.spacing.x));
 		grid_x_value.set_buffer (grid_x_buf);
@@ -2185,6 +2178,7 @@ package body callbacks is
 		event	: gdk_event_button)
 		return boolean
 	is
+		use demo_grid;
 		use glib;
 		event_handled : boolean := true;
 
@@ -2445,7 +2439,9 @@ package body callbacks is
 	
 	procedure move_cursor (
 		direction : type_direction)
-	is begin
+	is 
+		use demo_grid;
+	begin
 		-- Move the cursor by the grid spacing into the given direction:
 		put_line ("move cursor " & type_direction'image (direction));
 		
@@ -2521,6 +2517,8 @@ package body callbacks is
 		event	: gdk_event_key)
 		return boolean
 	is
+		use demo_grid;
+		
 		event_handled : boolean := true;
 
 		use gdk.types;		
@@ -2919,6 +2917,8 @@ package body callbacks is
 		--    visible area (in y direction).
 		-- 6. Draw the grid as dots or lines, depending on the user specified settings.
 		procedure draw_grid is
+			use demo_grid;
+			
 			type type_float_grid is new float; -- CS refinement required
 
 			-- X-AXIS:
@@ -3320,6 +3320,8 @@ package body callbacks is
 		end draw_objects;
 
 
+		
+		use demo_grid;
 		
 	begin -- cb_draw_objects
 		-- new_line;

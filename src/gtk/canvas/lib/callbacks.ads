@@ -60,6 +60,7 @@ with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
 
 
+
 package callbacks is
 
 -- BASE-OFFSET:
@@ -175,22 +176,6 @@ package callbacks is
 	function above_visibility_threshold (
 		a : in type_area)
 		return boolean;
-
-
-	
--- GRID:
-	
-	-- This function returns the space between
-	-- the grid columns or rows. It returns the lesser
-	-- spacing of them. It calculates the spacing by this
-	-- equation:
-	-- x = grid.spacing.x * scale-factor
-	-- y = grid.spacing.y * scale-factor
-	-- Then the lesser one, either x or y will be returned:
-	function get_grid_spacing (
-		grid : in type_grid)
-		return gdouble;
-
 
 
 	
