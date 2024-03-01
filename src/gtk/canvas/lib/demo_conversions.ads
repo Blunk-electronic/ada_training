@@ -44,6 +44,7 @@ with geometry_2;				use geometry_2;
 
 package demo_conversions is
 
+-- REAL AND VIRTUAL MODEL COORDINATES:
 	
 	-- Converts a virtual model point to a real model point:
 	function to_real (
