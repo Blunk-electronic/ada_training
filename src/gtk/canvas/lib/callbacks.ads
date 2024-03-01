@@ -58,7 +58,7 @@ with cairo;						use cairo;
 
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
-
+with demo_objects;				use demo_objects;
 
 
 package callbacks is
