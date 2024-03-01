@@ -38,12 +38,6 @@
 
 with glib;						use glib;
 
-with ada.numerics;
-with ada.numerics.generic_elementary_functions;
-
-with ada.containers;			use ada.containers;
-with ada.containers.doubly_linked_lists;
-
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
 

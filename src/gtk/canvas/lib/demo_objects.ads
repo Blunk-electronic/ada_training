@@ -36,10 +36,9 @@
 --   history of changes:
 --
 
-with glib;						use glib;
 
-with ada.numerics;
-with ada.numerics.generic_elementary_functions;
+-- with ada.numerics;
+-- with ada.numerics.generic_elementary_functions;
 
 with ada.containers;			use ada.containers;
 with ada.containers.doubly_linked_lists;
