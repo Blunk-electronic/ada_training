@@ -61,6 +61,22 @@ package demo_conversions is
 	
 
 -- CANVAS <-> MODEL:
+
+
+	-- Converts the given model distance to
+	-- a canvas distance according to the current scale-factor S:
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_gdouble;
+
+	
+	-- Converts the given canvas distance to
+	-- a model distance according to the current scale-factor S:
+	function to_distance (
+		d : in type_distance_gdouble)
+		return type_distance_model;
+
+
 	
 	-- Converts a canvas point to a model point
 	-- according to the given scale factor, the current

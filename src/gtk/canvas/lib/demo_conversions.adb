@@ -70,6 +70,24 @@ package body demo_conversions is
 
 
 
+	function to_distance (
+		d : in type_distance_model)
+		return type_distance_gdouble
+	is begin
+		return gdouble (d) * gdouble (S);
+	end to_distance;
+
+
+	function to_distance (
+		d : in type_distance_gdouble)
+		return type_distance_model
+	is begin
+		return type_distance_model (d / gdouble (S));
+	end to_distance;
+
+	
+
+	
 	function to_model (
 		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;

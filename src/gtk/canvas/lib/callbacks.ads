@@ -104,23 +104,8 @@ package callbacks is
 	function get_bounding_box_corners
 		return type_bounding_box_corners;
 	
-
-
 	
--- CONVERSION BETWEEN MODEL AND CANVAS:
 
-	-- Converts the given model distance to
-	-- a canvas distance according to the current scale-factor S:
-	function to_distance (
-		d : in type_distance_model)
-		return type_distance_gdouble;
-
-	
-	-- Converts the given canvas distance to
-	-- a model distance according to the current scale-factor S:
-	function to_distance (
-		d : in type_distance_gdouble)
-		return type_distance_model;
 
 
 
