@@ -312,18 +312,6 @@ package callbacks is
 	
 		
 	
-	-- This function calculates the scale factor required to
-	-- fit the given area into the current scrolled window.
-	-- The scrolled window has an initial size on startup. Later, when
-	-- the operator resizes the main window, the scrolled window gets
-	-- larger or smaller. This results in a situation depended scale-factor:
-	function get_ratio (
-		area : in type_area)
-		return type_scale_factor;
-	
-	
-
-	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the scrolled window.
 	procedure cb_swin_size_allocate (

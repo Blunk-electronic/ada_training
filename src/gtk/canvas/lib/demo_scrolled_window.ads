@@ -43,7 +43,8 @@ with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.scrollbar;				use gtk.scrollbar;
 
-
+with geometry_1;				use geometry_1;
+with geometry_2;				use geometry_2;
 with demo_window_dimensions;	use demo_window_dimensions;
 
 
@@ -159,6 +160,15 @@ package demo_scrolled_window is
 	procedure show_adjustments_v;
 	procedure show_adjustments_h;
 
+
+	-- This function calculates the scale factor required to
+	-- fit the given area into the current scrolled window.
+	-- The scrolled window has an initial size on startup. Later, when
+	-- the operator resizes the main window, the scrolled window gets
+	-- larger or smaller. This results in a situation depended scale-factor:
+	function get_ratio (
+		area : in type_area)
+		return type_scale_factor;
 	
 end demo_scrolled_window;
 
