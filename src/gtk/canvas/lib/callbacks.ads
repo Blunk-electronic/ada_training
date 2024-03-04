@@ -65,6 +65,7 @@ with demo_canvas;				use demo_canvas;
 with demo_conversions;			use demo_conversions;
 with demo_main_window;			use demo_main_window;
 with demo_coordinates_display;
+with demo_cursor;				use demo_cursor;
 
 
 package callbacks is
@@ -372,26 +373,6 @@ package callbacks is
 
 
 -- CURSOR:
-	
-	-- The cursor is a crosshair that can be moved by the
-	-- cursor keys (arrow keys) about the canvas:
-	type type_cursor is record
-		position	: type_vector_model := origin;
-
-		-- For drawing the cursor:
-		linewidth_1	: gdouble := 1.0;
-		linewidth_2	: gdouble := 4.0;
-		length_1	: gdouble := 20.0;
-		length_2	: gdouble := 20.0;
-		radius		: gdouble := 25.0;
-		
-		-- CS: blink, color, ...
-	end record;
-
-	
-	-- This is the instance of the cursor:
-	cursor : type_cursor;
-
 
 
 	

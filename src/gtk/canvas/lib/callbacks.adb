@@ -974,6 +974,9 @@ package body callbacks is
 	end set_up_canvas;
 
 
+
+	
+
 	
 	procedure zoom_on_cursor (
 		direction : in type_zoom_direction)
