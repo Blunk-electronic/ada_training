@@ -55,6 +55,7 @@ with demo_bounding_box;			use demo_bounding_box;
 with demo_conversions;			use demo_conversions;
 with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
+with demo_visibility;
 
 
 package body callbacks is
@@ -134,25 +135,6 @@ package body callbacks is
 	
 
 
-	function above_visibility_threshold (
-		a : in type_area)
-		return boolean
-	is
-		-- CS: Optimization required. Compiler options ?
-		w : constant gdouble := to_distance (a.width);
-		h : constant gdouble := to_distance (a.height);
-		l : gdouble;
-	begin
-		-- Get the greatest of w and h:
-		l := gdouble'max (w, h);
-
-		if l > visibility_threshold then
-			return true;
-		else
-			return false;
-		end if;
-		
-	end above_visibility_threshold;
 
 
 	
@@ -2634,6 +2616,8 @@ package body callbacks is
 		line	: in type_line;
 		pos		: in type_vector_model)
 	is
+		use demo_visibility;
+		
 		-- CS: Optimization required. Compiler options ?
 		
 		-- Make a copy of the given line:
@@ -2683,6 +2667,8 @@ package body callbacks is
 		circle	: in type_circle;
 		pos		: in type_vector_model) -- the position of the complex object
 	is
+		use demo_visibility;
+		
 		-- CS: Optimization required. Compiler options ?
 		
 		-- Make a copy of the given circle:

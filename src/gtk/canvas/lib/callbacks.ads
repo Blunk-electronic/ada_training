@@ -90,21 +90,6 @@ package callbacks is
 		S2	: in type_scale_factor;		-- the scale factor after zoom
 		M	: in type_vector_model);	-- the zoom center as a real model point
 
-
-
--- VISIBILTY THRESHOLD:
-	
-	-- If an object occupies a space that is wider or
-	-- higher than this constant, then it will be drawn on the screen:
-	visibility_threshold : constant gdouble := 5.0;
-	
-	-- Returns true if the given area is large enough
-	-- to display objects therein:
-	function above_visibility_threshold (
-		a : in type_area)
-		return boolean;
-
-
 	
 
 	

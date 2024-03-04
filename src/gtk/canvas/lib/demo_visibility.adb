@@ -4,7 +4,7 @@
 --                                                                          --
 --                              VISIBILITY                                  --
 --                                                                          --
---                               S p e c                                    --
+--                               B o d y                                    --
 --                                                                          --
 -- Copyright (C) 2024                                                       --
 -- Mario Blunk / Blunk electronic                                           --
@@ -40,23 +40,31 @@ with glib;						use glib;
 
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
+with demo_conversions;			use demo_conversions;
 
 
-package demo_visibility is
-
-	
-	-- VISIBILTY THRESHOLD:
-	
-	-- If an object occupies a space that is wider or
-	-- higher than this constant, then it will be drawn on the screen:
-	visibility_threshold : constant gdouble := 5.0;
+package body demo_visibility is
 
 	
-	-- Returns true if the given area is large enough
-	-- to display objects therein:
 	function above_visibility_threshold (
 		a : in type_area)
-		return boolean;
+		return boolean
+	is
+		-- CS: Optimization required. Compiler options ?
+		w : constant gdouble := to_distance (a.width);
+		h : constant gdouble := to_distance (a.height);
+		l : gdouble;
+	begin
+		-- Get the greatest of w and h:
+		l := gdouble'max (w, h);
+
+		if l > visibility_threshold then
+			return true;
+		else
+			return false;
+		end if;
+		
+	end above_visibility_threshold;
 
 	
 end demo_visibility;
