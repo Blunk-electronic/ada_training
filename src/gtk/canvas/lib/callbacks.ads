@@ -56,12 +56,15 @@ with gtk.scrollbar;				use gtk.scrollbar;
 with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
+with demo_buttons;
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
 with demo_objects;				use demo_objects;
 with demo_window_dimensions;	use demo_window_dimensions;
 with demo_canvas;				use demo_canvas;
 with demo_conversions;			use demo_conversions;
+with demo_main_window;			use demo_main_window;
+with demo_coordinates_display;
 
 
 package callbacks is
@@ -92,65 +95,6 @@ package callbacks is
 
 	
 
-	
--- MAIN WINDOW:
-	
-	main_window	: gtk_window;
-
-	
-
--- GTK-BOXES:
-	
-	box_h 				: gtk_hbox;
-	box_v0				: gtk_vbox;
-	box_v1				: gtk_vbox;
-	separator			: gtk_separator;
-
-	buttons_table		: gtk_table;
-	button_zoom_fit		: gtk_button;
-	button_zoom_area	: gtk_button;
-	button_move			: gtk_button;
-	button_add			: gtk_button;
-	button_delete		: gtk_button;
-	button_export		: gtk_button;
-	
-	
-	table_coordinates	: gtk_table; -- incl. relative distances
-	-- CS rename to coordinates_tabel
-
-	pointer_header							: gtk_label;
-	pointer_x_label, pointer_y_label		: gtk_label;
-	pointer_x_value, pointer_y_value		: gtk_text_view;
-	pointer_x_buf, pointer_y_buf			: gtk_text_buffer;
-	
-	cursor_header							: gtk_label;
-	cursor_x_label, cursor_y_label			: gtk_label;
-	cursor_x_value, cursor_y_value			: gtk_text_view;
-	cursor_x_buf, cursor_y_buf				: gtk_text_buffer;
-	
-	distances_header						: gtk_label;
-	distances_dx_label, distances_dy_label	: gtk_label;
-	distances_absolute_label				: gtk_label;
-	distances_angle_label					: gtk_label;
-	distances_dx_value, distances_dy_value	: gtk_text_view;
-	distances_absolute_value				: gtk_text_view;
-	distances_angle_value					: gtk_text_view;
-	distances_dx_buf, distances_dy_buf		: gtk_text_buffer;
-	distances_absolute_buf					: gtk_text_buffer;
-	distances_angle_buf						: gtk_text_buffer;
-
-	grid_header								: gtk_label;
-	grid_x_label, grid_y_label				: gtk_label;
-	grid_x_value, grid_y_value				: gtk_text_view;
-	grid_x_buf, grid_y_buf					: gtk_text_buffer;
-
-	scale_label								: gtk_label;
-	scale_value								: gtk_text_view;
-	scale_buf								: gtk_text_buffer;
-
-
-	
--- COMMAND BUTTONS:
 
 	
 	-- This callback procedure is called each time the 

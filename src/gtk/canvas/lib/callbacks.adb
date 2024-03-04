@@ -215,7 +215,9 @@ package body callbacks is
 
 	
 	
-	procedure update_cursor_coordinates is begin
+	procedure update_cursor_coordinates is 
+		use demo_coordinates_display;
+	begin
 		-- x-axis:
 		cursor_x_buf.set_text (to_string (cursor.position.x));
 		cursor_x_value.set_buffer (cursor_x_buf);
@@ -229,6 +231,8 @@ package body callbacks is
 	
 	
 	procedure update_distances_display is 
+		use demo_coordinates_display;
+		
 		px, py : gint; -- the pointer position
 		cp : type_vector_gdouble;
 		mp : type_vector_model;
@@ -284,7 +288,9 @@ package body callbacks is
 
 
 	
-	procedure update_scale_display is begin
+	procedure update_scale_display is 
+		use demo_coordinates_display;
+	begin
 		scale_buf.set_text (to_string (S));
 		scale_value.set_buffer (scale_buf);
 	end update_scale_display;
@@ -292,6 +298,7 @@ package body callbacks is
 	
 
 	procedure update_grid_display is 
+		use demo_coordinates_display;
 		use demo_grid;
 	begin
 		-- x-axis:
@@ -589,6 +596,7 @@ package body callbacks is
 
 
 	procedure set_up_command_buttons is
+		use demo_buttons;
 	begin
 		put_line ("set_up_command_buttons");
 		
@@ -705,6 +713,7 @@ package body callbacks is
 
 	
 	procedure set_up_coordinates_display is
+		use demo_coordinates_display;
 		use gtk.enums;
 
 		-- The width of the text view shall be wide enough
@@ -2215,6 +2224,8 @@ package body callbacks is
 		event	: gdk_event_motion)
 		return boolean
 	is
+		use demo_coordinates_display;
+		
 		use glib;
 		event_handled : boolean := true;
 
