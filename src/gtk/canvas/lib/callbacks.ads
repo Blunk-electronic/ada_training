@@ -284,33 +284,6 @@ package callbacks is
 	
 -- SCROLLED WINDOW:
 
-	-- This is the scrolled window:
-	swin : gtk_scrolled_window;
-
-	-- Inside the scrolled window the canvas exists.
-	
-
-	
-	-- When the scrolled window is resized, then the canvas can
-	-- operate in in several ways. Currently these modes are defined:
-	type type_scrolled_window_zoom_mode is (
-		-- No zoom. No moving. Just more or less of 
-		-- the canvas area is exposed:
-		MODE_1_EXPOSE_CANVAS,
-
-		-- Center of visible canvas area remains in the center. 
-		-- Around the center more or less of the canvas area is exposed:
-		MODE_2_KEEP_CENTER,
-
-		-- The visible area remains fit into the scrolled window.
-		MODE_3_ZOOM_FIT);
-
-
-	zoom_mode : constant type_scrolled_window_zoom_mode := 
-		-- MODE_1_EXPOSE_CANVAS;
-		-- MODE_2_KEEP_CENTER;
-		MODE_3_ZOOM_FIT;
-
 	
 	-- In MODE_3_ZOOM_FIT, here the last visible area
 	-- immediately before the dimensions of the scrolled window
@@ -337,23 +310,7 @@ package callbacks is
 	procedure backup_visible_area (
 		area : in type_area);
 	
-	
-	-- This is the initial size of the scrolled window.
-	-- IMPORTANT: The height must be greater than the sum
-	-- of the height of all other widgets in the main window !
-	-- Otherwise the canvas may freeze and stop emitting signals.
-	swin_size_initial : constant type_window_size := (
-		width	=> 400,
-		height	=> 400);
-	
-	-- The current size of the scrolled window. It gets updated
-	-- in procedure set_up_swin_and_scrollbars and 
-	-- in cb_swin_size_allocate. This variable is required
-	-- in order to detect size changes of the scrolled window:
-	swin_size : type_window_size;
-
-	
-	
+		
 	
 	-- This function calculates the scale factor required to
 	-- fit the given area into the current scrolled window.

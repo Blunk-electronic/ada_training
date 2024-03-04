@@ -56,6 +56,7 @@ with demo_conversions;			use demo_conversions;
 with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
 with demo_visibility;
+with demo_scrolled_window;		use demo_scrolled_window;
 
 
 package body callbacks is
