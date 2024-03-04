@@ -148,6 +148,12 @@ package demo_scrolled_window is
 	procedure restore_scrollbar_settings;
 
 
+
+	-- Sets the initial scrollbar settings based on
+	-- current base-offset and bounding-box:
+	procedure set_initial_scrollbar_settings;
+	
+	
 	-- For debugging, these procedures output the settings
 	-- of the scrollbars on the console:
 	procedure show_adjustments_v;

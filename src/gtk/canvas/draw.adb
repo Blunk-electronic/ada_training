@@ -73,6 +73,7 @@ with demo_bounding_box;
 with demo_canvas;
 with demo_base_offset;
 with demo_main_window;
+with demo_scrolled_window;
 with demo_coordinates_display;
 
 procedure draw is
@@ -111,7 +112,7 @@ begin
 	demo_main_window.main_window.show_all; -- assigns the allocation to the canvas
 
 	
-	set_initial_scrollbar_settings;
+	demo_scrolled_window.set_initial_scrollbar_settings;
 
 	-- show_adjustments_v;
 	-- show_adjustments_h;

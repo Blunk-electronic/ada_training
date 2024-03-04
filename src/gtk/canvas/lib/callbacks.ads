@@ -390,10 +390,7 @@ package callbacks is
 
 
 	
-	-- Sets the initial scrollbar settings based on
-	-- current base-offset and bounding-box:
-	procedure set_initial_scrollbar_settings;
-	
+
 
 	
 -- CANVAS:

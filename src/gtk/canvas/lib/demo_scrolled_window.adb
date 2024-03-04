@@ -46,8 +46,9 @@ with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.scrollbar;				use gtk.scrollbar;
 
-
 with demo_window_dimensions;	use demo_window_dimensions;
+with demo_base_offset;
+with demo_bounding_box;
 
 
 package body demo_scrolled_window is
@@ -132,7 +133,7 @@ package body demo_scrolled_window is
 		
 	end create_scrolled_window_and_scrollbars;
 
-
+	
 
 	procedure backup_scrollbar_settings is begin
 		--put_line ("backup_scrollbar_settings");
@@ -160,6 +161,92 @@ package body demo_scrolled_window is
 		scrollbar_v_adj.set_upper (scrollbar_v_backup.upper);
 	end restore_scrollbar_settings;
 
+
+
+	procedure set_initial_scrollbar_settings is
+		use demo_base_offset;		
+		use demo_bounding_box;
+		
+		debug : boolean := false;
+		-- debug : boolean := true;
+	begin
+		put_line ("set initial scrollbar settings");
+		
+		scrollbar_v_init.upper := - F.y;			
+		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
+		scrollbar_v_init.page_size := gdouble (bounding_box.height);
+		scrollbar_v_init.value := scrollbar_v_init.lower;
+
+		if debug then
+			put_line (" vertical:");
+			put_line ("  lower" & gdouble'image (scrollbar_v_init.lower));
+			put_line ("  upper" & gdouble'image (scrollbar_v_init.upper));
+			put_line ("  page " & gdouble'image (scrollbar_v_init.page_size));
+			put_line ("  value" & gdouble'image (scrollbar_v_init.value));
+		end if;
+		
+		scrollbar_h_init.lower := F.x;
+		scrollbar_h_init.upper := scrollbar_h_init.lower + gdouble (bounding_box.width);
+		scrollbar_h_init.page_size := gdouble (bounding_box.width);
+		scrollbar_h_init.value := scrollbar_h_init.lower;
+
+		if debug then
+			put_line (" horizontal:");
+			put_line ("  lower" & gdouble'image (scrollbar_h_init.lower));
+			put_line ("  upper" & gdouble'image (scrollbar_h_init.upper));
+			put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
+			put_line ("  value" & gdouble'image (scrollbar_h_init.value));
+		end if;
+
+	
+		--------------------------------------------------------------------------------
+		-- CS: This code is experimental in order to make the canvas
+		-- dimensions adjust DYNAMICALLY to the scrollbar limits. So far this
+		-- was not successful because the canvas size can not be changed
+		-- for some unknown reason after initialization:
+		
+-- 		declare
+-- 			w, h : gint;
+-- 			a : gtk_allocation;
+-- 		begin
+-- 			w := gint (scrollbar_h_init.lower + scrollbar_h_init.upper);
+-- 			h := gint (scrollbar_v_init.lower + scrollbar_v_init.upper);
+-- 
+-- 			canvas.get_allocation (a);
+-- 			a.width := w;
+-- 			a.height := h;
+-- 			-- canvas.set_allocation (a);
+-- 			-- canvas.size_allocate (a);
+-- 			-- canvas.set_size_request (w, h);
+-- 			
+-- 			if debug then
+-- 				show_canvas_size;
+-- 				-- put_line ("x/y : " & gint'image (a.x) & "/" & gint'image (a.y));
+-- 			end if;
+-- 		end;
+		--------------------------------------------------------------------------------
+
+		
+		-- put_line ("vertical:");
+		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
+		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
+		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
+		scrollbar_v_adj.set_value (scrollbar_v_init.value);
+
+		-- put_line ("horizontal:");
+		scrollbar_h_adj.set_upper (scrollbar_h_init.upper);			
+		scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
+		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
+		scrollbar_h_adj.set_value (scrollbar_h_init.value);
+
+		-- show_adjustments_h;
+		-- show_adjustments_v;
+		
+		backup_scrollbar_settings;
+		
+	end set_initial_scrollbar_settings;
+
+	
 	
 
 	procedure show_adjustments_v is 
