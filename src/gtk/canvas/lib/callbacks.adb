@@ -57,7 +57,7 @@ with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
 with demo_visibility;
 with demo_scrolled_window;		use demo_scrolled_window;
-
+with demo_visible_area;
 
 package body callbacks is
 	
@@ -640,22 +640,14 @@ package body callbacks is
 
 
 
-
-	procedure backup_visible_area (
-		area : in type_area)
-	is begin
-		last_visible_area := area;
-	end backup_visible_area;
-
-	
-
 	
 	
 	procedure cb_swin_size_allocate (
 		swin		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
-
+		use demo_visible_area;
+		
 		-- Each time ths procedure is called, the argument "allocation"
 		-- provides the new size of the scrolled window. Later this size will 
 		-- be compared with the old size (stored in global 
@@ -855,6 +847,7 @@ package body callbacks is
 		event	: gdk_event_button)
 		return boolean
 	is
+		use demo_visible_area;
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_v_released");
@@ -883,6 +876,7 @@ package body callbacks is
 		event	: gdk_event_button)
 		return boolean
 	is
+		use demo_visible_area;
 		event_handled : boolean := false;
 	begin
 		-- put_line ("cb_scrollbar_h_released");
@@ -1127,6 +1121,8 @@ package body callbacks is
 	procedure zoom_on_cursor (
 		direction : in type_zoom_direction)
 	is
+		use demo_visible_area;
+		
 		S1 : constant type_scale_factor := S;
 
 		-- The corners of the bounding-box on the canvas before 
@@ -1208,6 +1204,7 @@ package body callbacks is
 
 	procedure zoom_to_fit_all is
 		use demo_bounding_box;
+		use demo_visible_area;
 		
 		-- debug : boolean := true;
 		debug : boolean := false;
@@ -1346,7 +1343,9 @@ package body callbacks is
 		event	: gdk_event_button)
 		return boolean
 	is
+		use demo_visible_area;
 		use glib;
+		
 		event_handled : boolean := true;
 
 		debug : boolean := false;
@@ -1528,6 +1527,7 @@ package body callbacks is
 	procedure move_cursor (
 		direction : type_direction)
 	is 
+		use demo_visible_area;
 		use demo_grid;
 	begin
 		-- Move the cursor by the grid spacing into the given direction:
@@ -1695,6 +1695,8 @@ package body callbacks is
 
 
 		procedure zoom is
+			use demo_visible_area;
+			
 			-- The given point on the canvas where the operator is zooming in or out:
 			Z : constant type_vector_gdouble := (event.x, event.y);
 
@@ -1756,6 +1758,8 @@ package body callbacks is
 		procedure scroll (
 			direction : in type_scroll_direction)
 		is
+			use demo_visible_area;
+			
 			v1, dv, v2 : gdouble;
 
 			-- This procedure computes the amount

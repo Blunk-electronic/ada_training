@@ -74,6 +74,7 @@ with demo_canvas;
 with demo_base_offset;
 with demo_main_window;
 with demo_scrolled_window;
+with demo_visible_area;
 with demo_coordinates_display;
 
 procedure draw is
@@ -131,7 +132,7 @@ begin
 	
 	-- Backup the currently visible area.
 	-- This is relevant for canvas mode MODE_3_ZOOM_FIT only:
-	backup_visible_area (demo_bounding_box.bounding_box);
+	demo_visible_area.backup_visible_area (demo_bounding_box.bounding_box);
 	
 	put_line ("start gtk main loop");
 
