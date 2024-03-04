@@ -87,7 +87,7 @@ begin
 	demo_objects.make_database;
 
 	-- Compute the maximal dimensions of the canvas:
-	compute_canvas_size;
+	demo_canvas.compute_canvas_size;
 
 	-- Compute the initial bounding-box:
 	demo_bounding_box.compute_bounding_box;

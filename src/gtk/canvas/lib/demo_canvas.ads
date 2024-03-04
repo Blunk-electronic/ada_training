@@ -59,6 +59,16 @@ package demo_canvas is
 		canvas	: access gtk_widget_record'class);
 	
 
+	-- This procedure computes the dimensions of the canvas
+	-- and assigns them to variable canvas_size.
+	-- The computation bases on the maximum allowed width
+	-- and height of the bounding-box and the maximal
+	-- scale-factor.
+	-- CS: The computed dimensions may be not sufficient
+	-- with very very large screens:
+	procedure compute_canvas_size;
+
+	
 	-- This procedure outputs the current dimensions
 	-- of the canvas on the console:
 	procedure show_canvas_size;

@@ -1068,43 +1068,6 @@ package body callbacks is
 	end cb_canvas_size_allocate;
 
 
-	procedure compute_canvas_size is
-		debug : boolean := true;
-
-		-- The maximal base-offset:
-		F_max : type_vector_gdouble;
-		
-		-- The maximum scale factor:
-		S_max : constant gdouble := gdouble (type_scale_factor'last);
-
-		-- The maximum width and height of the bounding-box:
-		Bw : constant gdouble := gdouble (bounding_box_width_max);
-		Bh : constant gdouble := gdouble (bounding_box_height_max);
-	begin
-		if debug then
-			put_line ("compute_canvas_size");
-			put_line (" S_max : " & gdouble'image (S_max));
-			put_line (" Bw_max: " & gdouble'image (Bw));
-			put_line (" Bh_max: " & gdouble'image (Bh));
-		end if;
-
-		-- compute the maximal base-offset:
-		F_max.x :=   Bw * (S_max - 1.0);
-		F_max.y := - Bh * S_max;
-
-		if debug then
-			put_line (" F_max : " & to_string (F_max));
-		end if;
-
-		-- compute the canvas width and height:
-		canvas_size.width  := positive (  F_max.x + Bw * S_max);
-		canvas_size.height := positive (- F_max.y + Bh * (S_max - 1.0));
-
-		if debug then
-			put_line (" Cw    : " & positive'image (canvas_size.width));
-			put_line (" Ch    : " & positive'image (canvas_size.height));
-		end if;
-	end compute_canvas_size;
 
 	
 	

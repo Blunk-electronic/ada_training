@@ -398,8 +398,6 @@ package callbacks is
 	
 -- CANVAS:
 
-
-
 	-- This procedure is called when the canvas changes
 	-- its size. It is not used currently because the canvas
 	-- has a fixed size in this demo program (see below):
@@ -407,22 +405,9 @@ package callbacks is
 		canvas		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
-
-	
-	-- This procedure computes the dimensions of the canvas
-	-- and assigns them to variable canvas_size_min.
-	-- The computation bases on the maximum allowed width
-	-- and height of the bounding-box and the maximal
-	-- scale-factor.
-	-- CS: The computed dimensions may be not sufficient
-	-- with very very large screens:
-	procedure compute_canvas_size;
-	
-	
 	
 	-- This procedure creates the canvas, assigns to
-	-- it a fixed size (variable canvas_size, see above)
-	-- and connects signals:
+	-- it a fixed size and connects signals:
 	procedure set_up_canvas;
 		
 
