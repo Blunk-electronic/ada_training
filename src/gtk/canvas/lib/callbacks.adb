@@ -599,64 +599,16 @@ package body callbacks is
 		use demo_buttons;
 	begin
 		put_line ("set_up_command_buttons");
-		
-		gtk_new_vbox (box_v0);
-		box_h.pack_start (box_v0, expand => false);
 
+		create_buttons;
 
-		gtk_new (buttons_table, rows => 5, columns => 1, homogeneous => false);
-		-- table.set_col_spacings (50);
-		-- table_coordinates.set_border_width (10);
-
-		gtk_new (button_zoom_fit, "ZOOM FIT");
-		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);
-
-		gtk_new (button_zoom_area, "ZOOM AREA");
+		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);		
 		button_zoom_area.on_clicked (cb_zoom_area'access);
-		
-		gtk_new (button_add, "ADD");
 		button_add.on_clicked (cb_add'access);
-
-		gtk_new (button_delete, "DELETE");
 		button_delete.on_clicked (cb_delete'access);
-
-		gtk_new (button_move, "MOVE");
 		button_move.on_clicked (cb_move'access);
-		
-		gtk_new (button_export, "EXPORT");
 		button_export.on_clicked (cb_export'access);
 
-		-- CS add other buttons
-		
-		
-		-- The table shall not expand downward:
-		box_v0.pack_start (buttons_table, expand => false);
-
-		
-		buttons_table.attach (button_zoom_fit,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 0, bottom_attach => 1);
-
-		buttons_table.attach (button_zoom_area,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 1, bottom_attach => 2);
-		
-		buttons_table.attach (button_add,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 2, bottom_attach => 3);
-
-		buttons_table.attach (button_delete,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 3, bottom_attach => 4);
-
-		buttons_table.attach (button_move,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 4, bottom_attach => 5);
-
-		buttons_table.attach (button_export,
-			left_attach => 0, right_attach => 1,
-			top_attach  => 5, bottom_attach => 6);
-		
 	end set_up_command_buttons;
 
 	

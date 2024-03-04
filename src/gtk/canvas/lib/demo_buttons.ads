@@ -51,9 +51,10 @@ package demo_buttons is
 	button_add			: gtk_button;
 	button_delete		: gtk_button;
 	button_export		: gtk_button;
-
 	
-	procedure dummy;
+
+
+	procedure create_buttons;
 	
 	
 end demo_buttons;
