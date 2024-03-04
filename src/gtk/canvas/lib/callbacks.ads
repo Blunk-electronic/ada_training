@@ -279,10 +279,6 @@ package callbacks is
 	-- boxes inside the window:
 	procedure set_up_main_window;
 
-	
-	-- Creates the display for pointer/mouse and cursor position,
-	-- distances and angle:
-	procedure set_up_coordinates_display;
 
 	
 	

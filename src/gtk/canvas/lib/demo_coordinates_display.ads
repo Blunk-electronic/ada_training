@@ -79,8 +79,10 @@ package demo_coordinates_display is
 	scale_buf								: gtk_text_buffer;
 
 	
-	procedure dummy;
-	
+	-- Creates the display for pointer/mouse and cursor position,
+	-- distances and angle:
+	procedure set_up_coordinates_display;
+
 	
 end demo_coordinates_display;
 
