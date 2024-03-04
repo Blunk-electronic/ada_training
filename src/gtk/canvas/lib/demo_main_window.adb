@@ -36,16 +36,58 @@
 --   history of changes:
 --
 
+with ada.text_io;				use ada.text_io;
+
 -- with gtk.widget;				use gtk.widget;
 -- with gtk.window;				use gtk.window;
 -- with gtk.separator;				use gtk.separator;
 -- with gtk.box;					use gtk.box;
 -- with gtk.button;				use gtk.button;
 -- with gtk.table;					use gtk.table;
+with gtk.enums;					use gtk.enums;
+
 
 package body demo_main_window is
 
-	procedure dummy is begin null; end;
+	
+	procedure create_window is begin
+		put_line ("create_window");
+		
+
+		main_window := gtk_window_new (WINDOW_TOPLEVEL);
+		main_window.set_title ("Demo Canvas");
+		main_window.set_border_width (10);
+
+		-- CS: Set the minimum size of the main window ?
+		-- CS show main window size
+		-- main_window.set_size_request (1000, 500);
+
+		-- main_window.set_redraw_on_allocate (false);
+		
+
+		gtk_new_hbox (box_h);
+
+		
+		-- vertical box for coordinates display:
+		gtk_new_vbox (box_v1);
+		box_v1.set_border_width (10);
+		
+		-- The left vbox shall not change its width when the 
+		-- main window is resized:
+		box_h.pack_start (box_v1, expand => false);
+
+		-- Place a separator between the left and right
+		-- vertical box:
+		separator := gtk_separator_new (ORIENTATION_VERTICAL);
+		box_h.pack_start (separator, expand => false);
+
+		-- The right vbox shall expand upon resizing the main window:
+		-- box_h.pack_start (box_v2);
+
+		main_window.add (box_h);
+		
+	end create_window;
+
 	
 end demo_main_window;
 

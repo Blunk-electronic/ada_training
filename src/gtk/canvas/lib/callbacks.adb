@@ -602,6 +602,7 @@ package body callbacks is
 
 		create_buttons;
 
+		-- Connect button signals with subprograms:
 		button_zoom_fit.on_clicked (cb_zoom_to_fit'access);		
 		button_zoom_area.on_clicked (cb_zoom_area'access);
 		button_add.on_clicked (cb_add'access);
@@ -615,14 +616,9 @@ package body callbacks is
 	
 	procedure set_up_main_window is begin
 		put_line ("set_up_main_window");
-		
-		main_window := gtk_window_new (WINDOW_TOPLEVEL);
-		main_window.set_title ("Demo Canvas");
-		main_window.set_border_width (10);
 
-		-- CS: Set the minimum size of the main window ?
-		-- CS show main window size
-		-- main_window.set_size_request (1000, 500);
+		create_window; -- incl. boxes and a separator
+	
 		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
@@ -637,29 +633,8 @@ package body callbacks is
 		-- Not used:
 		-- main_window.on_activate_focus (cb_window_focus'access);
 
-		-- main_window.set_redraw_on_allocate (false);
-
-		gtk_new_hbox (box_h);
-
 		set_up_command_buttons;
-		
-		-- vertical box for coordinates:
-		gtk_new_vbox (box_v1);
-		box_v1.set_border_width (10);
-		
-		-- The left vbox shall not change its width when the 
-		-- main window is resized:
-		box_h.pack_start (box_v1, expand => false);
 
-		-- Place a separator between the left and right
-		-- vertical box:
-		separator := gtk_separator_new (ORIENTATION_VERTICAL);
-		box_h.pack_start (separator, expand => false);
-
-		-- The right vbox shall expand upon resizing the main window:
-		-- box_h.pack_start (box_v2);
-
-		main_window.add (box_h);
 	end set_up_main_window;
 
 

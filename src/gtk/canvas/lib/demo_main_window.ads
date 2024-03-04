@@ -53,7 +53,11 @@ package demo_main_window is
 
 	separator			: gtk_separator;
 
-	procedure dummy;
+
+	-- This procedure creates the main window and
+	-- the boxes box_h, box_v1 and the separator:
+	procedure create_window;
+	
 	
 end demo_main_window;
 
