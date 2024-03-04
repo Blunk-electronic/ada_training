@@ -72,7 +72,8 @@ with demo_frame;
 with demo_bounding_box;
 with demo_canvas;
 with demo_base_offset;
-
+with demo_main_window;
+with demo_coordinates_display;
 
 procedure draw is
 
@@ -100,14 +101,14 @@ begin
 
 	set_up_main_window; -- incl. box_h, box_v1, separator, box_v2
 	
-	set_up_coordinates_display; -- table in box_v1
+	demo_coordinates_display.set_up_coordinates_display; -- table in box_v1
 	
 	set_up_swin_and_scrollbars;
 	set_up_canvas;
 		
 
 	put_line ("show all widgets");
-	main_window.show_all; -- assigns the allocation to the canvas
+	demo_main_window.main_window.show_all; -- assigns the allocation to the canvas
 
 	
 	set_initial_scrollbar_settings;
