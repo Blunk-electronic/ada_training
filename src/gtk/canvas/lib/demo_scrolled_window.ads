@@ -39,18 +39,34 @@
 with gtk.widget;				use gtk.widget;
 with gtk.window;				use gtk.window;
 with gtk.scrolled_window;		use gtk.scrolled_window;
+with gtk.adjustment;			use gtk.adjustment;
+with gtk.scrollbar;				use gtk.scrollbar;
+
 
 with demo_window_dimensions;	use demo_window_dimensions;
 
 
 package demo_scrolled_window is
 
-	-- This is the scrolled window:
+-- SCROLLED WINDOW:
 	swin : gtk_scrolled_window;
 
 	-- Inside the scrolled window the canvas exists.
 
 
+-- SCROLLBARS:
+	
+	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
+	scrollbar_v, scrollbar_h : gtk_scrollbar;
+
+	type type_scroll_direction is (
+		SCROLL_UP,
+		SCROLL_DOWN,
+		SCROLL_RIGHT,
+		SCROLL_LEFT);
+
+
+	
 
 	-- This is the initial size of the scrolled window.
 	-- IMPORTANT: The height must be greater than the sum
@@ -89,6 +105,11 @@ package demo_scrolled_window is
 		-- MODE_1_EXPOSE_CANVAS;
 		-- MODE_2_KEEP_CENTER;
 		MODE_3_ZOOM_FIT;
+
+
+
+	-- Creates the scrolled window and its scrollbars:
+	procedure create_scrolled_window_and_scrollbars;
 
 	
 end demo_scrolled_window;
