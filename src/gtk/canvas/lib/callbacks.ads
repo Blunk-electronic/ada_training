@@ -419,10 +419,6 @@ package callbacks is
 	procedure compute_canvas_size;
 	
 	
-	-- This procedure outputs the current dimensions
-	-- of the canvas on the console:
-	procedure show_canvas_size;
-
 	
 	-- This procedure creates the canvas, assigns to
 	-- it a fixed size (variable canvas_size, see above)

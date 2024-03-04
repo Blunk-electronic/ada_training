@@ -1107,74 +1107,29 @@ package body callbacks is
 	end compute_canvas_size;
 
 	
-
-	procedure show_canvas_size is 
-		a : gtk_allocation;
-		width, height : gint;
-	begin
-		canvas.get_allocation (a);
-		put_line ("canvas size allocated (w/h):" 
-			& gint'image (a.width) & " /" & gint'image (a.height));
-		
-		canvas.get_size_request (width, height);
-		put_line ("canvas size minimum   (w/h):" 
-			& gint'image (width) & " /" & gint'image (height));
-	end show_canvas_size;
-
 	
 	
 	procedure set_up_canvas is
 	begin
 		put_line ("set_up_canvas");
-		
-		-- Set up the drawing area:
-		gtk_new (canvas);
 
+		create_canvas;
+		
 		-- Connect signals:
 
 		-- Not used:
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
-		
-		-- Set the size (width and height) of the canvas:
-		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
-		
-		show_canvas_size;
 
-		
-		-- Connect further signals:
 		canvas.on_draw (cb_draw_objects'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
-
 		
-		-- Make the canvas responding to mouse button clicks:
-		canvas.add_events (gdk.event.button_press_mask);
 		canvas.on_button_press_event (cb_canvas_button_pressed'access);
-
-		canvas.add_events (gdk.event.button_release_mask);
 		canvas.on_button_release_event (cb_canvas_button_released'access);
-		
-		-- Make the canvas responding to mouse movement:
-		canvas.add_events (gdk.event.pointer_motion_mask);
 		canvas.on_motion_notify_event (cb_mouse_moved'access);
-
-		-- Make the canvas responding to the mouse wheel:
-		canvas.add_events (gdk.event.scroll_mask);
 		canvas.on_scroll_event (cb_mouse_wheel_rolled'access);
-		
-		-- Make the canvas responding to the keyboard:
-		canvas.set_can_focus (true);
-		canvas.add_events (key_press_mask);
 		canvas.on_key_press_event (cb_canvas_key_pressed'access);
-
-		-- Add the canvas as a child to the scrolled window:
-		put_line ("add canvas to scrolled window");
-		swin.add (canvas); 
-
-		-- Insert the scrolled window in box_h:
-		put_line ("add scrolled window to box_h");
-		box_h.pack_start (swin);
 
 	end set_up_canvas;
 

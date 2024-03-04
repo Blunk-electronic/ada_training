@@ -58,6 +58,15 @@ package demo_canvas is
 	procedure refresh (
 		canvas	: access gtk_widget_record'class);
 	
+
+	-- This procedure outputs the current dimensions
+	-- of the canvas on the console:
+	procedure show_canvas_size;
+
+	-- This procedure creates the canvas, sets its size,
+	-- and adds it into the scrolled window.
+	-- It also adds events to be sensitive to:
+	procedure create_canvas;
 	
 end demo_canvas;
 

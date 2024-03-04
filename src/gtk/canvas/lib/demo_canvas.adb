@@ -36,6 +36,14 @@
 --   history of changes:
 --
 
+with glib;						use glib;
+with gdk.event;
+
+with ada.text_io;				use ada.text_io;
+
+with demo_main_window;
+with demo_scrolled_window;
+
 
 
 package body demo_canvas is
@@ -50,7 +58,59 @@ package body demo_canvas is
 	end refresh;
 
 
+
+	procedure show_canvas_size is 
+		a : gtk_allocation;
+		width, height : gint;
+	begin
+		canvas.get_allocation (a);
+		put_line ("canvas size allocated (w/h):" 
+			& gint'image (a.width) & " /" & gint'image (a.height));
+		
+		canvas.get_size_request (width, height);
+		put_line ("canvas size minimum   (w/h):" 
+			& gint'image (width) & " /" & gint'image (height));
+	end show_canvas_size;
 	
+
+	procedure create_canvas is
+		use demo_main_window;
+		use demo_scrolled_window;
+		use gdk.event;
+	begin
+		-- Set up the drawing area:
+		gtk_new (canvas);
+
+		-- Set the size (width and height) of the canvas:
+		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
+		
+		show_canvas_size;
+
+		-- Make the canvas responding to mouse button clicks:
+		canvas.add_events (gdk.event.button_press_mask);
+		canvas.add_events (gdk.event.button_release_mask);
+
+		-- Make the canvas responding to mouse movement:
+		canvas.add_events (gdk.event.pointer_motion_mask);
+
+		-- Make the canvas responding to the mouse wheel:
+		canvas.add_events (gdk.event.scroll_mask);
+
+		-- Make the canvas responding to the keyboard:
+		canvas.set_can_focus (true);
+		canvas.add_events (key_press_mask);
+
+		
+		-- Add the canvas as a child to the scrolled window:
+		put_line ("add canvas to scrolled window");
+		swin.add (canvas); 
+
+		-- Insert the scrolled window in box_h:
+		put_line ("add scrolled window to box_h");
+		box_h.pack_start (swin);
+		
+	end create_canvas;
+
 	
 end demo_canvas;
 
