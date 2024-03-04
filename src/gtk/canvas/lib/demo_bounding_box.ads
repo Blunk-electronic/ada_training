@@ -44,6 +44,7 @@
 
 with geometry_2;				use geometry_2;
 
+
 package demo_bounding_box is
 
 
@@ -119,6 +120,7 @@ package demo_bounding_box is
 		ignore_errors			: in boolean := false;
 		test_only				: in boolean := false);
 
+	
 	
 end demo_bounding_box;
 

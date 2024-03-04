@@ -61,6 +61,7 @@ with geometry_2;				use geometry_2;
 with demo_objects;				use demo_objects;
 with demo_window_dimensions;	use demo_window_dimensions;
 with demo_canvas;				use demo_canvas;
+with demo_conversions;			use demo_conversions;
 
 
 package callbacks is
@@ -87,25 +88,7 @@ package callbacks is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
 		S2	: in type_scale_factor;		-- the scale factor after zoom
-		M	: in type_vector_model);		-- the zoom center as a real model point
-
-
-	
-	-- In connection with zoom-operations we need the corners of the
-	-- bounding-box in canvas coordinates. This composite type serves this
-	-- purpose:
-	type type_bounding_box_corners is record
-		BL, BR, TL, TR : type_vector_gdouble;
-	end record;
-
-	-- This function returns the current corners of the bounding-box
-	-- in canvas-coordinates. The return depends on the current scale-factor S
-	-- and translate-offset:
-	function get_bounding_box_corners
-		return type_bounding_box_corners;
-	
-	
-
+		M	: in type_vector_model);	-- the zoom center as a real model point
 
 
 

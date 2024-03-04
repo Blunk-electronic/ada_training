@@ -152,6 +152,26 @@ package body demo_conversions is
 	end to_canvas;
 
 	
+
+	function get_bounding_box_corners
+		return type_bounding_box_corners
+	is
+		result : type_bounding_box_corners;
+
+		-- The corners of the given area in model-coordinates:
+		BC : constant type_area_corners := get_corners (bounding_box);
+
+	begin
+		-- Convert the corners of the bounding-box to canvas coordinates:
+		result.TL := to_canvas (BC.TL, S, true);
+		result.TR := to_canvas (BC.TR, S, true);
+		result.BL := to_canvas (BC.BL, S, true);
+		result.BR := to_canvas (BC.BR, S, true);
+		
+		return result;
+	end get_bounding_box_corners;
+
+
 	
 end demo_conversions;
 
