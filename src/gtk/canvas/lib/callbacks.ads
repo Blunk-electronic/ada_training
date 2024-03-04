@@ -370,39 +370,6 @@ package callbacks is
 		
 	
 
-	
--- VISIBLE AREA:	
-
-	-- Returns the currently visible area of the model.
-	-- The visible area depends the current scale-factor,
-	-- base-offset, translate-offset, dimensions of the scrolled window
-	-- and the current settings of the scrollbars.
-	function get_visible_area (
-		canvas	: access gtk_widget_record'class)
-		return type_area;
-
-	
-
-	-- This visible area is a global variable.
-	-- It is updated by procedure cb_draw_objects.
-	-- Some subprograms rely on it, for example those which
-	-- move the cursor. For this reason the visible area is
-	-- stored in a global variable.
-	-- For the future: If the operator searches for a
-	-- particular object, then the result of a search could be
-	-- a message like "The object is outside the visible
-	-- area at position (x/y)."
-	visible_area : type_area;
-
-
-
-	-- This procedure sets the translate-offset so that
-	-- the given area gets centered in the visible area.
-	-- The given area can be wider or higher than the visible area:
-	procedure center_to_visible_area (
-		area : in type_area);
-
-	
 
 -- CURSOR:
 	

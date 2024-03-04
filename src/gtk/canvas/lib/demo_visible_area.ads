@@ -36,16 +36,43 @@
 --   history of changes:
 --
 
--- with gtk.widget;				use gtk.widget;
--- with gtk.drawing_area;			use gtk.drawing_area;
-with geometry_1;				use geometry_1;
+with gtk.widget;				use gtk.widget;
 with geometry_2;				use geometry_2;
--- with demo_window_dimensions;	use demo_window_dimensions;
-
 
 
 package demo_visible_area is
 
+	-- Returns the currently visible area of the model.
+	-- The visible area depends the current scale-factor,
+	-- base-offset, translate-offset, dimensions of the scrolled window
+	-- and the current settings of the scrollbars.
+	function get_visible_area (
+		canvas	: access gtk_widget_record'class)
+		return type_area;
+
+	
+
+	-- This visible area is a global variable.
+	-- It is updated by procedure cb_draw_objects.
+	-- Some subprograms rely on it, for example those which
+	-- move the cursor. For this reason the visible area is
+	-- stored in a global variable.
+	-- For the future: If the operator searches for a
+	-- particular object, then the result of a search could be
+	-- a message like "The object is outside the visible
+	-- area at position (x/y)."
+	visible_area : type_area;
+
+
+
+	-- This procedure sets the translate-offset so that
+	-- the given area gets centered in the visible area.
+	-- The given area can be wider or higher than the visible area:
+	procedure center_to_visible_area (
+		area : in type_area);
+
+
+	
 	-- In MODE_3_ZOOM_FIT, here the last visible area
 	-- immediately before the dimensions of the scrolled window
 	-- change, is stored as reference.

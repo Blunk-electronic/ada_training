@@ -974,149 +974,6 @@ package body callbacks is
 	end set_up_canvas;
 
 
-
-	
-
-	function get_visible_area (
-		canvas	: access gtk_widget_record'class)
-		return type_area
-	is
-		result : type_area;
-
-		-- The allocation of the scrolled window:
-		W : gtk_allocation;
-		
-		h_start, h_length, h_end : gdouble;
-		v_start, v_length, v_end : gdouble;
-
-		-- The four corners of the visible area:
-		BL, BR, TL, TR : type_vector_model;
-	begin
-		-- Inquire the allocation of the scrolled window
-		-- inside the main window:
-		get_allocation (swin, W);
-
-		
-		-- X-AXIS:
-		
-		-- The visible area along the x-axis starts at the
-		-- position of the horizontal scrollbar:
-		h_start  := scrollbar_h_adj.get_value;
-
-		-- The visible area along the x-axis is as wide as
-		-- the scrolled window:
-		h_length := gdouble (W.width);
-
-		-- The visible area ends here:
-		h_end    := h_start + h_length;
-
-
-		-- Y-AXIS:
-		
-		-- The visible area along the y-axis starts at the
-		-- position of the vertical scrollbar:
-		v_start := scrollbar_v_adj.get_value;
-
-		-- The visible area along the y-axis is as high as
-		-- the scrolled window:
-		v_length := gdouble (W.height);
-
-		-- The visible area along the y-axis ends here:
-		v_end := v_start + v_length;
-
-		
-		-- Compute the corners of the visible area.
-		-- The corners are real model coordinates:
-		BL := to_model ((h_start, v_end),   S, true);
-		BR := to_model ((h_end, v_end),     S, true);
-		TL := to_model ((h_start, v_start), S, true);
-		TR := to_model ((h_end, v_start),   S, true);
-
-		-- put_line ("BL " & to_string (BL));
-		-- put_line ("BR " & to_string (BR));
-		-- put_line ("TR " & to_string (TR));
-		-- put_line ("TL " & to_string (TL));
-
-		-- The position of the visible area is the lower left 
-		-- corner:
-		result.position := BL;
-		
-		-- Compute the width and the height of the
-		-- visible area:
-		result.width := TR.x - TL.x;
-		result.height := TL.y - BL.y;
-
-		-- CS: more effective ?
-		-- result.width    := type_distance_model (h_length) * type_distance_model (S);
-		-- result.height   := type_distance_model (v_length) * type_distance_model (S);
-
-		-- put_line ("visible area " & to_string (result));
-		return result;
-	end get_visible_area;
-
-
-
-	procedure center_to_visible_area (
-		area : in type_area)
-	is
-		-- debug : boolean := true;
-		debug : boolean := false;
-		
-		-- The offset required to "move" all objects into
-		-- the center of the visible area:
-		dx, dy : type_distance_model;
-		
-		-- Get the currently visible model area:
-		v : constant type_area := get_visible_area (canvas);
-
-		w1 : constant type_distance_model := v.width;
-		w2 : constant type_distance_model := area.width;
-
-		h1 : constant type_distance_model := v.height;
-		h2 : constant type_distance_model := area.height;
-
-		a, b : type_distance_model;
-
-		x0 : constant type_distance_model := area.position.x;
-		y0 : constant type_distance_model := area.position.y;
-		
-		x1 : constant type_distance_model := v.position.x;
-		y1 : constant type_distance_model := v.position.y;
-
-		-- The given area will end up at this target position:
-		x2, y2 : type_distance_model;
-	begin
-		if debug then
-			put_line ("given   " & to_string (area));
-			put_line ("visible " & to_string (v));
-		end if;
-		
-		a := (w1 - w2) * 0.5;
-		x2 := x1 + a;
-		dx := x2 - x0;
-
-		b := (h1 - h2) * 0.5;
-		y2 := y1 + b;
-		dy := y2 - y0;
-
-		if debug then
-			put_line ("dx:" & to_string (dx));
-			put_line ("dy:" & to_string (dy));
-		end if;
-
-		-- Convert the model offset (dx;dy) to a canvas offset
-		-- and apply it to the global translate-offset.
-		-- Regarding y: T is in the canvas system (CS2)
-		-- where the y-axis goes downward. So we must multiply by -1:
-		T.x :=   gdouble (dx) * gdouble (S);
-		T.y := - gdouble (dy) * gdouble (S);
-		if debug then
-			put_line ("T: " & to_string (T));
-		end if;
-
-	end center_to_visible_area;
-
-
 	
 	procedure zoom_on_cursor (
 		direction : in type_zoom_direction)
@@ -1174,6 +1031,7 @@ package body callbacks is
 	procedure zoom_to_fit (
 		area : in type_area)
 	is
+		use demo_visible_area;
 		debug : boolean := false;
 	begin
 		put_line ("zoom_to_fit");
@@ -1605,6 +1463,7 @@ package body callbacks is
 		event	: gdk_event_key)
 		return boolean
 	is
+		use demo_visible_area;
 		use demo_grid;
 		
 		event_handled : boolean := true;
@@ -1872,6 +1731,7 @@ package body callbacks is
 		pos		: in type_vector_model)
 	is
 		use demo_visibility;
+		use demo_visible_area;
 		
 		-- CS: Optimization required. Compiler options ?
 		
@@ -1923,6 +1783,7 @@ package body callbacks is
 		pos		: in type_vector_model) -- the position of the complex object
 	is
 		use demo_visibility;
+		use demo_visible_area;
 		
 		-- CS: Optimization required. Compiler options ?
 		
@@ -2014,6 +1875,7 @@ package body callbacks is
 		-- 6. Draw the grid as dots or lines, depending on the user specified settings.
 		procedure draw_grid is
 			use demo_grid;
+			use demo_visible_area;
 			
 			type type_float_grid is new float; -- CS refinement required
 
@@ -2419,6 +2281,8 @@ package body callbacks is
 
 		
 		use demo_grid;
+		use demo_visible_area;
+		
 		
 	begin -- cb_draw_objects
 		-- new_line;
