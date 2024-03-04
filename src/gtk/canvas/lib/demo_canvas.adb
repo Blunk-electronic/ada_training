@@ -117,6 +117,7 @@ package body demo_canvas is
 		put_line ("canvas size minimum   (w/h):" 
 			& gint'image (width) & " /" & gint'image (height));
 	end show_canvas_size;
+
 	
 
 	procedure create_canvas is
@@ -156,6 +157,83 @@ package body demo_canvas is
 		box_h.pack_start (swin);
 		
 	end create_canvas;
+
+
+
+	procedure shift_canvas (
+		direction	: type_direction;
+		distance	: type_distance_model)
+	is
+		use demo_scrolled_window;
+		
+		-- Convert the given model distance to 
+		-- a canvas distance:
+		d : constant gdouble := gdouble (distance) * gdouble (S);
+
+		-- Scratch values for upper limit, lower limit and value
+		-- of scrollbars:
+		u, l, v : gdouble;
+	begin
+		case direction is
+			when DIR_RIGHT =>
+				-- Get the maximal allowed value for the
+				-- horizontal scrollbar:
+				u := scrollbar_h_adj.get_upper;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_h_adj.get_value + d;
+
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_max (v, u);
+				scrollbar_h_adj.set_value (v);
+
+				
+			when DIR_LEFT =>
+				-- Get the minimal allowed value for the
+				-- horizontal scrollbar:
+				l := scrollbar_h_adj.get_lower;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_h_adj.get_value - d;
+
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_min (v, l);
+				scrollbar_h_adj.set_value (v);
+
+				
+			when DIR_UP =>
+				-- Get the minimal allowed value for the
+				-- vertical scrollbar:
+				l := scrollbar_v_adj.get_lower;
+				
+				-- Compute the required scrollbar position:
+				v := scrollbar_v_adj.get_value - d;
+
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_min (v, l);
+				scrollbar_v_adj.set_value (v);
+
+				
+			when DIR_DOWN =>
+				-- Get the maximal allowed value for the
+				-- vertical scrollbar:
+				u := scrollbar_v_adj.get_upper;
+
+				-- Compute the required scrollbar position:
+				v := scrollbar_v_adj.get_value + d;
+
+				-- Clip the required position if necesary,
+				-- then apply it to the scrollbar:
+				clip_max (v, u);
+				scrollbar_v_adj.set_value (v);
+				
+		end case;
+
+		backup_scrollbar_settings;
+	end shift_canvas;
 
 	
 end demo_canvas;

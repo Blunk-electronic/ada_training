@@ -38,6 +38,8 @@
 
 with gtk.widget;				use gtk.widget;
 with gtk.drawing_area;			use gtk.drawing_area;
+with geometry_1;				use geometry_1;
+with geometry_2;				use geometry_2;
 with demo_window_dimensions;	use demo_window_dimensions;
 
 
@@ -77,6 +79,13 @@ package demo_canvas is
 	-- and adds it into the scrolled window.
 	-- It also adds events to be sensitive to:
 	procedure create_canvas;
-	
+
+
+	-- Shifts the canvas into the given direction
+	-- by the given distance:
+	procedure shift_canvas (
+		direction	: type_direction;
+		distance	: type_distance_model);
+
 end demo_canvas;
 

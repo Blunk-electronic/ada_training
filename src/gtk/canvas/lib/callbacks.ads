@@ -410,19 +410,7 @@ package callbacks is
 	-- it a fixed size and connects signals:
 	procedure set_up_canvas;
 		
-
-	-- The directions into which the an object can be moved
-	-- by means of the cursor keys (arrow keys):
-	type type_direction is (DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN);
-
 	
-	-- Shifts the canvas into the given direction
-	-- by the given distance:
-	procedure shift_canvas (
-		direction	: type_direction;
-		distance	: type_distance_model);
-	
-		
 
 	
 -- VISIBLE AREA:	
