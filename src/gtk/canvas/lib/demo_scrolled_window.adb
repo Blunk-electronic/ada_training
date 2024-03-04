@@ -131,8 +131,66 @@ package body demo_scrolled_window is
 
 		
 	end create_scrolled_window_and_scrollbars;
-		
 
+
+
+	procedure backup_scrollbar_settings is begin
+		--put_line ("backup_scrollbar_settings");
+		scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
+		scrollbar_h_backup.value := scrollbar_h_adj.get_value;
+		scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
+		scrollbar_h_backup.upper := scrollbar_h_adj.get_upper;
+
+		scrollbar_v_backup.lower := scrollbar_v_adj.get_lower;
+		scrollbar_v_backup.value := scrollbar_v_adj.get_value;
+		scrollbar_v_backup.page_size := scrollbar_v_adj.get_page_size;
+		scrollbar_v_backup.upper := scrollbar_v_adj.get_upper;
+	end backup_scrollbar_settings;
+	
+
+	procedure restore_scrollbar_settings is begin
+		scrollbar_h_adj.set_lower (scrollbar_h_backup.lower);
+		scrollbar_h_adj.set_value (scrollbar_h_backup.value);
+		scrollbar_h_adj.set_page_size (scrollbar_h_backup.page_size);
+		scrollbar_h_adj.set_upper (scrollbar_h_backup.upper);
+
+		scrollbar_v_adj.set_lower (scrollbar_v_backup.lower);
+		scrollbar_v_adj.set_value (scrollbar_v_backup.value);
+		scrollbar_v_adj.set_page_size (scrollbar_v_backup.page_size);
+		scrollbar_v_adj.set_upper (scrollbar_v_backup.upper);
+	end restore_scrollbar_settings;
+
+	
+
+	procedure show_adjustments_v is 
+		v_lower : gdouble := scrollbar_v_adj.get_lower;
+		v_value : gdouble := scrollbar_v_adj.get_value;
+		v_upper : gdouble := scrollbar_v_adj.get_upper;
+		v_page  : gdouble := scrollbar_v_adj.get_page_size;
+	begin
+		put_line ("vertical scrollbar adjustments:");
+		put_line (" lower" & gdouble'image (v_lower));
+		put_line (" value" & gdouble'image (v_value));
+		put_line (" page " & gdouble'image (v_page));
+		put_line (" upper" & gdouble'image (v_upper));
+	end show_adjustments_v;
+				  
+
+	procedure show_adjustments_h is 
+		h_lower : gdouble := scrollbar_h_adj.get_lower;
+		h_value : gdouble := scrollbar_h_adj.get_value;
+		h_upper : gdouble := scrollbar_h_adj.get_upper;
+		h_page  : gdouble := scrollbar_h_adj.get_page_size;
+	begin
+		put_line ("horizontal scrollbar adjustments:");
+		put_line (" lower" & gdouble'image (h_lower));
+		put_line (" value" & gdouble'image (h_value));
+		put_line (" page " & gdouble'image (h_page));
+		put_line (" upper" & gdouble'image (h_upper));
+	end show_adjustments_h;
+
+
+	
 	
 end demo_scrolled_window;
 

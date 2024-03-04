@@ -36,6 +36,7 @@
 --   history of changes:
 --
 
+with glib;						use glib;
 with gtk.widget;				use gtk.widget;
 with gtk.window;				use gtk.window;
 with gtk.scrolled_window;		use gtk.scrolled_window;
@@ -59,6 +60,27 @@ package demo_scrolled_window is
 	scrollbar_h_adj, scrollbar_v_adj : gtk_adjustment;
 	scrollbar_v, scrollbar_h : gtk_scrollbar;
 
+
+	-- This composite type contains the settings
+	-- of a scrollbar:
+	type type_scrollbar_settings is record
+		lower		: gdouble;
+		upper		: gdouble;
+		value		: gdouble;
+		page_size	: gdouble;
+	end record;
+
+	-- These are the places where the initial settings of
+	-- the scrollbars are stored:
+	scrollbar_v_init : type_scrollbar_settings;
+	scrollbar_h_init : type_scrollbar_settings;
+
+	-- These are the places where we backup the settings of
+	-- the scrollbars:
+	scrollbar_h_backup, scrollbar_v_backup : type_scrollbar_settings;
+
+	
+	
 	type type_scroll_direction is (
 		SCROLL_UP,
 		SCROLL_DOWN,
@@ -108,8 +130,28 @@ package demo_scrolled_window is
 
 
 
+
+	
+	
 	-- Creates the scrolled window and its scrollbars:
 	procedure create_scrolled_window_and_scrollbars;
+
+
+
+	-- This procedure does a backup of the current settings
+	-- of both the horizontal and the vertical scrollbar:
+	procedure backup_scrollbar_settings;
+
+
+	-- This procedure restores the settings of the vertical
+	-- and horizontal scrollbar from the backup:
+	procedure restore_scrollbar_settings;
+
+
+	-- For debugging, these procedures output the settings
+	-- of the scrollbars on the console:
+	procedure show_adjustments_v;
+	procedure show_adjustments_h;
 
 	
 end demo_scrolled_window;
