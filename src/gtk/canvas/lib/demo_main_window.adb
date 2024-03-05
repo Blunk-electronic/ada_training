@@ -38,12 +38,6 @@
 
 with ada.text_io;				use ada.text_io;
 
--- with gtk.widget;				use gtk.widget;
--- with gtk.window;				use gtk.window;
--- with gtk.separator;				use gtk.separator;
--- with gtk.box;					use gtk.box;
--- with gtk.button;				use gtk.button;
--- with gtk.table;					use gtk.table;
 with gtk.enums;					use gtk.enums;
 
 

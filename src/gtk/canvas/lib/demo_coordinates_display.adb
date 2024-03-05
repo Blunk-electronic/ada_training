@@ -42,7 +42,7 @@ with glib;						use glib;
 with gtk.box;					use gtk.box;
 with gtk.enums;					use gtk.enums;
 
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;		use demo_logical_pixels;
 with geometry_2;				use geometry_2;
 with demo_scale_factor;			use demo_scale_factor;
 with demo_main_window;			use demo_main_window;

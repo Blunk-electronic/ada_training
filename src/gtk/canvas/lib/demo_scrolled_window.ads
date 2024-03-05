@@ -43,7 +43,7 @@ with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
 with gtk.scrollbar;				use gtk.scrollbar;
 
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;		use demo_logical_pixels;
 with geometry_2;				use geometry_2;
 with demo_scale_factor;			use demo_scale_factor;
 with demo_window_dimensions;	use demo_window_dimensions;

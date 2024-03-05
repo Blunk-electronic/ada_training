@@ -60,7 +60,7 @@ package body demo_canvas is
 
 
 	procedure compute_canvas_size is
-		use geometry_1;
+		use demo_logical_pixels;
 		use demo_bounding_box;
 		
 		debug : boolean := true;

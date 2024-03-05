@@ -45,7 +45,7 @@ with gtk.adjustment;			use gtk.adjustment;
 with cairo;						use cairo;
 
 with demo_buttons;
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;		use demo_logical_pixels;
 with geometry_2;				use geometry_2;
 with demo_objects;				use demo_objects;
 with demo_window_dimensions;	use demo_window_dimensions;

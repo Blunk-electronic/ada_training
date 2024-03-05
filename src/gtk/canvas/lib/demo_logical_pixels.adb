@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                               GEOMETRY 1                                 --
+--                            LOGICAL PIXELS                                --
 --                                                                          --
 --                               B o d y                                    --
 --                                                                          --
@@ -39,7 +39,7 @@
 with ada.text_io;				use ada.text_io;
 
 
-package body geometry_1 is
+package body demo_logical_pixels is
 
 
 
@@ -76,5 +76,5 @@ package body geometry_1 is
 	end clip_min;
 
 	
-end geometry_1;
+end demo_logical_pixels;
 

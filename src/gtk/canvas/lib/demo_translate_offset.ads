@@ -36,7 +36,7 @@
 --   history of changes:
 --
 
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;			use demo_logical_pixels;
 
 
 package demo_translate_offset is

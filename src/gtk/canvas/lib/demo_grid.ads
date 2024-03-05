@@ -38,7 +38,7 @@
 
 with glib;						use glib;
 
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;		use demo_logical_pixels;
 with geometry_2;				use geometry_2;
 
 package demo_grid is

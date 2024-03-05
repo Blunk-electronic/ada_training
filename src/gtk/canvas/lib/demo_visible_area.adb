@@ -41,7 +41,7 @@ with ada.text_io;				use ada.text_io;
 with glib;						use glib;
 with gtk.scrolled_window;		use gtk.scrolled_window;
 
-with geometry_1;				use geometry_1;
+with demo_logical_pixels;		use demo_logical_pixels;
 with demo_translate_offset;		use demo_translate_offset;
 with demo_scale_factor;			use demo_scale_factor;
 with demo_conversions;			use demo_conversions;

@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                              GEOMETRY 1                                  --
+--                            LOGICAL PIXELS                                --
 --                                                                          --
 --                               S p e c                                    --
 --                                                                          --
@@ -38,7 +38,7 @@
 
 with glib;						use glib;
 
-package geometry_1 is
+package demo_logical_pixels is
 
 
 	
@@ -86,5 +86,5 @@ package geometry_1 is
 
 	
 	
-end geometry_1;
+end demo_logical_pixels;
 
