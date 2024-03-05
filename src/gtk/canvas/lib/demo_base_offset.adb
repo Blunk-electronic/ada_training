@@ -40,7 +40,7 @@ with ada.text_io;				use ada.text_io;
 with glib;						use glib;
 with demo_bounding_box;			use demo_bounding_box;
 with demo_canvas;				use demo_canvas;
-
+with demo_scale_factor;			use demo_scale_factor;
 
 package body demo_base_offset is
 

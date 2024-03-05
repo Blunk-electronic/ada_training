@@ -39,6 +39,7 @@
 with ada.text_io;				use ada.text_io;
 
 with geometry_1;				use geometry_1;
+with demo_scale_factor;			use demo_scale_factor;
 with demo_conversions;			use demo_conversions;
 with demo_visible_area;			use demo_visible_area;
 with demo_visibility;			use demo_visibility;

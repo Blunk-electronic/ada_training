@@ -45,8 +45,8 @@ with geometry_1;
 
 with demo_main_window;
 with demo_scrolled_window;
-
 with demo_bounding_box;
+with demo_scale_factor;			use demo_scale_factor;
 
 
 package body demo_canvas is

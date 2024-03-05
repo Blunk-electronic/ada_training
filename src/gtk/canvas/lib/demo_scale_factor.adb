@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                               GEOMETRY 1                                 --
+--                              SCALE FACTOR                                --
 --                                                                          --
 --                               B o d y                                    --
 --                                                                          --
@@ -39,42 +39,36 @@
 with ada.text_io;				use ada.text_io;
 
 
-package body geometry_1 is
-
+package body demo_scale_factor is
 
 
 	function to_string (
-		v : in type_vector_gdouble)
+		scale : in type_scale_factor)
 		return string
 	is begin
-		--return "vector gdouble x/y: "
-		return gdouble'image (v.x) & "/" & gdouble'image (v.y);
+		return type_scale_factor'image (scale);
 	end to_string;
-
-
-
-
 	
 	
-	procedure clip_max (
-		value	: in out gdouble;
-		limit	: in gdouble)
-	is begin
-		if value > limit then
-			value := limit;
-		end if;
-	end clip_max;
-	
-	
-	procedure clip_min (
-		value	: in out gdouble;
-		limit	: in gdouble)
-	is begin
-		if value < limit then
-			value := limit;
-		end if;
-	end clip_min;
+	procedure increase_scale is begin
+		S := S * SM;
+		
+		exception 
+			when constraint_error =>
+				put_line ("upper scale limit reached");
+			when others => null;
+	end increase_scale;
 
 	
-end geometry_1;
+	procedure decrease_scale is begin
+		S := S / SM;
+		
+		exception 
+			when constraint_error => 
+				put_line ("lower scale limit reached");
+			when others => null;
+	end decrease_scale;
+
+	
+end demo_scale_factor;
 

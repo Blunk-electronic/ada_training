@@ -38,6 +38,8 @@
 
 with ada.text_io;				use ada.text_io;
 
+with demo_scale_factor;			use demo_scale_factor;
+
 
 package body demo_grid is
 

@@ -43,6 +43,7 @@ with gtk.scrolled_window;		use gtk.scrolled_window;
 
 with geometry_1;				use geometry_1;
 with demo_translate_offset;		use demo_translate_offset;
+with demo_scale_factor;			use demo_scale_factor;
 with demo_conversions;			use demo_conversions;
 with demo_scrolled_window;		use demo_scrolled_window;
 with demo_canvas;				use demo_canvas;

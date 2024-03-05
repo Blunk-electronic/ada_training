@@ -44,6 +44,7 @@ with gtk.enums;					use gtk.enums;
 
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
+with demo_scale_factor;			use demo_scale_factor;
 with demo_main_window;			use demo_main_window;
 with demo_cursor;
 with demo_canvas;
