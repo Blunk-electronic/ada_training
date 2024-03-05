@@ -69,7 +69,7 @@ with demo_coordinates_display;
 with demo_zoom;
 
 
-procedure draw is
+procedure demo is
 
 begin
 
@@ -129,5 +129,6 @@ begin
 	put_line ("start gtk main loop");
 
 	gtk.main.main;
-end draw;
+	
+end demo;
 

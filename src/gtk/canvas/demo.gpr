@@ -1,6 +1,6 @@
 with "gtkada.gpr";
 
- project draw is
+ project demo is
 
 	--for exec_dir use external ("HOME") & "/bin";
 	for exec_dir use ".";
@@ -8,8 +8,8 @@ with "gtkada.gpr";
 	for source_dirs use ("." , "lib");
 
 
- 	for main use ("draw");
- end draw;
+ 	for main use ("demo");
+ end demo;
 
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
