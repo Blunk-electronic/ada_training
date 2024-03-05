@@ -66,6 +66,7 @@ with demo_conversions;			use demo_conversions;
 with demo_main_window;			use demo_main_window;
 with demo_coordinates_display;
 with demo_cursor;				use demo_cursor;
+with demo_zoom;					use demo_zoom;
 
 
 package callbacks is
@@ -355,8 +356,8 @@ package callbacks is
 
 -- ZOOMING:
 	
-	-- There are two kinds of zoom-operations:
-	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
+	-- -- There are two kinds of zoom-operations:
+	-- type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
 	
 	-- Zooms in or out at the current cursor position.
