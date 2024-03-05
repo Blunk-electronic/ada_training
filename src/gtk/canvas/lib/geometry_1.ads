@@ -40,12 +40,6 @@ with glib;						use glib;
 
 package geometry_1 is
 
-	-- The directions into which the an object can be moved
-	-- by means of the cursor keys (arrow keys):
-	type type_direction is (DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN);
-
-	
-
 
 	
 -- DISTANCE AND VECTORS ON THE SCREEN:

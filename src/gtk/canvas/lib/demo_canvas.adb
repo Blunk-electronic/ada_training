@@ -41,8 +41,6 @@ with gdk.event;
 
 with ada.text_io;				use ada.text_io;
 
-with geometry_1;
-
 with demo_main_window;
 with demo_scrolled_window;
 with demo_bounding_box;

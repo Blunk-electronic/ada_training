@@ -49,6 +49,12 @@ with geometry_1;				use geometry_1;
 
 package geometry_2 is
 
+	-- The directions into which the an object can be moved
+	-- by means of the cursor keys (arrow keys):
+	type type_direction is (DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN);
+
+
+	
 
 -- INTERNAL FLOAT TYPE:
 
