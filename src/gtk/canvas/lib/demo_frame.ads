@@ -36,7 +36,7 @@
 --   history of changes:
 --
 
-with geometry_2;				use geometry_2;
+with demo_geometry;				use demo_geometry;
 with demo_objects;				use demo_objects;
 
 

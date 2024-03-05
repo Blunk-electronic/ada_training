@@ -46,7 +46,7 @@ with cairo;						use cairo;
 
 with demo_buttons;
 with demo_logical_pixels;		use demo_logical_pixels;
-with geometry_2;				use geometry_2;
+with demo_geometry;				use demo_geometry;
 with demo_objects;				use demo_objects;
 with demo_window_dimensions;	use demo_window_dimensions;
 with demo_canvas;				use demo_canvas;

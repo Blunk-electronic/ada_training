@@ -38,7 +38,7 @@
 
 with glib;						use glib;
 with demo_logical_pixels;		use demo_logical_pixels;
-with geometry_2;				use geometry_2;
+with demo_geometry;				use demo_geometry;
 with demo_scale_factor;			use demo_scale_factor;
 
 

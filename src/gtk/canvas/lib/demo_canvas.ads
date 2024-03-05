@@ -39,7 +39,7 @@
 with gtk.widget;				use gtk.widget;
 with gtk.drawing_area;			use gtk.drawing_area;
 with demo_logical_pixels;		use demo_logical_pixels;
-with geometry_2;				use geometry_2;
+with demo_geometry;				use demo_geometry;
 with demo_window_dimensions;	use demo_window_dimensions;
 
 

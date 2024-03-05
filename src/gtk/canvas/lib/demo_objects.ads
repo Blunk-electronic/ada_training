@@ -43,7 +43,7 @@
 with ada.containers;			use ada.containers;
 with ada.containers.doubly_linked_lists;
 
-with geometry_2;				use geometry_2;
+with demo_geometry;				use demo_geometry;
 
 package demo_objects is
 
