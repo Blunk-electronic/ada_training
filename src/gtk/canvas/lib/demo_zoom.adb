@@ -124,6 +124,10 @@ package body demo_zoom is
 		zoom_area := (others => <>);
 	end reset_zoom_area;
 
+
+
+	
+
 	
 end demo_zoom;
 

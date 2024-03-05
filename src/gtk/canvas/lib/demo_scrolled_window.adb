@@ -51,6 +51,7 @@ with demo_base_offset;
 with demo_bounding_box;
 
 
+
 package body demo_scrolled_window is
 
 	
@@ -313,6 +314,129 @@ package body demo_scrolled_window is
 		return type_scale_factor'min (sw, sh);
 	end get_ratio;
 	
+
+
+	procedure update_scrollbar_limits (
+		C1, C2 : in type_bounding_box_corners)
+	is
+		debug : boolean := false;
+		scratch : gdouble;
+
+		HL : gdouble := scrollbar_h_adj.get_lower;
+		HU : gdouble := scrollbar_h_adj.get_upper;
+
+		VL : gdouble := scrollbar_v_adj.get_lower;
+		VU : gdouble := scrollbar_v_adj.get_upper;
+
+		dHL, dHU : gdouble;
+		dVL, dVU : gdouble;
+	begin
+		if debug then
+			put_line ("VL     " & gdouble'image (VL));
+			put_line ("VU     " & gdouble'image (VU));
+
+			put_line ("C1.TL.y" & gdouble'image (C1.TL.y));
+			put_line ("C1.BL.y" & gdouble'image (C1.BL.y));
+
+			put_line ("C2.TL.y" & gdouble'image (C2.TL.y));
+			put_line ("C2.BL.y" & gdouble'image (C2.BL.y));
+		end if;
+		
+		dHL := C2.BL.x - C1.BL.x;
+		dHU := C2.BR.x - C1.BR.x;
+
+		dVL := C2.TL.y - C1.TL.y;
+		dVU := C2.BL.y - C1.BL.y;
+
+		if debug then
+			put_line ("dVL    " & gdouble'image (dVL));
+			put_line ("dVU    " & gdouble'image (dVU));
+		end if;
+		
+
+		-- horizontal:
+
+		-- The left end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the left edge of the bounding-box is farther to the
+		-- left than the left end of the bar, then the lower limit
+		-- moves to the left. It assumes the value of the left edge
+		-- of the bounding-box:
+		HL := HL + dHL;
+		if HL <= scrollbar_h_adj.get_value then
+			clip_min (HL, 0.0); -- suppress negative value
+			scrollbar_h_adj.set_lower (HL);
+		else
+		-- If the left edge of the box is farther to the right than
+		-- the left end of the bar, then the lower limit can not be
+		-- moved further to the right. So the lower limit can at most assume
+		-- the value of the left end of the bar:
+			scrollbar_h_adj.set_lower (scrollbar_h_adj.get_value);
+		end if;
+
+		-- The right end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		HU := HU + dHU;
+		-- CS clip_max (HU, gdouble (scrolled_window_size.width));
+		-- If the right edge of the bounding-box is farther to the
+		-- right than the right end of the bar, then the upper limit
+		-- moves to the right. It assumes the value of the right edge
+		-- of the bounding-box:
+		if HU >= scratch then
+			scrollbar_h_adj.set_upper (HU);
+		else
+		-- If the right edge of the box is farther to the left than
+		-- the right end of the bar, then the upper limit can not be
+		-- moved further to the left. So the upper limit can at most assume
+		-- the value of the right end of the bar:
+			scrollbar_h_adj.set_upper (scratch);
+		end if;
+
+		
+		-- vertical:
+
+		-- The upper end of the scrollbar is the same as the position
+		-- (value) of the scrollbar.
+		-- If the upper edge of the bounding-box is higher
+		-- than the upper end of the bar, then the lower limit
+		-- moves upwards. It assumes the value of the upper edge
+		-- of the bounding-box:
+		VL := VL + dVL;
+		if VL <= scrollbar_v_adj.get_value then
+			clip_min (VL, 0.0); -- suppress negative value
+			scrollbar_v_adj.set_lower (VL);
+		else
+		-- If the upper edge of the box is below
+		-- the upper end of the bar, then the lower limit can not be
+		-- moved further upwards. So the lower limit can at most assume
+		-- the value of the upper end of the bar:
+			scrollbar_v_adj.set_lower (scrollbar_v_adj.get_value);
+		end if;
+
+		-- The lower end of the scrollbar is the sum of its position (value)
+		-- and its length (page size):
+		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		VU := VU + dVU;
+		-- CS clip_max (VU, gdouble (scrolled_window_size.height));
+		-- If the lower edge of the bounding-box is below the
+		-- lower end of the bar, then the upper limit
+		-- moves further downwards. It assumes the value of the lower edge
+		-- of the bounding-box:
+		if VU >= scratch then
+			scrollbar_v_adj.set_upper (VU);
+		else
+		-- If the lower edge of the box is above
+		-- the lower end of the bar, then the upper limit can not be
+		-- moved further downwards. So the upper limit can at most assume
+		-- the value of the lower end of the bar:
+			scrollbar_v_adj.set_upper (scratch);
+		end if;
+
+		-- show_adjustments_v;
+	end update_scrollbar_limits;
+
+
 	
 end demo_scrolled_window;
 

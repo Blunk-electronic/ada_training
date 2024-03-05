@@ -155,12 +155,6 @@ package callbacks is
 
 -- SCROLLBARS:
 	
-	-- Updates the limits of the scrollbars.
-	-- The argument C1 provides the old corners of the 
-	-- bounding-box on the canvas and C2 the new corners:
-	procedure update_scrollbar_limits (
-		C1, C2 : in type_bounding_box_corners);
-	
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window.

@@ -46,6 +46,7 @@ with gtk.scrollbar;				use gtk.scrollbar;
 with geometry_1;				use geometry_1;
 with geometry_2;				use geometry_2;
 with demo_window_dimensions;	use demo_window_dimensions;
+with demo_conversions;			use demo_conversions;
 
 
 package demo_scrolled_window is
@@ -169,6 +170,14 @@ package demo_scrolled_window is
 	function get_ratio (
 		area : in type_area)
 		return type_scale_factor;
+
+
+	-- Updates the limits of the scrollbars.
+	-- The argument C1 provides the old corners of the 
+	-- bounding-box on the canvas and C2 the new corners:
+	procedure update_scrollbar_limits (
+		C1, C2 : in type_bounding_box_corners);
+
 	
 end demo_scrolled_window;
 
