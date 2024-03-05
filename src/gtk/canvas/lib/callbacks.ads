@@ -259,33 +259,7 @@ package callbacks is
 		
 	
 
-	
 
--- ZOOMING:
-	
-	
-	-- Zooms in or out at the current cursor position.
-	-- If the direction is ZOOM_IN, then the global scale-factor S
-	-- is increased by multplying it with the scale_multiplier.
-	-- If direction is ZOOM_OUT then it decreases by dividing
-	-- by scale_multiplier:
-	procedure zoom_on_cursor (
-		direction : in type_zoom_direction);
-	
-
-	-- This procedure sets the global scale-factor S and translate-offset T
-	-- so that all objects of the given area fit into the scrolled window.
-	-- The zoom center is the top-left corner of the given area.
-	procedure zoom_to_fit (
-		area : in type_area);
-
-	
-	-- This procedure sets the global scale-factor S and translate-offset T
-	-- so that all objects of bounding-box fit into the scrolled window.
-	-- The zoom center is the top-left corner of bounding-box.
-	procedure zoom_to_fit_all;
-
-	
 	
 	-- This callback function is called each time the operator
 	-- clicks on the canvas.

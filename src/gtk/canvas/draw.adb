@@ -76,6 +76,8 @@ with demo_main_window;
 with demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;
+with demo_zoom;
+
 
 procedure draw is
 
@@ -127,7 +129,7 @@ begin
 
 	
 	-- Zoom so that all objects are visible:
-	zoom_to_fit (demo_bounding_box.bounding_box);
+	demo_zoom.zoom_to_fit (demo_bounding_box.bounding_box);
 
 	
 	-- Backup the currently visible area.
