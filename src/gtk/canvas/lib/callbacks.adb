@@ -36,7 +36,6 @@
 --   history of changes:
 --
 
-with glib;
 with gdk.types;
 with gdk.types.keysyms;
 with gtk.accel_group;
@@ -496,12 +495,41 @@ package body callbacks is
 
 		end if;
 	end cb_swin_size_allocate;
-	
 
 
 	
--- SCROLLBARS:
 
+	procedure set_up_swin_and_scrollbars is	begin
+		put_line ("set_up_swin_and_scrollbars");
+
+		create_scrolled_window_and_scrollbars;		
+
+		
+		-- connect signals:
+		swin.on_size_allocate (cb_swin_size_allocate'access);
+		-- After executing procedure cb_swin_size_allocate
+		-- the canvas is refreshed (similar to refresh (canvas)) automatically..
+
+		-- Connect the signal "value-changed" of the scrollbars with 
+		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
+		-- can watch how the signals are emitted:
+		scrollbar_v_adj.on_value_changed (cb_vertical_moved'access);
+		scrollbar_h_adj.on_value_changed (cb_horizontal_moved'access);
+
+		scrollbar_v := swin.get_vscrollbar;
+		scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
+		scrollbar_v.on_button_release_event (cb_scrollbar_v_released'access);
+
+		scrollbar_h := swin.get_hscrollbar;
+		scrollbar_h.on_button_press_event (cb_scrollbar_h_pressed'access);
+		scrollbar_h.on_button_release_event (cb_scrollbar_h_released'access);
+
+		
+		update_cursor_coordinates;
+	end set_up_swin_and_scrollbars;
+
+
+	
 	
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class)
@@ -591,40 +619,6 @@ package body callbacks is
 
 	
 
-	procedure set_up_swin_and_scrollbars is	begin
-		put_line ("set_up_swin_and_scrollbars");
-
-		create_scrolled_window_and_scrollbars;		
-
-		
-		-- connect signals:
-		swin.on_size_allocate (cb_swin_size_allocate'access);
-		-- After executing procedure cb_swin_size_allocate
-		-- the canvas is refreshed (similar to refresh (canvas)) automatically..
-
-		-- Connect the signal "value-changed" of the scrollbars with 
-		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
-		-- can watch how the signals are emitted:
-		scrollbar_v_adj.on_value_changed (cb_vertical_moved'access);
-		scrollbar_h_adj.on_value_changed (cb_horizontal_moved'access);
-
-		scrollbar_v := swin.get_vscrollbar;
-		scrollbar_v.on_button_press_event (cb_scrollbar_v_pressed'access);
-		scrollbar_v.on_button_release_event (cb_scrollbar_v_released'access);
-
-		scrollbar_h := swin.get_hscrollbar;
-		scrollbar_h.on_button_press_event (cb_scrollbar_h_pressed'access);
-		scrollbar_h.on_button_release_event (cb_scrollbar_h_released'access);
-
-		
-		update_cursor_coordinates;
-	end set_up_swin_and_scrollbars;
-
-
-
-		
-	
-
 	
 -- CANVAS:
 	
@@ -668,7 +662,7 @@ package body callbacks is
 		
 		canvas.on_button_press_event (cb_canvas_button_pressed'access);
 		canvas.on_button_release_event (cb_canvas_button_released'access);
-		canvas.on_motion_notify_event (cb_mouse_moved'access);
+		canvas.on_motion_notify_event (cb_canvas_mouse_moved'access);
 		canvas.on_scroll_event (cb_mouse_wheel_rolled'access);
 		canvas.on_key_press_event (cb_canvas_key_pressed'access);
 
@@ -881,7 +875,7 @@ package body callbacks is
 	
 	
 	
-	function cb_mouse_moved (
+	function cb_canvas_mouse_moved (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_motion)
 		return boolean
@@ -896,7 +890,7 @@ package body callbacks is
 		-- Get the real model coordinates:
 		mp : constant type_vector_model := to_model (cp, S, true);
 	begin
-		-- put_line ("cb_mouse_moved");
+		-- put_line ("cb_canvas_mouse_moved");
 
 		-- output on the terminal:
 		-- Output the x/y position of the pointer
@@ -930,7 +924,7 @@ package body callbacks is
 		end if;
 		
 		return event_handled;
-	end cb_mouse_moved;
+	end cb_canvas_mouse_moved;
 
 
 

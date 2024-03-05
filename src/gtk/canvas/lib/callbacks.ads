@@ -38,22 +38,10 @@
 
 with glib;						use glib;
 with gdk.event;					use gdk.event;
-with gtk.box;					use gtk.box;
-with gtk.separator;				use gtk.separator;
-with gtk.combo_box_text;		use gtk.combo_box_text;
-with gtk.text_view;				use gtk.text_view;
-with gtk.text_buffer;			use gtk.text_buffer;
-with gtk.enums;
-with gtk.gentry;				use gtk.gentry;
 with gtk.window;				use gtk.window;
 with gtk.widget;				use gtk.widget;
 with gtk.button;				use gtk.button;
-with gtk.table;					use gtk.table;
-with gtk.label;					use gtk.label;
-with gtk.scrolled_window;		use gtk.scrolled_window;
 with gtk.adjustment;			use gtk.adjustment;
-with gtk.scrollbar;				use gtk.scrollbar;
-with gtk.drawing_area;			use gtk.drawing_area;
 with cairo;						use cairo;
 
 with demo_buttons;
@@ -62,7 +50,6 @@ with geometry_2;				use geometry_2;
 with demo_objects;				use demo_objects;
 with demo_window_dimensions;	use demo_window_dimensions;
 with demo_canvas;				use demo_canvas;
-with demo_conversions;			use demo_conversions;
 with demo_main_window;			use demo_main_window;
 with demo_coordinates_display;
 with demo_cursor;				use demo_cursor;
@@ -123,7 +110,6 @@ package callbacks is
 		window : access gtk_window_record'class);
 
 
-
 	-- This function is called each time the operator
 	-- presses a mouse button.
 	function cb_window_button_pressed (
@@ -150,11 +136,8 @@ package callbacks is
 		window	: access gtk_widget_record'class;
 		event	: gdk_event_key)
 		return boolean;
-
 	
 
--- SCROLLBARS:
-	
 	
 	-- This callback procedure is called each time the size_allocate signal
 	-- is emitted by the main window.
@@ -164,14 +147,15 @@ package callbacks is
 
 
 	-- This procedure instantiates the main window,
-	-- sets the title bar, connects signals, creates
-	-- boxes inside the window:
+	-- sets the title bar, connects signals with callback
+	-- subprograms and creates boxes inside the window:
 	procedure set_up_main_window;
 
 
 	
+
 	
--- SCROLLED WINDOW:
+-- SCROLLED WINDOW AND SCROLLBARS:
 		
 	
 	-- This callback procedure is called each time the size_allocate signal
@@ -181,8 +165,12 @@ package callbacks is
 		allocation	: gtk_allocation);
 	
 
-	
--- SCROLLBARS:
+	-- This procedure creates the scrolled window,
+	-- assigns to it the initial size (widht and height)
+	-- and sets the behaviour of them.
+	-- It also connects the signals emitted by the scrollbars
+	-- with the callback subprograms.
+	procedure set_up_swin_and_scrollbars;
 
 	
 	
@@ -231,12 +219,6 @@ package callbacks is
 
 
 	
-	-- This procedure creates the scrolled window,
-	-- assigns to it the initial size (widht and height),
-	-- connects signals.
-	-- It also connects the signals emitted by the scrollbars,
-	-- sets the behaviour of them:
-	procedure set_up_swin_and_scrollbars;
 
 
 	
@@ -254,7 +236,8 @@ package callbacks is
 
 	
 	-- This procedure creates the canvas, assigns to
-	-- it a fixed size and connects signals:
+	-- it a fixed size and connects its signals
+	-- with callback subprograms:
 	procedure set_up_canvas;
 		
 	
@@ -281,7 +264,7 @@ package callbacks is
 	
 	-- This callback function is called each time the operator
 	-- moves the pointer (or the mouse) inside the canvas:
-	function cb_mouse_moved (
+	function cb_canvas_mouse_moved (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_motion)
 		return boolean;
@@ -304,6 +287,10 @@ package callbacks is
 		return boolean;
 
 
+
+
+
+	
 	
 	-- This function is called each time the canvas is to be refreshed:
 	function cb_draw_objects (

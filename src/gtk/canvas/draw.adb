@@ -52,21 +52,9 @@
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
 
-with glib;						use glib;
-with gdk.event;					use gdk.event;
 with gtk.main;					use gtk.main;
-with gtk.widget;				use gtk.widget;
-with gtk.adjustment;			use gtk.adjustment;
-with gtk.window;				use gtk.window;
-with gtk.enums;					use gtk.enums;
-with gtk.scrolled_window;		use gtk.scrolled_window;
-with gtk.drawing_area;			use gtk.drawing_area;
-with gtk.box;					use gtk.box;
-with gtk.separator;				use gtk.separator;
 with ada.text_io;				use ada.text_io;
 with callbacks;					use callbacks;
-with geometry_1;				use geometry_1;
-with geometry_2;
 with demo_objects;
 with demo_frame;
 with demo_bounding_box;
