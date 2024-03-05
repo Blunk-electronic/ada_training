@@ -46,8 +46,94 @@ package demo_zoom is
 	-- There are two kinds of zoom-operations:
 	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
-	procedure dummy;
+
+
+	-- This procedure sets the global translate-offset T that is
+	-- required for a zoom-operation.
+	-- After changing the scale-factor S (either by zoom on mouse pointer or
+	-- by zoom on cursor), the translate-offset T must
+	-- be calculated anew. The computation requires as input values
+	-- the zoom center as virtual model point (CS1) or as canvas point (CS2).
+	-- So there is a procedure set_translation_for_zoom that takes a canvas point
+	-- and another that takes a real model point.
+	-- Later, when the actual drawing takes place (see function cb_draw_objects)
+	-- the drawing will be dragged back by the translate-offset
+	-- so that the operator gets the impression of a zoom-into or zoom-out effect.
+	-- Without applying a translate-offset the drawing would be appearing as 
+	-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+	procedure set_translation_for_zoom (
+		S1	: in type_scale_factor;		-- the scale factor before zoom
+		S2	: in type_scale_factor;		-- the scale factor after zoom
+		Z1	: in type_vector_gdouble);	-- the zoom center as canvas point
+
+	procedure set_translation_for_zoom (
+		S1	: in type_scale_factor;		-- the scale factor before zoom
+		S2	: in type_scale_factor;		-- the scale factor after zoom
+		M	: in type_vector_model);	-- the zoom center as a real model point
+
+
+
 	
+
+	-- This composite type provides the ingredients
+	-- required to do a zoom-to-area operation:
+	type type_zoom_area is record
+		-- This flag indicates that the operation is active.
+		-- As soon as the operator clicks the "Zoom Area" button,
+		-- this flag is set. It is cleared when the operator
+		-- releases the right mouse button after she/he has
+		-- defined the zoom-area. The zoom-area is a
+		-- rectangle:
+		active	: boolean := false; 
+
+		-- This is the first corner of the area. It is assigned
+		-- when the operator presses the right mouse button
+		-- on the canvas to define the start point of the zoom-area:
+		k1		: type_vector_model;
+
+		-- This is the second corner of the area. It is assigned
+		-- when the operator releases the right mouse button
+		-- on the canvas to define end point of the the zoom-area:
+		k2		: type_vector_model;
+
+		-- This is the actual area to be zoomed to. It gets fully
+		-- specified when the operator releases the right mouse button.
+		-- The area will then be passed to the function zoom_to_fit
+		-- in order to have the area displayed on the canvas:
+		area	: type_area;
+
+		---------------------------------------------------------------
+		-- In order to display a rectangle that indicates the
+		-- currently selected area we need this stuff.
+		-- This is all in the canvas domain and has nothing to
+		-- do with the area in the model domain (see above):
+		
+		-- This flag indicates that the operator has started
+		-- the selection. It is cleared when the operator is done
+		-- with the selection by releasing the right mouse button:
+		started	: boolean := false;
+
+		-- The corners of the selected area:
+		l1		: type_vector_gdouble; -- the start point
+		l2		: type_vector_gdouble; -- the end point
+	end record;
+
+
+
+	-- This is the instance of the zoom-area:
+	zoom_area : type_zoom_area;
+
+	
+	-- This is the linewidth of the rectangle that
+	-- marks the selected zoom area:
+	zoom_area_linewidth : constant gdouble := 2.0;
+
+
+	-- This procedure resets the zoom_area (see above)
+	-- to its default values. 
+	-- Use this procedure to abort a zoom-to-area operation.
+	procedure reset_zoom_area;
+
 	
 end demo_zoom;
 

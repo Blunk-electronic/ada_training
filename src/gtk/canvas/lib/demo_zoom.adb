@@ -38,13 +38,92 @@
 
 with ada.text_io;				use ada.text_io;
 
-	
+with demo_base_offset;			use demo_base_offset;
+with demo_translate_offset;		use demo_translate_offset;
+with demo_conversions;			use demo_conversions;
 
-	
+
 package body demo_zoom is
 
+
+	procedure set_translation_for_zoom (
+		S1	: in type_scale_factor;
+		S2	: in type_scale_factor;
+		Z1	: in type_vector_gdouble)
+	is 
+		debug : boolean := false;
+		
+		-- Compute the virtual model-point
+		-- according to the scale factor before zoom:
+		M : constant type_vector_model := to_model (Z1, S1);
+
+		Z2 : type_vector_gdouble;
+	begin			
+		if debug then
+			put_line ("set_translation_for_zoom");
+		end if;
+		
+		-- Compute the prospected canvas-point according to the 
+		-- scale factor after zoom:
+		Z2 := to_canvas (M, S2);
+
+		-- This is the offset from Z1 to the prospected
+		-- point Z2. The offset must be multiplied by -1 because the
+		-- drawing must be dragged-back to the given pointer position:
+		T.x := -(Z2.x - Z1.x);
+		T.y := -(Z2.y - Z1.y);
+
+		if debug then
+			put_line (" T: " & to_string (T));
+		end if;
+	end set_translation_for_zoom;
+
+
 	
-	procedure dummy is begin null; end;
+
+	procedure set_translation_for_zoom (
+		S1	: in type_scale_factor;
+		S2	: in type_scale_factor;
+		M	: in type_vector_model) -- real model point
+	is 
+		debug : boolean := false;
+		
+		-- Compute the canvas point corresponding to the given
+		-- real model point with the scale factor before zoom:
+		Z1 : constant type_vector_gdouble := to_canvas (M, S1, real => true);
+
+		-- Convert the given model point to a virtual point in the model:
+		V : constant type_vector_model := to_virtual (M);
+		
+		Z2 : type_vector_gdouble;
+	begin			
+		if debug then
+			put_line ("set_translation_for_zoom");
+		end if;
+		
+		-- Compute the prospected canvas-point according to the 
+		-- scale factor after zoom:
+		Z2 := to_canvas (V, S2);
+		-- put_line ("Z2 " & to_string (Z2));
+
+		-- This is the offset from point Z1 to the prospected
+		-- point Z2. The offset must be multiplied by -1 because the
+		-- drawing must be dragged-back to the given pointer position:
+		T.x := -(Z2.x - Z1.x);
+		T.y := -(Z2.y - Z1.y);
+		
+		if debug then
+			put_line (" T: " & to_string (T));
+		end if;
+	end set_translation_for_zoom;
+
+
+
+	procedure reset_zoom_area is begin
+		put_line ("reset_zoom_area");
+		zoom_area := (others => <>);
+	end reset_zoom_area;
+
 	
 end demo_zoom;
 
