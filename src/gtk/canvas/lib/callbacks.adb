@@ -59,6 +59,7 @@ with demo_visibility;
 with demo_scrolled_window;		use demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;	use demo_coordinates_display;
+with demo_primitive_draw_ops;
 
 
 package body callbacks is
@@ -1201,113 +1202,6 @@ package body callbacks is
 
 
 	
-	
-	procedure draw_line (
-		context	: in cairo_context; -- CS make context global ?
-		line	: in type_line;
-		pos		: in type_vector_model)
-	is
-		use demo_visibility;
-		use demo_visible_area;
-		
-		-- CS: Optimization required. Compiler options ?
-		
-		-- Make a copy of the given line:
-		l : type_line := line;
-
-		-- When the line is drawn, we need canvas points
-		-- for start and end:
-		c1, c2 : type_vector_gdouble; -- start and end of the line
-
-		-- The bounding-box of the line. It is required
-		-- for the area and size check:
-		b : type_area;
-		
-	begin
-		-- Move the line to the given position:
-		move_line (l, pos);
-		
-		-- Get the bounding-box of line:
-		b := get_bounding_box (l);
-		-- put_line ("b " & to_string (b));
-		
-		-- Do the area check. If the bounding-box of the line
-		-- is inside the visible area then draw the line. Otherwise
-		-- nothing will be drawn:
-		if areas_overlap (visible_area, b) and then
-
-			-- Do the size check. If the bounding-box is greater
-			-- (either in width or heigth) than the visiblity threshold
-			-- then draw the line. Otherwise nothing will be drawn:
-			above_visibility_threshold (b) then
-
-			--put_line ("draw line");
-
-			set_line_width (context, to_distance (line.w));
-
-			c1 := to_canvas (l.s, S, real => true);
-			c2 := to_canvas (l.e, S, real => true);
-			move_to (context, c1.x, c1.y);
-			line_to (context, c2.x, c2.y);
-			stroke (context);
-		end if;
-	end draw_line;
-
-	
-	procedure draw_circle (
-		context	: in cairo_context; -- CS make context global ?
-		circle	: in type_circle;
-		pos		: in type_vector_model) -- the position of the complex object
-	is
-		use demo_visibility;
-		use demo_visible_area;
-		
-		-- CS: Optimization required. Compiler options ?
-		
-		-- Make a copy of the given circle:
-		c : type_circle := circle;
-
-		-- When the circle is drawn, we need a canvas point
-		-- for the center:
-		m : type_vector_gdouble;
-
-		r : type_distance_gdouble;
-		
-		-- The bounding-box of the circle. It is required
-		-- for the area and size check:
-		b : type_area;
-		
-	begin
-		-- Move the circle to the given position:
-		move_circle (c, pos);
-		
-		-- Get the bounding-box of circle:
-		b := get_bounding_box (c);
-		-- put_line ("b " & to_string (b));
-		
-		-- Do the area check. If the bounding-box of the circle
-		-- is inside the visible area then draw the circle. Otherwise
-		-- nothing will be drawn:
-		if areas_overlap (visible_area, b) and then
-
-			-- Do the size check. If the bounding-box is greater
-			-- (either in width or heigth) than the visiblity threshold
-			-- then draw the line. Otherwise nothing will be drawn:
-			above_visibility_threshold (b) then
-
-			-- put_line ("draw circle");
-
-			set_line_width (context, to_distance (circle.w));
-
-			m := to_canvas (c.c, S, real => true);
-			r := to_distance (c.r);
-			arc (context, m.x, m.y, r, 0.0, 6.3 );
-			stroke (context);
-		end if;
-	end draw_circle;
-	
-
-	
 	function cb_draw_objects (
 		canvas	: access gtk_widget_record'class;
 		context	: in cairo_context)
@@ -1684,8 +1578,10 @@ package body callbacks is
 		-- Draws all primitive objects of the drawing frame
 		-- and draws them one by one:
 		procedure draw_drawing_frame is
+			use demo_primitive_draw_ops;
 			use demo_frame;
 			use pac_lines;
+			
 			
 
 			procedure query_line (lc : in pac_lines.cursor) is
@@ -1714,6 +1610,7 @@ package body callbacks is
 		-- Draws all model objects. Parses the model database
 		-- and draws objects one by one:
 		procedure draw_objects is
+			use demo_primitive_draw_ops;
 			use pac_lines;
 			use pac_circles;
 			use pac_objects;

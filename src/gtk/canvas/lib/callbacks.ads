@@ -296,33 +296,12 @@ package callbacks is
 
 
 
-
-
-
 	-- This function is called each time the mouse wheel is
 	-- rolled inside the canvas by the operator:
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)
 		return boolean;
-
-
-	
-
--- DRAW OPERATIONS:
-	
-	-- This is a primitive draw operation that draws a line:
-	procedure draw_line (
-		context	: in cairo_context; -- CS make context global ?
-		line	: in type_line;
-		pos		: in type_vector_model); -- the position of the complex object
-
-
-	-- This is a primitive draw operation that draws a circle:
-	procedure draw_circle (
-		context	: in cairo_context; -- CS make context global ?
-		circle	: in type_circle;
-		pos		: in type_vector_model); -- the position of the complex object
 
 
 	
