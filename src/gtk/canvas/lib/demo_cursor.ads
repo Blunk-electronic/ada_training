@@ -63,6 +63,16 @@ package demo_cursor is
 	cursor : type_cursor;
 
 
+	-- This procedure moves the cursor to the given destination:
+	procedure move_cursor (
+		destination : type_vector_model);
+
+
+	-- This procedure moves the cursor into the given direction:
+	procedure move_cursor (
+		direction : type_direction);
+
+	
 	procedure dummy;
 	
 	
