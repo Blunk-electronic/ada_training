@@ -41,7 +41,15 @@ with ada.text_io;				use ada.text_io;
 with glib;						use glib;
 with gtk.box;					use gtk.box;
 with gtk.enums;					use gtk.enums;
+
+with geometry_1;				use geometry_1;
+with geometry_2;				use geometry_2;
 with demo_main_window;			use demo_main_window;
+with demo_cursor;
+with demo_canvas;
+with demo_grid;
+with demo_conversions;			use demo_conversions;
+
 
 
 package body demo_coordinates_display is
@@ -340,6 +348,101 @@ package body demo_coordinates_display is
 
 	end set_up_coordinates_display;
 
+
+	procedure update_cursor_coordinates is 
+		use demo_cursor;
+	begin
+		-- x-axis:
+		cursor_x_buf.set_text (to_string (cursor.position.x));
+		cursor_x_value.set_buffer (cursor_x_buf);
+ 
+		-- y-axis:
+		cursor_y_buf.set_text (to_string (cursor.position.y));
+		cursor_y_value.set_buffer (cursor_y_buf);
+	end update_cursor_coordinates;
+
+
+	
+	procedure update_distances_display is 
+		use demo_cursor;
+		use demo_canvas;
+		
+		px, py : gint; -- the pointer position
+		cp : type_vector_gdouble;
+		mp : type_vector_model;
+
+		dx, dy : type_distance_model;
+		dabs : type_distance_model;
+		angle : type_rotation_model;
+	begin
+		-- Get the current pointer/mouse position:
+		canvas.get_pointer (px, py);
+		cp := (gdouble (px), gdouble (py));
+		
+		-- Convert the pointer position to a real
+		-- point in the model:
+		mp := to_model (cp, S, true);
+
+		-- Compute the relative distance from cursor
+		-- to pointer:
+		dx := mp.x - cursor.position.x;
+		dy := mp.y - cursor.position.y;
+
+		-- Compute the absolute distance from
+		-- cursor to pointer:
+		dabs := get_distance (
+			p1 => (0.0, 0.0),
+			p2 => (dx, dy));
+
+		-- Compute the angle of direction from cursor
+		-- to pointer:
+		angle := get_angle (
+			p1 => (0.0, 0.0),
+			p2 => (dx, dy));
+
+		
+		-- Output the relative distances on the display:
+
+		-- dx:
+		distances_dx_buf.set_text (to_string (dx));
+		distances_dx_value.set_buffer (distances_dx_buf);
+
+		-- dy:
+		distances_dy_buf.set_text (to_string (dy));
+		distances_dy_value.set_buffer (distances_dy_buf);
+
+		-- absolute:
+		distances_absolute_buf.set_text (to_string (dabs));
+		distances_absolute_value.set_buffer (distances_absolute_buf);
+
+		-- angle:
+		distances_angle_buf.set_text (to_string (angle));
+		distances_angle_value.set_buffer (distances_angle_buf);
+	end update_distances_display;
+
+
+
+	procedure update_scale_display is 
+	begin
+		scale_buf.set_text (to_string (S));
+		scale_value.set_buffer (scale_buf);
+	end update_scale_display;
+
+
+
+	procedure update_grid_display is 
+		use demo_grid;
+	begin
+		-- x-axis:
+		grid_x_buf.set_text (to_string (grid.spacing.x));
+		grid_x_value.set_buffer (grid_x_buf);
+
+		-- y-axis:
+		grid_y_buf.set_text (to_string (grid.spacing.y));
+		grid_y_value.set_buffer (grid_y_buf);
+	end update_grid_display;
+
+	
 	
 end demo_coordinates_display;
 

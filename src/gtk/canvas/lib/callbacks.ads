@@ -194,27 +194,7 @@ package callbacks is
 		button : access gtk_button_record'class);
 	
 
-	
--- COORDINATES DISPLAY:
-	
-	-- Updates the cursor coordinates display
-	-- by the current cursor position:
-	procedure update_cursor_coordinates;
 
-	
-	-- Updates the distances display:
-	procedure update_distances_display;
-
-
-	-- Updates the scale display:
-	procedure update_scale_display;
-	
-
-	-- Updates the grid display:
-	procedure update_grid_display;
-
-
-	
 
 -- MAIN WINDOW:
 

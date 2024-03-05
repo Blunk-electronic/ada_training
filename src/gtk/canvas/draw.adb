@@ -118,8 +118,8 @@ begin
 	-- show_adjustments_v;
 	-- show_adjustments_h;
 
-	update_scale_display;
-	update_grid_display;
+	demo_coordinates_display.update_scale_display;
+	demo_coordinates_display.update_grid_display;
 
 	-- On startup the canvas has the focus. This enables the operator
 	-- to move the cursor with the cursor-keys from the beginning:
