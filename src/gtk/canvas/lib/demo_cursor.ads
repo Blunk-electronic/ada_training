@@ -71,10 +71,6 @@ package demo_cursor is
 	-- This procedure moves the cursor into the given direction:
 	procedure move_cursor (
 		direction : type_direction);
-
-	
-	procedure dummy;
-	
 	
 end demo_cursor;
 

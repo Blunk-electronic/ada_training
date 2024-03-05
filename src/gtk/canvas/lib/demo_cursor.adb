@@ -38,7 +38,6 @@
 
 with ada.text_io;				use ada.text_io;
 
-with geometry_2;				use geometry_2;
 with demo_visible_area;
 with demo_grid;
 with demo_canvas;
@@ -135,10 +134,7 @@ package body demo_cursor is
 
 		backup_visible_area (get_visible_area (canvas));
 	end move_cursor;
-
 	
-	
-	procedure dummy is begin null; end;
 	
 	
 end demo_cursor;
