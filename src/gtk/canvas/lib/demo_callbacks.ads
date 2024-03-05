@@ -56,7 +56,7 @@ with demo_cursor;				use demo_cursor;
 with demo_zoom;					use demo_zoom;
 
 
-package callbacks is
+package demo_callbacks is
 
 	
 	-- This callback procedure is called each time the 
@@ -299,5 +299,5 @@ package callbacks is
 		return boolean;
 
 
-end callbacks;
+end demo_callbacks;
 

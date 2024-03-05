@@ -62,7 +62,7 @@ with demo_primitive_draw_ops;
 with demo_scale_factor;			use demo_scale_factor;
 
 
-package body callbacks is
+package body demo_callbacks is
 	
 	
 	
@@ -1697,5 +1697,5 @@ package body callbacks is
 	end cb_draw_objects;
 
 	
-end callbacks;
+end demo_callbacks;
 

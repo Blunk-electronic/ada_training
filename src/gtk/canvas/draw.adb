@@ -52,9 +52,11 @@
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
 
-with gtk.main;					use gtk.main;
 with ada.text_io;				use ada.text_io;
-with callbacks;					use callbacks;
+
+with gtk.main;					use gtk.main;
+
+with demo_callbacks;			use demo_callbacks;
 with demo_objects;
 with demo_frame;
 with demo_bounding_box;
