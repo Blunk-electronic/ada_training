@@ -217,7 +217,7 @@ package body demo_objects is
 		-- The object is a square:
 
 		-- Define the position of the square:
-		object.p := (500.0, -250.0);
+		object.p := (-200.0, 0.0);
 		
 		-- In order to simulate a violation of the maximum
 		-- allowed bounding-box dimensions try this:
