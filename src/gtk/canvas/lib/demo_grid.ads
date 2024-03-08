@@ -55,6 +55,11 @@ package demo_grid is
 	grid_width_dots : constant gdouble := 1.0;
 	grid_radius_dots : constant gdouble := 0.5;
 
+	
+	-- The arm length of a grid point if drawn as a cross:
+	grid_cross_arm_length : constant gdouble := 1.0;
+	
+
 	-- The default grid size in in the model domain:
 	grid_spacing_default : constant type_distance_model := 10.0;
 

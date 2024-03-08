@@ -1338,14 +1338,17 @@ package body demo_callbacks is
 						-- 	 radius => grid_radius_dots, angle1 => 0.0, angle2 => 6.3);
 						-- stroke (context);
 
-						-- Alternatively, draw a very small cross at CP:
-						-- This could be more efficient than a circle.
-						move_to (context, CP.x - 1.0, CP.y);
-						line_to (context, CP.x + 1.0, CP.y);
-						stroke (context);
+						-- Alternatively, draw a very small cross at CP.
+						-- This could be more efficient than a circle:
 						
-						move_to (context, CP.x, CP.y - 1.0);
-						line_to (context, CP.x, CP.y + 1.0);
+						-- horizontal line:
+						move_to (context, CP.x - grid_cross_arm_length, CP.y);
+						line_to (context, CP.x + grid_cross_arm_length, CP.y);
+						stroke (context);
+
+						-- vertical line:
+						move_to (context, CP.x, CP.y - grid_cross_arm_length);
+						line_to (context, CP.x, CP.y + grid_cross_arm_length);
 						stroke (context);
 												
 						-- Advance one row up:
