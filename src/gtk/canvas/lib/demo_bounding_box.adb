@@ -206,19 +206,24 @@ package body demo_bounding_box is
 		-- must be parsed. This is the call of an iteration through
 		-- all objects of the database:
 		objects_database.iterate (query_object'access);
+
+		-- The temporary boundinb-box bbox_new in its current
+		-- state is the so called "inner bounding-box" (IB).
 		
-		-- Expand the temporary bounding-box by the margin
+		-- Now, we expand the temporary bounding-box by the margin
 		-- of the safety frame. The safety frame is regarded
 		-- as part of the model and thus inside
 		-- the bounding-box:
 		bbox_new.width  := bbox_new.width  + 2.0 * margin;
 		bbox_new.height := bbox_new.height + 2.0 * margin;
+
 		
 		-- Since we regard the safety frame as inside the bounding-box,
 		-- we must move the bounding-box position towards bottom-left
 		-- by the inverted margin_offset:
 		move_by (bbox_new.position, invert (margin_offset));
 
+		-- Now, bbox_new has become the "outer bounding-box" (OB).
 		
 		-- Compare the new bounding-box with the old 
 		-- bounding-box to detect a change:
