@@ -197,6 +197,7 @@ package body demo_bounding_box is
 	begin
 		put_line ("compute_bounding_box");
 
+		-- The drawing frame is regarded as part of the model.
 		-- Iterate through all primitive objects of the 
 		-- drawing frame:
 		parse_drawing_frame;
@@ -206,13 +207,14 @@ package body demo_bounding_box is
 		-- all objects of the database:
 		objects_database.iterate (query_object'access);
 		
-		-- Expand the temporary bounding-box by the margin. 
-		-- The margin is part of the model and thus part 
-		-- of the bounding-box:
+		-- Expand the temporary bounding-box by the margin
+		-- of the safety frame. The safety frame is regarded
+		-- as part of the model and thus inside
+		-- the bounding-box:
 		bbox_new.width  := bbox_new.width  + 2.0 * margin;
 		bbox_new.height := bbox_new.height + 2.0 * margin;
 		
-		-- Since we regard the margin as inside the bounding-box,
+		-- Since we regard the safety frame as inside the bounding-box,
 		-- we must move the bounding-box position towards bottom-left
 		-- by the inverted margin_offset:
 		move_by (bbox_new.position, invert (margin_offset));

@@ -48,8 +48,10 @@ with demo_geometry;				use demo_geometry;
 package demo_bounding_box is
 
 
-	-- The margin around the drawing is part of the model.
-	-- The bounding box includes the margin:
+	-- The safety frame around all model objects
+	-- is regarded as part of the model and thus inside
+	-- the bounding-box.
+	-- The safety frame has a margin:
 	margin : constant type_distance_model := 5.0;
 	
 	margin_offset : constant type_vector_model := (
