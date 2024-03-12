@@ -52,7 +52,8 @@ package body demo_canvas is
 	procedure refresh (
 		canvas	: access gtk_widget_record'class)
 	is
-		drawing_area : constant gtk_drawing_area := gtk_drawing_area (canvas);
+		drawing_area : constant gtk_drawing_area := 
+			gtk_drawing_area (canvas);
 	begin
 		-- put_line ("refresh " & image (clock)); 
 		drawing_area.queue_draw;
@@ -127,7 +128,8 @@ package body demo_canvas is
 		gtk_new (canvas);
 
 		-- Set the size (width and height) of the canvas:
-		canvas.set_size_request (gint (canvas_size.width), gint (canvas_size.height));
+		canvas.set_size_request (
+			gint (canvas_size.width), gint (canvas_size.height));
 		
 		show_canvas_size;
 

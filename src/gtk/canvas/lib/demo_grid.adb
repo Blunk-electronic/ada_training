@@ -77,8 +77,6 @@ package body demo_grid is
 		return gdouble'min (x, y);
 	end get_grid_spacing;
 
-
-	
 	
 end demo_grid;
 

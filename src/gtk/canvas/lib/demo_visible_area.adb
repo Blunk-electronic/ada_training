@@ -122,8 +122,10 @@ package body demo_visible_area is
 		result.height := TL.y - BL.y;
 
 		-- CS: more effective ?
-		-- result.width    := type_distance_model (h_length) * type_distance_model (S);
-		-- result.height   := type_distance_model (v_length) * type_distance_model (S);
+		-- result.width    := type_distance_model 
+		--		(h_length) * type_distance_model (S);
+		-- result.height   := type_distance_model 
+		--		(v_length) * type_distance_model (S);
 
 		-- put_line ("visible area " & to_string (result));
 		return result;
@@ -199,7 +201,6 @@ package body demo_visible_area is
 	is begin
 		last_visible_area := area;
 	end backup_visible_area;
-
 	
 
 end demo_visible_area;

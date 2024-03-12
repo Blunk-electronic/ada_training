@@ -236,9 +236,14 @@ package body demo_bounding_box is
 
 				-- output limits and computed box dimensions:
 				put_line ("WARNING: Bounding-box size limit exceeded !");
-				put_line (" max. width : " & to_string (bounding_box_width_max));
-				put_line (" max. height: " & to_string (bounding_box_height_max));
-				put_line (" detected   : " & to_string (bbox_new));
+				put_line (" max. width : " 
+					& to_string (bounding_box_width_max));
+				
+				put_line (" max. height: " 
+					& to_string (bounding_box_height_max));
+				
+				put_line (" detected   : " 
+					& to_string (bbox_new));
 
 				-- Set the error flag:
 				bounding_box_error := (

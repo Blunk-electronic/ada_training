@@ -102,11 +102,14 @@ package body demo_conversions is
 			put_line ("T " & to_string (T));
 		end if;
 		
-		result.x := type_distance_model (( (point.x - T.x) - F.x) / gdouble (scale));
-		result.y := type_distance_model ((-(point.y - T.y) - F.y) / gdouble (scale));
+		result.x := type_distance_model 
+			(( (point.x - T.x) - F.x) / gdouble (scale));
+		
+		result.y := type_distance_model 
+			((-(point.y - T.y) - F.y) / gdouble (scale));
 
-		-- If real model coordinates are required, then the result must be compensated
-		-- by the bounding-box position:
+		-- If real model coordinates are required, then the result 
+		-- must be compensated by the bounding-box position:
 		if real then
 			move_by (result, bounding_box.position);
 		end if;
@@ -114,7 +117,8 @@ package body demo_conversions is
 
 		exception
 			when constraint_error =>
-				put_line ("ERROR: conversion from canvas point to model point failed !");
+				put_line ("ERROR: conversion from canvas point "
+					& "to model point failed !");
 				put_line (" point " & to_string (point));
 				put_line (" scale " & to_string (scale));
 				put_line (" T     " & to_string (T));
@@ -170,8 +174,6 @@ package body demo_conversions is
 		
 		return result;
 	end get_bounding_box_corners;
-
-
 	
 end demo_conversions;
 

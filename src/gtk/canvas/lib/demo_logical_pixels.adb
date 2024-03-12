@@ -42,7 +42,6 @@ with ada.text_io;				use ada.text_io;
 package body demo_logical_pixels is
 
 
-
 	function to_string (
 		v : in type_vector_gdouble)
 		return string
@@ -50,9 +49,6 @@ package body demo_logical_pixels is
 		--return "vector gdouble x/y: "
 		return gdouble'image (v.x) & "/" & gdouble'image (v.y);
 	end to_string;
-
-
-
 
 	
 	

@@ -118,10 +118,11 @@ package demo_bounding_box is
 	-- - Test only. Means to simulate the compuation of the bounding-box only.
 	--   The global variable bounding_box will NOT be touched in any case.
 	procedure compute_bounding_box (
-		abort_on_first_error	: in boolean := false; -- CS currently not implemented
+		abort_on_first_error	: in boolean := false; 
+		-- CS currently not implemented
+		
 		ignore_errors			: in boolean := false;
 		test_only				: in boolean := false);
-
 	
 	
 end demo_bounding_box;

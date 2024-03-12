@@ -328,7 +328,10 @@ package body demo_callbacks is
 		main_window.on_button_press_event (cb_window_button_pressed'access);
 		main_window.on_key_press_event (cb_window_key_pressed'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
-		main_window.on_window_state_event (cb_main_window_state_change'access);
+		
+		main_window.on_window_state_event (
+			cb_main_window_state_change'access);
+		
 		main_window.on_realize (cb_main_window_realize'access);
 		main_window.on_activate_default (cb_main_window_activate'access);
 
@@ -382,14 +385,17 @@ package body demo_callbacks is
 		end show_size;
 		
 		
-		-- When the scrolled window is resized, then it expands away from its top left corner
-		-- or it shrinks toward its top-left corner. In both cases the bottom of the
-		-- window moves down or up. So the bottom of the canvas must follow the bottom
-		-- of the scrolled window. This procedure moves the bottom of the canvas by the same
+		-- When the scrolled window is resized, then it expands away
+		-- from its top left corner or it shrinks toward its top-left
+		-- corner. In both cases the bottom of the
+		-- window moves down or up. So the bottom of the canvas must 
+		-- follow the bottom of the scrolled window. This procedure 
+		-- moves the bottom of the canvas by the same
 		-- extent as the bottom of the scrolled window:
 		procedure move_canvas_bottom is begin
 			-- Approach 1:
-			-- One way to move the canvas is to change the y-component of the base-offset.
+			-- One way to move the canvas is to change the y-component
+			-- of the base-offset.
 			F.y := F.y - dh;
 
 			-- Schedule a refresh to make the size change appear smoothly:
@@ -427,7 +433,8 @@ package body demo_callbacks is
 		
 		-- This procedure moves the canvas so that the center of the visible
 		-- area remains in the center.
-		-- This procedure is required when zoom mode MODE_KEEP_CENTER is enabled:
+		-- This procedure is required when zoom mode MODE_KEEP_CENTER is 
+		-- enabled:
 		procedure move_center is
 		begin
 			F.x := F.x + dW * 0.5;
@@ -452,14 +459,16 @@ package body demo_callbacks is
 		-- Compare the new size with the old size. The global variable 
 		-- swin_size provides the size of the window BEFORE this
 		-- procedure has been called. If the size has changed, then proceed
-		-- with other actions. If the size has not changed, then nothing happens:
+		-- with other actions. If the size has not changed, then nothing 
+		-- happens:
 		if new_size /= swin_size then
 			new_line;
 			put_line ("scrolled window size changed");
 
-			-- Opon resizing the scrolled window, the settings of the scrollbars 
-			-- (upper, lower and page size) adapt to the size of the scrolled window. 
-			-- But we do NOT want this behaviour. Instead we restore the settings
+			-- Opon resizing the scrolled window, the settings of the 
+			-- scrollbars (upper, lower and page size) adapt to the size of
+			-- the scrolled window. But we do NOT want this behaviour. 
+			-- Instead we restore the settings
 			-- as they where BEFORE this procedure has been called:
 			restore_scrollbar_settings;
 			-- show_adjustments_h;
@@ -509,9 +518,10 @@ package body demo_callbacks is
 		-- connect signals:
 		swin.on_size_allocate (cb_swin_size_allocate'access);
 		-- After executing procedure cb_swin_size_allocate
-		-- the canvas is refreshed (similar to refresh (canvas)) automatically..
+		-- the canvas is refreshed (similar to refresh (canvas)) 
+		-- automatically.
 
-		-- Connect the signal "value-changed" of the scrollbars with 
+		-- Connect the signal "value-changed" of the scrollbars with
 		-- procedures cb_vertical_moved and cb_horizontal_moved. So the user
 		-- can watch how the signals are emitted:
 		scrollbar_v_adj.on_value_changed (cb_vertical_moved'access);
@@ -619,11 +629,8 @@ package body demo_callbacks is
 
 
 	
-
-	
 -- CANVAS:
 	
-
 
 	procedure cb_canvas_size_allocate (
 		canvas		: access gtk_widget_record'class;
@@ -633,7 +640,8 @@ package body demo_callbacks is
 		-- new_line;
 		-- put_line ("cb_canvas_size_allocate");
 
-		-- put_line ("cb_canvas_size_allocate. (x/y/w/h): " & gint'image (allocation.x) 
+		-- put_line ("cb_canvas_size_allocate. (x/y/w/h): " 
+		--  & gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
 		-- 	& " /" & gint'image (allocation.height));
@@ -641,12 +649,9 @@ package body demo_callbacks is
 	end cb_canvas_size_allocate;
 
 
-
 	
 	
-	
-	procedure set_up_canvas is
-	begin
+	procedure set_up_canvas is begin
 		put_line ("set_up_canvas");
 
 		create_canvas;
@@ -671,7 +676,6 @@ package body demo_callbacks is
 
 
 	
-
 	
 	
 	function cb_canvas_button_pressed (
@@ -698,9 +702,11 @@ package body demo_callbacks is
 		-- must be saved and restored if the canvas grabs the focus:
 		h, v : gdouble;
 		-- A solution might be:
-		-- <https://stackoverflow.com/questions/26693042/gtkscrolledwindow-disable-scroll-to-focused-child>
+		-- <https://stackoverflow.com/questions/26693042/
+		-- gtkscrolledwindow-disable-scroll-to-focused-child>
 		-- or
-		-- <https://discourse.gnome.org/t/disable-auto-scrolling-in-gtkscrolledwindow-when-grab-focus-in-children/13058>
+		-- <https://discourse.gnome.org/t/disable-auto-scrolling-in-
+		-- gtkscrolledwindow-when-grab-focus-in-children/13058>
 	begin
 		put_line ("cb_canvas_button_pressed");
 
@@ -836,8 +842,11 @@ package body demo_callbacks is
 				end if;
 
 				-- width and height:
-				zoom_area.area.width  := abs (zoom_area.k2.x - zoom_area.k1.x);
-				zoom_area.area.height := abs (zoom_area.k2.y - zoom_area.k1.y);
+				zoom_area.area.width  := 
+					abs (zoom_area.k2.x - zoom_area.k1.x);
+				
+				zoom_area.area.height := 
+					abs (zoom_area.k2.y - zoom_area.k1.y);
 
 				if debug then
 					put_line ("zoom " & to_string (zoom_area.area));
@@ -1020,16 +1029,19 @@ package body demo_callbacks is
 		use gtk.accel_group;
 		event_handled : boolean := true;
 
-		accel_mask : constant gdk_modifier_type := get_default_mod_mask;
+		accel_mask : constant gdk_modifier_type := 
+			get_default_mod_mask;
 
 		-- The direction at which the operator is turning the wheel:
-		wheel_direction : constant gdk_scroll_direction := event.direction;
+		wheel_direction : constant gdk_scroll_direction :=
+			event.direction;
 
 
 		procedure zoom is
 			use demo_visible_area;
 			
-			-- The given point on the canvas where the operator is zooming in or out:
+			-- The given point on the canvas where the operator is 
+			-- zooming in or out:
 			Z : constant type_vector_gdouble := (event.x, event.y);
 
 			-- The corners of the bounding-box on the canvas before 
@@ -1068,10 +1080,12 @@ package body demo_callbacks is
 			-- After changing the scale-factor, the translate-offset must
 			-- be calculated anew. When the actual drawing takes 
 			-- place (see function cb_draw_objects)
-			-- then the drawing will be dragged back by the translate-offset
-			-- so that the operator gets the impression of a zoom-into or zoom-out effect.
-			-- Without applying a translate-offset the drawing would be appearing as 
-			-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+			-- then the drawing will be dragged back by the 
+			-- translate-offset so that the operator gets the impression 
+			-- of a zoom-into or zoom-out effect.
+			-- Without applying a translate-offset the drawing would be 
+			-- appearing as expanding to the upper-right (on zoom-in) 
+			-- or shrinking toward the lower-left:
 			set_translation_for_zoom (S1, S, Z);
 
 			-- show_adjustments_v;
@@ -1154,7 +1168,8 @@ package body demo_callbacks is
 
 		if debug then
 			put_line ("cb_mouse_wheel_rolled");
-			-- put_line (" direction " & gdk_scroll_direction'image (wheel_direction));
+			-- put_line (" direction " 
+			-- & gdk_scroll_direction'image (wheel_direction));
 		end if;
 
 
@@ -1229,7 +1244,8 @@ package body demo_callbacks is
 		-- This procedure draws the grid in the visible area.
 		-- Outside the visible area nothing is drawn in order to save time.
 		-- The procedure works as follows:
-		-- 1. Define the begin and end of the visible area in x and y direction.
+		-- 1. Define the begin and end of the visible area in 
+		--    x and y direction.
 		-- 2. Find the first column that comes after the begin of 
 		--    the visible area (in x direction).
 		-- 3. Find the last column that comes before the end of the 
@@ -1238,7 +1254,8 @@ package body demo_callbacks is
 		--    visible area (in y direction).
 		-- 5. Find the last row that comes before the end of the 
 		--    visible area (in y direction).
-		-- 6. Draw the grid as dots or lines, depending on the user specified settings.
+		-- 6. Draw the grid as dots or lines, depending on the user specified
+		--    settings.
 		procedure draw_grid is
 			use demo_grid;
 			use demo_visible_area;
@@ -1251,11 +1268,15 @@ package body demo_callbacks is
 			x1, x2 : type_distance_model;
 
 			-- The start and the end of the visible area:
-			ax1 : constant type_float_grid := type_float_grid (visible_area.position.x);
-			ax2 : constant type_float_grid := ax1 + type_float_grid (visible_area.width);
+			ax1 : constant type_float_grid := 
+				type_float_grid (visible_area.position.x);
+			
+			ax2 : constant type_float_grid := 
+				ax1 + type_float_grid (visible_area.width);
 
 			-- The grid spacing:
-			gx : constant type_float_grid := type_float_grid (grid.spacing.x);
+			gx : constant type_float_grid := 
+				type_float_grid (grid.spacing.x);
 
 			
 			-- Y-AXIS:
@@ -1264,19 +1285,22 @@ package body demo_callbacks is
 			y1, y2 : type_distance_model;
 
 			-- The start and the end of the visible area:
-			ay1 : constant type_float_grid := type_float_grid (visible_area.position.y);
-			ay2 : constant type_float_grid := ay1 + type_float_grid (visible_area.height);
+			ay1 : constant type_float_grid := 
+				type_float_grid (visible_area.position.y);
+			
+			ay2 : constant type_float_grid := 
+				ay1 + type_float_grid (visible_area.height);
 
 			-- The grid spacing:
-			gy : constant type_float_grid := type_float_grid (grid.spacing.y);
+			gy : constant type_float_grid := 
+				type_float_grid (grid.spacing.y);
 
 			c : type_float_grid;
 
 			-- debug : boolean := false;
 
 			
-			procedure compute_first_and_last_column is
-			begin
+			procedure compute_first_and_last_column is begin
 				-- Compute the first column:
 				-- put_line (" ax1 " & type_float_grid'image (ax1));
 				c := type_float_grid'floor (ax1 / gx);
@@ -1291,8 +1315,7 @@ package body demo_callbacks is
 			end compute_first_and_last_column;
 
 
-			procedure compute_first_and_last_row is
-			begin
+			procedure compute_first_and_last_row is begin
 				-- Compute the first row:
 				-- put_line (" ay1 " & type_float_grid'image (ay1));
 				c := type_float_grid'floor (ay1 / gy);
@@ -1308,8 +1331,10 @@ package body demo_callbacks is
 			
 
 			-- This procedure draws the dots of the grid:
-			-- 1. Assemble from the first row and the first colum a real model point MP.
-			-- 2. Advance PM from row to row and column to column in a matrix like order.
+			-- 1. Assemble from the first row and the first colum a real
+			--    model point MP.
+			-- 2. Advance PM from row to row and column to column in a 
+			--    matrix like order.
 			-- 3. Draw a very small circle, which will appear like a dot,
 			--    (or alternatively a very small cross) at MP.
 			procedure draw_dots is 
@@ -1335,7 +1360,8 @@ package body demo_callbacks is
 
 						-- Draw a very small circle with its center at CP:
 						-- arc (context, CP.x, CP.y, 
-						-- 	 radius => grid_radius_dots, angle1 => 0.0, angle2 => 6.3);
+						-- 	 radius => grid_radius_dots, angle1 => 0.0, 
+						--    angle2 => 6.3);
 						-- stroke (context);
 
 						-- Alternatively, draw a very small cross at CP.
@@ -1380,10 +1406,12 @@ package body demo_callbacks is
 				
 				-- VERTICAL LINES:
 
-				-- All vertical lines start at the bottom of the visible area:
+				-- All vertical lines start at the bottom of 
+				-- the visible area:
 				MP1 := (x1, ay1f);
 
-				-- All vertical lines end at the top of the visible area:
+				-- All vertical lines end at the top of the 
+				-- visible area:
 				MP2 := (x1, ay2f);
 
 				-- The first vertical line runs along the first column. 
@@ -1405,10 +1433,12 @@ package body demo_callbacks is
 				
 				-- HORIZONTAL LINES:
 
-				-- All horizontal lines start at the left edge of the visible area:
+				-- All horizontal lines start at the left edge of the 
+				-- visible area:
 				MP1 := (ax1f, y1);
 
-				-- All horizontal lines end at the right edge of the visible area:
+				-- All horizontal lines end at the right edge of the 
+				-- visible area:
 				MP2 := (ax2f, y1);
 
 				-- The first horizontal line runs along the first row. 
@@ -1452,7 +1482,8 @@ package body demo_callbacks is
 		-- drawn always, regardless whether it is in the visible
 		-- area or not:
 		procedure draw_cursor is
-			cp : type_vector_gdouble := to_canvas (cursor.position, S, true);
+			cp : type_vector_gdouble := 
+				to_canvas (cursor.position, S, true);
 
 			-- These are the start and stop positions for the
 			-- horizontal lines:

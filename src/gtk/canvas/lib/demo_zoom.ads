@@ -55,22 +55,24 @@ package demo_zoom is
 	-- by zoom on cursor), the translate-offset T must
 	-- be calculated anew. The computation requires as input values
 	-- the zoom center as virtual model point (CS1) or as canvas point (CS2).
-	-- So there is a procedure set_translation_for_zoom that takes a canvas point
-	-- and another that takes a real model point.
-	-- Later, when the actual drawing takes place (see function cb_draw_objects)
-	-- the drawing will be dragged back by the translate-offset
-	-- so that the operator gets the impression of a zoom-into or zoom-out effect.
+	-- So there is a procedure set_translation_for_zoom that takes a canvas 
+	-- point and another that takes a real model point.
+	-- Later, when the actual drawing takes place (see function 
+	-- cb_draw_objects) the drawing will be dragged back by the 
+	-- translate-offset so that the operator gets the impression of a 
+	-- zoom-in or zoom-out effect.
 	-- Without applying a translate-offset the drawing would be appearing as 
-	-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+	-- expanding to the upper-right (on zoom-in) or shrinking toward the 
+	-- lower-left:
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;		-- the scale factor before zoom
 		S2	: in type_scale_factor;		-- the scale factor after zoom
 		Z1	: in type_vector_gdouble);	-- the zoom center as canvas point
 
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;		-- the scale factor before zoom
-		S2	: in type_scale_factor;		-- the scale factor after zoom
-		M	: in type_vector_model);	-- the zoom center as a real model point
+		S1	: in type_scale_factor;	 -- the scale factor before zoom
+		S2	: in type_scale_factor;	 -- the scale factor after zoom
+		M	: in type_vector_model); -- the zoom center as a real model point
 
 
 

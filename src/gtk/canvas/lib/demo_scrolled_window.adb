@@ -60,7 +60,8 @@ package body demo_scrolled_window is
 		put_line ("create_scrolled_window");
 
 		-- Create a scrolled window:
-		swin := gtk_scrolled_window_new (hadjustment => null, vadjustment => null);
+		swin := gtk_scrolled_window_new (
+			hadjustment => null, vadjustment => null);
 
 		-- Set the minimum size of the scrolled window and
 		-- the global swin_size variable.
@@ -75,7 +76,8 @@ package body demo_scrolled_window is
 		--
 		-- swin.set_size_request (
 		-- 	gint (bounding_box.width),
-		-- 	gint (bounding_box.height)); -- Mind a minimal height ! See above comment.
+		-- 	gint (bounding_box.height)); -- Mind a minimal height !
+		--  -- See above comment.
 		-- 
 		-- swin_size := (
 		-- 	width	=> positive (bounding_box.width),
@@ -174,7 +176,9 @@ package body demo_scrolled_window is
 		put_line ("set initial scrollbar settings");
 		
 		scrollbar_v_init.upper := - F.y;			
-		scrollbar_v_init.lower := scrollbar_v_init.upper - gdouble (bounding_box.height);
+		scrollbar_v_init.lower := 
+			scrollbar_v_init.upper - gdouble (bounding_box.height);
+		
 		scrollbar_v_init.page_size := gdouble (bounding_box.height);
 		scrollbar_v_init.value := scrollbar_v_init.lower;
 
@@ -187,7 +191,9 @@ package body demo_scrolled_window is
 		end if;
 		
 		scrollbar_h_init.lower := F.x;
-		scrollbar_h_init.upper := scrollbar_h_init.lower + gdouble (bounding_box.width);
+		scrollbar_h_init.upper := 
+			scrollbar_h_init.lower + gdouble (bounding_box.width);
+		
 		scrollbar_h_init.page_size := gdouble (bounding_box.width);
 		scrollbar_h_init.value := scrollbar_h_init.lower;
 
@@ -200,7 +206,7 @@ package body demo_scrolled_window is
 		end if;
 
 	
-		--------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 		-- CS: This code is experimental in order to make the canvas
 		-- dimensions adjust DYNAMICALLY to the scrollbar limits. So far this
 		-- was not successful because the canvas size can not be changed
@@ -222,10 +228,11 @@ package body demo_scrolled_window is
 -- 			
 -- 			if debug then
 -- 				show_canvas_size;
--- 				-- put_line ("x/y : " & gint'image (a.x) & "/" & gint'image (a.y));
+-- 				-- put_line ("x/y : " & gint'image (a.x) & "/" 
+-- 					& gint'image (a.y));
 -- 			end if;
 -- 		end;
-		--------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 
 		
 		-- put_line ("vertical:");
@@ -298,14 +305,20 @@ package body demo_scrolled_window is
 
 		-- Get the ratio of width and height based on the current dimensions
 		-- of the scrolled window:
-		sw := type_scale_factor (type_distance_model (a.width) / area.width);
-		sh := type_scale_factor (type_distance_model (a.height) / area.height);
+		sw := type_scale_factor 
+			(type_distance_model (a.width) / area.width);
+		
+		sh := type_scale_factor 
+			(type_distance_model (a.height) / area.height);
 
 		-- CS: Alternatively the ratio can be based on the initial dimensions
-		-- of the scrolled window. A boolean argument for this function could be
-		-- used to switch between current dimensions and initial dimensions:
-		-- sw := type_scale_factor (type_distance_model (swin_size_initial.width) / area.width);
-		-- sh := type_scale_factor (type_distance_model (swin_size_initial.height) / area.height);
+		-- of the scrolled window. A boolean argument for this function 
+		-- could be used to switch between current dimensions and initial 
+		-- dimensions:
+		-- sw := type_scale_factor 
+		-- 		(type_distance_model (swin_size_initial.width) / area.width);
+		-- sh := type_scale_factor 
+		--		(type_distance_model (swin_size_initial.height) / area.height);
 		
 		-- put_line ("sw: " & to_string (sw));
 		-- put_line ("sh: " & to_string (sh));
@@ -435,7 +448,6 @@ package body demo_scrolled_window is
 
 		-- show_adjustments_v;
 	end update_scrollbar_limits;
-
 
 	
 end demo_scrolled_window;

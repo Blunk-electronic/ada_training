@@ -171,9 +171,11 @@ package body demo_zoom is
 		-- be calculated anew. When the actual drawing takes 
 		-- place (see function cb_draw_objects)
 		-- then the drawing will be dragged back by the translate-offset
-		-- so that the operator gets the impression of a zoom-into or zoom-out effect.
-		-- Without applying a translate-offset the drawing would be appearing as 
-		-- expanding to the upper-right (on zoom-in) or shrinking toward the lower-left:
+		-- so that the operator gets the impression of a zoom-into or 
+		-- zoom-out effect.
+		-- Without applying a translate-offset the drawing would be appearing
+		-- as expanding to the upper-right (on zoom-in) or shrinking toward 
+		-- the lower-left:
 		set_translation_for_zoom (S1, S, cursor.position);
 
 		C2 := get_bounding_box_corners;
@@ -279,7 +281,6 @@ package body demo_zoom is
 		-- Schedule a redraw of the canvas:
 		refresh (canvas);
 	end zoom_to_fit_all;
-
 	
 	
 end demo_zoom;

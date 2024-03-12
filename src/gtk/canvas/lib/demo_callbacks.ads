@@ -174,14 +174,14 @@ package demo_callbacks is
 
 	
 	
-	-- This procedure is called whenever the horizontal scrollbar is moved, either
-	-- by the operator or by internal calls.
+	-- This procedure is called whenever the horizontal scrollbar is moved, 
+	-- either by the operator or by internal calls.
 	procedure cb_horizontal_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
 	
-	-- This procedure is called whenever the vertical scrollbar is moved, either
-	-- by the operator or by internal calls.
+	-- This procedure is called whenever the vertical scrollbar is moved, 
+	-- either by the operator or by internal calls.
 	procedure cb_vertical_moved (
 		scrollbar : access gtk_adjustment_record'class);
 
@@ -219,12 +219,6 @@ package demo_callbacks is
 
 
 	
-
-
-	
-
-
-	
 -- CANVAS:
 
 	-- This procedure is called when the canvas changes
@@ -239,9 +233,6 @@ package demo_callbacks is
 	-- it a fixed size and connects its signals
 	-- with callback subprograms:
 	procedure set_up_canvas;
-		
-	
-
 
 	
 	-- This callback function is called each time the operator
@@ -278,18 +269,12 @@ package demo_callbacks is
 		return boolean;
 
 
-
 	-- This function is called each time the mouse wheel is
 	-- rolled inside the canvas by the operator:
 	function cb_mouse_wheel_rolled (
 		canvas	: access gtk_widget_record'class;
 		event	: gdk_event_scroll)
 		return boolean;
-
-
-
-
-
 	
 	
 	-- This function is called each time the canvas is to be refreshed:

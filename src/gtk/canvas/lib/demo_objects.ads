@@ -103,22 +103,26 @@ package demo_objects is
 
 	
 
-	package pac_lines is new doubly_linked_lists (element_type => type_line);
-	package pac_circles is new doubly_linked_lists (element_type => type_circle);
+	package pac_lines is new doubly_linked_lists 
+		(element_type => type_line);
+		
+	package pac_circles is new doubly_linked_lists 
+		(element_type => type_circle);
 	
 	type type_complex_object is new type_object with record
 		lines	: pac_lines.list;
 		circles	: pac_circles.list;
 	end record;
 
-	package pac_objects is new doubly_linked_lists (element_type => type_complex_object);
+	package pac_objects is new doubly_linked_lists 
+		(element_type => type_complex_object);
+	
 	objects_database : pac_objects.list;
 
 	
 	-- This procedure generates a dummy database with 
 	-- some useless dummy objects:
 	procedure make_database;
-
 
 
 	-- This procedure adds a new object to the database.
@@ -129,7 +133,6 @@ package demo_objects is
 	-- This procedure deletes the last object that has been
 	-- added to the database:
 	procedure delete_object;
-
 
 	
 end demo_objects;

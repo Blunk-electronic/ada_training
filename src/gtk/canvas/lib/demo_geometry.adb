@@ -140,7 +140,8 @@ package body demo_geometry is
 		result.BR := (area.position.x + area.width, area.position.y);
 
 		result.TL := (area.position.x, area.position.y + area.height); 
-		result.TR := (area.position.x + area.width, area.position.y + area.height); 
+		result.TR := (area.position.x + area.width, 
+					  area.position.y + area.height); 
 		return result;
 	end get_corners;
 

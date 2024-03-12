@@ -148,7 +148,7 @@ package demo_geometry is
 	
 	-- The origin is a small cross at model position (0;0).
 	origin				: constant type_vector_model := (0.0, 0.0);
-	origin_size			: constant gdouble := 10.0; -- the arm-length of the cross
+	origin_size			: constant gdouble := 10.0; -- the arm-length
 	origin_linewidth	: constant gdouble := 1.0;
 
 
@@ -209,7 +209,6 @@ package demo_geometry is
 	procedure merge_areas (
 		A : in out type_area;
 		B : in type_area);
-	
 
 	
 end demo_geometry;

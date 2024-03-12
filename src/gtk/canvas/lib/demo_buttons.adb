@@ -45,16 +45,15 @@ with demo_main_window;			use demo_main_window;
 
 package body demo_buttons is
 
-
-	procedure create_buttons is
-	begin
+	procedure create_buttons is begin
 		put_line ("create_buttons");
 		
 		gtk_new_vbox (box_v0);
 		box_h.pack_start (box_v0, expand => false);
 
 
-		gtk_new (buttons_table, rows => 5, columns => 1, homogeneous => false);
+		gtk_new (buttons_table, rows => 5, columns => 1, 
+			homogeneous => false);
 		-- table.set_col_spacings (50);
 		-- table_coordinates.set_border_width (10);
 
@@ -98,8 +97,7 @@ package body demo_buttons is
 			top_attach  => 5, bottom_attach => 6);
 		
 		
-	end create_buttons;
-	
+	end create_buttons;	
 	
 end demo_buttons;
 

@@ -146,9 +146,7 @@ package body demo_primitive_draw_ops is
 			stroke (context);
 		end if;
 	end draw_circle;
-	
-
-	
+		
 	
 end demo_primitive_draw_ops;
 

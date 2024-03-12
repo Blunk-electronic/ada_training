@@ -86,7 +86,7 @@ package demo_conversions is
 	function to_model (
 		point	: in type_vector_gdouble;
 		scale	: in type_scale_factor;
-		real 	: in boolean := false) -- if real model coordinates are required
+		real 	: in boolean := false) 
 		return type_vector_model;
 	
 
@@ -99,7 +99,7 @@ package demo_conversions is
 	function to_canvas (
 		point 	: in type_vector_model;
 		scale	: in type_scale_factor;
-		real	: in boolean := false) -- if real model coordinates are given
+		real	: in boolean := false)
 		return type_vector_gdouble;
 
 
@@ -116,8 +116,6 @@ package demo_conversions is
 	-- and translate-offset:
 	function get_bounding_box_corners
 		return type_bounding_box_corners;
-	
-	
+		
 	
 end demo_conversions;
-

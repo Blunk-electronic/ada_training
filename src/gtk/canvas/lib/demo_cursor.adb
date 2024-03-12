@@ -95,7 +95,8 @@ package body demo_cursor is
 				when DIR_RIGHT =>
 					-- If the cursor is right of the visible area,
 					-- then shift the canvas to the right:
-					if cursor.position.x > visible_area.position.x + visible_area.width then
+					if cursor.position.x > 
+						visible_area.position.x + visible_area.width then
 						shift_canvas (direction, grid.spacing.x);
 					end if;
 					
@@ -109,7 +110,8 @@ package body demo_cursor is
 				when DIR_UP =>
 					-- If the cursor is above of the visible area,
 					-- then shift the canvas up:
-					if cursor.position.y > visible_area.position.y + visible_area.height then
+					if cursor.position.y > 
+						visible_area.position.y + visible_area.height then
 						shift_canvas (direction, grid.spacing.y);
 					end if;
 
@@ -134,7 +136,6 @@ package body demo_cursor is
 
 		backup_visible_area (get_visible_area (canvas));
 	end move_cursor;
-	
 	
 	
 end demo_cursor;

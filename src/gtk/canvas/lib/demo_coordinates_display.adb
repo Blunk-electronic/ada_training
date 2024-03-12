@@ -69,7 +69,8 @@ package body demo_coordinates_display is
 
 		-- Create a table, that contains headers, text labels
 		-- and text views for the actual coordinates:
-		gtk_new (table_coordinates, rows => 11, columns => 2, homogeneous => false);
+		gtk_new (table_coordinates, rows => 11, columns => 2, 
+			homogeneous => false);
 		-- table.set_col_spacings (50);
 		-- table_coordinates.set_border_width (10);
 
@@ -83,7 +84,8 @@ package body demo_coordinates_display is
 
 		-- The label shall be aligned in the column.
 		-- The discussion at:
-		-- <https://stackoverflow.com/questions/26345989/gtk-how-to-align-a-label-to-the-left-in-a-table>
+		-- <https://stackoverflow.com/questions/26345989/
+		-- gtk-how-to-align-a-label-to-the-left-in-a-table>
 		-- gave the solution. See also package gtk.misc for details:
 		pointer_x_label.set_alignment (0.0, 0.0);	
 		gtk_new (pointer_x_value); -- create a text view vor the value
@@ -92,11 +94,14 @@ package body demo_coordinates_display is
 		-- not affected, therefore the value -1:
 		pointer_x_value.set_size_request (pos_field_width_min, -1);
 		-- See also discussion at:
-		-- <https://stackoverflow.com/questions/24412859/gtk-how-can-the-size-of-a-textview-be-set-manually>
+		-- <https://stackoverflow.com/questions/24412859/
+		-- gtk-how-can-the-size-of-a-textview-be-set-manually>
 		-- for a way to achieve this using a tag.
 
 		gtk_new (pointer_x_buf); -- create a text buffer
-		pointer_x_value.set_justification (JUSTIFY_RIGHT); -- align the value left
+
+		-- align the value left
+		pointer_x_value.set_justification (JUSTIFY_RIGHT);
 		pointer_x_value.set_editable (false); -- the value is not editable
 		pointer_x_value.set_cursor_visible (false); -- do not show a cursor
 
@@ -105,11 +110,13 @@ package body demo_coordinates_display is
 		gtk_new (pointer_y_value);
 		pointer_y_value.set_size_request (pos_field_width_min, -1);
 		gtk_new (pointer_y_buf); -- create a text buffer
-		pointer_y_value.set_justification (JUSTIFY_RIGHT); -- align the value left
+		
+		-- align the value left
+		pointer_y_value.set_justification (JUSTIFY_RIGHT); 
 		pointer_y_value.set_editable (false); -- the value is not editable
 		pointer_y_value.set_cursor_visible (false); -- do not show a cursor
 
-		------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 		
 		-- CURSOR
 		gtk_new (cursor_header, "CURSOR");
@@ -133,7 +140,7 @@ package body demo_coordinates_display is
 		cursor_y_value.set_editable (false);
 		cursor_y_value.set_cursor_visible (false);
 
-		------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 		-- DISTANCES		
 		gtk_new (distances_header, "DISTANCE");
 		gtk_new (distances_dx_label, "dx:");
@@ -179,7 +186,7 @@ package body demo_coordinates_display is
 		distances_angle_value.set_editable (false);
 		distances_angle_value.set_cursor_visible (false);
 
-		------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 		-- GRID
 		gtk_new (grid_header, "GRID");
 		gtk_new (grid_x_label, "x:");
@@ -203,7 +210,7 @@ package body demo_coordinates_display is
 		grid_y_value.set_editable (false);
 		grid_y_value.set_cursor_visible (false);		
 
-		------------------------------------------------------------------------------
+		----------------------------------------------------------------------
 		-- SCALE
 		-- gtk_new (scale_header, "SCALE");
 		gtk_new (scale_label, "scale:");
@@ -216,11 +223,7 @@ package body demo_coordinates_display is
 		scale_value.set_editable (false);
 		scale_value.set_cursor_visible (false);
 
-
-		------------------------------------------------------------------------------
-
-
-		
+		----------------------------------------------------------------------
 		-- Put the items in the table:
 
 		-- MOUSE / POINTER:

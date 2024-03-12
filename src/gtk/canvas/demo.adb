@@ -102,7 +102,8 @@ begin
 		
 
 	put_line ("show all widgets");
-	demo_main_window.main_window.show_all; -- assigns the allocation to the canvas
+	demo_main_window.main_window.show_all; 
+	-- assigns the allocation to the canvas
 
 	
 	demo_scrolled_window.set_initial_scrollbar_settings;

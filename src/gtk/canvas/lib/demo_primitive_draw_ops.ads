@@ -57,7 +57,6 @@ package demo_primitive_draw_ops is
 		context	: in cairo_context; -- CS make context global ?
 		circle	: in type_circle;
 		pos		: in type_vector_model); -- the position of the complex object
-
 	
 	
 end demo_primitive_draw_ops;
