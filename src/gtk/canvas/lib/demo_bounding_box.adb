@@ -207,7 +207,7 @@ package body demo_bounding_box is
 		-- all objects of the database:
 		objects_database.iterate (query_object'access);
 
-		-- The temporary boundinb-box bbox_new in its current
+		-- The temporary bounding-box bbox_new in its current
 		-- state is the so called "inner bounding-box" (IB).
 		
 		-- Now, we expand the temporary bounding-box by the margin
