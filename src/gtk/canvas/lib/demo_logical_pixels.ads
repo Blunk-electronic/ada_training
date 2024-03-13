@@ -49,10 +49,12 @@ package demo_logical_pixels is
 	-- A point, a vector or a distance is expressed in
 	-- so called "logical pixels".	
 
+	-- CS subtype type_logical_pixels renames gdouble ?
+	
 	-- The total distance between two gdouble numbers is
 	-- always positive. So we define the distance as:
 	subtype type_distance_gdouble is gdouble range 0.0 .. gdouble'last;
-
+	-- CS rename to type_logical_pixels_distance ?
 	
 	-- A point, a location vector or a distance vector is
 	-- defined by this type:
