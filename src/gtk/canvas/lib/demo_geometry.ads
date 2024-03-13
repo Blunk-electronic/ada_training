@@ -75,6 +75,12 @@ package demo_geometry is
 		range -100_000.00 .. 100_000.00;
 
 
+	-- A length in the model world is always a 
+	-- positive number:
+	subtype type_length is type_distance_model 
+		range 0.0 .. type_distance_model'last;
+
+	
 	-- This function returns the given distance 
 	-- as string:	
 	function to_string (
