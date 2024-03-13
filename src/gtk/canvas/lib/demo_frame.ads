@@ -46,12 +46,14 @@ package demo_frame is
 	type type_drawing_frame is new type_object with record
 		lines	: pac_lines.list;
 		-- CS texts
+		-- CS separate entry for title block elements
 	end record;
-
+	
 	drawing_frame : type_drawing_frame;
 
+	
 	-- The place where the lower left corner of the 
-	-- drawing frame frame is:
+	-- drawing frame relative to the origin is:
 	drawing_frame_position : type_vector_model := (-150.0, -105.0);
 
 

@@ -103,7 +103,12 @@ package body demo_bounding_box is
 
 			
 		begin
+			-- CS: This simple solution iterates through all lines
+			-- incl. the title block. But since the title block
+			-- is always inside the drawing frame, the elements
+			-- of the title block can be omitted.
 			drawing_frame.lines.iterate (query_line'access);
+			
 			-- CS texts
 		end parse_drawing_frame;
 
