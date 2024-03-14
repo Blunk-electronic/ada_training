@@ -51,11 +51,20 @@ package body demo_frame is
 	begin
 		put_line ("make_drawing_frame");
 
+		-- FRAME POSITION:
+		
 		-- Set the position of the frame (lower left corner):
 		drawing_frame.p := drawing_frame_position;
 		
 		put_line (" frame position:" & to_string (drawing_frame.p));
 
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the frame were placed on position (0;0).
+		-- When the frame is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the frame position (see assignment above).
 		
 		-- These are the four lines that make the 
 		-- main rectangle (landscape format):
