@@ -146,7 +146,21 @@ package body demo_objects is
 		-- object.p := (-100.0, -250.0);
 
 		-- The first dummy object is a square:
+
+		
+		-- POSITION:
+
+		-- Define the position of the square:
 		object.position := (35.0, 30.0);
+
+
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the object was placed on position (0;0).
+		-- When the object is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the object position (see assignment above).
 		
 		line := (s => (-15.0, -10.0), e => (15.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -167,9 +181,22 @@ package body demo_objects is
 		object.lines.clear;
 		object.circles.clear;
 
-		-- The second dummy object is a triangle:
-		object.position := (-30.0, 0.0);
+		-- The 2nd dummy object is a triangle:
 		
+		-- POSITION:
+		
+		-- Define the position of the triangle:
+		object.position := (-30.0, 0.0);
+
+
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the object was placed on position (0;0).
+		-- When the object is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the object position (see assignment above).
+
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
@@ -188,7 +215,7 @@ package body demo_objects is
 		object.lines.clear;
 		object.circles.clear;
 
-		-- The third dummy object is a circle:
+		-- The 3rd dummy object is a circle:
 		object.position := (30.0, -20.0);
 		
 		circle := (c => (0.0, 0.0), r => 10.0, w => 1.0);
@@ -214,7 +241,10 @@ package body demo_objects is
 	begin
 		-- put_line ("add_object");
 
-		-- The object is a square:
+		-- The 1st object is a square:
+
+		
+		-- POSITION:
 
 		-- Define the position of the square:
 		object.position := (-200.0, 0.0);
@@ -223,6 +253,15 @@ package body demo_objects is
 		-- allowed bounding-box dimensions try this:
 		-- object.p := (2500.0, -250.0); -- width exceeded
 		-- object.p := (500.0, -1000.0); -- height exceeded
+
+		
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the object was placed on position (0;0).
+		-- When the object is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the object position (see assignment above).
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
