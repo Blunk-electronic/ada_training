@@ -1618,7 +1618,7 @@ package body demo_callbacks is
 				line : type_line renames element (lc);
 			begin
 				--put_line ("query_line");
-				draw_line (context, line, drawing_frame.p);					
+				draw_line (context, line, drawing_frame.position);
 			end query_line;
 	
 			
@@ -1652,7 +1652,7 @@ package body demo_callbacks is
 					line : type_line renames element (lc);
 				begin
 					--put_line ("query_line");
-					draw_line (context, line, object.p);					
+					draw_line (context, line, object.position);
 				end query_line;
 
 				
@@ -1660,7 +1660,7 @@ package body demo_callbacks is
 					circle : type_circle renames element (cc);
 				begin
 					-- put_line ("query_circle");
-					draw_circle (context, circle, object.p);					
+					draw_circle (context, circle, object.position);
 				end query_circle;
 
 				

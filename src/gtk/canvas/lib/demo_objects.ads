@@ -98,7 +98,7 @@ package demo_objects is
 
 	-- An object in general has a position in x and y:
 	type type_object is abstract tagged record
-		p : type_vector_model;
+		position : type_vector_model;
 	end record;
 
 	

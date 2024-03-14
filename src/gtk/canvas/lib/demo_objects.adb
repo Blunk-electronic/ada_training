@@ -146,7 +146,7 @@ package body demo_objects is
 		-- object.p := (-100.0, -250.0);
 
 		-- The first dummy object is a square:
-		object.p := (35.0, 30.0);
+		object.position := (35.0, 30.0);
 		
 		line := (s => (-15.0, -10.0), e => (15.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -168,7 +168,7 @@ package body demo_objects is
 		object.circles.clear;
 
 		-- The second dummy object is a triangle:
-		object.p := (-30.0, 0.0);
+		object.position := (-30.0, 0.0);
 		
 		line := (s => (-10.0, -10.0), e => (10.0, -10.0), w => 1.0);
 		object.lines.append (line);
@@ -189,7 +189,7 @@ package body demo_objects is
 		object.circles.clear;
 
 		-- The third dummy object is a circle:
-		object.p := (30.0, -20.0);
+		object.position := (30.0, -20.0);
 		
 		circle := (c => (0.0, 0.0), r => 10.0, w => 1.0);
 		object.circles.append (circle);
@@ -217,7 +217,7 @@ package body demo_objects is
 		-- The object is a square:
 
 		-- Define the position of the square:
-		object.p := (-200.0, 0.0);
+		object.position := (-200.0, 0.0);
 		
 		-- In order to simulate a violation of the maximum
 		-- allowed bounding-box dimensions try this:

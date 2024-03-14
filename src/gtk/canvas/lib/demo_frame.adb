@@ -54,9 +54,9 @@ package body demo_frame is
 		-- FRAME POSITION:
 		
 		-- Set the position of the frame (lower left corner):
-		drawing_frame.p := drawing_frame_position;
+		drawing_frame.position := drawing_frame_position;
 		
-		put_line (" frame position:" & to_string (drawing_frame.p));
+		put_line (" frame position:" & to_string (drawing_frame.position));
 
 		-- PRIMITIVE OBJECTS:
 

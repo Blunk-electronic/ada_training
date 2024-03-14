@@ -88,7 +88,7 @@ package body demo_bounding_box is
 				-- Move the box by the position of the
 				-- drawing frame to get the final bounding-box
 				-- of the line candidate:
-				move_by (b.position, drawing_frame.p);
+				move_by (b.position, drawing_frame.position);
 
 				-- If this is the first primitive object,
 				-- then use its bounding-box as seed to start from:
@@ -132,7 +132,7 @@ package body demo_bounding_box is
 				-- Move the box by the position of the
 				-- complex object to get the final bounding-box
 				-- of the line candidate:
-				move_by (b.position, object.p);
+				move_by (b.position, object.position);
 
 				-- If this is the first primitive object,
 				-- then use its bounding-box as seed to start from:
@@ -157,7 +157,7 @@ package body demo_bounding_box is
 				-- Move the box by the position of the
 				-- complex object to get the final bounding-box
 				-- of the circle candidate:
-				move_by (b.position, object.p);
+				move_by (b.position, object.position);
 
 				-- If this is the first primitive object,
 				-- then use its bounding-box as seed to start from:
