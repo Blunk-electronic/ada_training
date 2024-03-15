@@ -198,6 +198,9 @@ package body demo_bounding_box is
 			end if;
 		end update_global_bounding_box;
 		
+
+		-- The offset due to the safety frame:
+		margin_offset : type_vector_model;
 		
 	begin
 		put_line ("compute_bounding_box");
@@ -226,6 +229,7 @@ package body demo_bounding_box is
 		-- Since we regard the safety frame as inside the bounding-box,
 		-- we must move the bounding-box position towards bottom-left
 		-- by the inverted margin_offset:
+		margin_offset := (x	=> margin, y => margin);
 		move_by (bbox_new.position, invert (margin_offset));
 
 		-- Now, bbox_new has become the "outer bounding-box" (OB).

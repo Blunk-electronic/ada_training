@@ -53,12 +53,6 @@ package demo_bounding_box is
 	-- The safety frame has a margin:
 	margin : constant type_distance_model := 5.0;
 
-	-- CS: Explain more detailled or move it to 
-	-- procedure compute_bounding_box:
-	margin_offset : constant type_vector_model := (
-		x	=> margin,
-		y	=> margin);
-
 	
 	-- This is the bounding-box of the model. It is a rectangle
 	-- that encloses all objects of the model and the margins 
