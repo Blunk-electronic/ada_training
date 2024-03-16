@@ -4,33 +4,39 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_fixed_point_3 is
+procedure demo is
 
-	step_width : constant := 0.01;
+	-- This requested step width is not a power of two:
+	step_width : constant := 0.1;
+	-- The nearest step width that is both:
+	-- a power of two AND
+	-- is less than or equal 0.1 
+	-- is 0.0625.
+	-- So a delta of actually 0.0625 applies for our fixed point type.
+	
 	type type_distance is delta step_width range 0.0 .. 100_000.0;
-	for type_distance'small use step_width; 
+	-- for type_distance'small use step_width; 
 	
 	distance : type_distance := 0.0;
 
 	d1, d2, d3 : type_distance := 0.0;
 	
 begin
+	
 --ISSUE 1---------------------------------------------------
 	
-	-- Each iteration of this loop adds 0.01 to the 
+	-- Each iteration of this loop adds 0.1 to the 
 	-- distance. Naturally we would expect a final distance
-	-- of 1000.0 ...
+	-- of 10,000.0 ...
 	
 	for i in 1 .. 100_000 loop
-		distance := distance + 0.01;		
+		distance := distance + step_width;		
 	end loop;
 
 	put_line (type_distance'image (distance));
-	-- ... But we get 781.25 !!
-	-- Why ? Due to the way a float number is represented
-	-- internally, there is a small error.
-	-- This small error adds up in each iteration so 
-	-- that the total error gets even more.
+	-- ... But we get 6,250 !!
+	-- Why ? Due to the actual effective step width of 0.0625
+	-- the result is 100,000 times 0.0625.
 	
 	-- Uncomment the line right after the type declaration
 	-- and try again.
@@ -49,4 +55,4 @@ begin
 
 	-- Try a step_width of 0.001 and try again.
 	
-end types_fixed_point_3;
+end demo;
