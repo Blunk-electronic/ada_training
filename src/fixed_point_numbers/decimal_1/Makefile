@@ -1,13 +1,12 @@
-TARGET = types_fixed_point_4
+TARGET = demo
 
-VPATH = include
 OBJS = $(TARGET).o
 PREFIX = $(HOME)
 BINDIR = $(PREFIX)/bin
 
 # compile
 .adb.o:
-	gcc -c -gnat2012 $< -I $(VPATH)
+	gcc -c -gnat2012 $<
 .SUFFIXES: .adb .o
 
 # link
