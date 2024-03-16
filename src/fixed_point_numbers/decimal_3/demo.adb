@@ -4,7 +4,7 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_fixed_point_6 is
+procedure demo is
 
 	digit_count : constant := 10;
 	range_min : constant := -100.0;
@@ -64,4 +64,4 @@ begin
 		put_line ("R " & type_distance_coarse'image (round (A)));
 	end loop;
 	
-end types_fixed_point_6;
+end demo;

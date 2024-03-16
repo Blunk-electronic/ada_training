@@ -3,7 +3,7 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_fixed_point_5 is
+procedure demo is
 
 	step_width : constant := 0.01;
 	type type_distance is delta step_width digits 8 range 0.0 .. 100_000.00;
@@ -29,4 +29,4 @@ begin
 	put_line (type_distance'image (d3)); 
 	-- ... but we get 1.02 !
 	
-end types_fixed_point_5;
+end demo;
