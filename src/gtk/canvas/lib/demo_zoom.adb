@@ -78,6 +78,8 @@ package body demo_zoom is
 		-- drawing must be dragged-back to the given pointer position:
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
+		-- CS simplify or use vector mathematics specified in 
+		-- package demo_logical_pixels
 
 		if debug then
 			put_line (" T: " & to_string (T));
@@ -117,6 +119,8 @@ package body demo_zoom is
 		-- drawing must be dragged-back to the given pointer position:
 		T.x := -(Z2.x - Z1.x);
 		T.y := -(Z2.y - Z1.y);
+		-- CS simplify or use vector mathematics specified in 
+		-- package demo_logical_pixels
 		
 		if debug then
 			put_line (" T: " & to_string (T));

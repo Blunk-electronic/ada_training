@@ -47,8 +47,7 @@ package demo_zoom is
 	-- There are two kinds of zoom-operations:
 	type type_zoom_direction is (ZOOM_IN, ZOOM_OUT);
 
-
-
+	
 	-- This procedure sets the global translate-offset T that is
 	-- required for a zoom-operation.
 	-- After changing the scale-factor S (either by zoom on mouse pointer or
