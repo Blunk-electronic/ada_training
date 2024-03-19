@@ -379,8 +379,8 @@ package body demo_callbacks is
 				& positive'image (new_size.width)
 				& " /" & positive'image (new_size.height));
 
-			put_line (" dW : " & type_logical_pixels'image (dW));
-			put_line (" dH : " & type_logical_pixels'image (dH));
+			put_line (" dW : " & to_string (dW));
+			put_line (" dH : " & to_string (dH));
 
 			-- put_line ("S1:" & to_string (S1));
 		end show_size;
@@ -726,14 +726,14 @@ package body demo_callbacks is
 		h := to_lp (scrollbar_h_adj.get_value);
 		v := to_lp (scrollbar_v_adj.get_value);
 		-- CS: backup_scrollbar_settings does not work for some reason.
-		-- put_line (type_logical_pixels'image (v));
+		-- put_line (to_string (v));
 		
 		canvas.grab_focus;
 
 		scrollbar_h_adj.set_value (to_gdouble (h));
 		scrollbar_v_adj.set_value (to_gdouble (v));
 		-- CS: restore_scrollbar_settings does not work for some reason.
-		-- put_line (type_logical_pixels'image (v));
+		-- put_line (to_string (v));
 
 
 		-- If no zoom-to-area operation is active, then

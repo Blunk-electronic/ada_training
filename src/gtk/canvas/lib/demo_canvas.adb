@@ -81,9 +81,9 @@ package body demo_canvas is
 	begin
 		if debug then
 			put_line ("compute_canvas_size");
-			put_line (" S_max : " & type_logical_pixels'image (S_max));
-			put_line (" Bw_max: " & type_logical_pixels'image (Bw));
-			put_line (" Bh_max: " & type_logical_pixels'image (Bh));
+			put_line (" S_max : " & to_string (S_max));
+			put_line (" Bw_max: " & to_string (Bw));
+			put_line (" Bh_max: " & to_string (Bh));
 		end if;
 
 		-- compute the maximal base-offset:

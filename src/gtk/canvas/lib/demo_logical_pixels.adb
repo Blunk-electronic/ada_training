@@ -72,8 +72,8 @@ package body demo_logical_pixels is
 		return string
 	is begin
 		--return "vector logical pixels x/y: "
-		return type_logical_pixels'image (v.x) & "/" 
-			& type_logical_pixels'image (v.y);
+		return to_string (v.x) & "/" 
+			& to_string (v.y);
 	end to_string;
 
 	

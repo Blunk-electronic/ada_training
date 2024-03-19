@@ -194,16 +194,16 @@ package body demo_scrolled_window is
 		if debug then
 			put_line (" vertical:");
 			put_line ("  lower" & 
-				type_logical_pixels'image (scrollbar_v_init.lower));
+				to_string (scrollbar_v_init.lower));
 
 			put_line ("  upper" & 
-				type_logical_pixels'image (scrollbar_v_init.upper));
+				to_string (scrollbar_v_init.upper));
 
 			put_line ("  page " & 
-				type_logical_pixels'image (scrollbar_v_init.page_size));
+				to_string (scrollbar_v_init.page_size));
 
 			put_line ("  value" & 
-				type_logical_pixels'image (scrollbar_v_init.value));
+				to_string (scrollbar_v_init.value));
 		end if;
 		
 		scrollbar_h_init.lower := F.x;
@@ -218,16 +218,16 @@ package body demo_scrolled_window is
 		if debug then
 			put_line (" horizontal:");
 			put_line ("  lower" & 
-				type_logical_pixels'image (scrollbar_h_init.lower));
+				to_string (scrollbar_h_init.lower));
 
 			put_line ("  upper" &
-				type_logical_pixels'image (scrollbar_h_init.upper));
+				to_string (scrollbar_h_init.upper));
 
 			put_line ("  page " & 
-				type_logical_pixels'image (scrollbar_h_init.page_size));
+				to_string (scrollbar_h_init.page_size));
 
 			put_line ("  value" & 
-				type_logical_pixels'image (scrollbar_h_init.value));
+				to_string (scrollbar_h_init.value));
 		end if;
 
 	
@@ -303,10 +303,10 @@ package body demo_scrolled_window is
 		
 	begin
 		put_line ("vertical scrollbar adjustments:");
-		put_line (" lower" & type_logical_pixels'image (v_lower));
-		put_line (" value" & type_logical_pixels'image (v_value));
-		put_line (" page " & type_logical_pixels'image (v_page));
-		put_line (" upper" & type_logical_pixels'image (v_upper));
+		put_line (" lower" & to_string (v_lower));
+		put_line (" value" & to_string (v_value));
+		put_line (" page " & to_string (v_page));
+		put_line (" upper" & to_string (v_upper));
 	end show_adjustments_v;
 				  
 
@@ -319,10 +319,10 @@ package body demo_scrolled_window is
 			to_lp (scrollbar_h_adj.get_page_size);
 	begin
 		put_line ("horizontal scrollbar adjustments:");
-		put_line (" lower" & type_logical_pixels'image (h_lower));
-		put_line (" value" & type_logical_pixels'image (h_value));
-		put_line (" page " & type_logical_pixels'image (h_page));
-		put_line (" upper" & type_logical_pixels'image (h_upper));
+		put_line (" lower" & to_string (h_lower));
+		put_line (" value" & to_string (h_value));
+		put_line (" page " & to_string (h_page));
+		put_line (" upper" & to_string (h_upper));
 	end show_adjustments_h;
 
 
@@ -386,14 +386,14 @@ package body demo_scrolled_window is
 		dVL, dVU : type_logical_pixels;
 	begin
 		if debug then
-			put_line ("VL     " & type_logical_pixels'image (VL));
-			put_line ("VU     " & type_logical_pixels'image (VU));
+			put_line ("VL     " & to_string (VL));
+			put_line ("VU     " & to_string (VU));
 
-			put_line ("C1.TL.y" & type_logical_pixels'image (C1.TL.y));
-			put_line ("C1.BL.y" & type_logical_pixels'image (C1.BL.y));
+			put_line ("C1.TL.y" & to_string (C1.TL.y));
+			put_line ("C1.BL.y" & to_string (C1.BL.y));
 
-			put_line ("C2.TL.y" & type_logical_pixels'image (C2.TL.y));
-			put_line ("C2.BL.y" & type_logical_pixels'image (C2.BL.y));
+			put_line ("C2.TL.y" & to_string (C2.TL.y));
+			put_line ("C2.BL.y" & to_string (C2.BL.y));
 		end if;
 		
 		dHL := C2.BL.x - C1.BL.x;
@@ -403,8 +403,8 @@ package body demo_scrolled_window is
 		dVU := C2.BL.y - C1.BL.y;
 
 		if debug then
-			put_line ("dVL    " & type_logical_pixels'image (dVL));
-			put_line ("dVU    " & type_logical_pixels'image (dVU));
+			put_line ("dVL    " & to_string (dVL));
+			put_line ("dVU    " & to_string (dVU));
 		end if;
 		
 
