@@ -85,6 +85,8 @@ package body demo_cursor is
 				cursor.position.y := cursor.position.y - grid.spacing.y;
 		end case;
 
+		-- CS Limit cursor position to range of type_distance_model
+		-- Exception handler ?
 
 		-- If the cursor is outside the visible area, then the
 		-- canvas must be shifted with the cursor:
