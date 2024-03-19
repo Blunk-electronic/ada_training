@@ -112,8 +112,26 @@ package body demo_geometry is
 		dy : type_float := type_float (p2.y - p1.y);
 		a : type_float;
 	begin
-		a := arctan (dy, dx, 360.0);
+		-- For a tangens operations, dx must not
+		-- be zero. If it is zero, then dy determines
+		-- whether the result is 90 or -90 degree:
+		if dx /= 0.0 then
+			a := arctan (dy, dx, 360.0);
+		else
+			if dy > 0.0 then
+				a := 90.0;
+			else
+				a := -90.0;
+			end if;
+		end if;
+		
 		return type_rotation_model (a);
+
+		exception
+			when ADA.NUMERICS.ARGUMENT_ERROR => 
+				put_line ("tangens error");
+				raise;
+		
 	end get_angle;
 
 
