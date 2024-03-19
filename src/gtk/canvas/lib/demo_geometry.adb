@@ -63,7 +63,7 @@ package body demo_geometry is
 		v : in type_vector_model)
 		return string
 	is begin
-		return "vector model x/y: "
+		return "x/y: "
 			& to_string (v.x) & "/" & to_string (v.y);
 	end to_string;
 
@@ -123,8 +123,9 @@ package body demo_geometry is
 		box : in type_area)
 		return string
 	is begin
-		return "area (x/y/w/h): "
-			& to_string (box.position) & "/"
+		return "(x/y/w/h): "
+			& to_string (box.position.x) & "/"
+			& to_string (box.position.y) & "/"
 			& to_string (box.width) & "/"
 			& to_string (box.height);
 	end to_string;
