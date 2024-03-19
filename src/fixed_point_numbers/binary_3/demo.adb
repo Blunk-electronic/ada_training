@@ -15,8 +15,6 @@ procedure demo is
 	-- So a delta of actually 0.0625 applies for our fixed point type.
 	
 	type type_distance is delta step_width range 0.0 .. 100_000.0;
-
-	-- This enforces the step width:
 	-- for type_distance'small use step_width; 
 	
 	distance : type_distance := 0.0;
@@ -40,8 +38,8 @@ begin
 	-- Why ? Due to the actual effective step width of 0.0625
 	-- the result is 100,000 times 0.0625.
 	
-	-- Uncomment the statement in line 20 
-	-- (after the type declaration) and try again.
+	-- Uncomment the line right after the type declaration
+	-- and try again.
 
 --ISSUE 2---------------------------------------------------
 
