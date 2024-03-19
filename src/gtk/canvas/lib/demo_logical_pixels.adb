@@ -41,6 +41,14 @@ with ada.text_io;				use ada.text_io;
 
 package body demo_logical_pixels is
 
+	function to_string (
+		lp : in type_logical_pixels)
+		return string
+	is begin
+		return type_logical_pixels'image (lp);
+	end to_string;
+
+	
 
 	function to_lp (
 		gd : in glib.gdouble)
