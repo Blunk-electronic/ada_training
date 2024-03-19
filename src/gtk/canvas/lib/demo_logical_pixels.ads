@@ -67,12 +67,11 @@ package demo_logical_pixels is
 		return glib.gdouble;
 
 	
-	
-	-- The total distance between two gdouble numbers is
-	-- always positive. So we define the distance as:
-	subtype type_distance_gdouble is type_logical_pixels
+	-- Use this type for distances, lengths, scrollbar settings, ...
+	-- because such things are always positive numbers:
+	subtype type_logical_pixels_positive is type_logical_pixels
 		range 0.0 .. type_logical_pixels'last;
-	-- CS rename to type_logical_pixels_distance ?
+
 	
 	-- A point, a location vector or a distance vector is
 	-- defined by this type:

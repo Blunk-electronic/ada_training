@@ -65,13 +65,13 @@ package demo_conversions is
 	-- a canvas distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_distance_model)
-		return type_distance_gdouble;
+		return type_logical_pixels_positive;
 
 	
 	-- Converts the given canvas distance to
 	-- a model distance according to the current scale-factor S:
 	function to_distance (
-		d : in type_distance_gdouble)
+		d : in type_logical_pixels_positive)
 		return type_distance_model;
 
 

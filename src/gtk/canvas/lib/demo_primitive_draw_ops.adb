@@ -114,7 +114,7 @@ package body demo_primitive_draw_ops is
 		-- for the center:
 		m : type_vector_gdouble;
 
-		r : type_distance_gdouble;
+		r : type_logical_pixels_positive;
 		
 		-- The bounding-box of the circle. It is required
 		-- for the area and size check:
