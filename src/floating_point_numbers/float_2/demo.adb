@@ -3,7 +3,7 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_float_2 is
+procedure demo is
 
 	angle : float := 10.0;
 	
@@ -16,4 +16,4 @@ begin
 	angle := angle * 3.0;
 	put_line (float'image (angle));	-- 1.00000E+01
 
-end types_float_2;
+end demo;

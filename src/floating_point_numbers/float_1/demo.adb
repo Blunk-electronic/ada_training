@@ -4,7 +4,7 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_float is
+procedure demo is
 
 	f0 : float := 5.5; 	-- accuracy machine depended
 						-- you get any accuracy
@@ -35,4 +35,4 @@ begin
 	put_line (float_1'image (f1));	-- 5.5E+00
 	put_line (float_2'image (f2));	-- 1.1E+00
 	
-end types_float;
+end demo;
