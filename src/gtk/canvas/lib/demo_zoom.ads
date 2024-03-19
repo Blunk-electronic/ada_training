@@ -36,7 +36,6 @@
 --   history of changes:
 --
 
-with glib;						use glib;
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 with demo_scale_factor;			use demo_scale_factor;
@@ -64,14 +63,26 @@ package demo_zoom is
 	-- expanding to the upper-right (on zoom-in) or shrinking toward the 
 	-- lower-left:
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;		-- the scale factor before zoom
-		S2	: in type_scale_factor;		-- the scale factor after zoom
-		Z1	: in type_vector_gdouble);	-- the zoom center as canvas point
+		-- The scale factor before zoom:
+		S1	: in type_scale_factor;		
 
+		-- The scale factor after zoom:
+		S2	: in type_scale_factor;		
+
+		-- The zoom center as canvas point:
+		Z1	: in type_logical_pixels_vector); 
+
+
+	
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;	 -- the scale factor before zoom
-		S2	: in type_scale_factor;	 -- the scale factor after zoom
-		M	: in type_vector_model); -- the zoom center as a real model point
+		-- The scale factor before zoom:
+		S1	: in type_scale_factor;
+
+		-- The scale factor after zoom:
+		S2	: in type_scale_factor;
+
+		-- The zoom center as a real model point:
+		M	: in type_vector_model); 
 
 
 
@@ -116,8 +127,8 @@ package demo_zoom is
 		started	: boolean := false;
 
 		-- The corners of the selected area:
-		l1		: type_vector_gdouble; -- the start point
-		l2		: type_vector_gdouble; -- the end point
+		l1		: type_logical_pixels_vector; -- the start point
+		l2		: type_logical_pixels_vector; -- the end point
 	end record;
 
 

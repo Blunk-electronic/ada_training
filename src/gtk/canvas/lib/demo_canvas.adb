@@ -66,7 +66,7 @@ package body demo_canvas is
 		debug : boolean := true;
 
 		-- The maximal base-offset:
-		F_max : type_vector_gdouble;
+		F_max : type_logical_pixels_vector;
 		
 		-- The maximum scale factor:
 		S_max : constant type_logical_pixels := 

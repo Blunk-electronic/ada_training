@@ -162,7 +162,7 @@ package body demo_callbacks is
 		event_handled : boolean := true;
 
 		-- The point where the operator has clicked:
-		point : constant type_vector_gdouble :=
+		point : constant type_logical_pixels_vector :=
 			(to_lp (event.x), to_lp (event.y));
 	begin
 		null;
@@ -690,7 +690,7 @@ package body demo_callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- has clicked:
-		cp : constant type_vector_gdouble := 
+		cp : constant type_logical_pixels_vector := 
 			(to_lp (event.x), to_lp (event.y));
 
 		-- Convert the canvas point to the corresponding
@@ -779,7 +779,7 @@ package body demo_callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- released the button:
-		cp : constant type_vector_gdouble := 
+		cp : constant type_logical_pixels_vector := 
 			(to_lp (event.x), to_lp (event.y));
 
 		-- Convert the canvas point to the corresponding
@@ -898,7 +898,7 @@ package body demo_callbacks is
 		use glib;
 		event_handled : boolean := true;
 
-		cp : constant type_vector_gdouble := 
+		cp : constant type_logical_pixels_vector := 
 			(to_lp (event.x), to_lp (event.y));
 
 		-- Get the real model coordinates:
@@ -1046,7 +1046,7 @@ package body demo_callbacks is
 			
 			-- The given point on the canvas where the operator is 
 			-- zooming in or out:
-			Z : constant type_vector_gdouble := 
+			Z : constant type_logical_pixels_vector := 
 				(to_lp (event.x), to_lp (event.y));
 
 			-- The corners of the bounding-box on the canvas before 
@@ -1230,7 +1230,7 @@ package body demo_callbacks is
 		-- area. Since it is about two simple lines we draw them
 		-- always:
 		procedure draw_origin is
-			cp : type_vector_gdouble := to_canvas (origin, S, true);
+			cp : type_logical_pixels_vector := to_canvas (origin, S, true);
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 			set_line_width (context, to_gdouble (origin_linewidth));
@@ -1351,7 +1351,7 @@ package body demo_callbacks is
 			--    (or alternatively a very small cross) at MP.
 			procedure draw_dots is 
 				MP : type_vector_model;
-				CP : type_vector_gdouble;
+				CP : type_logical_pixels_vector;
 			begin
 				-- Set the linewidth of the dots:
 				set_line_width (context, to_gdouble (grid_width_dots));
@@ -1416,8 +1416,8 @@ package body demo_callbacks is
 				MP1 : type_vector_model;
 				MP2 : type_vector_model;
 
-				CP1 : type_vector_gdouble;
-				CP2 : type_vector_gdouble;
+				CP1 : type_logical_pixels_vector;
+				CP2 : type_logical_pixels_vector;
 
 				ax1f : type_distance_model := visible_area.position.x;
 				ax2f : type_distance_model := ax1f + visible_area.width;
@@ -1512,7 +1512,7 @@ package body demo_callbacks is
 		-- drawn always, regardless whether it is in the visible
 		-- area or not:
 		procedure draw_cursor is
-			cp : type_vector_gdouble := 
+			cp : type_logical_pixels_vector := 
 				to_canvas (cursor.position, S, true);
 
 			-- These are the start and stop positions for the
@@ -1600,8 +1600,8 @@ package body demo_callbacks is
 			x, y : type_logical_pixels;
 			w, h : type_logical_pixels;
 
-			l1 : type_vector_gdouble renames zoom_area.l1;
-			l2 : type_vector_gdouble renames zoom_area.l2;
+			l1 : type_logical_pixels_vector renames zoom_area.l1;
+			l2 : type_logical_pixels_vector renames zoom_area.l2;
 		begin
 			if zoom_area.started then
 

@@ -44,7 +44,7 @@ package demo_base_offset is
 	-- The place on the canvas where the model 
 	-- coordinates system has its origin.
 	-- It is a global variable. We call it "base-offset":
-	F : type_vector_gdouble;
+	F : type_logical_pixels_vector;
 
 	-- Sets the global base-offset F according to the current
 	-- bounding-box and the maximal allowed scale-factor:

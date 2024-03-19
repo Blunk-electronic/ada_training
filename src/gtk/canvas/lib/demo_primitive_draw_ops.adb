@@ -60,7 +60,7 @@ package body demo_primitive_draw_ops is
 
 		-- When the line is drawn, we need canvas points
 		-- for start and end:
-		c1, c2 : type_vector_gdouble; -- start and end of the line
+		c1, c2 : type_logical_pixels_vector; -- start and end of the line
 
 		-- The bounding-box of the line. It is required
 		-- for the area and size check:
@@ -112,7 +112,7 @@ package body demo_primitive_draw_ops is
 
 		-- When the circle is drawn, we need a canvas point
 		-- for the center:
-		m : type_vector_gdouble;
+		m : type_logical_pixels_vector;
 
 		r : type_logical_pixels_positive;
 		

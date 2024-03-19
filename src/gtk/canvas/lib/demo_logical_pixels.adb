@@ -60,7 +60,7 @@ package body demo_logical_pixels is
 	
 	
 	function to_string (
-		v : in type_vector_gdouble)
+		v : in type_logical_pixels_vector)
 		return string
 	is begin
 		--return "vector logical pixels x/y: "

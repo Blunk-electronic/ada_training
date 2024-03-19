@@ -89,7 +89,7 @@ package body demo_conversions is
 
 	
 	function to_model (
-		point	: in type_vector_gdouble;
+		point	: in type_logical_pixels_vector;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false)
 		return type_vector_model
@@ -132,10 +132,10 @@ package body demo_conversions is
 		point 	: in type_vector_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false)
-		return type_vector_gdouble
+		return type_logical_pixels_vector
 	is
 		P : type_vector_model := point;
-		result : type_vector_gdouble;
+		result : type_logical_pixels_vector;
 	begin
 		-- If real model coordinates are given, then they must
 		-- be compensated by the inverted bounding-box position

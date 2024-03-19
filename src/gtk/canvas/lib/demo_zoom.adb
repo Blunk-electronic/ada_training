@@ -55,7 +55,7 @@ package body demo_zoom is
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
 		S2	: in type_scale_factor;
-		Z1	: in type_vector_gdouble)
+		Z1	: in type_logical_pixels_vector)
 	is 
 		debug : boolean := false;
 		
@@ -63,7 +63,7 @@ package body demo_zoom is
 		-- according to the scale factor before zoom:
 		M : constant type_vector_model := to_model (Z1, S1);
 
-		Z2 : type_vector_gdouble;
+		Z2 : type_logical_pixels_vector;
 	begin			
 		if debug then
 			put_line ("set_translation_for_zoom");
@@ -98,12 +98,13 @@ package body demo_zoom is
 		
 		-- Compute the canvas point corresponding to the given
 		-- real model point with the scale factor before zoom:
-		Z1 : constant type_vector_gdouble := to_canvas (M, S1, real => true);
+		Z1 : constant type_logical_pixels_vector :=
+			to_canvas (M, S1, real => true);
 
 		-- Convert the given model point to a virtual point in the model:
 		V : constant type_vector_model := to_virtual (M);
 		
-		Z2 : type_vector_gdouble;
+		Z2 : type_logical_pixels_vector;
 	begin			
 		if debug then
 			put_line ("set_translation_for_zoom");

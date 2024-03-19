@@ -75,7 +75,7 @@ package demo_logical_pixels is
 	
 	-- A point, a location vector or a distance vector is
 	-- defined by this type:
-	type type_vector_gdouble is record
+	type type_logical_pixels_vector is record
 		x, y : type_logical_pixels := 0.0;
 	end record;
 
@@ -83,7 +83,7 @@ package demo_logical_pixels is
 	-- This function outputs the x and y component of a vector
 	-- on the console:
 	function to_string (
-		v : in type_vector_gdouble)
+		v : in type_logical_pixels_vector)
 		return string;
 
 

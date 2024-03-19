@@ -373,7 +373,7 @@ package body demo_coordinates_display is
 		use demo_canvas;
 		
 		px, py : gint; -- the pointer position
-		cp : type_vector_gdouble;
+		cp : type_logical_pixels_vector;
 		mp : type_vector_model;
 
 		dx, dy : type_distance_model;

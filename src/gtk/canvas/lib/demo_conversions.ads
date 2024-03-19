@@ -82,7 +82,7 @@ package demo_conversions is
 	-- If a real model point is required, then the position
 	-- of the current bonding-box is also taken into account:
 	function to_model (
-		point	: in type_vector_gdouble;
+		point	: in type_logical_pixels_vector;
 		scale	: in type_scale_factor;
 		real 	: in boolean := false) 
 		return type_vector_model;
@@ -98,7 +98,7 @@ package demo_conversions is
 		point 	: in type_vector_model;
 		scale	: in type_scale_factor;
 		real	: in boolean := false)
-		return type_vector_gdouble;
+		return type_logical_pixels_vector;
 
 
 
@@ -106,7 +106,7 @@ package demo_conversions is
 	-- bounding-box in canvas coordinates. This composite type serves this
 	-- purpose:
 	type type_bounding_box_corners is record
-		BL, BR, TL, TR : type_vector_gdouble;
+		BL, BR, TL, TR : type_logical_pixels_vector;
 	end record;
 	
 	-- This function returns the current corners of the bounding-box

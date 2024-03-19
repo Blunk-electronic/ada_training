@@ -43,7 +43,7 @@ package demo_translate_offset is
 
 	-- The global translate-offset by which all draw operations on the canvas
 	-- are translated when the operator zooms on the pointer or the cursor:
-	T : type_vector_gdouble := (0.0, 0.0);
+	T : type_logical_pixels_vector := (0.0, 0.0);
 	
 	
 end demo_translate_offset;
