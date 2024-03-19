@@ -47,25 +47,27 @@ package demo_grid is
 	type type_grid_style is (STYLE_DOTS, STYLE_LINES);
 
 	-- The linewidth of the grid lines:
-	grid_width_lines : constant type_logical_pixels := 0.5;
+	grid_width_lines : constant type_logical_pixels_positive := 0.5;
 
 	-- The linewidth of the circles which form the grid dots:
-	grid_width_dots : constant type_logical_pixels := 1.0;
-	grid_radius_dots : constant type_logical_pixels := 0.5;
+	grid_width_dots : constant type_logical_pixels_positive := 1.0;
+	grid_radius_dots : constant type_logical_pixels_positive := 0.5;
 
 	
 	-- The arm length of a grid point if drawn as a cross:
-	grid_cross_arm_length : constant type_logical_pixels := 1.0;
+	grid_cross_arm_length : constant type_logical_pixels_positive := 1.0;
 	
 
 	-- The default grid size in in the model domain:
-	grid_spacing_default : constant type_distance_model := 10.0;
+	grid_spacing_default : constant type_distance_model := 10.0; 
+	-- CS subtype ?
 
 	-- If the displayed grid is too dense, then it makes no
 	-- sense to draw a grid. For this reason we define a minimum
 	-- distance between grid rows and columns. If the spacing becomes
 	-- greater than this threshold then the grid will be drawn:
-	grid_spacing_min : constant type_logical_pixels := 10.0;
+	grid_spacing_min : constant type_logical_pixels_positive := 10.0;
+
 	
 	type type_grid is record
 		on		: type_grid_on_off := GRID_ON;
@@ -96,7 +98,7 @@ package demo_grid is
 	-- Then the lesser one, either x or y will be returned:
 	function get_grid_spacing (
 		grid : in type_grid)
-		return type_logical_pixels;
+		return type_logical_pixels_positive;
 
 	
 end demo_grid;

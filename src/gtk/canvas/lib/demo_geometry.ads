@@ -75,7 +75,7 @@ package demo_geometry is
 
 	-- A length in the model world is always a 
 	-- positive number:
-	subtype type_length is type_distance_model 
+	subtype type_length is type_distance_model -- CS rename to type_distance_model_positive ?
 		range 0.0 .. type_distance_model'last;
 
 	
@@ -137,7 +137,7 @@ package demo_geometry is
 	-- model points. Uses internally a float type:
 	function get_distance (
 		p1, p2 : in type_vector_model)
-		return type_distance_model;
+		return type_distance_model; -- CS use subtype
 	
 
 	-- Returns the angle of direection from the given 
@@ -152,8 +152,10 @@ package demo_geometry is
 	
 	-- The origin is a small cross at model position (0;0).
 	origin				: constant type_vector_model := (0.0, 0.0);
-	origin_size			: constant type_logical_pixels := 10.0; -- the arm-length
-	origin_linewidth	: constant type_logical_pixels := 1.0;
+
+	-- the arm-length:
+	origin_size			: constant type_logical_pixels_positive := 10.0;
+	origin_linewidth	: constant type_logical_pixels_positive := 1.0;
 
 
 

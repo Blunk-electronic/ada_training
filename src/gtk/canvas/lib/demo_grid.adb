@@ -67,14 +67,14 @@ package body demo_grid is
 
 	function get_grid_spacing (
 		grid : in type_grid)
-		return type_logical_pixels
+		return type_logical_pixels_positive
 	is
 		sg : constant type_logical_pixels := type_logical_pixels (S);
 		x, y : type_logical_pixels;
 	begin
 		x := type_logical_pixels (grid.spacing.x) * sg;
 		y := type_logical_pixels (grid.spacing.y) * sg;
-		return type_logical_pixels'min (x, y);
+		return type_logical_pixels_positive'min (x, y);
 	end get_grid_spacing;
 
 	

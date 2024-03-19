@@ -64,7 +64,7 @@ package demo_conversions is
 	-- Converts the given model distance to
 	-- a canvas distance according to the current scale-factor S:
 	function to_distance (
-		d : in type_distance_model)
+		d : in type_distance_model) -- CS use subtype
 		return type_logical_pixels_positive;
 
 	
@@ -72,7 +72,7 @@ package demo_conversions is
 	-- a model distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_logical_pixels_positive)
-		return type_distance_model;
+		return type_distance_model; -- CS use subtype
 
 
 	

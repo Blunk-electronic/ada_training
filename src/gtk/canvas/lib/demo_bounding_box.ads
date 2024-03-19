@@ -51,7 +51,7 @@ package demo_bounding_box is
 	-- is regarded as part of the model and thus inside
 	-- the bounding-box.
 	-- The safety frame has a margin:
-	margin : constant type_distance_model := 5.0;
+	margin : constant type_distance_model := 5.0; -- CS use subtype
 
 	
 	-- This is the bounding-box of the model. It is a rectangle
@@ -63,7 +63,7 @@ package demo_bounding_box is
 	-- of the bounding-box of the model:
 	bounding_box_width_max  : constant type_distance_model := 2_000.0;
 	bounding_box_height_max : constant type_distance_model := 1_000.0;
-
+	-- CS use subtype
 
 
 
@@ -77,8 +77,8 @@ package demo_bounding_box is
 	-- composite type is required:
 	type type_bounding_box_error is record
 		size_exceeded	: boolean := false;
-		width			: type_distance_model := 0.0;
-		height			: type_distance_model := 0.0;
+		width			: type_distance_model := 0.0; -- CS use subtype
+		height			: type_distance_model := 0.0; -- CS use subtype
 		-- CS ? position : type_vector_model;
 	end record;
 

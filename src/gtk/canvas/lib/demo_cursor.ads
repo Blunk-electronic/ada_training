@@ -48,11 +48,11 @@ package demo_cursor is
 		position	: type_vector_model := origin;
 
 		-- For drawing the cursor:
-		linewidth_1	: type_logical_pixels := 1.0;
-		linewidth_2	: type_logical_pixels := 4.0;
-		length_1	: type_logical_pixels := 20.0;
-		length_2	: type_logical_pixels := 20.0;
-		radius		: type_logical_pixels := 25.0;
+		linewidth_1	: type_logical_pixels_positive := 1.0;
+		linewidth_2	: type_logical_pixels_positive := 4.0;
+		length_1	: type_logical_pixels_positive := 20.0;
+		length_2	: type_logical_pixels_positive := 20.0;
+		radius		: type_logical_pixels_positive := 25.0;
 		
 		-- CS: blink, color, ...
 	end record;

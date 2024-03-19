@@ -128,7 +128,7 @@ package demo_zoom is
 	
 	-- This is the linewidth of the rectangle that
 	-- marks the selected zoom area:
-	zoom_area_linewidth : constant gdouble := 2.0;
+	zoom_area_linewidth : constant type_logical_pixels_positive := 2.0;
 
 
 	-- This procedure resets the zoom_area (see above)

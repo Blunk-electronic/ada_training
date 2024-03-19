@@ -51,7 +51,7 @@ package demo_objects is
 	-- The simplest object in the model world is a line:
 	type type_line is record
 		s, e : type_vector_model; -- start and end point
-		w : type_distance_model; -- linewidth
+		w : type_distance_model; -- linewidth  -- CS subtype
 	end record;
 
 	
@@ -73,8 +73,8 @@ package demo_objects is
 	-- Another primitive object is a circle:
 	type type_circle is record
 		c : type_vector_model;   -- the center
-		r : type_distance_model; -- the radius
-		w : type_distance_model; -- the linewidth
+		r : type_distance_model; -- the radius -- CS subtype
+		w : type_distance_model; -- the linewidth -- CS subtype
 		-- CS: fill status
 	end record;
 

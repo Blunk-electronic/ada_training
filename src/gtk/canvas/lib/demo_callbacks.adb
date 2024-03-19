@@ -1629,7 +1629,7 @@ package body demo_callbacks is
 				w := abs (l1.x - l2.x);
 				h := abs (l1.y - l2.y);
 
-				set_line_width (context, zoom_area_linewidth);
+				set_line_width (context, to_gdouble (zoom_area_linewidth));
 				
 				rectangle (context, 
 					to_gdouble (x),
