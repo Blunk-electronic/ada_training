@@ -37,7 +37,7 @@
 --
 
 with ada.text_io;				use ada.text_io;
-with glib;						use glib;
+with demo_logical_pixels;		use demo_logical_pixels;
 with demo_bounding_box;			use demo_bounding_box;
 with demo_canvas;				use demo_canvas;
 with demo_scale_factor;			use demo_scale_factor;
@@ -48,14 +48,19 @@ package body demo_base_offset is
 	procedure set_base_offset is
 		debug : boolean := false;
 		
-		x, y : gdouble;
+		x, y : type_logical_pixels;
 
 		-- The maximum scale factor:
-		S_max : constant gdouble := gdouble (type_scale_factor'last);
+		S_max : constant type_logical_pixels := 
+			type_logical_pixels (type_scale_factor'last);
 
 		-- The width and height of the bounding-box:
-		Bh : constant gdouble := gdouble (bounding_box.height);
-		Bw : constant gdouble := gdouble (bounding_box.width);
+		Bh : constant type_logical_pixels := 
+			type_logical_pixels (bounding_box.height);
+		
+		Bw : constant type_logical_pixels := 
+			type_logical_pixels (bounding_box.width);
+		
 	begin
 		x :=   Bw * (S_max - 1.0);
 		y := - Bh * S_max;
@@ -65,8 +70,8 @@ package body demo_base_offset is
 
 		-- Output a warning if the base-offset is outside
 		-- the canvas dimensions:
-		if  x >   gdouble (canvas_size.width) or
-			y < - gdouble (canvas_size.height) then
+		if  x >   type_logical_pixels (canvas_size.width) or
+			y < - type_logical_pixels (canvas_size.height) then
 
 			put_line ("WARNING: base-offset outside canvas !");
 			put_line (" F: " & to_string (F));

@@ -43,7 +43,6 @@ with demo_geometry;				use demo_geometry;
 with demo_window_dimensions;	use demo_window_dimensions;
 
 
-
 package demo_canvas is
 
 	-- This is the canvas where all the drawing takes place:

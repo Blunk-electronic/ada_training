@@ -42,19 +42,37 @@ with ada.text_io;				use ada.text_io;
 package body demo_logical_pixels is
 
 
+	function to_lp (
+		gd : in glib.gdouble)
+		return type_logical_pixels
+	is begin
+		return type_logical_pixels (gd);
+	end to_lp;
+
+	
+	function to_gdouble (
+		lp : in type_logical_pixels)
+		return glib.gdouble
+	is begin
+		return glib.gdouble (lp);
+	end to_gdouble;
+
+	
+	
 	function to_string (
 		v : in type_vector_gdouble)
 		return string
 	is begin
-		--return "vector gdouble x/y: "
-		return gdouble'image (v.x) & "/" & gdouble'image (v.y);
+		--return "vector logical pixels x/y: "
+		return type_logical_pixels'image (v.x) & "/" 
+			& type_logical_pixels'image (v.y);
 	end to_string;
 
 	
 	
 	procedure clip_max (
-		value	: in out gdouble;
-		limit	: in gdouble)
+		value	: in out type_logical_pixels;
+		limit	: in type_logical_pixels)
 	is begin
 		if value > limit then
 			value := limit;
@@ -63,8 +81,8 @@ package body demo_logical_pixels is
 	
 	
 	procedure clip_min (
-		value	: in out gdouble;
-		limit	: in gdouble)
+		value	: in out type_logical_pixels;
+		limit	: in type_logical_pixels)
 	is begin
 		if value < limit then
 			value := limit;

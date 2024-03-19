@@ -36,9 +36,8 @@
 --   history of changes:
 --
 
-with glib;						use glib;
 with gdk.event;
-
+with glib;
 with ada.text_io;				use ada.text_io;
 
 with demo_main_window;
@@ -70,17 +69,21 @@ package body demo_canvas is
 		F_max : type_vector_gdouble;
 		
 		-- The maximum scale factor:
-		S_max : constant gdouble := gdouble (type_scale_factor'last);
+		S_max : constant type_logical_pixels := 
+			type_logical_pixels (type_scale_factor'last);
 
 		-- The maximum width and height of the bounding-box:
-		Bw : constant gdouble := gdouble (bounding_box_width_max);
-		Bh : constant gdouble := gdouble (bounding_box_height_max);
+		Bw : constant type_logical_pixels := 
+			type_logical_pixels (bounding_box_width_max);
+		
+		Bh : constant type_logical_pixels := 
+			type_logical_pixels (bounding_box_height_max);
 	begin
 		if debug then
 			put_line ("compute_canvas_size");
-			put_line (" S_max : " & gdouble'image (S_max));
-			put_line (" Bw_max: " & gdouble'image (Bw));
-			put_line (" Bh_max: " & gdouble'image (Bh));
+			put_line (" S_max : " & type_logical_pixels'image (S_max));
+			put_line (" Bw_max: " & type_logical_pixels'image (Bw));
+			put_line (" Bh_max: " & type_logical_pixels'image (Bh));
 		end if;
 
 		-- compute the maximal base-offset:
@@ -105,6 +108,7 @@ package body demo_canvas is
 
 	
 	procedure show_canvas_size is 
+		use glib;
 		a : gtk_allocation;
 		width, height : gint;
 	begin
@@ -123,6 +127,7 @@ package body demo_canvas is
 		use demo_main_window;
 		use demo_scrolled_window;
 		use gdk.event;
+		use glib;
 	begin
 		-- Set up the drawing area:
 		gtk_new (canvas);
@@ -168,67 +173,68 @@ package body demo_canvas is
 		
 		-- Convert the given model distance to 
 		-- a canvas distance:
-		d : constant gdouble := gdouble (distance) * gdouble (S);
+		d : constant type_logical_pixels := 
+			type_logical_pixels (distance) * type_logical_pixels (S);
 
 		-- Scratch values for upper limit, lower limit and value
 		-- of scrollbars:
-		u, l, v : gdouble;
+		u, l, v : type_logical_pixels;
 	begin
 		case direction is
 			when DIR_RIGHT =>
 				-- Get the maximal allowed value for the
 				-- horizontal scrollbar:
-				u := scrollbar_h_adj.get_upper;
+				u := to_lp (scrollbar_h_adj.get_upper);
 
 				-- Compute the required scrollbar position:
-				v := scrollbar_h_adj.get_value + d;
+				v := to_lp (scrollbar_h_adj.get_value) + d;
 
 				-- Clip the required position if necesary,
 				-- then apply it to the scrollbar:
 				clip_max (v, u);
-				scrollbar_h_adj.set_value (v);
+				scrollbar_h_adj.set_value (to_gdouble (v));
 
 				
 			when DIR_LEFT =>
 				-- Get the minimal allowed value for the
 				-- horizontal scrollbar:
-				l := scrollbar_h_adj.get_lower;
+				l := to_lp (scrollbar_h_adj.get_lower);
 
 				-- Compute the required scrollbar position:
-				v := scrollbar_h_adj.get_value - d;
+				v := to_lp (scrollbar_h_adj.get_value) - d;
 
 				-- Clip the required position if necesary,
 				-- then apply it to the scrollbar:
 				clip_min (v, l);
-				scrollbar_h_adj.set_value (v);
+				scrollbar_h_adj.set_value (to_gdouble (v));
 
 				
 			when DIR_UP =>
 				-- Get the minimal allowed value for the
 				-- vertical scrollbar:
-				l := scrollbar_v_adj.get_lower;
+				l := to_lp (scrollbar_v_adj.get_lower);
 				
 				-- Compute the required scrollbar position:
-				v := scrollbar_v_adj.get_value - d;
+				v := to_lp (scrollbar_v_adj.get_value) - d;
 
 				-- Clip the required position if necesary,
 				-- then apply it to the scrollbar:
 				clip_min (v, l);
-				scrollbar_v_adj.set_value (v);
+				scrollbar_v_adj.set_value (to_gdouble (v));
 
 				
 			when DIR_DOWN =>
 				-- Get the maximal allowed value for the
 				-- vertical scrollbar:
-				u := scrollbar_v_adj.get_upper;
+				u := to_lp (scrollbar_v_adj.get_upper);
 
 				-- Compute the required scrollbar position:
-				v := scrollbar_v_adj.get_value + d;
+				v := to_lp (scrollbar_v_adj.get_value) + d;
 
 				-- Clip the required position if necesary,
 				-- then apply it to the scrollbar:
 				clip_max (v, u);
-				scrollbar_v_adj.set_value (v);
+				scrollbar_v_adj.set_value (to_gdouble (v));
 				
 		end case;
 

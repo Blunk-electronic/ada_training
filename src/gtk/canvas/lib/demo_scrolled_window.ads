@@ -67,10 +67,10 @@ package demo_scrolled_window is
 	-- This composite type contains the settings
 	-- of a scrollbar:
 	type type_scrollbar_settings is record
-		lower		: gdouble;
-		upper		: gdouble;
-		value		: gdouble;
-		page_size	: gdouble;
+		lower		: type_logical_pixels;
+		upper		: type_logical_pixels;
+		value		: type_logical_pixels;
+		page_size	: type_logical_pixels;
 	end record;
 
 	-- These are the places where the initial settings of

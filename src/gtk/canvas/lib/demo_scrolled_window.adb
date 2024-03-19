@@ -38,7 +38,7 @@
 
 with ada.text_io;				use ada.text_io;
 
-with glib;						use glib;
+-- with glib;						use glib;
 with gtk.widget;				use gtk.widget;
 with gtk.window;				use gtk.window;
 with gtk.enums;					use gtk.enums;
@@ -140,28 +140,34 @@ package body demo_scrolled_window is
 
 	procedure backup_scrollbar_settings is begin
 		--put_line ("backup_scrollbar_settings");
-		scrollbar_h_backup.lower := scrollbar_h_adj.get_lower;
-		scrollbar_h_backup.value := scrollbar_h_adj.get_value;
-		scrollbar_h_backup.page_size := scrollbar_h_adj.get_page_size;
-		scrollbar_h_backup.upper := scrollbar_h_adj.get_upper;
+		scrollbar_h_backup.lower := to_lp (scrollbar_h_adj.get_lower);
+		scrollbar_h_backup.value := to_lp (scrollbar_h_adj.get_value);
+		scrollbar_h_backup.page_size := to_lp (scrollbar_h_adj.get_page_size);
+		scrollbar_h_backup.upper := to_lp (scrollbar_h_adj.get_upper);
 
-		scrollbar_v_backup.lower := scrollbar_v_adj.get_lower;
-		scrollbar_v_backup.value := scrollbar_v_adj.get_value;
-		scrollbar_v_backup.page_size := scrollbar_v_adj.get_page_size;
-		scrollbar_v_backup.upper := scrollbar_v_adj.get_upper;
+		scrollbar_v_backup.lower := to_lp (scrollbar_v_adj.get_lower);
+		scrollbar_v_backup.value := to_lp (scrollbar_v_adj.get_value);
+		scrollbar_v_backup.page_size := to_lp (scrollbar_v_adj.get_page_size);
+		scrollbar_v_backup.upper := to_lp (scrollbar_v_adj.get_upper);
 	end backup_scrollbar_settings;
 	
 
 	procedure restore_scrollbar_settings is begin
-		scrollbar_h_adj.set_lower (scrollbar_h_backup.lower);
-		scrollbar_h_adj.set_value (scrollbar_h_backup.value);
-		scrollbar_h_adj.set_page_size (scrollbar_h_backup.page_size);
-		scrollbar_h_adj.set_upper (scrollbar_h_backup.upper);
+		scrollbar_h_adj.set_lower (to_gdouble (scrollbar_h_backup.lower));
+		scrollbar_h_adj.set_value (to_gdouble (scrollbar_h_backup.value));
+		
+		scrollbar_h_adj.set_page_size (
+			to_gdouble (scrollbar_h_backup.page_size));
+		
+		scrollbar_h_adj.set_upper (to_gdouble (scrollbar_h_backup.upper));
 
-		scrollbar_v_adj.set_lower (scrollbar_v_backup.lower);
-		scrollbar_v_adj.set_value (scrollbar_v_backup.value);
-		scrollbar_v_adj.set_page_size (scrollbar_v_backup.page_size);
-		scrollbar_v_adj.set_upper (scrollbar_v_backup.upper);
+		scrollbar_v_adj.set_lower (to_gdouble (scrollbar_v_backup.lower));
+		scrollbar_v_adj.set_value (to_gdouble (scrollbar_v_backup.value));
+
+		scrollbar_v_adj.set_page_size (
+			to_gdouble (scrollbar_v_backup.page_size));
+
+		scrollbar_v_adj.set_upper (to_gdouble (scrollbar_v_backup.upper));
 	end restore_scrollbar_settings;
 
 
@@ -176,33 +182,52 @@ package body demo_scrolled_window is
 		put_line ("set initial scrollbar settings");
 		
 		scrollbar_v_init.upper := - F.y;			
-		scrollbar_v_init.lower := 
-			scrollbar_v_init.upper - gdouble (bounding_box.height);
 		
-		scrollbar_v_init.page_size := gdouble (bounding_box.height);
+		scrollbar_v_init.lower := scrollbar_v_init.upper - 
+			type_logical_pixels (bounding_box.height);
+		
+		scrollbar_v_init.page_size := 
+			type_logical_pixels (bounding_box.height);
+		
 		scrollbar_v_init.value := scrollbar_v_init.lower;
 
 		if debug then
 			put_line (" vertical:");
-			put_line ("  lower" & gdouble'image (scrollbar_v_init.lower));
-			put_line ("  upper" & gdouble'image (scrollbar_v_init.upper));
-			put_line ("  page " & gdouble'image (scrollbar_v_init.page_size));
-			put_line ("  value" & gdouble'image (scrollbar_v_init.value));
+			put_line ("  lower" & 
+				type_logical_pixels'image (scrollbar_v_init.lower));
+
+			put_line ("  upper" & 
+				type_logical_pixels'image (scrollbar_v_init.upper));
+
+			put_line ("  page " & 
+				type_logical_pixels'image (scrollbar_v_init.page_size));
+
+			put_line ("  value" & 
+				type_logical_pixels'image (scrollbar_v_init.value));
 		end if;
 		
 		scrollbar_h_init.lower := F.x;
-		scrollbar_h_init.upper := 
-			scrollbar_h_init.lower + gdouble (bounding_box.width);
+		scrollbar_h_init.upper := scrollbar_h_init.lower + 
+			type_logical_pixels (bounding_box.width);
 		
-		scrollbar_h_init.page_size := gdouble (bounding_box.width);
+		scrollbar_h_init.page_size := 
+			type_logical_pixels (bounding_box.width);
+		
 		scrollbar_h_init.value := scrollbar_h_init.lower;
 
 		if debug then
 			put_line (" horizontal:");
-			put_line ("  lower" & gdouble'image (scrollbar_h_init.lower));
-			put_line ("  upper" & gdouble'image (scrollbar_h_init.upper));
-			put_line ("  page " & gdouble'image (scrollbar_h_init.page_size));
-			put_line ("  value" & gdouble'image (scrollbar_h_init.value));
+			put_line ("  lower" & 
+				type_logical_pixels'image (scrollbar_h_init.lower));
+
+			put_line ("  upper" &
+				type_logical_pixels'image (scrollbar_h_init.upper));
+
+			put_line ("  page " & 
+				type_logical_pixels'image (scrollbar_h_init.page_size));
+
+			put_line ("  value" & 
+				type_logical_pixels'image (scrollbar_h_init.value));
 		end if;
 
 	
@@ -236,16 +261,22 @@ package body demo_scrolled_window is
 
 		
 		-- put_line ("vertical:");
-		scrollbar_v_adj.set_upper (scrollbar_v_init.upper);			
-		scrollbar_v_adj.set_lower (scrollbar_v_init.lower);
-		scrollbar_v_adj.set_page_size (scrollbar_v_init.page_size);
-		scrollbar_v_adj.set_value (scrollbar_v_init.value);
+		scrollbar_v_adj.set_upper (to_gdouble (scrollbar_v_init.upper));
+		scrollbar_v_adj.set_lower (to_gdouble (scrollbar_v_init.lower));
+		
+		scrollbar_v_adj.set_page_size (
+			to_gdouble (scrollbar_v_init.page_size));
+
+		scrollbar_v_adj.set_value (to_gdouble (scrollbar_v_init.value));
 
 		-- put_line ("horizontal:");
-		scrollbar_h_adj.set_upper (scrollbar_h_init.upper);			
-		scrollbar_h_adj.set_lower (scrollbar_h_init.lower);
-		scrollbar_h_adj.set_page_size (scrollbar_h_init.page_size);
-		scrollbar_h_adj.set_value (scrollbar_h_init.value);
+		scrollbar_h_adj.set_upper (to_gdouble (scrollbar_h_init.upper));
+		scrollbar_h_adj.set_lower (to_gdouble (scrollbar_h_init.lower));
+
+		scrollbar_h_adj.set_page_size (
+			to_gdouble (scrollbar_h_init.page_size));
+
+		scrollbar_h_adj.set_value (to_gdouble (scrollbar_h_init.value));
 
 		-- show_adjustments_h;
 		-- show_adjustments_v;
@@ -258,30 +289,40 @@ package body demo_scrolled_window is
 	
 
 	procedure show_adjustments_v is 
-		v_lower : gdouble := scrollbar_v_adj.get_lower;
-		v_value : gdouble := scrollbar_v_adj.get_value;
-		v_upper : gdouble := scrollbar_v_adj.get_upper;
-		v_page  : gdouble := scrollbar_v_adj.get_page_size;
+		v_lower : type_logical_pixels := 
+			to_lp (scrollbar_v_adj.get_lower);
+
+		v_value : type_logical_pixels := 
+			to_lp (scrollbar_v_adj.get_value);
+
+		v_upper : type_logical_pixels := 
+			to_lp (scrollbar_v_adj.get_upper);
+
+		v_page  : type_logical_pixels := 
+			to_lp (scrollbar_v_adj.get_page_size);
+		
 	begin
 		put_line ("vertical scrollbar adjustments:");
-		put_line (" lower" & gdouble'image (v_lower));
-		put_line (" value" & gdouble'image (v_value));
-		put_line (" page " & gdouble'image (v_page));
-		put_line (" upper" & gdouble'image (v_upper));
+		put_line (" lower" & type_logical_pixels'image (v_lower));
+		put_line (" value" & type_logical_pixels'image (v_value));
+		put_line (" page " & type_logical_pixels'image (v_page));
+		put_line (" upper" & type_logical_pixels'image (v_upper));
 	end show_adjustments_v;
 				  
 
 	procedure show_adjustments_h is 
-		h_lower : gdouble := scrollbar_h_adj.get_lower;
-		h_value : gdouble := scrollbar_h_adj.get_value;
-		h_upper : gdouble := scrollbar_h_adj.get_upper;
-		h_page  : gdouble := scrollbar_h_adj.get_page_size;
+		h_lower : type_logical_pixels := to_lp (scrollbar_h_adj.get_lower);
+		h_value : type_logical_pixels := to_lp (scrollbar_h_adj.get_value);
+		h_upper : type_logical_pixels := to_lp (scrollbar_h_adj.get_upper);
+		
+		h_page  : type_logical_pixels := 
+			to_lp (scrollbar_h_adj.get_page_size);
 	begin
 		put_line ("horizontal scrollbar adjustments:");
-		put_line (" lower" & gdouble'image (h_lower));
-		put_line (" value" & gdouble'image (h_value));
-		put_line (" page " & gdouble'image (h_page));
-		put_line (" upper" & gdouble'image (h_upper));
+		put_line (" lower" & type_logical_pixels'image (h_lower));
+		put_line (" value" & type_logical_pixels'image (h_value));
+		put_line (" page " & type_logical_pixels'image (h_page));
+		put_line (" upper" & type_logical_pixels'image (h_upper));
 	end show_adjustments_h;
 
 
@@ -316,9 +357,9 @@ package body demo_scrolled_window is
 		-- could be used to switch between current dimensions and initial 
 		-- dimensions:
 		-- sw := type_scale_factor 
-		-- 		(type_distance_model (swin_size_initial.width) / area.width);
+		-- 	(type_distance_model (swin_size_initial.width) / area.width);
 		-- sh := type_scale_factor 
-		--		(type_distance_model (swin_size_initial.height) / area.height);
+		--	(type_distance_model (swin_size_initial.height) / area.height);
 		
 		-- put_line ("sw: " & to_string (sw));
 		-- put_line ("sh: " & to_string (sh));
@@ -333,26 +374,26 @@ package body demo_scrolled_window is
 		C1, C2 : in type_bounding_box_corners)
 	is
 		debug : boolean := false;
-		scratch : gdouble;
+		scratch : type_logical_pixels;
 
-		HL : gdouble := scrollbar_h_adj.get_lower;
-		HU : gdouble := scrollbar_h_adj.get_upper;
+		HL : type_logical_pixels := to_lp (scrollbar_h_adj.get_lower);
+		HU : type_logical_pixels := to_lp (scrollbar_h_adj.get_upper);
 
-		VL : gdouble := scrollbar_v_adj.get_lower;
-		VU : gdouble := scrollbar_v_adj.get_upper;
+		VL : type_logical_pixels := to_lp (scrollbar_v_adj.get_lower);
+		VU : type_logical_pixels := to_lp (scrollbar_v_adj.get_upper);
 
-		dHL, dHU : gdouble;
-		dVL, dVU : gdouble;
+		dHL, dHU : type_logical_pixels;
+		dVL, dVU : type_logical_pixels;
 	begin
 		if debug then
-			put_line ("VL     " & gdouble'image (VL));
-			put_line ("VU     " & gdouble'image (VU));
+			put_line ("VL     " & type_logical_pixels'image (VL));
+			put_line ("VU     " & type_logical_pixels'image (VU));
 
-			put_line ("C1.TL.y" & gdouble'image (C1.TL.y));
-			put_line ("C1.BL.y" & gdouble'image (C1.BL.y));
+			put_line ("C1.TL.y" & type_logical_pixels'image (C1.TL.y));
+			put_line ("C1.BL.y" & type_logical_pixels'image (C1.BL.y));
 
-			put_line ("C2.TL.y" & gdouble'image (C2.TL.y));
-			put_line ("C2.BL.y" & gdouble'image (C2.BL.y));
+			put_line ("C2.TL.y" & type_logical_pixels'image (C2.TL.y));
+			put_line ("C2.BL.y" & type_logical_pixels'image (C2.BL.y));
 		end if;
 		
 		dHL := C2.BL.x - C1.BL.x;
@@ -362,8 +403,8 @@ package body demo_scrolled_window is
 		dVU := C2.BL.y - C1.BL.y;
 
 		if debug then
-			put_line ("dVL    " & gdouble'image (dVL));
-			put_line ("dVU    " & gdouble'image (dVU));
+			put_line ("dVL    " & type_logical_pixels'image (dVL));
+			put_line ("dVU    " & type_logical_pixels'image (dVU));
 		end if;
 		
 
@@ -376,9 +417,9 @@ package body demo_scrolled_window is
 		-- moves to the left. It assumes the value of the left edge
 		-- of the bounding-box:
 		HL := HL + dHL;
-		if HL <= scrollbar_h_adj.get_value then
+		if HL <= to_lp (scrollbar_h_adj.get_value) then
 			clip_min (HL, 0.0); -- suppress negative value
-			scrollbar_h_adj.set_lower (HL);
+			scrollbar_h_adj.set_lower (to_gdouble (HL));
 		else
 		-- If the left edge of the box is farther to the right than
 		-- the left end of the bar, then the lower limit can not be
@@ -389,21 +430,23 @@ package body demo_scrolled_window is
 
 		-- The right end of the scrollbar is the sum of its position (value)
 		-- and its length (page size):
-		scratch := scrollbar_h_adj.get_value + scrollbar_h_adj.get_page_size;
+		scratch := to_lp (scrollbar_h_adj.get_value + 
+						  scrollbar_h_adj.get_page_size);
+		
 		HU := HU + dHU;
-		-- CS clip_max (HU, gdouble (scrolled_window_size.width));
+		-- CS clip_max (HU, type_logical_pixels (scrolled_window_size.width));
 		-- If the right edge of the bounding-box is farther to the
 		-- right than the right end of the bar, then the upper limit
 		-- moves to the right. It assumes the value of the right edge
 		-- of the bounding-box:
 		if HU >= scratch then
-			scrollbar_h_adj.set_upper (HU);
+			scrollbar_h_adj.set_upper (to_gdouble (HU));
 		else
 		-- If the right edge of the box is farther to the left than
 		-- the right end of the bar, then the upper limit can not be
 		-- moved further to the left. So the upper limit can at most assume
 		-- the value of the right end of the bar:
-			scrollbar_h_adj.set_upper (scratch);
+			scrollbar_h_adj.set_upper (to_gdouble (scratch));
 		end if;
 
 		
@@ -416,9 +459,9 @@ package body demo_scrolled_window is
 		-- moves upwards. It assumes the value of the upper edge
 		-- of the bounding-box:
 		VL := VL + dVL;
-		if VL <= scrollbar_v_adj.get_value then
+		if VL <= to_lp (scrollbar_v_adj.get_value) then
 			clip_min (VL, 0.0); -- suppress negative value
-			scrollbar_v_adj.set_lower (VL);
+			scrollbar_v_adj.set_lower (to_gdouble (VL));
 		else
 		-- If the upper edge of the box is below
 		-- the upper end of the bar, then the lower limit can not be
@@ -429,21 +472,24 @@ package body demo_scrolled_window is
 
 		-- The lower end of the scrollbar is the sum of its position (value)
 		-- and its length (page size):
-		scratch := scrollbar_v_adj.get_value + scrollbar_v_adj.get_page_size;
+		scratch := to_lp (scrollbar_v_adj.get_value + 
+						  scrollbar_v_adj.get_page_size);
+		
 		VU := VU + dVU;
-		-- CS clip_max (VU, gdouble (scrolled_window_size.height));
+		-- CS clip_max (VU, 
+		--   type_logical_pixels (scrolled_window_size.height));
 		-- If the lower edge of the bounding-box is below the
 		-- lower end of the bar, then the upper limit
 		-- moves further downwards. It assumes the value of the lower edge
 		-- of the bounding-box:
 		if VU >= scratch then
-			scrollbar_v_adj.set_upper (VU);
+			scrollbar_v_adj.set_upper (to_gdouble (VU));
 		else
 		-- If the lower edge of the box is above
 		-- the lower end of the bar, then the upper limit can not be
 		-- moved further downwards. So the upper limit can at most assume
 		-- the value of the lower end of the bar:
-			scrollbar_v_adj.set_upper (scratch);
+			scrollbar_v_adj.set_upper (to_gdouble (scratch));
 		end if;
 
 		-- show_adjustments_v;

@@ -36,8 +36,6 @@
 --   history of changes:
 --
 
-with glib;						use glib;
-
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 with demo_scale_factor;			use demo_scale_factor;

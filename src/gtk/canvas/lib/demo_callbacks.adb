@@ -162,7 +162,8 @@ package body demo_callbacks is
 		event_handled : boolean := true;
 
 		-- The point where the operator has clicked:
-		point : constant type_vector_gdouble := (event.x, event.y);
+		point : constant type_vector_gdouble :=
+			(to_lp (event.x), to_lp (event.y));
 	begin
 		null;
 		
@@ -361,10 +362,10 @@ package body demo_callbacks is
 			height	=> positive (allocation.height));
 
 		-- This is the difference between new width and old width:
-		dW : gdouble;
+		dW : type_logical_pixels;
 
 		-- This is the difference between new height and old height:
-		dH : gdouble;
+		dH : type_logical_pixels;
 
 
 		-- For debugging. Outputs the dimensions and size
@@ -378,8 +379,8 @@ package body demo_callbacks is
 				& positive'image (new_size.width)
 				& " /" & positive'image (new_size.height));
 
-			put_line (" dW : " & gdouble'image (dW));
-			put_line (" dH : " & gdouble'image (dH));
+			put_line (" dW : " & type_logical_pixels'image (dW));
+			put_line (" dH : " & type_logical_pixels'image (dH));
 
 			-- put_line ("S1:" & to_string (S1));
 		end show_size;
@@ -475,8 +476,8 @@ package body demo_callbacks is
 			-- show_adjustments_v;
 			
 			-- Compute the change of width and height:
-			dW := gdouble (new_size.width - swin_size.width);
-			dH := gdouble (new_size.height - swin_size.height);
+			dW := type_logical_pixels (new_size.width - swin_size.width);
+			dH := type_logical_pixels (new_size.height - swin_size.height);
 
 			-- for debugging:
 			-- show_size;
@@ -689,7 +690,8 @@ package body demo_callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- has clicked:
-		cp : constant type_vector_gdouble := (event.x, event.y);
+		cp : constant type_vector_gdouble := 
+			(to_lp (event.x), to_lp (event.y));
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
@@ -700,7 +702,7 @@ package body demo_callbacks is
 
 		-- CS: For some reason the value of the scrollbars
 		-- must be saved and restored if the canvas grabs the focus:
-		h, v : gdouble;
+		h, v : type_logical_pixels;
 		-- A solution might be:
 		-- <https://stackoverflow.com/questions/26693042/
 		-- gtkscrolledwindow-disable-scroll-to-focused-child>
@@ -721,17 +723,17 @@ package body demo_callbacks is
 
 		-- Set the focus on the canvas,
 		-- But first save the scrollbar values:
-		h := scrollbar_h_adj.get_value;
-		v := scrollbar_v_adj.get_value;
+		h := to_lp (scrollbar_h_adj.get_value);
+		v := to_lp (scrollbar_v_adj.get_value);
 		-- CS: backup_scrollbar_settings does not work for some reason.
-		-- put_line (gdouble'image (v));
+		-- put_line (type_logical_pixels'image (v));
 		
 		canvas.grab_focus;
 
-		scrollbar_h_adj.set_value (h);
-		scrollbar_v_adj.set_value (v);
+		scrollbar_h_adj.set_value (to_gdouble (h));
+		scrollbar_v_adj.set_value (to_gdouble (v));
 		-- CS: restore_scrollbar_settings does not work for some reason.
-		-- put_line (gdouble'image (v));
+		-- put_line (type_logical_pixels'image (v));
 
 
 		-- If no zoom-to-area operation is active, then
@@ -777,7 +779,8 @@ package body demo_callbacks is
 
 		-- This is the point in the canvas where the operator
 		-- released the button:
-		cp : constant type_vector_gdouble := (event.x, event.y);
+		cp : constant type_vector_gdouble := 
+			(to_lp (event.x), to_lp (event.y));
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
@@ -895,7 +898,8 @@ package body demo_callbacks is
 		use glib;
 		event_handled : boolean := true;
 
-		cp : constant type_vector_gdouble := (event.x, event.y);
+		cp : constant type_vector_gdouble := 
+			(to_lp (event.x), to_lp (event.y));
 
 		-- Get the real model coordinates:
 		mp : constant type_vector_model := to_model (cp, S, true);
@@ -1042,7 +1046,8 @@ package body demo_callbacks is
 			
 			-- The given point on the canvas where the operator is 
 			-- zooming in or out:
-			Z : constant type_vector_gdouble := (event.x, event.y);
+			Z : constant type_vector_gdouble := 
+				(to_lp (event.x), to_lp (event.y));
 
 			-- The corners of the bounding-box on the canvas before 
 			-- and after zooming:
@@ -1106,7 +1111,7 @@ package body demo_callbacks is
 		is
 			use demo_visible_area;
 			
-			v1, dv, v2 : gdouble;
+			v1, dv, v2 : type_logical_pixels;
 
 			-- This procedure computes the amount
 			-- by which the scrollbar value is to be changed:
@@ -1114,7 +1119,7 @@ package body demo_callbacks is
 				null;
 				-- CS: This is emperical for the time being.
 				-- Rework required.
-				dv := 10.0 * gdouble (S);
+				dv := 10.0 * type_logical_pixels (S);
 			end set_delta;
 			
 		begin
@@ -1126,7 +1131,7 @@ package body demo_callbacks is
 			case direction is
 				when SCROLL_DOWN =>
 					-- Get the current value of the scrollbar:
-					v1 := scrollbar_v_adj.get_value;
+					v1 := to_lp (scrollbar_v_adj.get_value);
 
 					-- Compute the amout by which the 
 					-- scrollbar is to be moved:
@@ -1136,26 +1141,26 @@ package body demo_callbacks is
 					v2 := v1 + dv;
 
 					-- Set the new value of the scrollbar:
-					scrollbar_v_adj.set_value (v2);
+					scrollbar_v_adj.set_value (to_gdouble (v2));
 
 					
 				when SCROLL_UP =>
-					v1 := scrollbar_v_adj.get_value;
+					v1 := to_lp (scrollbar_v_adj.get_value);
 					set_delta;
 					v2 := v1 - dv;
-					scrollbar_v_adj.set_value (v2);
+					scrollbar_v_adj.set_value (to_gdouble (v2));
 
 				when SCROLL_RIGHT =>
-					v1 := scrollbar_h_adj.get_value;
+					v1 := to_lp (scrollbar_h_adj.get_value);
 					set_delta;
 					v2 := v1 + dv;
-					scrollbar_h_adj.set_value (v2);
+					scrollbar_h_adj.set_value (to_gdouble (v2));
 					
 				when SCROLL_LEFT =>
-					v1 := scrollbar_h_adj.get_value;
+					v1 := to_lp (scrollbar_h_adj.get_value);
 					set_delta;
 					v2 := v1 - dv;
-					scrollbar_h_adj.set_value (v2);
+					scrollbar_h_adj.set_value (to_gdouble (v2));
 
 				-- CS clip ?
 			end case;
@@ -1228,15 +1233,22 @@ package body demo_callbacks is
 			cp : type_vector_gdouble := to_canvas (origin, S, true);
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-			set_line_width (context, origin_linewidth);
+			set_line_width (context, to_gdouble (origin_linewidth));
 
 			-- Draw the horizontal line from left to right:
-			move_to (context, cp.x - origin_size, cp.y);
-			line_to (context, cp.x + origin_size, cp.y);
+			move_to (context, 
+				to_gdouble (cp.x - origin_size), to_gdouble (cp.y));
+			
+			line_to (context, 
+				to_gdouble (cp.x + origin_size), to_gdouble (cp.y));
 
 			-- Draw the vertical line from top to bottom:
-			move_to (context, cp.x, cp.y - origin_size);
-			line_to (context, cp.x, cp.y + origin_size);
+			move_to (context, 
+				to_gdouble (cp.x), to_gdouble (cp.y - origin_size));
+			
+			line_to (context, 
+				 to_gdouble (cp.x), to_gdouble (cp.y + origin_size));
+			
 			stroke (context);
 		end draw_origin;
 		
@@ -1342,7 +1354,7 @@ package body demo_callbacks is
 				CP : type_vector_gdouble;
 			begin
 				-- Set the linewidth of the dots:
-				set_line_width (context, grid_width_dots);
+				set_line_width (context, to_gdouble (grid_width_dots));
 				
 				-- Compose a model point from the first column and 
 				-- the first row:
@@ -1368,13 +1380,25 @@ package body demo_callbacks is
 						-- This could be more efficient than a circle:
 						
 						-- horizontal line:
-						move_to (context, CP.x - grid_cross_arm_length, CP.y);
-						line_to (context, CP.x + grid_cross_arm_length, CP.y);
+						move_to (context, 
+							to_gdouble (CP.x - grid_cross_arm_length),
+							to_gdouble (CP.y));
+						
+						line_to (context, 
+							to_gdouble (CP.x + grid_cross_arm_length),
+							to_gdouble (CP.y));
+							
 						stroke (context);
 
 						-- vertical line:
-						move_to (context, CP.x, CP.y - grid_cross_arm_length);
-						line_to (context, CP.x, CP.y + grid_cross_arm_length);
+						move_to (context, 
+							to_gdouble (CP.x), 
+							to_gdouble (CP.y - grid_cross_arm_length));
+						
+						line_to (context,
+							to_gdouble (CP.x),
+							to_gdouble (CP.y + grid_cross_arm_length));
+						
 						stroke (context);
 												
 						-- Advance one row up:
@@ -1402,7 +1426,7 @@ package body demo_callbacks is
 				ay2f : type_distance_model := ay1f + visible_area.height;
 			begin
 				-- Set the linewidth of the lines:
-				set_line_width (context, grid_width_lines);
+				set_line_width (context, to_gdouble (grid_width_lines));
 				
 				-- VERTICAL LINES:
 
@@ -1422,8 +1446,11 @@ package body demo_callbacks is
 					CP1 := to_canvas (MP1, S, true);
 					CP2 := to_canvas (MP2, S, true);
 					
-					move_to (context, CP1.x, CP1.y);
-					line_to (context, CP2.x, CP2.y);
+					move_to (context, 
+						to_gdouble (CP1.x), to_gdouble (CP1.y));
+					
+					line_to (context, 
+						to_gdouble (CP2.x), to_gdouble (CP2.y));
 
 					MP1.x := MP1.x + grid.spacing.x;
 					MP2.x := MP2.x + grid.spacing.x;
@@ -1449,8 +1476,11 @@ package body demo_callbacks is
 					CP1 := to_canvas (MP1, S, true);
 					CP2 := to_canvas (MP2, S, true);
 					
-					move_to (context, CP1.x, CP1.y);
-					line_to (context, CP2.x, CP2.y);
+					move_to (context, 
+						to_gdouble (CP1.x), to_gdouble (CP1.y));
+
+					line_to (context, 
+						to_gdouble (CP2.x), to_gdouble (CP2.y));
 
 					MP1.y := MP1.y + grid.spacing.y;
 					MP2.y := MP2.y + grid.spacing.y;
@@ -1487,14 +1517,16 @@ package body demo_callbacks is
 
 			-- These are the start and stop positions for the
 			-- horizontal lines:
-			h1, h2, h3, h4 : gdouble;
+			h1, h2, h3, h4 : type_logical_pixels;
 
 			-- These are the start and stop positions for the
 			-- vertical lines:
-			v1, v2, v3, v4 : gdouble;
+			v1, v2, v3, v4 : type_logical_pixels;
 
 			-- This is the total length of an arm:
-			l : constant gdouble := cursor.length_1 + cursor.length_2;
+			l : constant type_logical_pixels := 
+				cursor.length_1 + cursor.length_2;
+			
 		begin
 			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 
@@ -1511,45 +1543,47 @@ package body demo_callbacks is
 
 			-- Draw the horizontal line from left to right:
 			-- thick
-			set_line_width (context, cursor.linewidth_2);
-			move_to (context, h1, cp.y);
-			line_to (context, h2, cp.y);
+			set_line_width (context, to_gdouble (cursor.linewidth_2));
+			move_to (context, to_gdouble (h1), to_gdouble (cp.y));
+			line_to (context, to_gdouble (h2), to_gdouble (cp.y));
 			stroke (context);
 
 			-- thin
-			set_line_width (context, cursor.linewidth_1);
-			move_to (context, h2, cp.y);
-			line_to (context, h3, cp.y);
+			set_line_width (context, to_gdouble (cursor.linewidth_1));
+			move_to (context, to_gdouble (h2), to_gdouble (cp.y));
+			line_to (context, to_gdouble (h3), to_gdouble (cp.y));
 			stroke (context);
 
 			-- thick
-			set_line_width (context, cursor.linewidth_2);
-			move_to (context, h3, cp.y);
-			line_to (context, h4, cp.y);
+			set_line_width (context, to_gdouble (cursor.linewidth_2));
+			move_to (context, to_gdouble (h3), to_gdouble (cp.y));
+			line_to (context, to_gdouble (h4), to_gdouble (cp.y));
 			stroke (context);
 			
 			-- Draw the vertical line from top to bottom:
 			-- thick
-			move_to (context, cp.x, v1);
-			line_to (context, cp.x, v2);
+			move_to (context, to_gdouble (cp.x), to_gdouble (v1));
+			line_to (context, to_gdouble (cp.x), to_gdouble (v2));
 			stroke (context);
 
 			-- thin
-			set_line_width (context, cursor.linewidth_1);
-			move_to (context, cp.x, v2);
-			line_to (context, cp.x, v3);
+			set_line_width (context, to_gdouble (cursor.linewidth_1));
+			move_to (context, to_gdouble (cp.x), to_gdouble (v2));
+			line_to (context, to_gdouble (cp.x), to_gdouble (v3));
 			stroke (context);
 
 			-- thick
-			set_line_width (context, cursor.linewidth_2);
-			move_to (context, cp.x, v3);
-			line_to (context, cp.x, v4);
+			set_line_width (context, to_gdouble (cursor.linewidth_2));
+			move_to (context, to_gdouble (cp.x), to_gdouble (v3));
+			line_to (context, to_gdouble (cp.x), to_gdouble (v4));
 			stroke (context);
 
 			-- arc
-			set_line_width (context, cursor.linewidth_1);
-			arc (context, cp.x, cp.y, 
-				radius => cursor.radius, angle1 => 0.0, angle2 => 6.3);
+			set_line_width (context, to_gdouble (cursor.linewidth_1));
+			arc (context, to_gdouble (cp.x), to_gdouble (cp.y), 
+				 radius => to_gdouble (cursor.radius), 
+				 angle1 => 0.0, angle2 => 6.3);
+			
 			stroke (context);
 
 			-- CS: To improve performance on drawing, it might help
@@ -1563,8 +1597,8 @@ package body demo_callbacks is
 		-- area to be zoomed at.
 		-- The rectangle is drawn directly on the cairo_context.
 		procedure draw_zoom_area is
-			x, y : gdouble;
-			w, h : gdouble;
+			x, y : type_logical_pixels;
+			w, h : type_logical_pixels;
 
 			l1 : type_vector_gdouble renames zoom_area.l1;
 			l2 : type_vector_gdouble renames zoom_area.l2;
@@ -1597,7 +1631,12 @@ package body demo_callbacks is
 
 				set_line_width (context, zoom_area_linewidth);
 				
-				rectangle (context, x, y, w, h);
+				rectangle (context, 
+					to_gdouble (x),
+					to_gdouble (y),
+					to_gdouble (w),
+					to_gdouble (h));
+					
 				stroke (context);
 			end if;
 		end draw_zoom_area;

@@ -51,12 +51,12 @@ package body demo_visibility is
 		return boolean
 	is
 		-- CS: Optimization required. Compiler options ?
-		w : constant gdouble := to_distance (a.width);
-		h : constant gdouble := to_distance (a.height);
-		l : gdouble;
+		w : constant type_logical_pixels := to_distance (a.width);
+		h : constant type_logical_pixels := to_distance (a.height);
+		l : type_logical_pixels;
 	begin
 		-- Get the greatest of w and h:
-		l := gdouble'max (w, h);
+		l := type_logical_pixels'max (w, h);
 
 		if l > visibility_threshold then
 			return true;

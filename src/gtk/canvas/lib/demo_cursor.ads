@@ -36,7 +36,6 @@
 --   history of changes:
 --
 
-with glib;						use glib;
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 
@@ -49,11 +48,11 @@ package demo_cursor is
 		position	: type_vector_model := origin;
 
 		-- For drawing the cursor:
-		linewidth_1	: gdouble := 1.0;
-		linewidth_2	: gdouble := 4.0;
-		length_1	: gdouble := 20.0;
-		length_2	: gdouble := 20.0;
-		radius		: gdouble := 25.0;
+		linewidth_1	: type_logical_pixels := 1.0;
+		linewidth_2	: type_logical_pixels := 4.0;
+		length_1	: type_logical_pixels := 20.0;
+		length_2	: type_logical_pixels := 20.0;
+		radius		: type_logical_pixels := 25.0;
 		
 		-- CS: blink, color, ...
 	end record;

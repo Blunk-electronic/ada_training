@@ -37,8 +37,7 @@
 --
 
 with ada.text_io;				use ada.text_io;
-
-with glib;						use glib;
+with glib;
 with gtk.box;					use gtk.box;
 with gtk.enums;					use gtk.enums;
 
@@ -57,7 +56,8 @@ package body demo_coordinates_display is
 
 
 	procedure set_up_coordinates_display is
-
+		use glib;
+		
 		-- The width of the text view shall be wide enough
 		-- to fit the greatest numbers:
 		pos_field_width_min : constant gint := 80;
@@ -368,6 +368,7 @@ package body demo_coordinates_display is
 
 	
 	procedure update_distances_display is 
+		use glib;
 		use demo_cursor;
 		use demo_canvas;
 		
@@ -381,7 +382,7 @@ package body demo_coordinates_display is
 	begin
 		-- Get the current pointer/mouse position:
 		canvas.get_pointer (px, py);
-		cp := (gdouble (px), gdouble (py));
+		cp := (type_logical_pixels (px), type_logical_pixels (py));
 		
 		-- Convert the pointer position to a real
 		-- point in the model:

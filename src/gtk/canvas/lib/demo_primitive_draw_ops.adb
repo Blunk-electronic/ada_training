@@ -86,12 +86,14 @@ package body demo_primitive_draw_ops is
 
 			--put_line ("draw line");
 
-			set_line_width (context, to_distance (line.w));
+			set_line_width (context, to_gdouble (to_distance (line.w)));
 
 			c1 := to_canvas (l.s, S, real => true);
 			c2 := to_canvas (l.e, S, real => true);
-			move_to (context, c1.x, c1.y);
-			line_to (context, c2.x, c2.y);
+			
+			move_to (context, to_gdouble (c1.x), to_gdouble (c1.y));
+			line_to (context, to_gdouble (c2.x), to_gdouble (c2.y));
+
 			stroke (context);
 		end if;
 	end draw_line;
@@ -138,11 +140,17 @@ package body demo_primitive_draw_ops is
 
 			-- put_line ("draw circle");
 
-			set_line_width (context, to_distance (circle.w));
+			set_line_width (context, to_gdouble (to_distance (circle.w)));
 
 			m := to_canvas (c.c, S, real => true);
 			r := to_distance (c.r);
-			arc (context, m.x, m.y, r, 0.0, 6.3 );
+			
+			arc (context, 
+				 to_gdouble (m.x), 
+				 to_gdouble (m.y),
+				 to_gdouble (r), 
+				 0.0, 6.3 ); -- start and end angle in radians
+			
 			stroke (context);
 		end if;
 	end draw_circle;

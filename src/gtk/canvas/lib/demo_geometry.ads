@@ -36,8 +36,6 @@
 --   history of changes:
 --
 
-with glib;						use glib;
-
 with ada.numerics;
 with ada.numerics.generic_elementary_functions;
 
@@ -154,8 +152,8 @@ package demo_geometry is
 	
 	-- The origin is a small cross at model position (0;0).
 	origin				: constant type_vector_model := (0.0, 0.0);
-	origin_size			: constant gdouble := 10.0; -- the arm-length
-	origin_linewidth	: constant gdouble := 1.0;
+	origin_size			: constant type_logical_pixels := 10.0; -- the arm-length
+	origin_linewidth	: constant type_logical_pixels := 1.0;
 
 
 

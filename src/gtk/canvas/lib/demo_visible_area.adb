@@ -38,7 +38,6 @@
 
 with ada.text_io;				use ada.text_io;
 
-with glib;						use glib;
 with gtk.scrolled_window;		use gtk.scrolled_window;
 
 with demo_logical_pixels;		use demo_logical_pixels;
@@ -61,8 +60,8 @@ package body demo_visible_area is
 		-- The allocation of the scrolled window:
 		W : gtk_allocation;
 		
-		h_start, h_length, h_end : gdouble;
-		v_start, v_length, v_end : gdouble;
+		h_start, h_length, h_end : type_logical_pixels;
+		v_start, v_length, v_end : type_logical_pixels;
 
 		-- The four corners of the visible area:
 		BL, BR, TL, TR : type_vector_model;
@@ -76,11 +75,11 @@ package body demo_visible_area is
 		
 		-- The visible area along the x-axis starts at the
 		-- position of the horizontal scrollbar:
-		h_start  := scrollbar_h_adj.get_value;
+		h_start  := to_lp (scrollbar_h_adj.get_value);
 
 		-- The visible area along the x-axis is as wide as
 		-- the scrolled window:
-		h_length := gdouble (W.width);
+		h_length := type_logical_pixels (W.width);
 
 		-- The visible area ends here:
 		h_end    := h_start + h_length;
@@ -90,11 +89,11 @@ package body demo_visible_area is
 		
 		-- The visible area along the y-axis starts at the
 		-- position of the vertical scrollbar:
-		v_start := scrollbar_v_adj.get_value;
+		v_start := to_lp (scrollbar_v_adj.get_value);
 
 		-- The visible area along the y-axis is as high as
 		-- the scrolled window:
-		v_length := gdouble (W.height);
+		v_length := type_logical_pixels (W.height);
 
 		-- The visible area along the y-axis ends here:
 		v_end := v_start + v_length;
@@ -186,8 +185,8 @@ package body demo_visible_area is
 		-- and apply it to the global translate-offset.
 		-- Regarding y: T is in the canvas system (CS2)
 		-- where the y-axis goes downward. So we must multiply by -1:
-		T.x :=   gdouble (dx) * gdouble (S);
-		T.y := - gdouble (dy) * gdouble (S);
+		T.x :=   type_logical_pixels (dx) * type_logical_pixels (S);
+		T.y := - type_logical_pixels (dy) * type_logical_pixels (S);
 		if debug then
 			put_line ("T: " & to_string (T));
 		end if;

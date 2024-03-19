@@ -74,7 +74,7 @@ package body demo_conversions is
 		d : in type_distance_model)
 		return type_distance_gdouble
 	is begin
-		return gdouble (d) * gdouble (S);
+		return type_logical_pixels (d) * type_logical_pixels (S);
 	end to_distance;
 
 
@@ -82,7 +82,7 @@ package body demo_conversions is
 		d : in type_distance_gdouble)
 		return type_distance_model
 	is begin
-		return type_distance_model (d / gdouble (S));
+		return type_distance_model (d / type_logical_pixels (S));
 	end to_distance;
 
 	
@@ -103,10 +103,10 @@ package body demo_conversions is
 		end if;
 		
 		result.x := type_distance_model 
-			(( (point.x - T.x) - F.x) / gdouble (scale));
+			(( (point.x - T.x) - F.x) / type_logical_pixels (scale));
 		
 		result.y := type_distance_model 
-			((-(point.y - T.y) - F.y) / gdouble (scale));
+			((-(point.y - T.y) - F.y) / type_logical_pixels (scale));
 
 		-- If real model coordinates are required, then the result 
 		-- must be compensated by the bounding-box position:
@@ -144,8 +144,11 @@ package body demo_conversions is
 			move_by (P, invert (bounding_box.position));
 		end if;
 		
-		result.x :=  (gdouble (P.x) * gdouble (scale) + F.x);
-		result.y := -(gdouble (P.y) * gdouble (scale) + F.y);
+		result.x :=  (type_logical_pixels (P.x) *
+					  type_logical_pixels (scale) + F.x);
+		
+		result.y := -(type_logical_pixels (P.y) * 
+					  type_logical_pixels (scale) + F.y);
 
 		if real then
 			result.x := result.x + T.x;

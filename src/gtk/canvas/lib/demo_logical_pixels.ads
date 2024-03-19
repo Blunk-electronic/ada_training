@@ -36,10 +36,9 @@
 --   history of changes:
 --
 
-with glib;						use glib;
+with glib;
 
 package demo_logical_pixels is
-
 
 	
 -- DISTANCE AND VECTORS ON THE SCREEN:
@@ -49,17 +48,36 @@ package demo_logical_pixels is
 	-- A point, a vector or a distance is expressed in
 	-- so called "logical pixels".	
 
-	-- CS subtype type_logical_pixels renames gdouble ?
+	-- We derive a new type from glib.gdouble in order to 
+	-- get a clear separation from things defined in glib:
+	type type_logical_pixels is new glib.gdouble;
+	
+
+	-- This function converts a gdouble number
+	-- to logical pixels:
+	function to_lp (
+		gd : in glib.gdouble)
+		return type_logical_pixels;
+
+	
+	-- This function converts a logical pixels
+	-- to a gdouble number:
+	function to_gdouble (
+		lp : in type_logical_pixels)
+		return glib.gdouble;
+
+	
 	
 	-- The total distance between two gdouble numbers is
 	-- always positive. So we define the distance as:
-	subtype type_distance_gdouble is gdouble range 0.0 .. gdouble'last;
+	subtype type_distance_gdouble is type_logical_pixels
+		range 0.0 .. type_logical_pixels'last;
 	-- CS rename to type_logical_pixels_distance ?
 	
 	-- A point, a location vector or a distance vector is
 	-- defined by this type:
 	type type_vector_gdouble is record
-		x, y : gdouble := 0.0;
+		x, y : type_logical_pixels := 0.0;
 	end record;
 
 
@@ -76,15 +94,15 @@ package demo_logical_pixels is
 	-- If the given value is less or equal the limit,
 	-- then value remains unchanged:
 	procedure clip_max (
-		value	: in out gdouble;
-		limit	: in gdouble);
+		value	: in out type_logical_pixels;
+		limit	: in type_logical_pixels);
 	
 	-- Clips the given value by the given limit.
 	-- If the given value is greater or equal the limit,
 	-- then value remains unchanged:
 	procedure clip_min (
-		value	: in out gdouble;
-		limit	: in gdouble);
+		value	: in out type_logical_pixels;
+		limit	: in type_logical_pixels);
 
 	
 	
