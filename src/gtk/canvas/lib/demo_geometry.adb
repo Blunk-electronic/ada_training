@@ -89,7 +89,7 @@ package body demo_geometry is
 	
 	function get_distance (
 		p1, p2 : in type_vector_model)
-		return type_distance_model
+		return type_distance_model_positive
 	is
 		use pac_float_numbers_functions;
 
@@ -98,7 +98,7 @@ package body demo_geometry is
 		d : type_float;
 	begin
 		d := sqrt (dx**2.0 + dy**2.0);
-		return type_distance_model (d);
+		return type_distance_model_positive (d);
 	end get_distance;
 	
 

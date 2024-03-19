@@ -52,7 +52,9 @@ package demo_logical_pixels is
 	-- get a clear separation from things defined in glib:
 	type type_logical_pixels is new glib.gdouble;
 	
-
+	-- CS function to_string
+	
+	
 	-- This function converts a gdouble number
 	-- to logical pixels:
 	function to_lp (

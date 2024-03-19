@@ -69,18 +69,17 @@ package demo_geometry is
 	
 	-- The model coordinates system uses so called
 	-- decimal fixed point numbers for distances and positions:
-	type type_distance_model is delta 0.01 digits 8 
+	type type_distance_model is delta 0.01 digits 8
 		range -100_000.00 .. 100_000.00;
 
 
-	-- A length in the model world is always a 
-	-- positive number:
-	subtype type_length is type_distance_model -- CS rename to type_distance_model_positive ?
+	-- Use this type for distances, lengths, ...
+	-- Because those things require positive numbers:
+	subtype type_distance_model_positive is type_distance_model
 		range 0.0 .. type_distance_model'last;
 
 	
-	-- This function returns the given distance 
-	-- as string:	
+	-- This function returns the given distance as string:	
 	function to_string (
 		distance : in type_distance_model)
 		return string;
@@ -137,7 +136,7 @@ package demo_geometry is
 	-- model points. Uses internally a float type:
 	function get_distance (
 		p1, p2 : in type_vector_model)
-		return type_distance_model; -- CS use subtype
+		return type_distance_model_positive;
 	
 
 	-- Returns the angle of direection from the given 
@@ -164,8 +163,8 @@ package demo_geometry is
 -- AREA:
 	
 	type type_area is record
-		width		: type_distance_model := 0.0; -- CS should be positive
-		height		: type_distance_model := 0.0; -- CS should be positive
+		width		: type_distance_model_positive := 0.0;
+		height		: type_distance_model_positive := 0.0;
 		position	: type_vector_model; -- lower left corner
 	end record;
 

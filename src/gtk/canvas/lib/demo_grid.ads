@@ -59,8 +59,8 @@ package demo_grid is
 	
 
 	-- The default grid size in in the model domain:
-	grid_spacing_default : constant type_distance_model := 10.0; 
-	-- CS subtype ?
+	grid_spacing_default : constant type_distance_model_positive := 10.0; 
+
 
 	-- If the displayed grid is too dense, then it makes no
 	-- sense to draw a grid. For this reason we define a minimum

@@ -64,7 +64,7 @@ package demo_conversions is
 	-- Converts the given model distance to
 	-- a canvas distance according to the current scale-factor S:
 	function to_distance (
-		d : in type_distance_model) -- CS use subtype
+		d : in type_distance_model_positive)
 		return type_logical_pixels_positive;
 
 	
@@ -72,7 +72,7 @@ package demo_conversions is
 	-- a model distance according to the current scale-factor S:
 	function to_distance (
 		d : in type_logical_pixels_positive)
-		return type_distance_model; -- CS use subtype
+		return type_distance_model_positive;
 
 
 	
@@ -108,6 +108,7 @@ package demo_conversions is
 	type type_bounding_box_corners is record
 		BL, BR, TL, TR : type_logical_pixels_vector;
 	end record;
+
 	
 	-- This function returns the current corners of the bounding-box
 	-- in canvas-coordinates. The return depends on the current scale-factor S

@@ -71,7 +71,7 @@ package body demo_conversions is
 
 
 	function to_distance (
-		d : in type_distance_model)
+		d : in type_distance_model_positive)
 		return type_logical_pixels_positive
 	is begin
 		return type_logical_pixels (d) * type_logical_pixels (S);
@@ -80,9 +80,9 @@ package body demo_conversions is
 
 	function to_distance (
 		d : in type_logical_pixels_positive)
-		return type_distance_model
+		return type_distance_model_positive
 	is begin
-		return type_distance_model (d / type_logical_pixels (S));
+		return type_distance_model_positive (d / type_logical_pixels (S));
 	end to_distance;
 
 	
