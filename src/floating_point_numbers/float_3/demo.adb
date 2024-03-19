@@ -3,7 +3,7 @@
 
 with ada.text_io;	use ada.text_io;
 
-procedure types_float_3 is
+procedure demo is
 
 	distance : float := 0.0;
 	
@@ -23,4 +23,4 @@ begin
 	-- This small error adds up in each iteration so 
 	-- that the total error gets even more.
 	
-end types_float_3;
+end demo;
