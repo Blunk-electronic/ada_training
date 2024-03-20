@@ -310,20 +310,30 @@ package body demo_grid is
 		
 
 	begin -- draw_grid
-		-- put_line ("draw_grid");
-		compute_first_and_last_column;
-		compute_first_and_last_row;
 
-		-- Set the color of the grid:
-		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+		-- Draw the grid if it is enabled and if the spacing
+		-- is greater than the minimal required spacing:
+		if grid.on = GRID_ON and then
+			get_grid_spacing (grid) >= grid_spacing_min then
 
-		case grid.style is
-			when STYLE_DOTS =>
-				draw_dots;
+			
+			-- put_line ("draw_grid");
+			compute_first_and_last_column;
+			compute_first_and_last_row;
 
-			when STYLE_LINES =>
-				draw_lines;
-		end case;
+			-- Set the color of the grid:
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+			case grid.style is
+				when STYLE_DOTS =>
+					draw_dots;
+
+				when STYLE_LINES =>
+					draw_lines;
+			end case;
+			
+		end if;
+		
 	end draw_grid;
 
 	

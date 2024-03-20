@@ -1223,11 +1223,10 @@ package body demo_callbacks is
 		return boolean
 	is
 		event_handled : boolean := true;
-		
-		use demo_grid;
+
 		use demo_visible_area;
 		
-	begin -- cb_draw_objects
+	begin
 		-- new_line;
 		-- put_line ("cb_draw_objects " & image (clock));
 
@@ -1247,24 +1246,12 @@ package body demo_callbacks is
 		-- The ends of all kinds of lines are round:
 		set_line_cap (context, cairo_line_cap_round);
 
-		
-		-- Draw the grid if it is enabled and if the spacing
-		-- is greater than the minimal required spacing:
-		if grid.on = GRID_ON and then
-			get_grid_spacing (grid) >= grid_spacing_min then
-			draw_grid;
-		end if; -- CS move this stuff to procedure draw_grid.
-		
+		demo_grid.draw_grid;		
 		demo_drawing_origin.draw_origin;
-
 		draw_cursor;
-
 		draw_zoom_area;
-
-		demo_frame.draw_drawing_frame;
-		
-		draw_objects;
-		
+		demo_frame.draw_drawing_frame;		
+		draw_objects;		
 		
 		return event_handled;
 	end cb_draw_objects;
