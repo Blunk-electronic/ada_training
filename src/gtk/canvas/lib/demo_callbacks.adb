@@ -663,7 +663,7 @@ package body demo_callbacks is
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 
-		canvas.on_draw (cb_draw_objects'access);
+		canvas.on_draw (cb_draw'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
 		
@@ -1084,7 +1084,7 @@ package body demo_callbacks is
 			
 			-- After changing the scale-factor, the translate-offset must
 			-- be calculated anew. When the actual drawing takes 
-			-- place (see function cb_draw_objects)
+			-- place (see function cb_draw)
 			-- then the drawing will be dragged back by the 
 			-- translate-offset so that the operator gets the impression 
 			-- of a zoom-into or zoom-out effect.
@@ -1217,7 +1217,7 @@ package body demo_callbacks is
 
 
 	
-	function cb_draw_objects (
+	function cb_draw (
 		canvas		: access gtk_widget_record'class;
 		context_in	: in cairo_context)
 		return boolean
@@ -1228,7 +1228,7 @@ package body demo_callbacks is
 		
 	begin
 		-- new_line;
-		-- put_line ("cb_draw_objects " & image (clock));
+		-- put_line ("cb_draw " & image (clock));
 
 		-- Update the global context:
 		context := context_in;
@@ -1254,7 +1254,7 @@ package body demo_callbacks is
 		draw_objects;		
 		
 		return event_handled;
-	end cb_draw_objects;
+	end cb_draw;
 
 	
 end demo_callbacks;

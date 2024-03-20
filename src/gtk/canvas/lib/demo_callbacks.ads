@@ -277,8 +277,10 @@ package demo_callbacks is
 		return boolean;
 	
 	
-	-- This function is called each time the canvas is to be refreshed:
-	function cb_draw_objects (
+	-- This function is called each time the canvas 
+	-- is to be refreshed.
+	-- It draws everything: frame, grid, cursor, objects
+	function cb_draw (
 		canvas		: access gtk_widget_record'class;
 		context_in	: in cairo_context)
 		return boolean;
