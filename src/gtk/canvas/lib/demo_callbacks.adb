@@ -59,6 +59,7 @@ with demo_scrolled_window;		use demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;	use demo_coordinates_display;
 with demo_primitive_draw_ops;
+with demo_drawing_origin;
 with demo_scale_factor;			use demo_scale_factor;
 
 
@@ -1223,35 +1224,6 @@ package body demo_callbacks is
 	is
 		event_handled : boolean := true;
 
-		-- This procedure draws the origin. The origin is a small
-		-- cross at model position (0;0). This procedure does not
-		-- check whether the lines of the cross are inside the visible
-		-- area. Since it is about two simple lines we draw them
-		-- always:
-		procedure draw_origin is
-			cp : type_logical_pixels_vector := to_canvas (origin, S, true);
-		begin
-			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-			set_line_width (context, to_gdouble (origin_linewidth));
-
-			-- Draw the horizontal line from left to right:
-			move_to (context, 
-				to_gdouble (cp.x - origin_size), to_gdouble (cp.y));
-			
-			line_to (context, 
-				to_gdouble (cp.x + origin_size), to_gdouble (cp.y));
-
-			-- Draw the vertical line from top to bottom:
-			move_to (context, 
-				to_gdouble (cp.x), to_gdouble (cp.y - origin_size));
-			
-			line_to (context, 
-				 to_gdouble (cp.x), to_gdouble (cp.y + origin_size));
-			
-			stroke (context);
-		end draw_origin;
-
-
 		-- If a zoom-to-area operation has started, then
 		-- this procedure draws the rectangle around the
 		-- area to be zoomed at.
@@ -1334,7 +1306,7 @@ package body demo_callbacks is
 			draw_grid;
 		end if; -- CS move this stuff to procedure draw_grid.
 		
-		draw_origin;
+		demo_drawing_origin.draw_origin;
 
 		draw_cursor;
 

@@ -151,11 +151,7 @@ package demo_geometry is
 -- ORIGIN:
 	
 	-- The origin is a small cross at model position (0;0).
-	origin				: constant type_vector_model := (0.0, 0.0);
-
-	-- the arm-length:
-	origin_size			: constant type_logical_pixels_positive := 10.0;
-	origin_linewidth	: constant type_logical_pixels_positive := 1.0;
+	origin : constant type_vector_model := (0.0, 0.0);
 
 
 
