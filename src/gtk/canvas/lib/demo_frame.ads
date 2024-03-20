@@ -61,6 +61,10 @@ package demo_frame is
 	-- dummy drawing frame:
 	procedure make_drawing_frame;
 
+
+	-- Draws all primitive objects of the drawing frame
+	-- and draws them one by one:
+	procedure draw_drawing_frame;
 	
 end demo_frame;
 

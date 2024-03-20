@@ -38,9 +38,15 @@
 
 with ada.text_io;				use ada.text_io;
 
+with cairo;
+
+with demo_canvas;
+with demo_primitive_draw_ops;
+
 
 package body demo_frame is
 
+	
 	procedure make_drawing_frame is
 		use pac_lines;
 
@@ -97,6 +103,36 @@ package body demo_frame is
 		drawing_frame.lines.append (line);
 		
 	end make_drawing_frame;
+
+
+
+	procedure draw_drawing_frame is
+		use cairo;
+		use demo_canvas;
+		use demo_primitive_draw_ops;
+		-- use demo_frame;
+		use pac_lines;
+					
+
+		procedure query_line (lc : in pac_lines.cursor) is
+			-- The candidate line being handled:
+			line : type_line renames element (lc);
+		begin
+			--put_line ("query_line");
+			draw_line (line, drawing_frame.position);
+		end query_line;
+
+		
+	begin
+		--put_line ("draw_drawing_frame");
+
+		-- Set the color:
+		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+		drawing_frame.lines.iterate (query_line'access);			
+		-- CS texts
+		
+	end draw_drawing_frame;
 
 	
 end demo_frame;

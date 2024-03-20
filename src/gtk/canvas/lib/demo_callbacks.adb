@@ -1390,37 +1390,6 @@ package body demo_callbacks is
 
 		
 
-		-- Draws all primitive objects of the drawing frame
-		-- and draws them one by one:
-		procedure draw_drawing_frame is
-			use demo_primitive_draw_ops;
-			use demo_frame;
-			use pac_lines;
-						
-
-			procedure query_line (lc : in pac_lines.cursor) is
-				-- The candidate line being handled:
-				line : type_line renames element (lc);
-			begin
-				--put_line ("query_line");
-				draw_line (line, drawing_frame.position);
-			end query_line;
-	
-			
-		begin
-			--put_line ("draw_drawing_frame");
-
-			-- Set the color:
-			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-
-			drawing_frame.lines.iterate (query_line'access);			
-			-- CS texts
-			
-		end draw_drawing_frame;
-
-
-		
-
 		-- Draws all model objects. Parses the model database
 		-- and draws objects one by one:
 		procedure draw_objects is
@@ -1506,7 +1475,7 @@ package body demo_callbacks is
 
 		draw_zoom_area;
 
-		draw_drawing_frame;
+		demo_frame.draw_drawing_frame;
 		
 		draw_objects;
 		
