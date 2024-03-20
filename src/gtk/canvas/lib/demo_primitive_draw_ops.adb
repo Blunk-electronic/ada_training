@@ -38,6 +38,7 @@
 
 with ada.text_io;				use ada.text_io;
 
+-- with glib;						use glib;
 with cairo;						use cairo;
 
 with demo_logical_pixels;		use demo_logical_pixels;
@@ -91,10 +92,16 @@ package body demo_primitive_draw_ops is
 
 			c1 := to_canvas (l.s, S, real => true);
 			c2 := to_canvas (l.e, S, real => true);
-			
+
+			-- These draw operations consume the most time:
 			move_to (context, to_gdouble (c1.x), to_gdouble (c1.y));
 			line_to (context, to_gdouble (c2.x), to_gdouble (c2.y));
 
+			-- Direct conversion to gdouble does not improve performance:
+			-- move_to (context, gdouble (c1.x), gdouble (c1.y));
+			-- line_to (context, gdouble (c2.x), gdouble (c2.y));
+
+			
 			stroke (context);
 		end if;
 	end draw_line;
@@ -143,7 +150,8 @@ package body demo_primitive_draw_ops is
 
 			m := to_canvas (c.c, S, real => true);
 			r := to_distance (c.r);
-			
+
+			-- This draw operation consumes the most time:
 			arc (context, 
 				 to_gdouble (m.x), 
 				 to_gdouble (m.y),
