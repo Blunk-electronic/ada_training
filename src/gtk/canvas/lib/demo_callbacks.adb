@@ -1396,15 +1396,14 @@ package body demo_callbacks is
 			use demo_primitive_draw_ops;
 			use demo_frame;
 			use pac_lines;
-			
-			
+						
 
 			procedure query_line (lc : in pac_lines.cursor) is
 				-- The candidate line being handled:
 				line : type_line renames element (lc);
 			begin
 				--put_line ("query_line");
-				draw_line (context, line, drawing_frame.position);
+				draw_line (line, drawing_frame.position);
 			end query_line;
 	
 			
@@ -1438,7 +1437,7 @@ package body demo_callbacks is
 					line : type_line renames element (lc);
 				begin
 					--put_line ("query_line");
-					draw_line (context, line, object.position);
+					draw_line (line, object.position);
 				end query_line;
 
 				
@@ -1446,7 +1445,7 @@ package body demo_callbacks is
 					circle : type_circle renames element (cc);
 				begin
 					-- put_line ("query_circle");
-					draw_circle (context, circle, object.position);
+					draw_circle (circle, object.position);
 				end query_circle;
 
 				

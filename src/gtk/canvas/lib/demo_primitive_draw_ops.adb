@@ -38,21 +38,22 @@
 
 with ada.text_io;				use ada.text_io;
 
+with cairo;						use cairo;
+
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_scale_factor;			use demo_scale_factor;
 with demo_conversions;			use demo_conversions;
 with demo_visible_area;			use demo_visible_area;
 with demo_visibility;			use demo_visibility;
+with demo_canvas;				use demo_canvas;
 
 
 package body demo_primitive_draw_ops is
 
 	procedure draw_line (
-		context	: in cairo_context; -- CS make context global ?
 		line	: in type_line;
 		pos		: in type_vector_model)
 	is
-		
 		-- CS: Optimization required. Compiler options ?
 		
 		-- Make a copy of the given line:
@@ -100,11 +101,9 @@ package body demo_primitive_draw_ops is
 
 	
 	procedure draw_circle (
-		context	: in cairo_context; -- CS make context global ?
 		circle	: in type_circle;
-		pos		: in type_vector_model) -- the position of the complex object
+		pos		: in type_vector_model)
 	is
-	
 		-- CS: Optimization required. Compiler options ?
 		
 		-- Make a copy of the given circle:

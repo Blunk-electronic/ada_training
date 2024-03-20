@@ -36,8 +36,6 @@
 --   history of changes:
 --
 
-with cairo;					use cairo;
-
 with demo_geometry;			use demo_geometry;
 with demo_objects;			use demo_objects;
 
@@ -47,14 +45,12 @@ package demo_primitive_draw_ops is
 	
 	-- This is a primitive draw operation that draws a line:
 	procedure draw_line (
-		context	: in cairo_context; -- CS make context global ?
 		line	: in type_line;
 		pos		: in type_vector_model); -- the position of the complex object
 
 
 	-- This is a primitive draw operation that draws a circle:
 	procedure draw_circle (
-		context	: in cairo_context; -- CS make context global ?
 		circle	: in type_circle;
 		pos		: in type_vector_model); -- the position of the complex object
 	
