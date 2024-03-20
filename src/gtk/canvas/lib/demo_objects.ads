@@ -134,6 +134,12 @@ package demo_objects is
 	-- added to the database:
 	procedure delete_object;
 
+
+
+	-- Draws all model objects. Parses the model database
+	-- and draws objects one by one:
+	procedure draw_objects;
+
 	
 end demo_objects;
 

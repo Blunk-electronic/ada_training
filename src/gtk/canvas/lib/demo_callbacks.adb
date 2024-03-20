@@ -1389,54 +1389,6 @@ package body demo_callbacks is
 		end draw_zoom_area;
 
 		
-
-		-- Draws all model objects. Parses the model database
-		-- and draws objects one by one:
-		procedure draw_objects is
-			use demo_primitive_draw_ops;
-			use pac_lines;
-			use pac_circles;
-			use pac_objects;
-
-
-			procedure query_object (oc : in pac_objects.cursor) is
-				object : type_complex_object renames element (oc);
-
-				procedure query_line (lc : in pac_lines.cursor) is
-					line : type_line renames element (lc);
-				begin
-					--put_line ("query_line");
-					draw_line (line, object.position);
-				end query_line;
-
-				
-				procedure query_circle (cc : in pac_circles.cursor) is
-					circle : type_circle renames element (cc);
-				begin
-					-- put_line ("query_circle");
-					draw_circle (circle, object.position);
-				end query_circle;
-
-				
-			begin
-				--put_line ("query_object");
-				object.lines.iterate (query_line'access);
-				object.circles.iterate (query_circle'access);
-			end query_object;
-			
-		begin
-			--put_line ("draw_objects");
-			
-			-- Set the color:
-			set_source_rgb (context, 1.0, 0.0, 0.0);
-
-			-- CS draw origin
-
-			objects_database.iterate (query_object'access);
-		end draw_objects;
-
-
-		
 		use demo_grid;
 		use demo_visible_area;
 		

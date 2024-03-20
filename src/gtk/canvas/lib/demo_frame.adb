@@ -110,7 +110,6 @@ package body demo_frame is
 		use cairo;
 		use demo_canvas;
 		use demo_primitive_draw_ops;
-		-- use demo_frame;
 		use pac_lines;
 					
 
