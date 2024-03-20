@@ -39,6 +39,8 @@
 with ada.text_io;				use ada.text_io;
 
 with demo_scale_factor;			use demo_scale_factor;
+with demo_visible_area;
+with demo_conversions;
 
 
 package body demo_grid is
@@ -76,6 +78,266 @@ package body demo_grid is
 		y := type_logical_pixels (grid.spacing.y) * sg;
 		return type_logical_pixels_positive'min (x, y);
 	end get_grid_spacing;
+
+
+
+	-- This procedure draws the grid in the visible area.
+	-- Outside the visible area nothing is drawn in order to save time.
+	-- The procedure works as follows:
+	-- 1. Define the begin and end of the visible area in 
+	--    x and y direction.
+	-- 2. Find the first column that comes after the begin of 
+	--    the visible area (in x direction).
+	-- 3. Find the last column that comes before the end of the 
+	--    visible area (in x direction).
+	-- 4. Find the first row that comes after the begin of the 
+	--    visible area (in y direction).
+	-- 5. Find the last row that comes before the end of the 
+	--    visible area (in y direction).
+	-- 6. Draw the grid as dots or lines, depending on the user specified
+	--    settings.
+	procedure draw_grid (
+		context	: in cairo_context) 
+	is
+		use demo_conversions;
+		use demo_grid;
+		use demo_visible_area;
+		
+		type type_float_grid is new float; -- CS refinement required
+
+		-- X-AXIS:
+
+		-- The first and the last column:
+		x1, x2 : type_distance_model;
+
+		-- The start and the end of the visible area:
+		ax1 : constant type_float_grid := 
+			type_float_grid (visible_area.position.x);
+		
+		ax2 : constant type_float_grid := 
+			ax1 + type_float_grid (visible_area.width);
+
+		-- The grid spacing:
+		gx : constant type_float_grid := 
+			type_float_grid (grid.spacing.x);
+
+		
+		-- Y-AXIS:
+
+		-- The first and the last row:
+		y1, y2 : type_distance_model;
+
+		-- The start and the end of the visible area:
+		ay1 : constant type_float_grid := 
+			type_float_grid (visible_area.position.y);
+		
+		ay2 : constant type_float_grid := 
+			ay1 + type_float_grid (visible_area.height);
+
+		-- The grid spacing:
+		gy : constant type_float_grid := 
+			type_float_grid (grid.spacing.y);
+
+		c : type_float_grid;
+
+		-- debug : boolean := false;
+
+		
+		procedure compute_first_and_last_column is begin
+			-- Compute the first column:
+			-- put_line (" ax1 " & type_float_grid'image (ax1));
+			c := type_float_grid'floor (ax1 / gx);
+			x1 := type_distance_model ((gx * c) + gx);
+			-- put_line (" x1  " & type_distance_model'image (x1));
+
+			-- Compute the last column:
+			-- put_line (" ax2 " & type_float_grid'image (ax2));
+			c := type_float_grid'floor (ax2 / gx);
+			x2 := type_distance_model (gx * c);
+			-- put_line (" x2  " & type_distance_model'image (x2));
+		end compute_first_and_last_column;
+
+
+		procedure compute_first_and_last_row is begin
+			-- Compute the first row:
+			-- put_line (" ay1 " & type_float_grid'image (ay1));
+			c := type_float_grid'floor (ay1 / gy);
+			y1 := type_distance_model ((gy * c) + gy);
+			-- put_line (" y1  " & type_distance_model'image (y1));
+
+			-- Compute the last row:
+			-- put_line (" ay2 " & type_float_grid'image (ay2));
+			c := type_float_grid'floor (ay2 / gy);
+			y2 := type_distance_model (gy * c);
+			-- put_line (" y2  " & type_distance_model'image (y2));
+		end compute_first_and_last_row;
+		
+
+		-- This procedure draws the dots of the grid:
+		-- 1. Assemble from the first row and the first colum a real
+		--    model point MP.
+		-- 2. Advance PM from row to row and column to column in a 
+		--    matrix like order.
+		-- 3. Draw a very small circle, which will appear like a dot,
+		--    (or alternatively a very small cross) at MP.
+		procedure draw_dots is 
+			MP : type_vector_model;
+			CP : type_logical_pixels_vector;
+		begin
+			-- Set the linewidth of the dots:
+			set_line_width (context, to_gdouble (grid_width_dots));
+			
+			-- Compose a model point from the first column and 
+			-- the first row:
+			MP := (x1, y1);
+
+			-- Advance PM from column to column:
+			while MP.x <= x2 loop
+
+				-- Advance PM from row to row:
+				MP.y := y1;
+				while MP.y <= y2 loop
+					-- Convert the current real model point MP to a
+					-- point on the canvas:
+					CP := to_canvas (MP, S, true);
+
+					-- Draw a very small circle with its center at CP:
+					-- arc (context, CP.x, CP.y, 
+					-- 	 radius => grid_radius_dots, angle1 => 0.0, 
+					--    angle2 => 6.3);
+					-- stroke (context);
+
+					-- Alternatively, draw a very small cross at CP.
+					-- This could be more efficient than a circle:
+					
+					-- horizontal line:
+					move_to (context, 
+						to_gdouble (CP.x - grid_cross_arm_length),
+						to_gdouble (CP.y));
+					
+					line_to (context, 
+						to_gdouble (CP.x + grid_cross_arm_length),
+						to_gdouble (CP.y));
+						
+					-- stroke (context);
+
+					-- vertical line:
+					move_to (context, 
+						to_gdouble (CP.x), 
+						to_gdouble (CP.y - grid_cross_arm_length));
+					
+					line_to (context,
+						to_gdouble (CP.x),
+						to_gdouble (CP.y + grid_cross_arm_length));
+					
+					-- stroke (context);
+											
+					-- Advance one row up:
+					MP.y := MP.y + grid.spacing.y;
+				end loop;
+
+				-- Advance one column to the right:
+				MP.x := MP.x + grid.spacing.x;
+			end loop;
+
+			stroke (context);
+		end draw_dots;
+
+
+		-- This procedure draws the lines of the grid:
+		procedure draw_lines is 
+			MP1 : type_vector_model;
+			MP2 : type_vector_model;
+
+			CP1 : type_logical_pixels_vector;
+			CP2 : type_logical_pixels_vector;
+
+			ax1f : type_distance_model := visible_area.position.x;
+			ax2f : type_distance_model := ax1f + visible_area.width;
+			
+			ay1f : type_distance_model := visible_area.position.y;
+			ay2f : type_distance_model := ay1f + visible_area.height;
+		begin
+			-- Set the linewidth of the lines:
+			set_line_width (context, to_gdouble (grid_width_lines));
+			
+			-- VERTICAL LINES:
+
+			-- All vertical lines start at the bottom of 
+			-- the visible area:
+			MP1 := (x1, ay1f);
+
+			-- All vertical lines end at the top of the 
+			-- visible area:
+			MP2 := (x1, ay2f);
+
+			-- The first vertical line runs along the first column. 
+			-- The last vertical line runs along the last column.
+			-- This loop advances from one column to the next and
+			-- draws a vertical line:
+			while MP1.x <= x2 loop
+				CP1 := to_canvas (MP1, S, true);
+				CP2 := to_canvas (MP2, S, true);
+				
+				move_to (context, 
+					to_gdouble (CP1.x), to_gdouble (CP1.y));
+				
+				line_to (context, 
+					to_gdouble (CP2.x), to_gdouble (CP2.y));
+
+				MP1.x := MP1.x + grid.spacing.x;
+				MP2.x := MP2.x + grid.spacing.x;
+				stroke (context);
+			end loop;
+
+			
+			-- HORIZONTAL LINES:
+
+			-- All horizontal lines start at the left edge of the 
+			-- visible area:
+			MP1 := (ax1f, y1);
+
+			-- All horizontal lines end at the right edge of the 
+			-- visible area:
+			MP2 := (ax2f, y1);
+
+			-- The first horizontal line runs along the first row. 
+			-- The last horizontal line runs along the last row.
+			-- This loop advances from one row to the next and
+			-- draws a horizontal line:
+			while MP1.y <= y2 loop
+				CP1 := to_canvas (MP1, S, true);
+				CP2 := to_canvas (MP2, S, true);
+				
+				move_to (context, 
+					to_gdouble (CP1.x), to_gdouble (CP1.y));
+
+				line_to (context, 
+					to_gdouble (CP2.x), to_gdouble (CP2.y));
+
+				MP1.y := MP1.y + grid.spacing.y;
+				MP2.y := MP2.y + grid.spacing.y;
+				stroke (context);
+			end loop;
+		end draw_lines;
+		
+
+	begin -- draw_grid
+		-- put_line ("draw_grid");
+		compute_first_and_last_column;
+		compute_first_and_last_row;
+
+		-- Set the color of the grid:
+		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+		case grid.style is
+			when STYLE_DOTS =>
+				draw_dots;
+
+			when STYLE_LINES =>
+				draw_lines;
+		end case;
+	end draw_grid;
 
 	
 end demo_grid;

@@ -36,8 +36,11 @@
 --   history of changes:
 --
 
+with cairo;						use cairo;
+
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
+
 
 package demo_grid is
 
@@ -99,6 +102,10 @@ package demo_grid is
 	function get_grid_spacing (
 		grid : in type_grid)
 		return type_logical_pixels_positive;
+
+
+	procedure draw_grid (
+		context	: in cairo_context);
 
 	
 end demo_grid;
