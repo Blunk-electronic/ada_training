@@ -70,6 +70,14 @@ package demo_cursor is
 	-- This procedure moves the cursor into the given direction:
 	procedure move_cursor (
 		direction : type_direction);
+
+
+	-- This procedure draws the cursor at its current
+	-- position. To keep things simple, the cursor is
+	-- drawn always, regardless whether it is in the visible
+	-- area or not:
+	procedure draw_cursor;
+
 	
 end demo_cursor;
 

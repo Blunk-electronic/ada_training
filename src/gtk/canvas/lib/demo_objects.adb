@@ -38,6 +38,7 @@
 
 with ada.text_io;				use ada.text_io;
 with cairo;
+
 with demo_primitive_draw_ops;
 with demo_canvas;
 

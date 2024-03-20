@@ -37,7 +37,10 @@
 --
 
 with ada.text_io;				use ada.text_io;
+with cairo;
 
+with demo_scale_factor;
+with demo_conversions;
 with demo_visible_area;
 with demo_grid;
 with demo_canvas;
@@ -139,6 +142,94 @@ package body demo_cursor is
 		backup_visible_area (get_visible_area (canvas));
 	end move_cursor;
 	
+
+
+	procedure draw_cursor is
+		use cairo;
+		use demo_canvas;
+		use demo_conversions;
+		use demo_scale_factor;
+		
+
+		cp : type_logical_pixels_vector := 
+			to_canvas (cursor.position, S, true);
+
+		-- These are the start and stop positions for the
+		-- horizontal lines:
+		h1, h2, h3, h4 : type_logical_pixels;
+
+		-- These are the start and stop positions for the
+		-- vertical lines:
+		v1, v2, v3, v4 : type_logical_pixels;
+
+		-- This is the total length of an arm:
+		l : constant type_logical_pixels := 
+			cursor.length_1 + cursor.length_2;
+		
+	begin
+		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+		-- Compute the start and stop positions:
+		h1 := cp.x - l;
+		h2 := cp.x - cursor.length_1;
+		h3 := cp.x + cursor.length_1;
+		h4 := cp.x + l;
+		
+		v1 := cp.y - l;
+		v2 := cp.y - cursor.length_1;
+		v3 := cp.y + cursor.length_1;
+		v4 := cp.y + l;
+
+		-- Draw the horizontal line from left to right:
+		-- thick
+		set_line_width (context, to_gdouble (cursor.linewidth_2));
+		move_to (context, to_gdouble (h1), to_gdouble (cp.y));
+		line_to (context, to_gdouble (h2), to_gdouble (cp.y));
+		stroke (context);
+
+		-- thin
+		set_line_width (context, to_gdouble (cursor.linewidth_1));
+		move_to (context, to_gdouble (h2), to_gdouble (cp.y));
+		line_to (context, to_gdouble (h3), to_gdouble (cp.y));
+		stroke (context);
+
+		-- thick
+		set_line_width (context, to_gdouble (cursor.linewidth_2));
+		move_to (context, to_gdouble (h3), to_gdouble (cp.y));
+		line_to (context, to_gdouble (h4), to_gdouble (cp.y));
+		stroke (context);
+		
+		-- Draw the vertical line from top to bottom:
+		-- thick
+		move_to (context, to_gdouble (cp.x), to_gdouble (v1));
+		line_to (context, to_gdouble (cp.x), to_gdouble (v2));
+		stroke (context);
+
+		-- thin
+		set_line_width (context, to_gdouble (cursor.linewidth_1));
+		move_to (context, to_gdouble (cp.x), to_gdouble (v2));
+		line_to (context, to_gdouble (cp.x), to_gdouble (v3));
+		stroke (context);
+
+		-- thick
+		set_line_width (context, to_gdouble (cursor.linewidth_2));
+		move_to (context, to_gdouble (cp.x), to_gdouble (v3));
+		line_to (context, to_gdouble (cp.x), to_gdouble (v4));
+		stroke (context);
+
+		-- arc
+		set_line_width (context, to_gdouble (cursor.linewidth_1));
+		arc (context, to_gdouble (cp.x), to_gdouble (cp.y), 
+				radius => to_gdouble (cursor.radius), 
+				angle1 => 0.0, angle2 => 6.3);
+		
+		stroke (context);
+
+		-- CS: To improve performance on drawing, it might help
+		-- to draw all objects which have a thin line first, then
+		-- all object with a thick line.
+	end draw_cursor;
+
 	
 end demo_cursor;
 
