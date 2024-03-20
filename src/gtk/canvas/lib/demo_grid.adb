@@ -206,7 +206,6 @@ package body demo_grid is
 						to_gdouble (CP.x + grid_cross_arm_length),
 						to_gdouble (CP.y));
 						
-					-- stroke (context);
 
 					-- vertical line:
 					move_to (context, 
@@ -216,8 +215,7 @@ package body demo_grid is
 					line_to (context,
 						to_gdouble (CP.x),
 						to_gdouble (CP.y + grid_cross_arm_length));
-					
-					-- stroke (context);
+
 											
 					-- Advance one row up:
 					MP.y := MP.y + grid.spacing.y;
@@ -274,7 +272,6 @@ package body demo_grid is
 
 				MP1.x := MP1.x + grid.spacing.x;
 				MP2.x := MP2.x + grid.spacing.x;
-				stroke (context);
 			end loop;
 
 			
@@ -304,8 +301,9 @@ package body demo_grid is
 
 				MP1.y := MP1.y + grid.spacing.y;
 				MP2.y := MP2.y + grid.spacing.y;
-				stroke (context);
 			end loop;
+
+			stroke (context);
 		end draw_lines;
 		
 

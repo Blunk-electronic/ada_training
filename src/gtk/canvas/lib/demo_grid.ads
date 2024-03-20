@@ -75,7 +75,7 @@ package demo_grid is
 		-- on		: type_grid_on_off := GRID_OFF;
 		spacing : type_vector_model := (others => grid_spacing_default);
 		style	: type_grid_style := STYLE_DOTS;
-		-- style	: type_grid_style := STYLE_LINES;
+		--style	: type_grid_style := STYLE_LINES;
 	end record;
 	
 	grid : type_grid;
