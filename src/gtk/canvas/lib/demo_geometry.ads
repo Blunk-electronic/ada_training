@@ -69,9 +69,10 @@ package demo_geometry is
 	
 	-- The model coordinates system uses so called
 	-- decimal fixed point numbers for distances and positions:
-	type type_distance_model is delta 0.01 digits 8
+	--type type_distance_model is delta 0.01 digits 8
+	type type_distance_model is delta 0.01
 		range -100_000.00 .. 100_000.00;
-
+	for type_distance_model'small use 0.01;
 
 	-- Use this type for distances, lengths, ...
 	-- Because those things require positive numbers:
