@@ -142,6 +142,36 @@ package body demo_objects is
 		object 	: type_complex_object;
 		line 	: type_line;
 		circle 	: type_circle;
+
+		position : type_vector_model := (10.0, 10.0);
+		
+		
+		procedure make_object (
+			destination : in type_vector_model)
+		is
+			O : type_complex_object;
+			L : type_line;
+			-- C : type_circle;
+		begin
+			O.position := destination;
+
+			-- The object to be created is a square:
+			L := (s => (-5.0, -5.0), e => (5.0, -5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (5.0, -5.0), e => (5.0, 5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (5.0, 5.0), e => (-5.0, 5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (-5.0, 5.0), e => (-5.0, -5.0), w => 1.0);
+			O.lines.append (L);
+
+			objects_database.append (O);
+		end make_object;
+
+		
 	begin
 		put_line ("make_database");
 
@@ -151,6 +181,7 @@ package body demo_objects is
 
 		-- The first dummy object is a square:
 
+		goto l_end;
 		
 		-- POSITION:
 
@@ -227,8 +258,33 @@ package body demo_objects is
 
 		objects_database.append (object);
 
+		-------------------------------------
+
 	<<l_end>>
+
+		-- This creates a 150 squares:
+		for column in 1 .. 10 loop			
+			for row in 1 .. 15 loop
+				make_object (position);
+				position.x := position.x + 20.0;
+			end loop;
 		
+			position.x := 10.0;
+			position.y := position.y + 20.0;
+		end loop;
+
+		-- This creates 10.000 squares:
+		-- for column in 1 .. 100 loop			
+		-- 	for row in 1 .. 100 loop
+		-- 		make_object (position);
+		-- 		position.x := position.x + 1.0;
+		-- 	end loop;
+		-- 
+		-- 	position.x := 10.0;
+		-- 	position.y := position.y + 1.0;
+		-- end loop;
+
+
 	end make_database;
 
 
