@@ -38,6 +38,7 @@
 
 with gtk.widget;				use gtk.widget;
 with gtk.drawing_area;			use gtk.drawing_area;
+with cairo;
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 with demo_window_dimensions;	use demo_window_dimensions;
@@ -49,6 +50,11 @@ package demo_canvas is
 	canvas : gtk_drawing_area;
 
 
+	-- This is the global drawing context.
+	-- It is updated by the function cb_draw_objects:
+	context : cairo.cairo_context;
+
+	
 	-- This is the size of the canvas in device pixels.
 	-- It is set by procedure compute_canvas_size on system startup:
 	canvas_size : type_window_size;

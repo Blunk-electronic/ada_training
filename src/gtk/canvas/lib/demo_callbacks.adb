@@ -63,8 +63,7 @@ with demo_scale_factor;			use demo_scale_factor;
 
 
 package body demo_callbacks is
-	
-	
+		
 	
 	procedure cb_zoom_to_fit (
 		button : access gtk_button_record'class)
@@ -1218,11 +1217,10 @@ package body demo_callbacks is
 
 	
 	function cb_draw_objects (
-		canvas	: access gtk_widget_record'class;
-		context	: in cairo_context)
+		canvas		: access gtk_widget_record'class;
+		context_in	: in cairo_context)
 		return boolean
 	is
-		
 		event_handled : boolean := true;
 
 		-- This procedure draws the origin. The origin is a small
@@ -1479,10 +1477,9 @@ package body demo_callbacks is
 		-- new_line;
 		-- put_line ("cb_draw_objects " & image (clock));
 
-		-- CS if context is global then do:
-		-- context_global := context;
+		-- Update the global context:
+		context := context_in;
 
-		-- show_adjustments_v;
 		
 		-- Update the global visible_area:
 		visible_area := get_visible_area (canvas);
@@ -1501,7 +1498,7 @@ package body demo_callbacks is
 		-- is greater than the minimal required spacing:
 		if grid.on = GRID_ON and then
 			get_grid_spacing (grid) >= grid_spacing_min then
-			draw_grid (context);
+			draw_grid;
 		end if; -- CS move this stuff to procedure draw_grid.
 		
 		draw_origin;

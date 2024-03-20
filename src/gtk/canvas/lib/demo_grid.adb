@@ -38,9 +38,11 @@
 
 with ada.text_io;				use ada.text_io;
 
+with cairo;
 with demo_scale_factor;			use demo_scale_factor;
 with demo_visible_area;
 with demo_conversions;
+with demo_canvas;
 
 
 package body demo_grid is
@@ -81,27 +83,12 @@ package body demo_grid is
 
 
 
-	-- This procedure draws the grid in the visible area.
-	-- Outside the visible area nothing is drawn in order to save time.
-	-- The procedure works as follows:
-	-- 1. Define the begin and end of the visible area in 
-	--    x and y direction.
-	-- 2. Find the first column that comes after the begin of 
-	--    the visible area (in x direction).
-	-- 3. Find the last column that comes before the end of the 
-	--    visible area (in x direction).
-	-- 4. Find the first row that comes after the begin of the 
-	--    visible area (in y direction).
-	-- 5. Find the last row that comes before the end of the 
-	--    visible area (in y direction).
-	-- 6. Draw the grid as dots or lines, depending on the user specified
-	--    settings.
-	procedure draw_grid (
-		context	: in cairo_context) 
-	is
+	procedure draw_grid is
+		use cairo;
 		use demo_conversions;
 		use demo_grid;
 		use demo_visible_area;
+		use demo_canvas;
 		
 		type type_float_grid is new float; -- CS refinement required
 

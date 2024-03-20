@@ -36,8 +36,6 @@
 --   history of changes:
 --
 
-with cairo;						use cairo;
-
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 
@@ -104,8 +102,23 @@ package demo_grid is
 		return type_logical_pixels_positive;
 
 
-	procedure draw_grid (
-		context	: in cairo_context);
+
+	-- This procedure draws the grid in the visible area.
+	-- Outside the visible area nothing is drawn in order to save time.
+	-- The procedure works as follows:
+	-- 1. Define the begin and end of the visible area in 
+	--    x and y direction.
+	-- 2. Find the first column that comes after the begin of 
+	--    the visible area (in x direction).
+	-- 3. Find the last column that comes before the end of the 
+	--    visible area (in x direction).
+	-- 4. Find the first row that comes after the begin of the 
+	--    visible area (in y direction).
+	-- 5. Find the last row that comes before the end of the 
+	--    visible area (in y direction).
+	-- 6. Draw the grid as dots or lines, depending on the user specified
+	--    settings.
+	procedure draw_grid;
 
 	
 end demo_grid;

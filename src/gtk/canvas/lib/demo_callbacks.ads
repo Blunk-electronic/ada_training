@@ -279,8 +279,8 @@ package demo_callbacks is
 	
 	-- This function is called each time the canvas is to be refreshed:
 	function cb_draw_objects (
-		canvas	: access gtk_widget_record'class;
-		context	: in cairo_context)
+		canvas		: access gtk_widget_record'class;
+		context_in	: in cairo_context)
 		return boolean;
 
 
