@@ -38,6 +38,8 @@
 
 with ada.text_io;				use ada.text_io;
 
+with cairo;
+
 with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
 with demo_conversions;			use demo_conversions;
@@ -47,6 +49,8 @@ with demo_cursor;
 with demo_canvas;
 with demo_scrolled_window;
 with demo_bounding_box;
+
+
 
 
 package body demo_zoom is
@@ -287,6 +291,55 @@ package body demo_zoom is
 		refresh (canvas);
 	end zoom_to_fit_all;
 	
+
+
+	procedure draw_zoom_area is
+		use cairo;
+		use demo_canvas;
+		
+		x, y : type_logical_pixels;
+		w, h : type_logical_pixels;
+
+		l1 : type_logical_pixels_vector renames zoom_area.l1;
+		l2 : type_logical_pixels_vector renames zoom_area.l2;
+	begin
+		if zoom_area.started then
+
+			-- Set the color of the rectangle:
+			set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+			-- Compute the position and dimensions of
+			-- the rectangle:
+
+			-- x-position:
+			if l1.x < l2.x then
+				x := l1.x;
+			else
+				x := l2.x;
+			end if;
+
+			-- y-position:
+			if l1.y < l2.y then
+				y := l1.y;
+			else
+				y := l2.y;
+			end if;
+
+			-- width and height:
+			w := abs (l1.x - l2.x);
+			h := abs (l1.y - l2.y);
+
+			set_line_width (context, to_gdouble (zoom_area_linewidth));
+			
+			rectangle (context, 
+				to_gdouble (x),
+				to_gdouble (y),
+				to_gdouble (w),
+				to_gdouble (h));
+				
+			stroke (context);
+		end if;
+	end draw_zoom_area;
 	
 end demo_zoom;
 

@@ -169,6 +169,13 @@ package demo_zoom is
 	-- so that all objects of bounding-box fit into the scrolled window.
 	-- The zoom center is the top-left corner of bounding-box.
 	procedure zoom_to_fit_all;
+
+
+	-- If a zoom-to-area operation has started, then
+	-- this procedure draws the rectangle around the
+	-- area to be zoomed at.
+	-- The rectangle is drawn directly on the cairo_context.
+	procedure draw_zoom_area;
 	
 end demo_zoom;
 

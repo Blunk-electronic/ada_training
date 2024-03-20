@@ -1223,60 +1223,9 @@ package body demo_callbacks is
 		return boolean
 	is
 		event_handled : boolean := true;
-
-		-- If a zoom-to-area operation has started, then
-		-- this procedure draws the rectangle around the
-		-- area to be zoomed at.
-		-- The rectangle is drawn directly on the cairo_context.
-		procedure draw_zoom_area is
-			x, y : type_logical_pixels;
-			w, h : type_logical_pixels;
-
-			l1 : type_logical_pixels_vector renames zoom_area.l1;
-			l2 : type_logical_pixels_vector renames zoom_area.l2;
-		begin
-			if zoom_area.started then
-
-				-- Set the color of the rectangle:
-				set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
-
-				-- Compute the position and dimensions of
-				-- the rectangle:
-
-				-- x-position:
-				if l1.x < l2.x then
-					x := l1.x;
-				else
-					x := l2.x;
-				end if;
-
-				-- y-position:
-				if l1.y < l2.y then
-					y := l1.y;
-				else
-					y := l2.y;
-				end if;
-
-				-- width and height:
-				w := abs (l1.x - l2.x);
-				h := abs (l1.y - l2.y);
-
-				set_line_width (context, to_gdouble (zoom_area_linewidth));
-				
-				rectangle (context, 
-					to_gdouble (x),
-					to_gdouble (y),
-					to_gdouble (w),
-					to_gdouble (h));
-					
-				stroke (context);
-			end if;
-		end draw_zoom_area;
-
 		
 		use demo_grid;
 		use demo_visible_area;
-		
 		
 	begin -- cb_draw_objects
 		-- new_line;
