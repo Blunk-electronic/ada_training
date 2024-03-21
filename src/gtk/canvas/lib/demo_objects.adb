@@ -142,49 +142,18 @@ package body demo_objects is
 		object 	: type_complex_object;
 		line 	: type_line;
 		circle 	: type_circle;
-
-		position : type_vector_model := (10.0, 10.0);
-		
-		
-		procedure make_object (
-			destination : in type_vector_model)
-		is
-			O : type_complex_object;
-			L : type_line;
-			-- C : type_circle;
-		begin
-			O.position := destination;
-
-			-- The object to be created is a square:
-			L := (s => (-5.0, -5.0), e => (5.0, -5.0), w => 1.0);
-			O.lines.append (L);
-   
-			L := (s => (5.0, -5.0), e => (5.0, 5.0), w => 1.0);
-			O.lines.append (L);
-   
-			L := (s => (5.0, 5.0), e => (-5.0, 5.0), w => 1.0);
-			O.lines.append (L);
-   
-			L := (s => (-5.0, 5.0), e => (-5.0, -5.0), w => 1.0);
-			O.lines.append (L);
-
-			objects_database.append (O);
-		end make_object;
-
 		
 	begin
 		put_line ("make_database");
 
-		-- object.p := (-100.0, -100.0);
-		-- object.p := (-50.0, 50.0);
-		-- object.p := (-100.0, -250.0);
-
-		-- The first dummy object is a square:
-
-		goto l_end;
+		-- goto l_end;
 		
 		-- POSITION:
 
+		-- Mind drawing_frame_position in package demo_frame
+		-- for the origin of the drawing.
+		
+		-- The first dummy object is a square:
 		-- Define the position of the square:
 		object.position := (35.0, 30.0);
 
@@ -258,11 +227,53 @@ package body demo_objects is
 
 		objects_database.append (object);
 
-		-------------------------------------
+	end make_database;
 
-	<<l_end>>
 
-		-- This creates a 150 squares:
+	
+	procedure make_database_2 is
+		
+		procedure make_object (
+			destination : in type_vector_model)
+		is
+			use pac_lines;
+			use pac_circles;
+			use pac_objects;
+
+			O : type_complex_object;
+			L : type_line;
+		begin
+			O.position := destination;
+
+			-- IMPORTANT: The primitve objects are defined as if
+			-- the object was placed on position (0;0).
+			-- When the object is drawn on the canvas or when
+			-- the bounding-box is computed, then the primitve
+			-- objects are moved by the object position (see assignment above).
+
+			-- The object to be created is a square:
+			L := (s => (-5.0, -5.0), e => (5.0, -5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (5.0, -5.0), e => (5.0, 5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (5.0, 5.0), e => (-5.0, 5.0), w => 1.0);
+			O.lines.append (L);
+   
+			L := (s => (-5.0, 5.0), e => (-5.0, -5.0), w => 1.0);
+			O.lines.append (L);
+
+			objects_database.append (O);
+		end make_object;
+
+		-- The first object will be placed here:
+		position : type_vector_model := (10.0, 10.0);
+		
+	begin
+		put_line ("make_database_2");
+
+		-- This creates some squares spread across the sheet:
 		for column in 1 .. 10 loop			
 			for row in 1 .. 15 loop
 				make_object (position);
@@ -284,9 +295,7 @@ package body demo_objects is
 		-- 	position.y := position.y + 1.0;
 		-- end loop;
 
-
-	end make_database;
-
+	end make_database_2;
 
 	
 

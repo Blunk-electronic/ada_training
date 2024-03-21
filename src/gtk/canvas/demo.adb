@@ -76,10 +76,17 @@ begin
 	-- Generate a simple drawing frame:
 	demo_frame.make_drawing_frame;
 
-	-- Generate a database with some useless dummy
-	-- objects:
+	-- Generate a database with some useless dummy objects:
 	demo_objects.make_database;
 
+	-- Alternatively generate a database with many
+	-- useless dummy objects for perfomance tests:
+	-- demo_objects.make_database_2;
+	-- NOTE: Mind drawing_frame_position in package demo_frame
+	-- for the origin of the drawing.
+
+
+	
 	-- Compute the maximal dimensions of the canvas:
 	demo_canvas.compute_canvas_size;
 

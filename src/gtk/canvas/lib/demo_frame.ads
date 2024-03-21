@@ -54,8 +54,8 @@ package demo_frame is
 	
 	-- The place where the lower left corner of the 
 	-- drawing frame relative to the origin is:
-	--drawing_frame_position : type_vector_model := (-150.0, -105.0);
-	drawing_frame_position : type_vector_model := (0.0, 0.0);
+	drawing_frame_position : type_vector_model := (-150.0, -105.0);
+	--drawing_frame_position : type_vector_model := (0.0, 0.0);
 
 
 	-- This procedure generates a very simple

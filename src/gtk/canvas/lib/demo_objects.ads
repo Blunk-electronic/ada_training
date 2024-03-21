@@ -124,7 +124,11 @@ package demo_objects is
 	-- some useless dummy objects:
 	procedure make_database;
 
+	-- This procedure generates a dummy database with 
+	-- many useless dummy objects:
+	procedure make_database_2;
 
+	
 	-- This procedure adds a new object to the database.
 	-- The object is a simple square:
 	procedure add_object;
