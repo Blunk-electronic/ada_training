@@ -55,8 +55,6 @@ package body demo_primitive_draw_ops is
 		line	: in type_line;
 		pos		: in type_vector_model)
 	is
-		-- CS: Optimization required. Compiler options ?
-		
 		-- Make a copy of the given line:
 		l : type_line := line;
 
@@ -93,10 +91,11 @@ package body demo_primitive_draw_ops is
 			c1 := to_canvas (l.s, S, real => true);
 			c2 := to_canvas (l.e, S, real => true);
 
-			-- These draw operations consume the most time:
+			-- THESE DRAW OPERATIONS CONSUME THE MOST TIME:
 			move_to (context, to_gdouble (c1.x), to_gdouble (c1.y));
 			line_to (context, to_gdouble (c2.x), to_gdouble (c2.y));
-
+			-- CS: use OpenGL ?
+			
 			-- Direct conversion to gdouble does not improve performance:
 			-- move_to (context, gdouble (c1.x), gdouble (c1.y));
 			-- line_to (context, gdouble (c2.x), gdouble (c2.y));
@@ -111,8 +110,6 @@ package body demo_primitive_draw_ops is
 		circle	: in type_circle;
 		pos		: in type_vector_model)
 	is
-		-- CS: Optimization required. Compiler options ?
-		
 		-- Make a copy of the given circle:
 		c : type_circle := circle;
 
@@ -151,12 +148,15 @@ package body demo_primitive_draw_ops is
 			m := to_canvas (c.c, S, real => true);
 			r := to_distance (c.r);
 
-			-- This draw operation consumes the most time:
+			-- THIS DRAW OPERATION CONSUMES THE MOST TIME:
 			arc (context, 
 				 to_gdouble (m.x), 
 				 to_gdouble (m.y),
 				 to_gdouble (r), 
 				 0.0, 6.3 ); -- start and end angle in radians
+
+			-- CS: use OpenGL ?
+
 			
 			stroke (context);
 		end if;
