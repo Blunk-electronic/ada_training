@@ -50,11 +50,9 @@ with gtk.main;					use gtk.main;
 
 with demo_grid;
 with demo_frame;
-with demo_bounding_box;			use demo_bounding_box;
 with demo_conversions;			use demo_conversions;
 with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
-with demo_visibility;
 with demo_scrolled_window;		use demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;	use demo_coordinates_display;
@@ -118,9 +116,8 @@ package body demo_callbacks is
 		button : access gtk_button_record'class)
 	is begin
 		put_line ("cb_move");
+		-- CS
 	end cb_move;
-
-
 	
 
 	procedure cb_export (
@@ -128,7 +125,6 @@ package body demo_callbacks is
 	is
 	begin
 		put_line ("cb_export");
-
 		-- CS
 	end cb_export;
 
@@ -237,23 +233,20 @@ package body demo_callbacks is
 	
 		
 		
-	procedure cb_window_size_allocate (
+	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation)
 	is 
 	begin
-		null;
-		
-		-- put_line ("cb_window_size_allocate " & image (clock)); 
+		null;		
+		-- put_line ("cb_main_window_size_allocate " & image (clock)); 
 
 		-- put_line ("cb_window_size_allocate. (x/y/w/h): " 
 		-- 	& gint'image (allocation.x) 
 		-- 	& " /" & gint'image (allocation.y)
 		-- 	& " /" & gint'image (allocation.width)
-		-- 	& " /" & gint'image (allocation.height));
-		
-	end cb_window_size_allocate;
-
+		-- 	& " /" & gint'image (allocation.height));		
+	end cb_main_window_size_allocate;
 
 
 	
@@ -285,7 +278,6 @@ package body demo_callbacks is
 		result : boolean := false;
 	begin
 		-- put_line ("cb_main_window_state_change " & image (clock)); 
-		-- restore_scrollbar_settings;
 		return result;
 	end cb_main_window_state_change;
 
@@ -320,12 +312,11 @@ package body demo_callbacks is
 	procedure set_up_main_window is begin
 		put_line ("set_up_main_window");
 
-		create_window; -- incl. boxes and a separator
-	
+		create_window; -- incl. boxes and a separator	
 		
 		-- connect signals:
 		main_window.on_destroy (cb_terminate'access);
-		main_window.on_size_allocate (cb_window_size_allocate'access);
+		main_window.on_size_allocate (cb_main_window_size_allocate'access);
 		main_window.on_button_press_event (cb_window_button_pressed'access);
 		main_window.on_key_press_event (cb_window_key_pressed'access);
 		main_window.on_configure_event (cb_main_window_configure'access);
@@ -547,13 +538,8 @@ package body demo_callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin
 		-- put_line ("horizontal moved " & image (clock));
-		null;
 		-- show_adjustments_h;
-
-		-- CS do not remove, might be required some day:
-		-- update_visible_area (canvas);		
 		refresh (canvas);
-		-- backup_scrollbar_settings;
 	end cb_horizontal_moved;
 
 	
@@ -561,13 +547,8 @@ package body demo_callbacks is
 		scrollbar : access gtk_adjustment_record'class)
 	is begin		
 		-- put_line ("vertical moved " & image (clock));
-		null;
 		-- show_adjustments_v;
-
-		-- CS do not remove, might be required some day:
-		-- update_visible_area (canvas);
 		refresh (canvas);
-		-- backup_scrollbar_settings;
 	end cb_vertical_moved;
 
 

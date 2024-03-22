@@ -139,9 +139,9 @@ package demo_callbacks is
 	
 
 	
-	-- This callback procedure is called each time the size_allocate signal
-	-- is emitted by the main window.
-	procedure cb_window_size_allocate (
+	-- This callback procedure is called each time the 
+	-- size_allocate signal is emitted by the main window:
+	procedure cb_main_window_size_allocate (
 		window		: access gtk_widget_record'class;
 		allocation	: gtk_allocation);
 
