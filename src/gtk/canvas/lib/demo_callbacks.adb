@@ -56,10 +56,10 @@ with demo_translate_offset;		use demo_translate_offset;
 with demo_scrolled_window;		use demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;	use demo_coordinates_display;
-with demo_primitive_draw_ops;
 with demo_drawing_origin;
 with demo_scale_factor;			use demo_scale_factor;
-
+with demo_cursor;				use demo_cursor;
+with demo_objects;				use demo_objects;
 
 package body demo_callbacks is
 		
