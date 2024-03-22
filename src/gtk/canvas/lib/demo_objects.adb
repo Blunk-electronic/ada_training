@@ -39,6 +39,8 @@
 with ada.text_io;				use ada.text_io;
 with cairo;
 
+with demo_scale_factor;
+with demo_conversions;
 with demo_primitive_draw_ops;
 with demo_canvas;
 
@@ -370,11 +372,91 @@ package body demo_objects is
 		procedure query_object (oc : in pac_objects.cursor) is
 			object : type_complex_object renames element (oc);
 
+
+			procedure draw_origin is
+
+				-- This procedure draws the origin as a cross of fixed size.
+				-- It is independed of the scale factor.
+				-- The drawing is done directly with canvas coordinates:
+				procedure fixed_size is
+					use demo_conversions;
+					use demo_scale_factor;
+					cp : type_logical_pixels_vector;
+				begin
+					-- Compute the center of the origin as canvas point:
+					cp := to_canvas (object.position, S, true);
+
+					-- Set the linewidth:
+					set_line_width (context, to_gdouble (fixed_origin_linewidth));
+
+					-- Draw the horizontal line from left to right:
+					move_to (context, 
+						to_gdouble (cp.x - fixed_origin_arm_lenght), to_gdouble (cp.y));
+					
+					line_to (context, 
+						to_gdouble (cp.x + fixed_origin_arm_lenght), to_gdouble (cp.y));
+
+					-- Draw the vertical line from top to bottom:
+					move_to (context, 
+						to_gdouble (cp.x), to_gdouble (cp.y - fixed_origin_arm_lenght));
+					
+					line_to (context, 
+							to_gdouble (cp.x), to_gdouble (cp.y + fixed_origin_arm_lenght));
+					
+					stroke (context);
+				end fixed_size;
+
+
+				
+				-- This procedure draws the origin as a cross of variable size.
+				-- The size depends on the scale factor.
+				-- The drawing is in model coordinates:
+				procedure variable_size is
+					-- The linewidth can be set here. Start and end point
+					-- will follow later:
+					line : type_line := (w => variable_origin_linewidth, others => <>);
+				begin
+					-- horizontal line:
+					line.s := (x => - variable_origin_arm_length, y => 0.0); -- start
+					line.e := (x => + variable_origin_arm_length, y => 0.0); -- end
+					
+					draw_line (line, object.position);
+					
+					-- vertical line:
+					line.s := (x => 0.0, y => - variable_origin_arm_length); -- start
+					line.e := (x => 0.0, y => + variable_origin_arm_length); -- end
+
+					draw_line (line, object.position);
+				end variable_size;
+				
+				
+			begin
+				-- Set the color of the origin:
+				set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
+
+				-- Here we decide whether to draw the origin with a
+				-- variable or a fixed size:
+				if origin_fixed_size then
+					fixed_size;
+				else
+					variable_size;
+				end if;
+				
+			end draw_origin;
+			
+			
 			procedure query_line (lc : in pac_lines.cursor) is
 				line : type_line renames element (lc);
 			begin
 				--put_line ("query_line");
+
+				-- If the line candidate has a special color,
+				-- then the color must be set here.
+				
 				draw_line (line, object.position);
+
+				-- If the line candidate has a special color,
+				-- then a dedicated stroke command is required here.
 			end query_line;
 
 			
@@ -382,12 +464,24 @@ package body demo_objects is
 				circle : type_circle renames element (cc);
 			begin
 				-- put_line ("query_circle");
+
+				-- If the circle candidate has a special color,
+				-- then the color must be set here.
+
 				draw_circle (circle, object.position);
+
+				-- If the circle candidate has a special color,
+				-- then a dedicated stroke command is required here.
 			end query_circle;
 
 			
 		begin
 			--put_line ("query_object");
+			draw_origin;
+
+			-- Set the color for primitive objects:
+			set_source_rgb (context, 1.0, 0.0, 0.0);
+
 			object.lines.iterate (query_line'access);
 			object.circles.iterate (query_circle'access);
 		end query_object;
@@ -395,10 +489,7 @@ package body demo_objects is
 	begin
 		--put_line ("draw_objects");
 		
-		-- Set the color:
-		set_source_rgb (context, 1.0, 0.0, 0.0);
 
-		-- CS draw origin
 
 		objects_database.iterate (query_object'access);
 	end draw_objects;

@@ -43,15 +43,34 @@
 with ada.containers;			use ada.containers;
 with ada.containers.doubly_linked_lists;
 
+with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 
 package demo_objects is
 
+
+-- ORIGIN:
+	
+	-- The origin of a complex object is a small cross 
+	-- that marks the center and the position of the object.
+
+	-- This switch determines whether the origin is
+	-- drawn with a fixed or a variable size:
+	origin_fixed_size : boolean := false;
+
+	variable_origin_arm_length : constant type_distance_model_positive := 2.0;
+	variable_origin_linewidth  : constant type_distance_model_positive := 0.2;
+	
+	-- the arm-length:
+	fixed_origin_arm_lenght	: constant type_logical_pixels_positive := 10.0;
+	fixed_origin_linewidth	: constant type_logical_pixels_positive := 1.0;
+	
+	
 	
 	-- The simplest object in the model world is a line:
 	type type_line is record
 		s, e : type_vector_model; -- start and end point
-		w : type_distance_model_positive; -- linewidth
+		w : type_distance_model_positive := 0.1; -- linewidth
 	end record;
 
 	
