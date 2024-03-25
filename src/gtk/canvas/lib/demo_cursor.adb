@@ -52,8 +52,7 @@ package body demo_cursor is
 
 	procedure move_cursor (
 		destination : type_vector_model)
-	is
-	begin
+	is begin
 		cursor.position := destination;
 		update_cursor_coordinates;
 		update_distances_display;
@@ -185,37 +184,37 @@ package body demo_cursor is
 		set_line_width (context, to_gdouble (cursor.linewidth_2));
 		move_to (context, to_gdouble (h1), to_gdouble (cp.y));
 		line_to (context, to_gdouble (h2), to_gdouble (cp.y));
-		stroke (context);
+		stroke;
 
 		-- thin
 		set_line_width (context, to_gdouble (cursor.linewidth_1));
 		move_to (context, to_gdouble (h2), to_gdouble (cp.y));
 		line_to (context, to_gdouble (h3), to_gdouble (cp.y));
-		stroke (context);
+		stroke;
 
 		-- thick
 		set_line_width (context, to_gdouble (cursor.linewidth_2));
 		move_to (context, to_gdouble (h3), to_gdouble (cp.y));
 		line_to (context, to_gdouble (h4), to_gdouble (cp.y));
-		stroke (context);
+		stroke;
 		
 		-- Draw the vertical line from top to bottom:
 		-- thick
 		move_to (context, to_gdouble (cp.x), to_gdouble (v1));
 		line_to (context, to_gdouble (cp.x), to_gdouble (v2));
-		stroke (context);
+		stroke;
 
 		-- thin
 		set_line_width (context, to_gdouble (cursor.linewidth_1));
 		move_to (context, to_gdouble (cp.x), to_gdouble (v2));
 		line_to (context, to_gdouble (cp.x), to_gdouble (v3));
-		stroke (context);
+		stroke;
 
 		-- thick
 		set_line_width (context, to_gdouble (cursor.linewidth_2));
 		move_to (context, to_gdouble (cp.x), to_gdouble (v3));
 		line_to (context, to_gdouble (cp.x), to_gdouble (v4));
-		stroke (context);
+		stroke;
 
 		-- arc
 		set_line_width (context, to_gdouble (cursor.linewidth_1));
@@ -223,7 +222,7 @@ package body demo_cursor is
 				radius => to_gdouble (cursor.radius), 
 				angle1 => 0.0, angle2 => 6.3);
 		
-		stroke (context);
+		stroke;
 
 		-- CS: To improve performance on drawing, it might help
 		-- to draw all objects which have a thin line first, then

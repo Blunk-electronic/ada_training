@@ -48,6 +48,11 @@ with demo_scale_factor;			use demo_scale_factor;
 
 package body demo_canvas is
 
+	procedure stroke is begin
+		cairo.stroke (context);
+	end stroke;
+
+	
 	procedure refresh (
 		canvas	: access gtk_widget_record'class)
 	is

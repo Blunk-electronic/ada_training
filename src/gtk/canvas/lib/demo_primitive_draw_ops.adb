@@ -52,8 +52,9 @@ with demo_canvas;				use demo_canvas;
 package body demo_primitive_draw_ops is
 
 	procedure draw_line (
-		line	: in type_line;
-		pos		: in type_vector_model)
+		line		: in type_line;
+		pos			: in type_vector_model;
+		do_stroke	: in boolean := false)
 	is
 		-- Make a copy of the given line:
 		l : type_line := line;
@@ -67,6 +68,9 @@ package body demo_primitive_draw_ops is
 		b : type_area;
 		
 	begin
+		-- CS: If the line is to be rotated about its origin,
+		-- then do the rotation here.
+		
 		-- Move the line to the given position:
 		move_line (l, pos);
 		
@@ -84,9 +88,11 @@ package body demo_primitive_draw_ops is
 			-- then draw the line. Otherwise nothing will be drawn:
 			above_visibility_threshold (b) then
 
-			--put_line ("draw line");
-
-			set_line_width (context, to_gdouble (to_distance (line.w)));
+			-- If an individual stroke is requested for
+			-- the given line, then set the linewidth:
+			if do_stroke then
+				set_line_width (context, to_gdouble (to_distance (line.w)));
+			end if;
 
 			c1 := to_canvas (l.s, S, real => true);
 			c2 := to_canvas (l.e, S, real => true);
@@ -94,21 +100,27 @@ package body demo_primitive_draw_ops is
 			-- THESE DRAW OPERATIONS CONSUME THE MOST TIME:
 			move_to (context, to_gdouble (c1.x), to_gdouble (c1.y));
 			line_to (context, to_gdouble (c2.x), to_gdouble (c2.y));
-			-- CS: use OpenGL ?
 			
 			-- Direct conversion to gdouble does not improve performance:
 			-- move_to (context, gdouble (c1.x), gdouble (c1.y));
 			-- line_to (context, gdouble (c2.x), gdouble (c2.y));
 
+			-- If an individual stroke is requested for
+			-- the given line, then do it now:
+			if do_stroke then
+				stroke (context);
+			end if;
+
 			
-			stroke (context);
+			-- CS: use OpenGL ?
 		end if;
 	end draw_line;
 
 	
 	procedure draw_circle (
-		circle	: in type_circle;
-		pos		: in type_vector_model)
+		circle		: in type_circle;
+		pos			: in type_vector_model;
+		do_stroke	: in boolean := false)
 	is
 		-- Make a copy of the given circle:
 		c : type_circle := circle;
@@ -124,6 +136,9 @@ package body demo_primitive_draw_ops is
 		b : type_area;
 		
 	begin
+		-- CS: Since this is a circle, a rotation about 
+		-- its origin can be omitted here.
+		
 		-- Move the circle to the given position:
 		move_circle (c, pos);
 		
@@ -143,7 +158,12 @@ package body demo_primitive_draw_ops is
 
 			-- put_line ("draw circle");
 
-			set_line_width (context, to_gdouble (to_distance (circle.w)));
+			-- If an individual stroke is requested for
+			-- the given circle, then set the linewidth of the 
+			-- circumfence:
+			if do_stroke then
+				set_line_width (context, to_gdouble (to_distance (circle.w)));
+			end if;
 
 			m := to_canvas (c.c, S, real => true);
 			r := to_distance (c.r);
@@ -155,10 +175,15 @@ package body demo_primitive_draw_ops is
 				 to_gdouble (r), 
 				 0.0, 6.3 ); -- start and end angle in radians
 
-			-- CS: use OpenGL ?
+
+			-- If an individual stroke is requested for
+			-- the given circle, then do it now:
+			if do_stroke then
+				stroke (context);
+			end if;
 
 			
-			stroke (context);
+			-- CS: use OpenGL ?
 		end if;
 	end draw_circle;
 		

@@ -337,7 +337,7 @@ package body demo_zoom is
 				to_gdouble (w),
 				to_gdouble (h));
 				
-			stroke (context);
+			stroke;
 		end if;
 	end draw_zoom_area;
 	

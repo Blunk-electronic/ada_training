@@ -43,16 +43,26 @@ with demo_objects;			use demo_objects;
 package demo_primitive_draw_ops is
 
 	
-	-- This is a primitive draw operation that draws a line:
+	-- This is a primitive draw operation that draws a line.
+	-- The argument pos contains the position of the parent
+	-- complex object.
+	-- If the argument do_stroke is false (default) then
+	-- no setting of linewidth and no stroking will be done. In this
+	-- case it is assumed that the caller has already set a linewidth
+	-- and that the caller will later care for a stroke command. This mode
+	-- requires less time for drawing the line than with do_stroke enabled.
 	procedure draw_line (
-		line	: in type_line;
-		pos		: in type_vector_model); -- the position of the complex object
+		line		: in type_line;
+		pos			: in type_vector_model;
+		do_stroke	: in boolean := false);
 
-
-	-- This is a primitive draw operation that draws a circle:
+	
+	-- This is a primitive draw operation that draws a circle.
+	-- For arguments see draw_line:
 	procedure draw_circle (
-		circle	: in type_circle;
-		pos		: in type_vector_model); -- the position of the complex object
+		circle		: in type_circle;
+		pos			: in type_vector_model;
+		do_stroke	: in boolean := false);
 	
 	
 end demo_primitive_draw_ops;

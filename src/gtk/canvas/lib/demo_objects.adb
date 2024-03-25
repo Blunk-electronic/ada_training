@@ -171,7 +171,7 @@ package body demo_objects is
 		line := (s => (-15.0, -10.0), e => (15.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
-		line := (s => (15.0, -10.0), e => (15.0, 10.0), w => 1.0);
+		line := (s => (15.0, -10.0), e => (15.0, 10.0), w => 0.1);
 		object.lines.append (line);
 
 		line := (s => (15.0, 10.0), e => (-15.0, 10.0), w => 1.0);
@@ -270,32 +270,35 @@ package body demo_objects is
 		end make_object;
 
 		-- The first object will be placed here:
-		position : type_vector_model := (10.0, 10.0);
+		-- position : type_vector_model := (10.0, 10.0);
+		position : type_vector_model := (-140.0, -90.0);
 		
 	begin
 		put_line ("make_database_2");
 
 		-- This creates some squares spread across the sheet:
-		for column in 1 .. 10 loop			
-			for row in 1 .. 15 loop
+-- 		for column in 1 .. 10 loop			
+-- 			for row in 1 .. 15 loop
+-- 				make_object (position);
+-- 				position.x := position.x + 20.0;
+-- 			end loop;
+-- 		
+-- 			position.x := 10.0;
+-- 			position.y := position.y + 20.0;
+-- 		end loop;
+
+		-- CS usa a switch to activate:
+		
+		-- This creates 10.000 squares:
+		for column in 1 .. 400 loop			
+			for row in 1 .. 400 loop
 				make_object (position);
-				position.x := position.x + 20.0;
+				position.x := position.x + 1.0;
 			end loop;
 		
-			position.x := 10.0;
-			position.y := position.y + 20.0;
+			position.x := -140.0;
+			position.y := position.y + 1.0;
 		end loop;
-
-		-- This creates 10.000 squares:
-		-- for column in 1 .. 100 loop			
-		-- 	for row in 1 .. 100 loop
-		-- 		make_object (position);
-		-- 		position.x := position.x + 1.0;
-		-- 	end loop;
-		-- 
-		-- 	position.x := 10.0;
-		-- 	position.y := position.y + 1.0;
-		-- end loop;
 
 	end make_database_2;
 
@@ -364,6 +367,7 @@ package body demo_objects is
 		use cairo;
 		use demo_primitive_draw_ops;
 		use demo_canvas;
+		use demo_conversions;
 		use pac_lines;
 		use pac_circles;
 		use pac_objects;
@@ -379,7 +383,6 @@ package body demo_objects is
 				-- It is independed of the scale factor.
 				-- The drawing is done directly with canvas coordinates:
 				procedure fixed_size is
-					use demo_conversions;
 					use demo_scale_factor;
 					cp : type_logical_pixels_vector;
 				begin
@@ -402,8 +405,8 @@ package body demo_objects is
 					
 					line_to (context, 
 							to_gdouble (cp.x), to_gdouble (cp.y + fixed_origin_arm_lenght));
-					
-					stroke (context);
+
+					stroke;
 				end fixed_size;
 
 
@@ -420,13 +423,13 @@ package body demo_objects is
 					line.s := (x => - variable_origin_arm_length, y => 0.0); -- start
 					line.e := (x => + variable_origin_arm_length, y => 0.0); -- end
 					
-					draw_line (line, object.position);
+					draw_line (line, object.position, true);
 					
 					-- vertical line:
 					line.s := (x => 0.0, y => - variable_origin_arm_length); -- start
 					line.e := (x => 0.0, y => + variable_origin_arm_length); -- end
 
-					draw_line (line, object.position);
+					draw_line (line, object.position, true);
 				end variable_size;
 				
 				
@@ -441,7 +444,7 @@ package body demo_objects is
 				else
 					variable_size;
 				end if;
-				
+
 			end draw_origin;
 			
 			
@@ -452,8 +455,16 @@ package body demo_objects is
 
 				-- If the line candidate has a special color,
 				-- then the color must be set here.
-				
-				draw_line (line, object.position);
+
+				-- If the line candidate has a special color
+				-- or a special linewidth then the draw routine
+				-- must perfom a dedicated stroke:
+				draw_line (line, object.position, true);
+
+				-- If lots of lines have the same linewidth
+				-- and color then this call is sufficient
+				-- and takes less time to execute:
+				-- draw_line (line, object.position);
 
 				-- If the line candidate has a special color,
 				-- then a dedicated stroke command is required here.
@@ -468,7 +479,15 @@ package body demo_objects is
 				-- If the circle candidate has a special color,
 				-- then the color must be set here.
 
-				draw_circle (circle, object.position);
+				-- If the circle candidate has a special color
+				-- or a special linewidth then the draw routine
+				-- must perfom a dedicated stroke:
+				draw_circle (circle, object.position, true);
+				
+				-- If lots of arcs have the same linewidth
+				-- and color then this call is sufficient
+				-- and takes less time to execute:
+				-- draw_circle (circle, object.position);
 
 				-- If the circle candidate has a special color,
 				-- then a dedicated stroke command is required here.
@@ -479,21 +498,29 @@ package body demo_objects is
 			--put_line ("query_object");
 			draw_origin;
 
-			-- Set the color for primitive objects:
+			-- If lots of primitive objects are to be drawn
+			-- with all having the same color then do:
 			set_source_rgb (context, 1.0, 0.0, 0.0);
 
+			-- If lots of primitive objects are to be drawn
+			-- with all having the same linewidth then do:
+			-- set_line_width (context, to_gdouble (to_distance (1.0)));
+			
 			object.lines.iterate (query_line'access);
 			object.circles.iterate (query_circle'access);
+
+			-- If lots of primitive objects are to be drawn
+			-- with all having the same linewidth and color
+			-- then a single stroke command is sufficient:
+			-- stroke;
 		end query_object;
+
 		
 	begin
 		--put_line ("draw_objects");
 		
-
-
 		objects_database.iterate (query_object'access);
 	end draw_objects;
-
 
 	
 end demo_objects;

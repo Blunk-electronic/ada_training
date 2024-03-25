@@ -224,8 +224,6 @@ package body demo_grid is
 				-- Advance one column to the right:
 				MP.x := MP.x + grid.spacing.x;
 			end loop;
-
-			stroke (context);
 		end draw_dots;
 
 
@@ -302,8 +300,6 @@ package body demo_grid is
 				MP1.y := MP1.y + grid.spacing.y;
 				MP2.y := MP2.y + grid.spacing.y;
 			end loop;
-
-			stroke (context);
 		end draw_lines;
 		
 
@@ -329,7 +325,11 @@ package body demo_grid is
 				when STYLE_LINES =>
 					draw_lines;
 			end case;
-			
+
+			-- Since all dots or lines are
+			-- drawn with the same linewidth and color
+			-- this single stroke command is sufficient:
+			stroke;
 		end if;
 		
 	end draw_grid;

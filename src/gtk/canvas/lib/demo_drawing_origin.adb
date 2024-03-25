@@ -71,7 +71,7 @@ package body demo_drawing_origin is
 		line_to (context, 
 				to_gdouble (cp.x), to_gdouble (cp.y + origin_size));
 		
-		stroke (context);
+		stroke;
 	end draw_origin;
 
 

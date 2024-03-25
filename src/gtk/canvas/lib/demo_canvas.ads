@@ -55,6 +55,10 @@ package demo_canvas is
 	context : cairo.cairo_context;
 
 	
+	-- Strokes the global context (see above):
+	procedure stroke;
+
+	
 	-- This is the size of the canvas in device pixels.
 	-- It is set by procedure compute_canvas_size on system startup:
 	canvas_size : type_window_size;

@@ -118,7 +118,11 @@ package body demo_frame is
 			line : type_line renames element (lc);
 		begin
 			--put_line ("query_line");
-			draw_line (line, drawing_frame.position);
+			
+			-- Usually the drawing frame has lines with different
+			-- widths. For this reason each line is drawn with 
+			-- an explicit stroke:
+			draw_line (line, drawing_frame.position, true);
 		end query_line;
 
 		
@@ -128,8 +132,11 @@ package body demo_frame is
 		-- Set the color:
 		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 
-		drawing_frame.lines.iterate (query_line'access);			
+		drawing_frame.lines.iterate (query_line'access);
+		-- CS iterate the lines of the title block separtely ?
+		
 		-- CS texts
+
 		
 	end draw_drawing_frame;
 
