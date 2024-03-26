@@ -52,7 +52,7 @@ package body demo_base_offset is
 
 		-- The maximum scale factor:
 		S_max : constant type_logical_pixels := 
-			type_logical_pixels (type_scale_factor'last);
+			type_logical_pixels (type_zoom_factor'last);
 
 		-- The width and height of the bounding-box:
 		Bh : constant type_logical_pixels := 

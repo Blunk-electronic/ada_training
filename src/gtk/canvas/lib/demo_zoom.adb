@@ -57,10 +57,10 @@ package body demo_zoom is
 
 
 	function to_string (
-		scale : in type_scale_factor)
+		scale : in type_zoom_factor)
 		return string
 	is begin
-		return type_scale_factor'image (scale);
+		return type_zoom_factor'image (scale);
 	end to_string;
 	
 	
@@ -87,8 +87,8 @@ package body demo_zoom is
 	
 
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;
-		S2	: in type_scale_factor;
+		S1	: in type_zoom_factor;
+		S2	: in type_zoom_factor;
 		Z1	: in type_logical_pixels_vector)
 	is 
 		debug : boolean := false;
@@ -124,8 +124,8 @@ package body demo_zoom is
 	
 
 	procedure set_translation_for_zoom (
-		S1	: in type_scale_factor;
-		S2	: in type_scale_factor;
+		S1	: in type_zoom_factor;
+		S2	: in type_zoom_factor;
 		M	: in type_vector_model) -- real model point
 	is 
 		debug : boolean := false;
@@ -180,7 +180,7 @@ package body demo_zoom is
 		use demo_canvas;
 		use demo_scrolled_window;
 		
-		S1 : constant type_scale_factor := S;
+		S1 : constant type_zoom_factor := S;
 
 		-- The corners of the bounding-box on the canvas before 
 		-- and after zooming:
@@ -247,7 +247,7 @@ package body demo_zoom is
 		S := get_ratio (area);
 		
 		if debug then
-			put_line (" S: " & type_scale_factor'image (S));
+			put_line (" S: " & type_zoom_factor'image (S));
 		end if;
 
 		update_scale_display;
@@ -305,7 +305,7 @@ package body demo_zoom is
 		
 		
 		if debug then
-			put_line (" S: " & type_scale_factor'image (S));
+			put_line (" S: " & type_zoom_factor'image (S));
 		end if;
 
 		update_scale_display;

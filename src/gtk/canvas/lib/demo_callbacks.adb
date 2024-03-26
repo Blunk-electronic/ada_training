@@ -1033,7 +1033,7 @@ package body demo_callbacks is
 			-- The corners of the bounding-box on the canvas before 
 			-- and after zooming:
 			C1, C2 : type_bounding_box_corners;
-			S1 : constant type_scale_factor := S;
+			S1 : constant type_zoom_factor := S;
 			
 		begin -- zoom
 			-- put_line (" scale old" & to_string (S));

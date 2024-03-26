@@ -75,7 +75,7 @@ package body demo_canvas is
 		
 		-- The maximum scale factor:
 		S_max : constant type_logical_pixels := 
-			type_logical_pixels (type_scale_factor'last);
+			type_logical_pixels (type_zoom_factor'last);
 
 		-- The maximum width and height of the bounding-box:
 		Bw : constant type_logical_pixels := 

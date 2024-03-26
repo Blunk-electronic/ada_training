@@ -38,29 +38,28 @@
 
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
--- with demo_scale_factor;			use demo_scale_factor;
 
 
 package demo_zoom is
 
 
-	type type_scale_factor is digits 3 range 0.10 .. 100.0;
+	type type_zoom_factor is digits 3 range 0.10 .. 100.0;
 
 	-- This is the global scale-factor:
-	S : type_scale_factor := 1.0;
+	S : type_zoom_factor := 1.0;
 
 	-- This is the multiplier that is used when the
 	-- global scale-factor is increased or decreased:
-	SM : constant type_scale_factor := 1.2;
+	SM : constant type_zoom_factor := 1.2;
 
 	
 
 	-- Converts the given scale factor to a string.
-	-- CS: Since type_scale_factor is a float type, the output is
+	-- CS: Since type_zoom_factor is a float type, the output is
 	-- something like 1.44E+00. Instead the output should be something
 	-- simpler like 1.44:
 	function to_string (
-		scale : in type_scale_factor)
+		scale : in type_zoom_factor)
 		return string;
 
 
@@ -96,10 +95,10 @@ package demo_zoom is
 	-- lower-left:
 	procedure set_translation_for_zoom (
 		-- The scale factor before zoom:
-		S1	: in type_scale_factor;		
+		S1	: in type_zoom_factor;		
 
 		-- The scale factor after zoom:
-		S2	: in type_scale_factor;		
+		S2	: in type_zoom_factor;		
 
 		-- The zoom center as canvas point:
 		Z1	: in type_logical_pixels_vector); 
@@ -108,10 +107,10 @@ package demo_zoom is
 	
 	procedure set_translation_for_zoom (
 		-- The scale factor before zoom:
-		S1	: in type_scale_factor;
+		S1	: in type_zoom_factor;
 
 		-- The scale factor after zoom:
-		S2	: in type_scale_factor;
+		S2	: in type_zoom_factor;
 
 		-- The zoom center as a real model point:
 		M	: in type_vector_model); 

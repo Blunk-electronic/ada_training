@@ -90,7 +90,7 @@ package body demo_conversions is
 	
 	function to_model (
 		point	: in type_logical_pixels_vector;
-		scale	: in type_scale_factor;
+		scale	: in type_zoom_factor;
 		real 	: in boolean := false)
 		return type_vector_model
 	is 
@@ -130,7 +130,7 @@ package body demo_conversions is
 
 	function to_canvas (
 		point 	: in type_vector_model;
-		scale	: in type_scale_factor;
+		scale	: in type_zoom_factor;
 		real	: in boolean := false)
 		return type_logical_pixels_vector
 	is

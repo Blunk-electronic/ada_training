@@ -329,7 +329,7 @@ package body demo_scrolled_window is
 
 	function get_ratio (
 		area : in type_area)
-		return type_scale_factor
+		return type_zoom_factor
 	is
 		-- The allocation of the scrolled window provides
 		-- its width and height:
@@ -337,7 +337,7 @@ package body demo_scrolled_window is
 		
 		-- The two scale factors: one based on the width and another
 		-- based on the height of the given area:
-		sw, sh : type_scale_factor;
+		sw, sh : type_zoom_factor;
 	begin
 		-- put_line ("get_ratio");
 
@@ -346,26 +346,26 @@ package body demo_scrolled_window is
 
 		-- Get the ratio of width and height based on the current dimensions
 		-- of the scrolled window:
-		sw := type_scale_factor 
+		sw := type_zoom_factor 
 			(type_distance_model (a.width) / area.width);
 		
-		sh := type_scale_factor 
+		sh := type_zoom_factor 
 			(type_distance_model (a.height) / area.height);
 
 		-- CS: Alternatively the ratio can be based on the initial dimensions
 		-- of the scrolled window. A boolean argument for this function 
 		-- could be used to switch between current dimensions and initial 
 		-- dimensions:
-		-- sw := type_scale_factor 
+		-- sw := type_zoom_factor 
 		-- 	(type_distance_model (swin_size_initial.width) / area.width);
-		-- sh := type_scale_factor 
+		-- sh := type_zoom_factor 
 		--	(type_distance_model (swin_size_initial.height) / area.height);
 		
 		-- put_line ("sw: " & to_string (sw));
 		-- put_line ("sh: " & to_string (sh));
 
 		-- The smaller of sw and sh has the final say:
-		return type_scale_factor'min (sw, sh);
+		return type_zoom_factor'min (sw, sh);
 	end get_ratio;
 	
 

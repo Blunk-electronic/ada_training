@@ -170,7 +170,7 @@ package demo_scrolled_window is
 	-- larger or smaller. This results in a situation depended scale-factor:
 	function get_ratio (
 		area : in type_area)
-		return type_scale_factor;
+		return type_zoom_factor;
 
 
 	-- Updates the limits of the scrollbars.
