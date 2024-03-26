@@ -335,7 +335,7 @@ package body demo_scrolled_window is
 		-- its width and height:
 		a : gtk_allocation;
 		
-		-- The two scale factors: one based on the width and another
+		-- The two zoom factors: one based on the width and another
 		-- based on the height of the given area:
 		sw, sh : type_zoom_factor;
 	begin

@@ -42,35 +42,37 @@ with demo_geometry;				use demo_geometry;
 
 package demo_zoom is
 
-
+	-- This is the specification of the zoom factor
+	-- (German: Vergroesserungsfaktor)
 	type type_zoom_factor is digits 3 range 0.10 .. 100.0;
+	
 
-	-- This is the global scale-factor:
+	-- This is the global zoom factor:
 	S : type_zoom_factor := 1.0;
 
 	-- This is the multiplier that is used when the
-	-- global scale-factor is increased or decreased:
+	-- global zoom factor is increased or decreased:
 	SM : constant type_zoom_factor := 1.2;
 
 	
 
-	-- Converts the given scale factor to a string.
+	-- Converts the given zoom factor to a string.
 	-- CS: Since type_zoom_factor is a float type, the output is
 	-- something like 1.44E+00. Instead the output should be something
 	-- simpler like 1.44:
 	function to_string (
-		scale : in type_zoom_factor)
+		zf : in type_zoom_factor)
 		return string;
 
 
-	-- This procedure increases the global scale-factor
+	-- This procedure increases the global zoom factor
 	-- by multiplying it by SM:
-	procedure increase_scale;
+	procedure increase_zoom_factor;
 
 	
-	-- This procedure decreases the global scale-factor
+	-- This procedure decreases the global zoom factor
 	-- by dividing it by SM:
-	procedure decrease_scale;
+	procedure decrease_zoom_factor;
 
 	
 
@@ -80,7 +82,7 @@ package demo_zoom is
 	
 	-- This procedure sets the global translate-offset T that is
 	-- required for a zoom-operation.
-	-- After changing the scale-factor S (either by zoom on mouse pointer or
+	-- After changing the zoom factor S (either by zoom on mouse pointer or
 	-- by zoom on cursor), the translate-offset T must
 	-- be calculated anew. The computation requires as input values
 	-- the zoom center as virtual model point (CS1) or as canvas point (CS2).
@@ -181,7 +183,7 @@ package demo_zoom is
 
 
 	-- Zooms in or out at the current cursor position.
-	-- If the direction is ZOOM_IN, then the global scale-factor S
+	-- If the direction is ZOOM_IN, then the global zoom factor S
 	-- is increased by multplying it with the scale_multiplier.
 	-- If direction is ZOOM_OUT then it decreases by dividing
 	-- by scale_multiplier:
@@ -189,14 +191,14 @@ package demo_zoom is
 		direction : in type_zoom_direction);
 
 
-	-- This procedure sets the global scale-factor S and translate-offset T
+	-- This procedure sets the global zoom factor S and translate-offset T
 	-- so that all objects of the given area fit into the scrolled window.
 	-- The zoom center is the top-left corner of the given area.
 	procedure zoom_to_fit (
 		area : in type_area);
 
 
-	-- This procedure sets the global scale-factor S and translate-offset T
+	-- This procedure sets the global zoom factor S and translate-offset T
 	-- so that all objects of bounding-box fit into the scrolled window.
 	-- The zoom center is the top-left corner of bounding-box.
 	procedure zoom_to_fit_all;

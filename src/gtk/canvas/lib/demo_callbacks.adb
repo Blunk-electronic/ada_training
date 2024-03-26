@@ -1036,20 +1036,20 @@ package body demo_callbacks is
 			S1 : constant type_zoom_factor := S;
 			
 		begin -- zoom
-			-- put_line (" scale old" & to_string (S));
+			-- put_line (" zoom old" & to_string (S));
 
 			C1 := get_bounding_box_corners;
 			
 			case wheel_direction is
 				when SCROLL_UP =>
-					increase_scale;
+					increase_zoom_factor;
 					if debug then
 						put_line (" zoom in");
 					end if;
 					update_scale_display;
 					
 				when SCROLL_DOWN => 
-					decrease_scale;
+					decrease_zoom_factor;
 					if debug then
 						put_line (" zoom out");
 					end if;
@@ -1063,7 +1063,7 @@ package body demo_callbacks is
 				put_line (" S" & to_string (S));
 			end if;
 			
-			-- After changing the scale-factor, the translate-offset must
+			-- After changing the zoom factor, the translate-offset must
 			-- be calculated anew. When the actual drawing takes 
 			-- place (see function cb_draw)
 			-- then the drawing will be dragged back by the 

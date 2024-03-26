@@ -57,31 +57,31 @@ package body demo_zoom is
 
 
 	function to_string (
-		scale : in type_zoom_factor)
+		zf : in type_zoom_factor)
 		return string
 	is begin
-		return type_zoom_factor'image (scale);
+		return type_zoom_factor'image (zf);
 	end to_string;
 	
 	
-	procedure increase_scale is begin
+	procedure increase_zoom_factor is begin
 		S := S * SM;
 		
 		exception 
 			when constraint_error =>
-				put_line ("upper scale limit reached");
+				put_line ("upper zoom limit reached");
 			when others => null;
-	end increase_scale;
+	end increase_zoom_factor;
 
 	
-	procedure decrease_scale is begin
+	procedure decrease_zoom_factor is begin
 		S := S / SM;
 		
 		exception 
 			when constraint_error => 
-				put_line ("lower scale limit reached");
+				put_line ("lower zoom limit reached");
 			when others => null;
-	end decrease_scale;
+	end decrease_zoom_factor;
 
 
 	
@@ -94,7 +94,7 @@ package body demo_zoom is
 		debug : boolean := false;
 		
 		-- Compute the virtual model-point
-		-- according to the scale factor before zoom:
+		-- according to the zoom factor before zoom:
 		M : constant type_vector_model := to_model (Z1, S1);
 
 		Z2 : type_logical_pixels_vector;
@@ -104,7 +104,7 @@ package body demo_zoom is
 		end if;
 		
 		-- Compute the prospected canvas-point according to the 
-		-- scale factor after zoom:
+		-- zoom factor after zoom:
 		Z2 := to_canvas (M, S2);
 
 		-- This is the offset from Z1 to the prospected
@@ -131,7 +131,7 @@ package body demo_zoom is
 		debug : boolean := false;
 		
 		-- Compute the canvas point corresponding to the given
-		-- real model point with the scale factor before zoom:
+		-- real model point with the zoom factor before zoom:
 		Z1 : constant type_logical_pixels_vector :=
 			to_canvas (M, S1, real => true);
 
@@ -145,7 +145,7 @@ package body demo_zoom is
 		end if;
 		
 		-- Compute the prospected canvas-point according to the 
-		-- scale factor after zoom:
+		-- zoom factor after zoom:
 		Z2 := to_canvas (V, S2);
 		-- put_line ("Z2 " & to_string (Z2));
 
@@ -192,11 +192,11 @@ package body demo_zoom is
 
 		case direction is
 			when ZOOM_IN =>
-				increase_scale;
+				increase_zoom_factor;
 				put_line (" zoom in");
 				
 			when ZOOM_OUT => 
-				decrease_scale;
+				decrease_zoom_factor;
 				put_line (" zoom out");
 				
 			when others => null;
@@ -206,7 +206,7 @@ package body demo_zoom is
 		
 		-- put_line (" S" & to_string (S));
 
-		-- After changing the scale-factor, the translate-offset must
+		-- After changing the zoom factor, the translate-offset must
 		-- be calculated anew. When the actual drawing takes 
 		-- place (see function cb_draw_objects)
 		-- then the drawing will be dragged back by the translate-offset
@@ -242,7 +242,7 @@ package body demo_zoom is
 	begin
 		put_line ("zoom_to_fit");
 
-		-- Calculate the scale-factor that is required to
+		-- Calculate the zoom factor that is required to
 		-- fit the given area into the scrolled window:
 		S := get_ratio (area);
 		
@@ -298,7 +298,7 @@ package body demo_zoom is
 		-- must be reinitialized:
 		set_initial_scrollbar_settings;
 
-		-- Calculate the scale-factor that is required to
+		-- Calculate the zoom factor that is required to
 		-- fit all objects into the scrolled window:
 		S := get_ratio (bounding_box);
 

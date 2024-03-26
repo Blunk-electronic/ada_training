@@ -380,7 +380,7 @@ package body demo_objects is
 			procedure draw_origin is
 
 				-- This procedure draws the origin as a cross of fixed size.
-				-- It is independed of the scale factor.
+				-- It is independed of the zoom factor.
 				-- The drawing is done directly with canvas coordinates:
 				procedure fixed_size is
 					use demo_zoom;
@@ -412,7 +412,7 @@ package body demo_objects is
 
 				
 				-- This procedure draws the origin as a cross of variable size.
-				-- The size depends on the scale factor.
+				-- The size depends on the zoom factor.
 				-- The drawing is in model coordinates:
 				procedure variable_size is
 					-- The linewidth can be set here. Start and end point

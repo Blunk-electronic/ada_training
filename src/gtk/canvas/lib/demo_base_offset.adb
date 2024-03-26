@@ -50,7 +50,7 @@ package body demo_base_offset is
 		
 		x, y : type_logical_pixels;
 
-		-- The maximum scale factor:
+		-- The maximum zoom factor:
 		S_max : constant type_logical_pixels := 
 			type_logical_pixels (type_zoom_factor'last);
 

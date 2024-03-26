@@ -73,7 +73,7 @@ package body demo_canvas is
 		-- The maximal base-offset:
 		F_max : type_logical_pixels_vector;
 		
-		-- The maximum scale factor:
+		-- The maximum zoom factor:
 		S_max : constant type_logical_pixels := 
 			type_logical_pixels (type_zoom_factor'last);
 

@@ -211,9 +211,9 @@ package body demo_coordinates_display is
 		grid_y_value.set_cursor_visible (false);		
 
 		----------------------------------------------------------------------
-		-- SCALE
-		-- gtk_new (scale_header, "SCALE");
-		gtk_new (scale_label, "scale:");
+		-- ZOOM FACTOR
+		-- gtk_new (scale_header, "ZOOM");
+		gtk_new (scale_label, "zoom:");
 		scale_label.set_alignment (0.0, 0.0);	
 		gtk_new (scale_value);
 		scale_value.set_size_request (pos_field_width_min, -1);
@@ -341,7 +341,7 @@ package body demo_coordinates_display is
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 14, bottom_attach => 15);
 
-		-- scale:
+		-- zoom:
 		table_coordinates.attach (scale_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 15, bottom_attach => 16);
