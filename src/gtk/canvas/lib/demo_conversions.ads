@@ -83,7 +83,7 @@ package demo_conversions is
 	-- of the current bonding-box is also taken into account:
 	function to_model (
 		point	: in type_logical_pixels_vector;
-		scale	: in type_zoom_factor;
+		zf		: in type_zoom_factor;
 		real 	: in boolean := false) 
 		return type_vector_model;
 	
@@ -96,7 +96,7 @@ package demo_conversions is
 	-- bounding-box is also taken into account:
 	function to_canvas (
 		point 	: in type_vector_model;
-		scale	: in type_zoom_factor;
+		zf		: in type_zoom_factor;
 		real	: in boolean := false)
 		return type_logical_pixels_vector;
 

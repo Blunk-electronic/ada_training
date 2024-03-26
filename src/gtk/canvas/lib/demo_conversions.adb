@@ -90,7 +90,7 @@ package body demo_conversions is
 	
 	function to_model (
 		point	: in type_logical_pixels_vector;
-		scale	: in type_zoom_factor;
+		zf		: in type_zoom_factor;
 		real 	: in boolean := false)
 		return type_vector_model
 	is 
@@ -103,10 +103,10 @@ package body demo_conversions is
 		end if;
 		
 		result.x := type_distance_model 
-			(( (point.x - T.x) - F.x) / type_logical_pixels (scale));
+			(( (point.x - T.x) - F.x) / type_logical_pixels (zf));
 		
 		result.y := type_distance_model 
-			((-(point.y - T.y) - F.y) / type_logical_pixels (scale));
+			((-(point.y - T.y) - F.y) / type_logical_pixels (zf));
 
 		-- If real model coordinates are required, then the result 
 		-- must be compensated by the bounding-box position:
@@ -120,7 +120,7 @@ package body demo_conversions is
 				put_line ("ERROR: conversion from canvas point "
 					& "to model point failed !");
 				put_line (" point " & to_string (point));
-				put_line (" scale " & to_string (scale));
+				put_line (" zf    " & to_string (zf));
 				put_line (" T     " & to_string (T));
 				put_line (" F     " & to_string (F));
 				put_line (" real  " & boolean'image (real));
@@ -130,7 +130,7 @@ package body demo_conversions is
 
 	function to_canvas (
 		point 	: in type_vector_model;
-		scale	: in type_zoom_factor;
+		zf		: in type_zoom_factor;
 		real	: in boolean := false)
 		return type_logical_pixels_vector
 	is
@@ -145,10 +145,10 @@ package body demo_conversions is
 		end if;
 		
 		result.x :=  (type_logical_pixels (P.x) *
-					  type_logical_pixels (scale) + F.x);
+					  type_logical_pixels (zf) + F.x);
 		
 		result.y := -(type_logical_pixels (P.y) * 
-					  type_logical_pixels (scale) + F.y);
+					  type_logical_pixels (zf) + F.y);
 
 		if real then
 			result.x := result.x + T.x;

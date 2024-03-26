@@ -678,7 +678,7 @@ package body demo_callbacks is
 		-- real model point:
 		mp : constant type_vector_model := to_model (
 			point 	=> cp,
-			scale	=> S,
+			zf		=> S,
 			real	=> true);
 
 		-- CS: For some reason the value of the scrollbars
@@ -767,7 +767,7 @@ package body demo_callbacks is
 		-- real model point:
 		mp : constant type_vector_model := to_model (
 			point 	=> cp,
-			scale	=> S,
+			zf		=> S,
 			real	=> true);
 
 		-- The corners of the bounding-box on the canvas before 
