@@ -43,7 +43,7 @@ with ada.text_io;				use ada.text_io;
 with demo_main_window;
 with demo_scrolled_window;
 with demo_bounding_box;
-with demo_scale_factor;			use demo_scale_factor;
+with demo_zoom;					use demo_zoom;
 
 
 package body demo_canvas is

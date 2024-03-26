@@ -42,7 +42,7 @@ with gtk.scrolled_window;		use gtk.scrolled_window;
 
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_translate_offset;		use demo_translate_offset;
-with demo_scale_factor;			use demo_scale_factor;
+with demo_zoom;					use demo_zoom;
 with demo_conversions;			use demo_conversions;
 with demo_scrolled_window;		use demo_scrolled_window;
 with demo_canvas;				use demo_canvas;

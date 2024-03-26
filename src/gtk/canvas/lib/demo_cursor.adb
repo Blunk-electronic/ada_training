@@ -39,7 +39,7 @@
 with ada.text_io;				use ada.text_io;
 with cairo;
 
-with demo_scale_factor;
+with demo_zoom;
 with demo_conversions;
 with demo_visible_area;
 with demo_grid;
@@ -147,7 +147,7 @@ package body demo_cursor is
 		use cairo;
 		use demo_canvas;
 		use demo_conversions;
-		use demo_scale_factor;
+		use demo_zoom;
 		
 
 		cp : type_logical_pixels_vector := 

@@ -39,7 +39,7 @@
 with ada.text_io;				use ada.text_io;
 with cairo;
 
-with demo_scale_factor;
+with demo_zoom;
 with demo_conversions;
 with demo_primitive_draw_ops;
 with demo_canvas;
@@ -383,7 +383,7 @@ package body demo_objects is
 				-- It is independed of the scale factor.
 				-- The drawing is done directly with canvas coordinates:
 				procedure fixed_size is
-					use demo_scale_factor;
+					use demo_zoom;
 					cp : type_logical_pixels_vector;
 				begin
 					-- Compute the center of the origin as canvas point:

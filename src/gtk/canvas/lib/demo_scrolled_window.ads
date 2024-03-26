@@ -45,7 +45,7 @@ with gtk.scrollbar;				use gtk.scrollbar;
 
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
-with demo_scale_factor;			use demo_scale_factor;
+with demo_zoom;					use demo_zoom;
 with demo_window_dimensions;	use demo_window_dimensions;
 with demo_conversions;			use demo_conversions;
 

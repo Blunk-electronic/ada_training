@@ -56,6 +56,36 @@ with demo_bounding_box;
 package body demo_zoom is
 
 
+	function to_string (
+		scale : in type_scale_factor)
+		return string
+	is begin
+		return type_scale_factor'image (scale);
+	end to_string;
+	
+	
+	procedure increase_scale is begin
+		S := S * SM;
+		
+		exception 
+			when constraint_error =>
+				put_line ("upper scale limit reached");
+			when others => null;
+	end increase_scale;
+
+	
+	procedure decrease_scale is begin
+		S := S / SM;
+		
+		exception 
+			when constraint_error => 
+				put_line ("lower scale limit reached");
+			when others => null;
+	end decrease_scale;
+
+
+	
+
 	procedure set_translation_for_zoom (
 		S1	: in type_scale_factor;
 		S2	: in type_scale_factor;

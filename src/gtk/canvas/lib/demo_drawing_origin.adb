@@ -38,7 +38,7 @@
 
 with cairo;
 with demo_canvas;
-with demo_scale_factor;
+with demo_zoom;
 with demo_conversions;
 with demo_geometry;				use demo_geometry;
 
@@ -49,7 +49,7 @@ package body demo_drawing_origin is
 	procedure draw_origin is
 		use cairo;
 		use demo_canvas;
-		use demo_scale_factor;
+		use demo_zoom;
 		use demo_conversions;
 		
 		cp : type_logical_pixels_vector := to_canvas (origin, S, true);

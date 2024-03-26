@@ -39,7 +39,7 @@
 with ada.text_io;				use ada.text_io;
 
 with cairo;
-with demo_scale_factor;			use demo_scale_factor;
+with demo_zoom;					use demo_zoom;
 with demo_visible_area;
 with demo_conversions;
 with demo_canvas;
