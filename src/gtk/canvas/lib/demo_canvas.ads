@@ -74,7 +74,7 @@ package demo_canvas is
 	-- and assigns them to variable canvas_size.
 	-- The computation bases on the maximum allowed width
 	-- and height of the bounding-box and the maximal
-	-- scale-factor.
+	-- zoom factor.
 	-- CS: The computed dimensions may be not sufficient
 	-- with very very large screens:
 	procedure compute_canvas_size;

@@ -94,8 +94,8 @@ package demo_grid is
 	-- the grid columns or rows. It returns the lesser
 	-- spacing of them. It calculates the spacing by this
 	-- equation:
-	-- x = grid.spacing.x * scale-factor
-	-- y = grid.spacing.y * scale-factor
+	-- x = grid.spacing.x * zoom factor
+	-- y = grid.spacing.y * zoom factor
 	-- Then the lesser one, either x or y will be returned:
 	function get_grid_spacing (
 		grid : in type_grid)

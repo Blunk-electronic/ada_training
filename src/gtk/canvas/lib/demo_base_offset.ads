@@ -47,7 +47,7 @@ package demo_base_offset is
 	F : type_logical_pixels_vector;
 
 	-- Sets the global base-offset F according to the current
-	-- bounding-box and the maximal allowed scale-factor:
+	-- bounding-box and the maximal allowed zoom factor:
 	procedure set_base_offset;
 
 	

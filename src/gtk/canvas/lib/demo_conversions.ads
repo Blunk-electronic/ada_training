@@ -62,14 +62,14 @@ package demo_conversions is
 
 
 	-- Converts the given model distance to
-	-- a canvas distance according to the current scale-factor S:
+	-- a canvas distance according to the current zoom factor S:
 	function to_distance (
 		d : in type_distance_model_positive)
 		return type_logical_pixels_positive;
 
 	
 	-- Converts the given canvas distance to
-	-- a model distance according to the current scale-factor S:
+	-- a model distance according to the current zoom factor S:
 	function to_distance (
 		d : in type_logical_pixels_positive)
 		return type_distance_model_positive;
@@ -77,7 +77,7 @@ package demo_conversions is
 
 	
 	-- Converts a canvas point to a model point
-	-- according to the given scale factor, the current
+	-- according to the given zoom factor, the current
 	-- base-offset and the current tranlate-offset.
 	-- If a real model point is required, then the position
 	-- of the current bonding-box is also taken into account:
@@ -89,7 +89,7 @@ package demo_conversions is
 	
 
 	-- Converts a model point to a canvas point
-	-- according to the given scale factor and the current
+	-- according to the given zoom factor and the current
 	-- base-offset.
 	-- If the given model point is real, then the current
 	-- tranlate-offset and the position of the current
@@ -111,7 +111,7 @@ package demo_conversions is
 
 	
 	-- This function returns the current corners of the bounding-box
-	-- in canvas-coordinates. The return depends on the current scale-factor S
+	-- in canvas-coordinates. The return depends on the current zoom factor S
 	-- and translate-offset:
 	function get_bounding_box_corners
 		return type_bounding_box_corners;

@@ -96,10 +96,10 @@ package demo_zoom is
 	-- expanding to the upper-right (on zoom-in) or shrinking toward the 
 	-- lower-left:
 	procedure set_translation_for_zoom (
-		-- The scale factor before zoom:
+		-- The zoom factor before zoom:
 		S1	: in type_zoom_factor;		
 
-		-- The scale factor after zoom:
+		-- The zoom factor after zoom:
 		S2	: in type_zoom_factor;		
 
 		-- The zoom center as canvas point:
@@ -108,10 +108,10 @@ package demo_zoom is
 
 	
 	procedure set_translation_for_zoom (
-		-- The scale factor before zoom:
+		-- The zoom factor before zoom:
 		S1	: in type_zoom_factor;
 
-		-- The scale factor after zoom:
+		-- The zoom factor after zoom:
 		S2	: in type_zoom_factor;
 
 		-- The zoom center as a real model point:
@@ -184,9 +184,9 @@ package demo_zoom is
 
 	-- Zooms in or out at the current cursor position.
 	-- If the direction is ZOOM_IN, then the global zoom factor S
-	-- is increased by multplying it with the scale_multiplier.
+	-- is increased by multplying it with the zoom multiplier SM.
 	-- If direction is ZOOM_OUT then it decreases by dividing
-	-- by scale_multiplier:
+	-- by SM:
 	procedure zoom_on_cursor (
 		direction : in type_zoom_direction);
 

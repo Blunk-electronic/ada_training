@@ -43,7 +43,7 @@ with demo_geometry;				use demo_geometry;
 package demo_visible_area is
 
 	-- Returns the currently visible area of the model.
-	-- The visible area depends the current scale-factor,
+	-- The visible area depends the current zoom factor,
 	-- base-offset, translate-offset, dimensions of the scrolled window
 	-- and the current settings of the scrollbars.
 	function get_visible_area (

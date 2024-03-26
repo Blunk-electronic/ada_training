@@ -163,11 +163,11 @@ package demo_scrolled_window is
 	procedure show_adjustments_h;
 
 
-	-- This function calculates the scale factor required to
+	-- This function calculates the zoom factor required to
 	-- fit the given area into the current scrolled window.
 	-- The scrolled window has an initial size on startup. Later, when
 	-- the operator resizes the main window, the scrolled window gets
-	-- larger or smaller. This results in a situation depended scale-factor:
+	-- larger or smaller. This results in a situation depended zoom factor:
 	function get_ratio (
 		area : in type_area)
 		return type_zoom_factor;
