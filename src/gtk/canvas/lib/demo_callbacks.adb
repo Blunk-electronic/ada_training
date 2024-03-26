@@ -57,7 +57,6 @@ with demo_scrolled_window;		use demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;	use demo_coordinates_display;
 with demo_drawing_origin;
-with demo_scale_factor;			use demo_scale_factor;
 with demo_cursor;				use demo_cursor;
 with demo_objects;				use demo_objects;
 
@@ -1046,14 +1045,14 @@ package body demo_callbacks is
 					if debug then
 						put_line (" zoom in");
 					end if;
-					update_scale_display;
+					update_zoom_display;
 					
 				when SCROLL_DOWN => 
 					decrease_zoom_factor;
 					if debug then
 						put_line (" zoom out");
 					end if;
-					update_scale_display;
+					update_zoom_display;
 					
 				when others => null;
 			end case;

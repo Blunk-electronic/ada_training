@@ -202,7 +202,7 @@ package body demo_zoom is
 			when others => null;
 		end case;
 
-		update_scale_display;
+		update_zoom_display;
 		
 		-- put_line (" S" & to_string (S));
 
@@ -250,7 +250,7 @@ package body demo_zoom is
 			put_line (" S: " & type_zoom_factor'image (S));
 		end if;
 
-		update_scale_display;
+		update_zoom_display;
 		-----------------------------------------------------
 
 		-- Calculate the translate-offset that is required to
@@ -308,7 +308,7 @@ package body demo_zoom is
 			put_line (" S: " & type_zoom_factor'image (S));
 		end if;
 
-		update_scale_display;
+		update_zoom_display;
 
 
 		-- Calculate the translate-offset that is required to

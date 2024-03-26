@@ -212,16 +212,16 @@ package body demo_coordinates_display is
 
 		----------------------------------------------------------------------
 		-- ZOOM FACTOR
-		-- gtk_new (scale_header, "ZOOM");
-		gtk_new (scale_label, "zoom:");
-		scale_label.set_alignment (0.0, 0.0);	
-		gtk_new (scale_value);
-		scale_value.set_size_request (pos_field_width_min, -1);
+		-- gtk_new (zoom_header, "ZOOM");
+		gtk_new (zoom_label, "zoom:");
+		zoom_label.set_alignment (0.0, 0.0);	
+		gtk_new (zoom_value);
+		zoom_value.set_size_request (pos_field_width_min, -1);
 
-		gtk_new (scale_buf);
-		scale_value.set_justification (JUSTIFY_RIGHT);
-		scale_value.set_editable (false);
-		scale_value.set_cursor_visible (false);
+		gtk_new (zoom_buf);
+		zoom_value.set_justification (JUSTIFY_RIGHT);
+		zoom_value.set_editable (false);
+		zoom_value.set_cursor_visible (false);
 
 		----------------------------------------------------------------------
 		-- Put the items in the table:
@@ -342,11 +342,11 @@ package body demo_coordinates_display is
 			top_attach	=> 14, bottom_attach => 15);
 
 		-- zoom:
-		table_coordinates.attach (scale_label, 
+		table_coordinates.attach (zoom_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 15, bottom_attach => 16);
   
-		table_coordinates.attach (scale_value, 
+		table_coordinates.attach (zoom_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 15, bottom_attach => 16);
 
@@ -427,11 +427,11 @@ package body demo_coordinates_display is
 
 
 
-	procedure update_scale_display is 
+	procedure update_zoom_display is 
 	begin
-		scale_buf.set_text (to_string (S));
-		scale_value.set_buffer (scale_buf);
-	end update_scale_display;
+		zoom_buf.set_text (to_string (S));
+		zoom_value.set_buffer (zoom_buf);
+	end update_zoom_display;
 
 
 

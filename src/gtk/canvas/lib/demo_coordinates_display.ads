@@ -74,9 +74,9 @@ package demo_coordinates_display is
 	grid_x_value, grid_y_value				: gtk_text_view;
 	grid_x_buf, grid_y_buf					: gtk_text_buffer;
 
-	scale_label								: gtk_label;
-	scale_value								: gtk_text_view;
-	scale_buf								: gtk_text_buffer;
+	zoom_label								: gtk_label;
+	zoom_value								: gtk_text_view;
+	zoom_buf								: gtk_text_buffer;
 
 	
 	-- Creates the display for pointer/mouse and cursor position,
@@ -93,8 +93,8 @@ package demo_coordinates_display is
 	procedure update_distances_display;
 
 
-	-- Updates the scale display:
-	procedure update_scale_display;
+	-- Updates the zoom display:
+	procedure update_zoom_display;
 
 	
 	-- Updates the grid display:
