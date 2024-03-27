@@ -2,9 +2,9 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                              SCALE FACTOR                                --
+--                                SCALE                                     --
 --                                                                          --
---                               B o d y                                    --
+--                               S p e c                                    --
 --                                                                          --
 -- Copyright (C) 2024                                                       --
 -- Mario Blunk / Blunk electronic                                           --
@@ -36,40 +36,20 @@
 --   history of changes:
 --
 
-with ada.text_io;				use ada.text_io;
+package demo_scale is
 
+	type type_scale is digits 3 range 0.10 .. 100.0;
 
-package body demo_scale_factor is
+	-- This is the global scale:
+	M : type_scale_factor := 1.0;
 
-	procedure dummy is begin null; end;
-
--- 	function to_string (
--- 		scale : in type_scale_factor)
--- 		return string
--- 	is begin
--- 		return type_scale_factor'image (scale);
--- 	end to_string;
--- 	
--- 	
--- 	procedure increase_scale is begin
--- 		S := S * SM;
--- 		
--- 		exception 
--- 			when constraint_error =>
--- 				put_line ("upper scale limit reached");
--- 			when others => null;
--- 	end increase_scale;
--- 
--- 	
--- 	procedure decrease_scale is begin
--- 		S := S / SM;
--- 		
--- 		exception 
--- 			when constraint_error => 
--- 				put_line ("lower scale limit reached");
--- 			when others => null;
--- 	end decrease_scale;
-
+	-- Converts the given scale factor to a string.
+	-- CS: Since type_scale_factor is a float type, the output is
+	-- something like 1.44E+00. Instead the output should be something
+	-- simpler like 1.44:
+	function to_string (
+		scale : in type_scale_factor)
+		return string;
 	
-end demo_scale_factor;
+end demo_scale;
 

@@ -2,9 +2,9 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                              SCALE FACTOR                                --
+--                                SCALE                                     --
 --                                                                          --
---                               S p e c                                    --
+--                               B o d y                                    --
 --                                                                          --
 -- Copyright (C) 2024                                                       --
 -- Mario Blunk / Blunk electronic                                           --
@@ -36,39 +36,16 @@
 --   history of changes:
 --
 
+with ada.text_io;				use ada.text_io;
 
-package demo_scale_factor is
+package body demo_scale is
 
--- 	type type_scale_factor is digits 3 range 0.10 .. 100.0;
--- 
--- 	-- This is the global scale-factor:
--- 	S : type_scale_factor := 1.0;
--- 
--- 	-- This is the multiplier that is used when the
--- 	-- global scale-factor is increased or decreased:
--- 	SM : constant type_scale_factor := 1.2;
--- 
--- 	
--- 
--- 	-- Converts the given scale factor to a string.
--- 	-- CS: Since type_scale_factor is a float type, the output is
--- 	-- something like 1.44E+00. Instead the output should be something
--- 	-- simpler like 1.44:
--- 	function to_string (
--- 		scale : in type_scale_factor)
--- 		return string;
--- 
--- 
--- 	-- This procedure increases the global scale-factor
--- 	-- by multiplying it by SM:
--- 	procedure increase_scale;
--- 
--- 	
--- 	-- This procedure decreases the global scale-factor
--- 	-- by dividing it by SM:
--- 	procedure decrease_scale;
-
-	procedure dummy;
+	function to_string (
+		scale : in type_scale_factor)
+		return string
+	is begin
+		return type_scale_factor'image (scale);
+	end to_string;
 	
-end demo_scale_factor;
+end demo_scale;
 
