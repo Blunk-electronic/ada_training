@@ -43,20 +43,21 @@ package demo_scale is
 	type type_scale is digits 3 range 0.10 .. 100.0;
 
 	-- This is the global scale:
-	M : type_scale := 1.0;
+	--M : type_scale := 0.1;
+	M : type_scale := 2.0;
 
 	-- Examples for usage:
 	-- 1)
 	-- If M is set to 10 then the scale is 1:10 (in words one to ten).
 	-- This means: A distance of 1mm in the model represents
 	-- a distance of 10mm in the real world.
-	-- The drawing shows the reality enlarged.
+	-- The drawing shows the reality downsized.
 	
 	-- 2)
 	-- If M is set to 0.1 then the scale is 10:1 (in words ten to one).
 	-- This means: A distance of 10mm in the model represents
 	-- a distance of 1mm in the real world. 
-	-- The drawing shows the reality downsized.
+	-- The drawing shows the reality enlarged.
 
 	
 	
@@ -75,12 +76,30 @@ package demo_scale is
 		d : in type_distance_model)
 		return type_distance_model;
 
+	procedure to_reality (
+		d : in out type_distance_model);
+
+	
 	
 	-- Converts a distance of the reality to
 	-- a distance in the model:
 	function to_model (
 		d : in type_distance_model)
 		return type_distance_model;
+
+	procedure to_model (
+		d : in out type_distance_model);
+
+
+	
+	function to_reality (
+		v : in type_vector_model)
+		return type_vector_model;
+
+
+	function to_model (
+		v : in type_vector_model)
+		return type_vector_model;
 
 	
 end demo_scale;

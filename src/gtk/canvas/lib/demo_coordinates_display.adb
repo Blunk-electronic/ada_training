@@ -49,7 +49,7 @@ with demo_cursor;
 with demo_canvas;
 with demo_grid;
 with demo_conversions;			use demo_conversions;
-
+with demo_scale;
 
 
 package body demo_coordinates_display is
@@ -354,14 +354,17 @@ package body demo_coordinates_display is
 
 
 	procedure update_cursor_coordinates is 
+		use demo_scale;
 		use demo_cursor;
 	begin
 		-- x-axis:
-		cursor_x_buf.set_text (to_string (cursor.position.x));
+		-- cursor_x_buf.set_text (to_string (cursor.position.x));
+		cursor_x_buf.set_text (to_string (to_reality (cursor.position.x)));
 		cursor_x_value.set_buffer (cursor_x_buf);
  
 		-- y-axis:
-		cursor_y_buf.set_text (to_string (cursor.position.y));
+		-- cursor_y_buf.set_text (to_string (cursor.position.y));
+		cursor_y_buf.set_text (to_string (to_reality (cursor.position.y)));
 		cursor_y_value.set_buffer (cursor_y_buf);
 	end update_cursor_coordinates;
 
@@ -371,6 +374,7 @@ package body demo_coordinates_display is
 		use glib;
 		use demo_cursor;
 		use demo_canvas;
+		use demo_scale;
 		
 		px, py : gint; -- the pointer position
 		cp : type_logical_pixels_vector;
@@ -409,15 +413,18 @@ package body demo_coordinates_display is
 		-- Output the relative distances on the display:
 
 		-- dx:
-		distances_dx_buf.set_text (to_string (dx));
+		-- distances_dx_buf.set_text (to_string (dx));
+		distances_dx_buf.set_text (to_string (to_reality (dx)));
 		distances_dx_value.set_buffer (distances_dx_buf);
 
 		-- dy:
-		distances_dy_buf.set_text (to_string (dy));
+		-- distances_dy_buf.set_text (to_string (dy));
+		distances_dy_buf.set_text (to_string (to_reality (dy)));
 		distances_dy_value.set_buffer (distances_dy_buf);
 
 		-- absolute:
-		distances_absolute_buf.set_text (to_string (dabs));
+		-- distances_absolute_buf.set_text (to_string (dabs));
+		distances_absolute_buf.set_text (to_string (to_reality (dabs)));
 		distances_absolute_value.set_buffer (distances_absolute_buf);
 
 		-- angle:
@@ -437,13 +444,16 @@ package body demo_coordinates_display is
 
 	procedure update_grid_display is 
 		use demo_grid;
+		use demo_scale;
 	begin
 		-- x-axis:
-		grid_x_buf.set_text (to_string (grid.spacing.x));
+		--grid_x_buf.set_text (to_string (grid.spacing.x));
+		grid_x_buf.set_text (to_string (to_reality (grid.spacing.x)));
 		grid_x_value.set_buffer (grid_x_buf);
 
 		-- y-axis:
-		grid_y_buf.set_text (to_string (grid.spacing.y));
+		--grid_y_buf.set_text (to_string (grid.spacing.y));
+		grid_y_buf.set_text (to_string (to_reality (grid.spacing.y)));
 		grid_y_value.set_buffer (grid_y_buf);
 	end update_grid_display;
 

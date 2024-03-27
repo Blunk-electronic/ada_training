@@ -213,7 +213,8 @@ package body demo_bounding_box is
 		-- The database that contains all objects of the model
 		-- must be parsed. This is the call of an iteration through
 		-- all objects of the database:
-		objects_database.iterate (query_object'access);
+		-- objects_database.iterate (query_object'access);
+		objects_database_scaled.iterate (query_object'access);
 
 		-- The temporary bounding-box bbox_new in its current
 		-- state is the so called "inner bounding-box" (IB).

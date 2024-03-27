@@ -43,11 +43,20 @@ with demo_zoom;					use demo_zoom;
 with demo_visible_area;
 with demo_conversions;
 with demo_canvas;
-
+with demo_scale;
 
 package body demo_grid is
 
 
+	procedure set_grid_to_scale is
+		use demo_scale;
+	begin
+		to_model (grid.spacing.x);
+		to_model (grid.spacing.y);
+	end set_grid_to_scale;
+
+	
+	
 	function snap_to_grid (
 		point : in type_vector_model)
 		return type_vector_model

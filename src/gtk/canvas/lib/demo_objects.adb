@@ -39,6 +39,7 @@
 with ada.text_io;				use ada.text_io;
 with cairo;
 
+with demo_scale;
 with demo_zoom;
 with demo_conversions;
 with demo_primitive_draw_ops;
@@ -133,6 +134,64 @@ package body demo_objects is
 		-- CS: Optimization required. Compiler options ?
 		move_by (circle.c, offset);
 	end move_circle;
+
+
+
+
+	procedure scale_objects is
+		use demo_scale;
+		use pac_objects;
+
+		
+		procedure query_object (oc : in pac_objects.cursor) is
+			o_old : type_complex_object renames element (oc);
+			o_new : type_complex_object;
+			
+			use pac_lines;
+			use pac_circles;
+			
+			procedure query_line (lc : in pac_lines.cursor) is
+				l_old : type_line renames element (lc);
+				l_new : type_line;									
+			begin
+				l_new.w := to_model (l_old.w);
+				l_new.s := to_model (l_old.s);
+				l_new.e := to_model (l_old.e);
+
+				o_new.lines.append (l_new);
+			end query_line;
+
+			
+			procedure query_circle (cc : in pac_circles.cursor) is
+				c_old : type_circle renames element (cc);
+				c_new : type_circle;
+			begin
+				c_new.w := to_model (c_old.w);
+				c_new.r := to_model (c_old.r);
+				c_new.c := to_model (c_old.c);
+
+				o_new.circles.append (c_new);
+			end query_circle;
+
+
+			
+		begin
+			o_new.position := to_model (o_old.position);
+				
+			o_old.lines.iterate (query_line'access);
+			o_old.circles.iterate (query_circle'access);
+
+			objects_database_scaled.append (o_new);
+		end query_object;
+		
+	begin
+		put_line ("scale_objects");
+		put_line (" M 1:" & to_string (M));
+
+		objects_database_scaled.clear;
+		
+		objects_database.iterate (query_object'access);
+	end scale_objects;
 
 	
 
@@ -229,6 +288,11 @@ package body demo_objects is
 
 		objects_database.append (object);
 
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+		
 	end make_database;
 
 
@@ -300,7 +364,14 @@ package body demo_objects is
 			position.y := position.y + 1.0;
 		end loop;
 
+
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+		
 	end make_database_2;
+
 
 	
 
@@ -349,7 +420,13 @@ package body demo_objects is
 		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
-		objects_database.append (object);		
+		objects_database.append (object);	
+
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+		
 	end add_object;
 
 	
@@ -359,6 +436,12 @@ package body demo_objects is
 		put_line ("delete_object");
 
 		objects_database.delete_last;
+
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+
 	end delete_object;
 
 
@@ -519,7 +602,7 @@ package body demo_objects is
 	begin
 		--put_line ("draw_objects");
 		
-		objects_database.iterate (query_object'access);
+		objects_database_scaled.iterate (query_object'access);
 	end draw_objects;
 
 	

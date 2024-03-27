@@ -80,6 +80,12 @@ package demo_grid is
 	
 	grid : type_grid;
 
+
+	-- This procedure sets the grid spacing
+	-- according to the scale specified
+	-- by the operator (see package spec. demo_scale):
+	procedure set_grid_to_scale;
+	
 	
 	-- This function returns the grid point that is
 	-- closest to the given model point;

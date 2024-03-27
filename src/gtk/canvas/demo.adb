@@ -67,7 +67,7 @@ with demo_scrolled_window;
 with demo_visible_area;
 with demo_coordinates_display;
 with demo_zoom;
-
+with demo_grid;
 
 procedure demo is
 
@@ -78,6 +78,8 @@ begin
 
 	-- Generate a database with some useless dummy objects:
 	demo_objects.make_database;
+
+	demo_grid.set_grid_to_scale;
 
 	-- Alternatively generate a database with many
 	-- useless dummy objects for perfomance tests:

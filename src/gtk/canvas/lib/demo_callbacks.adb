@@ -50,6 +50,7 @@ with gtk.main;					use gtk.main;
 
 with demo_grid;
 with demo_frame;
+with demo_scale;
 with demo_conversions;			use demo_conversions;
 with demo_base_offset;			use demo_base_offset;
 with demo_translate_offset;		use demo_translate_offset;
@@ -874,6 +875,7 @@ package body demo_callbacks is
 		return boolean
 	is
 		use demo_coordinates_display;
+		use demo_scale;
 		
 		use glib;
 		event_handled : boolean := true;
@@ -895,12 +897,14 @@ package body demo_callbacks is
 
 		-- Update the coordinates display with the pointer position:
 		-- x-axis:
-		pointer_x_buf.set_text (to_string (mp.x));
+		--pointer_x_buf.set_text (to_string (mp.x));
+		pointer_x_buf.set_text (to_string (to_reality (mp.x)));
 		pointer_x_value.set_buffer (pointer_x_buf);
   
 		-- y-axis:
-		pointer_y_buf.set_text (to_string (mp.y));
+		pointer_y_buf.set_text (to_string (to_reality (mp.y)));
 		pointer_y_value.set_buffer (pointer_y_buf);
+		-- CS move to demo_coordinates_display
 
 		update_distances_display;
 

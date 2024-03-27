@@ -56,6 +56,14 @@ package body demo_scale is
 		return type_distance_model_positive (M) * d;
 	end to_reality;
 
+
+	procedure to_reality (
+		d : in out type_distance_model)
+	is begin
+		d := type_distance_model_positive (M) * d;
+	end to_reality;
+
+
 	
 	function to_model (
 		d : in type_distance_model)
@@ -63,6 +71,30 @@ package body demo_scale is
 	is begin
 		return type_distance_model_positive (1.0 / M) * d;
 	end to_model;
+
+	procedure to_model (
+		d : in out type_distance_model)
+	is begin
+		d := type_distance_model_positive (1.0 / M) * d;
+	end to_model;
+
+	
+
+	function to_reality (
+		v : in type_vector_model)
+		return type_vector_model
+	is begin
+		return (x => to_reality (v.x), y => to_reality (v.y));
+	end to_reality;
+
+	
+	function to_model (
+		v : in type_vector_model)
+		return type_vector_model
+	is begin
+		return (x => to_model (v.x), y => to_model (v.y));
+	end to_model;
+
 
 	
 end demo_scale;
