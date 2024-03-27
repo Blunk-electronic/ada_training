@@ -38,14 +38,32 @@
 
 with ada.text_io;				use ada.text_io;
 
+
 package body demo_scale is
 
 	function to_string (
-		scale : in type_scale_factor)
+		scale : in type_scale)
 		return string
 	is begin
-		return type_scale_factor'image (scale);
+		return type_scale'image (scale);
 	end to_string;
+
+
+	function to_reality (
+		d : in type_distance_model)
+		return type_distance_model
+	is begin
+		return type_distance_model_positive (M) * d;
+	end to_reality;
+
+	
+	function to_model (
+		d : in type_distance_model)
+		return type_distance_model
+	is begin
+		return type_distance_model_positive (1.0 / M) * d;
+	end to_model;
+
 	
 end demo_scale;
 
