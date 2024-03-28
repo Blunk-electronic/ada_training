@@ -135,13 +135,21 @@ package demo_objects is
 
 	package pac_objects is new doubly_linked_lists 
 		(element_type => type_complex_object);
-	
-	objects_database : pac_objects.list; -- CS rename to objects_database_original
 
-	objects_database_scaled : pac_objects.list;
 
 	
-	-- Generates the database objects_database_scaled:
+	-- This is the database that contains the objects
+	-- of the real world (without scale):
+	objects_database_reality : pac_objects.list;
+
+	-- This is the database that contains the scaled
+	-- objects of the model:
+	objects_database_model : pac_objects.list;
+
+	
+	
+	-- Generates the database objects_database_model
+	-- from the database objects_database_reality:
 	procedure scale_objects;
 	
 	-- This procedure generates a dummy database with 

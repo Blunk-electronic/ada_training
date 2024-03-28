@@ -40,6 +40,8 @@ with demo_geometry;				use demo_geometry;
 
 package demo_scale is
 
+	-- The scale is a floating point type.
+	-- Its ranges are defined here:
 	type type_scale is digits 3 range 0.10 .. 100.0;
 
 	-- This is the global scale:

@@ -181,16 +181,16 @@ package body demo_objects is
 			o_old.lines.iterate (query_line'access);
 			o_old.circles.iterate (query_circle'access);
 
-			objects_database_scaled.append (o_new);
+			objects_database_model.append (o_new);
 		end query_object;
 		
 	begin
 		put_line ("scale_objects");
 		put_line (" M 1:" & to_string (M));
 
-		objects_database_scaled.clear;
+		objects_database_model.clear;
 		
-		objects_database.iterate (query_object'access);
+		objects_database_reality.iterate (query_object'access);
 	end scale_objects;
 
 	
@@ -239,7 +239,7 @@ package body demo_objects is
 		line := (s => (-15.0, 10.0), e => (-15.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
-		objects_database.append (object);
+		objects_database_reality.append (object);
 		------------------------------------
 		-- goto l_end;
 
@@ -272,7 +272,7 @@ package body demo_objects is
 		object.lines.append (line);
 
 
-		objects_database.append (object);
+		objects_database_reality.append (object);
 
 		------------------------------------
 		-- goto l_end;
@@ -286,7 +286,7 @@ package body demo_objects is
 		circle := (c => (0.0, 0.0), r => 10.0, w => 1.0);
 		object.circles.append (circle);
 
-		objects_database.append (object);
+		objects_database_reality.append (object);
 
 		-- Now the database with the real world objects is complete.
 		-- The objects must now be scaled according to the 
@@ -330,7 +330,7 @@ package body demo_objects is
 			L := (s => (-5.0, 5.0), e => (-5.0, -5.0), w => 1.0);
 			O.lines.append (L);
 
-			objects_database.append (O);
+			objects_database_reality.append (O);
 		end make_object;
 
 		-- The first object will be placed here:
@@ -420,7 +420,7 @@ package body demo_objects is
 		line := (s => (-10.0, 10.0), e => (-10.0, -10.0), w => 1.0);
 		object.lines.append (line);
 
-		objects_database.append (object);	
+		objects_database_reality.append (object);	
 
 		-- Now the database with the real world objects is complete.
 		-- The objects must now be scaled according to the 
@@ -435,7 +435,7 @@ package body demo_objects is
 	begin
 		put_line ("delete_object");
 
-		objects_database.delete_last;
+		objects_database_reality.delete_last;
 
 		-- Now the database with the real world objects is complete.
 		-- The objects must now be scaled according to the 
@@ -602,7 +602,7 @@ package body demo_objects is
 	begin
 		--put_line ("draw_objects");
 		
-		objects_database_scaled.iterate (query_object'access);
+		objects_database_model.iterate (query_object'access);
 	end draw_objects;
 
 	
