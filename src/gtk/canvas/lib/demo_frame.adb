@@ -54,6 +54,8 @@ package body demo_frame is
 		-- which have a linewidth of 1mm:
 		line : type_line;
 		w : type_distance_model := 1.0;
+
+		c1, c2, c3, c4 : type_vector_model;
 	begin
 		put_line ("make_drawing_frame");
 
@@ -76,32 +78,39 @@ package body demo_frame is
 		-- main rectangle (landscape format):
 
 		-- CS change dimensions with respect to the safety frame !
-		line := (s => (0.0, 0.0), e => (297.0, 0.0), w => w);
+		c1 := (margin, margin);
+		c2 := (paper.width - margin, margin);
+		c3 := (paper.width - margin, paper.height - margin);
+		c4 := (margin, paper.height - margin);
+		
+		line := (s => c1, e => c2, w => w);
+		drawing_frame.lines.append (line);
+		
+		line := (s => c2, e => c3, w => w);		
 		drawing_frame.lines.append (line);
 
-		line := (s => (297.0, 0.0), e => (297.0, 210.0), w => w);
+		line := (s => c3, e => c4, w => w);
 		drawing_frame.lines.append (line);
 
-		line := (s => (297.0, 210.0), e => (0.0, 210.0), w => w);
-		drawing_frame.lines.append (line);
-
-		line := (s => (0.0, 210.0), e => (0.0, 0.0), w => w);
+		line := (s => c4, e => c1, w => w);
 		drawing_frame.lines.append (line);
 
 
 		
 		-- The lines of the title block:
-		line := (s => (200.0, 0.0), e => (200.0, 50.0), w => w);
+		line := (s => (200.0, margin), e => (200.0, 50.0), w => w);
 		drawing_frame.lines.append (line);
 
-		line := (s => (230.0, 0.0), e => (230.0, 50.0), w => w);
+		line := (s => (230.0, margin), e => (230.0, 50.0), w => w);
 		drawing_frame.lines.append (line);
 
 		
-		line := (s => (200.0, 50.0), e => (297.0, 50.0), w => w);
+		line := (s => (200.0, 50.0), 
+				 e => (paper.width - margin, 50.0), w => w);
 		drawing_frame.lines.append (line);
 
-		line := (s => (200.0, 40.0), e => (297.0, 40.0), w => w);
+		line := (s => (200.0, 40.0), 
+				 e => (paper.width - margin, 40.0), w => w);
 		drawing_frame.lines.append (line);
 		
 	end make_drawing_frame;

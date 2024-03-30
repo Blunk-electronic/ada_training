@@ -45,7 +45,7 @@ package demo_frame is
 	-- The default paper size is A4 landscape:
 	type type_paper is record
 		width 	: type_distance_model_positive := 297.0;
-		heigth	: type_distance_model_positive := 210.0;
+		height	: type_distance_model_positive := 210.0;
 	end record;
 
 	paper : type_paper;
