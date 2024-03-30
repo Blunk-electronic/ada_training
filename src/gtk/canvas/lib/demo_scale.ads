@@ -42,11 +42,12 @@ package demo_scale is
 
 	-- The scale is a floating point type.
 	-- Its ranges are defined here:
-	type type_scale is digits 3 range 0.10 .. 100.0;
+	type type_scale is digits 3 range 0.01 .. 100.0;
 
 	-- This is the global scale:
-	--M : type_scale := 0.1;
-	M : type_scale := 2.0;
+	-- M : type_scale := 1.0;
+	M : type_scale := 50.0;
+	--M : type_scale := 0.04;
 
 	-- Examples for usage:
 	-- 1)

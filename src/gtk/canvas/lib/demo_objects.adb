@@ -195,7 +195,7 @@ package body demo_objects is
 
 	
 
-	procedure make_database is
+	procedure make_database_1 is
 		use pac_lines;
 		use pac_circles;
 		use pac_objects;
@@ -205,7 +205,7 @@ package body demo_objects is
 		circle 	: type_circle;
 		
 	begin
-		put_line ("make_database");
+		put_line ("make_database_1");
 
 		-- goto l_end;
 		
@@ -293,7 +293,7 @@ package body demo_objects is
 		-- scale that was specified by the operator:
 		scale_objects;
 		
-	end make_database;
+	end make_database_1;
 
 
 	
@@ -371,6 +371,117 @@ package body demo_objects is
 		scale_objects;
 		
 	end make_database_2;
+
+
+
+	procedure make_database_3 is
+		use pac_lines;
+		use pac_objects;
+
+		object 	: type_complex_object;
+		line 	: type_line;
+		
+	begin
+		put_line ("make_database_3");
+
+		-- Mind drawing_frame_position in package demo_frame
+		-- for the origin of the drawing.
+		
+		-- The first dummy object is a square:
+		-- Define the position of the square:
+		object.position := (0.0, 0.0);
+
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the object was placed on position (0;0).
+		-- When the object is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the object position (see assignment above).
+		
+		line := (s => (-5000.0, 0.0), e => (-5000.0, 2000.0), w => 100.0);
+		object.lines.append (line);
+
+		line := (s => (-5000.0, 2000.0), e => (5000.0, 2000.0), w => 100.0);
+		object.lines.append (line);
+
+		line := (s => (5000.0, 2000.0), e => (5000.0, 0.0), w => 100.0);
+		object.lines.append (line);
+
+		line := (s => (-5000.0, 1000.0), e => (-500.0, 2000.0), w => 50.0);
+		object.lines.append (line);
+
+		line := (s => (5000.0, 1000.0), e => (500.0, 2000.0), w => 50.0);
+		object.lines.append (line);
+		
+		objects_database_reality.append (object);
+		
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+		
+	end make_database_3;
+
+	
+	procedure make_database_4 is
+		use pac_lines;
+		use pac_objects;
+
+		object 	: type_complex_object;
+		line 	: type_line;
+		
+	begin
+		put_line ("make_database_4");
+
+		-- Mind drawing_frame_position in package demo_frame
+		-- for the origin of the drawing.
+		
+		-- The first dummy object is a square:
+		-- Define the position of the square:
+		object.position := (-1.0, 0.0);
+
+		-- PRIMITIVE OBJECTS:
+
+		-- IMPORTANT: The primitve objects are defined as if
+		-- the object was placed on position (0;0).
+		-- When the object is drawn on the canvas or when
+		-- the bounding-box is computed, then the primitve
+		-- objects are moved by the object position (see assignment above).
+		
+		line := (s => (-2.0, -2.0), e => (0.0, -2.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (0.0, -2.0), e => (0.0, -1.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (-0.0, -1.0), e => (5.0, -1.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (5.0, -1.0), e => (5.0,  1.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (5.0, 1.0), e => (0.0, 1.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (0.0, 1.0), e => (0.0, 2.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (0.0, 2.0), e => (-2.0, 2.0), w => 0.1);
+		object.lines.append (line);
+
+		line := (s => (-2.0, 2.0), e => (-2.0, -2.0), w => 0.1);
+		object.lines.append (line);
+
+		
+		objects_database_reality.append (object);
+		
+		-- Now the database with the real world objects is complete.
+		-- The objects must now be scaled according to the 
+		-- scale that was specified by the operator:
+		scale_objects;
+		
+	end make_database_4;
 
 
 	

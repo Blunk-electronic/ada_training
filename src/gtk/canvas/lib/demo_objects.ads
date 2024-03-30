@@ -153,14 +153,29 @@ package demo_objects is
 	procedure scale_objects;
 	
 	-- This procedure generates a dummy database with 
-	-- some useless dummy objects:
-	procedure make_database;
+	-- some useless dummy objects: A square, a triangle
+	-- and a circle.
+	-- Recommendation for proper displaying:
+	-- Set the scale to 1 and grid width to 10mm.
+	procedure make_database_1;
 
 	-- This procedure generates a dummy database with 
-	-- many useless dummy objects:
+	-- many useless dummy objects: Hundreds of squares:
 	procedure make_database_2;
 
-	
+	-- This procedure generates a dummy database with 
+	-- a single object: A bridge with a span of 10 meters
+	-- and a height of 2 meters.
+	-- Recommendation for proper displaying:
+	-- Set the scale to 50 and grid width to 100mm.
+	procedure make_database_3;
+
+	-- This procedure generates a dummy database with 
+	-- a single object: A small screw of 7mm length.
+	-- Use it to demostrate the application of a scale.
+	-- Recommendation for proper displaying:
+	-- Set the scale to 0.04 and grid width to 1mm.
+	procedure make_database_4;
 	
 	
 	-- This procedure adds a new object to the database.

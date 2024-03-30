@@ -77,8 +77,11 @@ begin
 	demo_frame.make_drawing_frame;
 
 	-- Generate a database with some useless dummy objects:
-	demo_objects.make_database;
-
+	-- demo_objects.make_database_1;
+	-- demo_objects.make_database_2;
+	demo_objects.make_database_3;
+	-- demo_objects.make_database_4; 
+	
 	demo_grid.set_grid_to_scale;
 
 	-- Alternatively generate a database with many
