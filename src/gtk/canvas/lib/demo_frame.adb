@@ -74,6 +74,8 @@ package body demo_frame is
 		
 		-- These are the four lines that make the 
 		-- main rectangle (landscape format):
+
+		-- CS change dimensions with respect to the safety frame !
 		line := (s => (0.0, 0.0), e => (297.0, 0.0), w => w);
 		drawing_frame.lines.append (line);
 

@@ -45,14 +45,6 @@ with demo_geometry;				use demo_geometry;
 
 
 package demo_bounding_box is
-
-
-	-- The safety frame around all model objects
-	-- is regarded as part of the model and thus inside
-	-- the bounding-box.
-	-- The safety frame has a margin:
-	margin : constant type_distance_model_positive := 5.0;
-
 	
 	-- This is the bounding-box of the model. It is a rectangle
 	-- that encloses all objects of the model and the margins 

@@ -41,8 +41,24 @@ with demo_objects;				use demo_objects;
 
 
 package demo_frame is
-	
 
+	-- The default paper size is A4 landscape:
+	type type_paper is record
+		width 	: type_distance_model_positive := 297.0;
+		heigth	: type_distance_model_positive := 210.0;
+	end record;
+
+	paper : type_paper;
+	
+	
+	-- The safety frame around all model objects
+	-- is regarded as part of the model and thus inside
+	-- the bounding-box.
+	-- The safety frame has a margin:
+	margin : constant type_distance_model_positive := 5.0;
+
+
+	
 	type type_drawing_frame is new type_object with record
 		lines	: pac_lines.list;
 		-- CS texts

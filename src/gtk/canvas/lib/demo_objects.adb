@@ -472,7 +472,6 @@ package body demo_objects is
 
 		line := (s => (-2.0, 2.0), e => (-2.0, -2.0), w => 0.1);
 		object.lines.append (line);
-
 		
 		objects_database_reality.append (object);
 		

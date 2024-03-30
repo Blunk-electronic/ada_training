@@ -160,7 +160,10 @@ package demo_objects is
 	procedure make_database_1;
 
 	-- This procedure generates a dummy database with 
-	-- many useless dummy objects: Hundreds of squares:
+	-- many useless dummy objects: Hundreds of squares.
+	-- It is intended for performance testing.
+	-- Recommendation for proper displaying:
+	-- Set the scale to 1 and grid width to 10mm.
 	procedure make_database_2;
 
 	-- This procedure generates a dummy database with 
