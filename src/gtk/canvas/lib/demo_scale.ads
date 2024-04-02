@@ -36,19 +36,26 @@
 --   history of changes:
 --
 
+with ada.text_io;				use ada.text_io;
+
 with demo_geometry;				use demo_geometry;
+
 
 package demo_scale is
 
 	-- The scale is a floating point type.
 	-- Its ranges are defined here:
 	type type_scale is digits 3 range 0.01 .. 100.0;
+	-- If you intend to change this declaration, please see the
+	-- comments in function to_string.
 
 	-- This is the global scale:
 	-- M : type_scale := 1.0;
 	M : type_scale := 50.0;
 	--M : type_scale := 0.04;
-
+	-- M : type_scale := 100.0;
+	-- M : type_scale := 0.01;
+	
 	-- Examples for usage:
 	-- 1)
 	-- If M is set to 10 then the scale is 1:10 (in words one to ten).
@@ -62,12 +69,12 @@ package demo_scale is
 	-- a distance of 1mm in the real world. 
 	-- The drawing shows the reality enlarged.
 
+
+	package pac_scale_io is new ada.text_io.float_io (type_scale);
 	
 	
-	-- Converts the given scale factor to a string.
-	-- CS: Since type_scale_factor is a float type, the output is
-	-- something like 1.44E+00. Instead the output should be something
-	-- simpler like 1.44:
+	-- Converts the given scale factor to a string like 1:100
+	-- or 100:1:
 	function to_string (
 		scale : in type_scale)
 		return string;

@@ -36,7 +36,9 @@
 --   history of changes:
 --
 
-with ada.text_io;				use ada.text_io;
+with ada.strings.bounded;
+with ada.strings;
+with ada.strings.fixed;
 
 
 package body demo_scale is
@@ -44,8 +46,66 @@ package body demo_scale is
 	function to_string (
 		scale : in type_scale)
 		return string
-	is begin
-		return type_scale'image (scale);
+	is 
+		use pac_scale_io;
+		use ada.strings.bounded;
+		use ada.strings;
+		use ada.strings.fixed;
+
+		package pac_scale_bounded is new generic_bounded_length (10);
+		use pac_scale_bounded;
+		
+		m_bounded : pac_scale_bounded.bounded_string;
+
+		-- This string holds temporarily the given scale.
+		-- The length of the string should be set in advance
+		-- here in order to take the longest possible combination
+		-- of charecters according to the declaration of type_scale.
+		-- Mind, the comma/point. It must also taken into account here:
+		m_fixed : string (1 .. type_scale'digits + 3);
+		-- CS find something more elegantly here.
+
+		m_reciprocal : type_scale;
+	begin
+		--put_line ("scale" & type_scale'image (scale));
+
+		-- Since we want an output like 1:100 or 100:1 the given scale
+		-- must be checked whether it is greater or less than 1.0:
+		if scale >= 1.0 then
+
+			-- Output the given scale to a fixed string
+			-- without an exponent:
+			put (
+				to		=> m_fixed, -- like 100.00
+				item	=> scale,
+				exp		=> 0); -- no exponent
+
+			-- Trim the string on both ends and store it in m_bounded:
+			m_bounded := trim (to_bounded_string (m_fixed), both);
+			-- CS remove leading zeroes after the comma.
+
+			-- Return a nicely formatted expression like 1:100
+			return "1:" & to_string (m_bounded);
+		else
+			-- The scale is smaller than 1.0. So we first 
+			-- calculate the reciprocal of scale.
+			-- For example: scale 0.01 turns to 100.0:
+			m_reciprocal := 1.0 / scale;
+
+			-- Output the given scale to a fixed string
+			-- without an exponent:
+			put (
+				to		=> m_fixed, -- like 100.0
+				item	=> m_reciprocal,
+				exp		=> 0); -- no exponent
+
+			-- Trim the string on both ends and store it in m_bounded:
+			m_bounded := trim (to_bounded_string (m_fixed), both);
+			-- CS remove leading zeroes after the comma.
+			
+			-- Return a nicely formatted expression like 100:1
+			return to_string (m_bounded) & ":1";
+		end if;
 	end to_string;
 
 

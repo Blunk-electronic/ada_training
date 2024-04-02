@@ -186,7 +186,8 @@ package body demo_objects is
 		
 	begin
 		put_line ("scale_objects");
-		put_line (" M 1:" & to_string (M));
+		--put_line (" M 1:" & to_string (M));
+		put_line (" M: " & to_string (M));
 
 		objects_database_model.clear;
 		

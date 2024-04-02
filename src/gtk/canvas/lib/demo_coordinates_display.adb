@@ -37,6 +37,7 @@
 --
 
 with ada.text_io;				use ada.text_io;
+
 with glib;
 with gtk.box;					use gtk.box;
 with gtk.enums;					use gtk.enums;
