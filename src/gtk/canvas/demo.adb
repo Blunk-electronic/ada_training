@@ -125,6 +125,7 @@ begin
 
 	demo_coordinates_display.update_zoom_display;
 	demo_coordinates_display.update_grid_display;
+	demo_coordinates_display.update_scale_display;
 
 	-- On startup the canvas has the focus. This enables the operator
 	-- to move the cursor with the cursor-keys from the beginning:

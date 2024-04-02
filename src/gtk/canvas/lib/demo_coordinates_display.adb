@@ -224,6 +224,18 @@ package body demo_coordinates_display is
 		zoom_value.set_cursor_visible (false);
 
 		----------------------------------------------------------------------
+		-- SCALE
+		gtk_new (scale_label, "scale:");
+		scale_label.set_alignment (0.0, 0.0);	
+		gtk_new (scale_value);
+		scale_value.set_size_request (pos_field_width_min, -1);
+
+		gtk_new (scale_buf);
+		scale_value.set_justification (JUSTIFY_RIGHT);
+		scale_value.set_editable (false);
+		scale_value.set_cursor_visible (false);
+		
+		----------------------------------------------------------------------
 		-- Put the items in the table:
 
 		-- MOUSE / POINTER:
@@ -341,7 +353,8 @@ package body demo_coordinates_display is
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 14, bottom_attach => 15);
 
-		-- zoom:
+		
+		-- ZOOM:
 		table.attach (zoom_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 15, bottom_attach => 16);
@@ -349,6 +362,16 @@ package body demo_coordinates_display is
 		table.attach (zoom_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 15, bottom_attach => 16);
+
+		
+		-- SCALE:
+		table.attach (scale_label, 
+			left_attach	=> 0, right_attach	=> 1, 
+			top_attach	=> 16, bottom_attach => 17);
+  
+		table.attach (scale_value, 
+			left_attach	=> 1, right_attach	=> 2, 
+			top_attach	=> 16, bottom_attach => 17);
 
 	end set_up_coordinates_display;
 
@@ -358,12 +381,10 @@ package body demo_coordinates_display is
 		use demo_cursor;
 	begin
 		-- x-axis:
-		-- cursor_x_buf.set_text (to_string (cursor.position.x));
 		cursor_x_buf.set_text (to_string (to_reality (cursor.position.x)));
 		cursor_x_value.set_buffer (cursor_x_buf);
  
 		-- y-axis:
-		-- cursor_y_buf.set_text (to_string (cursor.position.y));
 		cursor_y_buf.set_text (to_string (to_reality (cursor.position.y)));
 		cursor_y_value.set_buffer (cursor_y_buf);
 	end update_cursor_coordinates;
@@ -413,17 +434,14 @@ package body demo_coordinates_display is
 		-- Output the relative distances on the display:
 
 		-- dx:
-		-- distances_dx_buf.set_text (to_string (dx));
 		distances_dx_buf.set_text (to_string (to_reality (dx)));
 		distances_dx_value.set_buffer (distances_dx_buf);
 
 		-- dy:
-		-- distances_dy_buf.set_text (to_string (dy));
 		distances_dy_buf.set_text (to_string (to_reality (dy)));
 		distances_dy_value.set_buffer (distances_dy_buf);
 
 		-- absolute:
-		-- distances_absolute_buf.set_text (to_string (dabs));
 		distances_absolute_buf.set_text (to_string (to_reality (dabs)));
 		distances_absolute_value.set_buffer (distances_absolute_buf);
 
@@ -434,8 +452,7 @@ package body demo_coordinates_display is
 
 
 
-	procedure update_zoom_display is 
-	begin
+	procedure update_zoom_display is begin
 		zoom_buf.set_text (to_string (S));
 		zoom_value.set_buffer (zoom_buf);
 	end update_zoom_display;
@@ -447,17 +464,24 @@ package body demo_coordinates_display is
 		use demo_scale;
 	begin
 		-- x-axis:
-		--grid_x_buf.set_text (to_string (grid.spacing.x));
 		grid_x_buf.set_text (to_string (to_reality (grid.spacing.x)));
 		grid_x_value.set_buffer (grid_x_buf);
 
 		-- y-axis:
-		--grid_y_buf.set_text (to_string (grid.spacing.y));
 		grid_y_buf.set_text (to_string (to_reality (grid.spacing.y)));
 		grid_y_value.set_buffer (grid_y_buf);
 	end update_grid_display;
 
 	
+	procedure update_scale_display is 
+		use demo_grid;
+		use demo_scale;
+	begin
+		scale_buf.set_text (to_string (M));
+		scale_value.set_buffer (scale_buf);
+	end update_scale_display;
+
+
 	
 end demo_coordinates_display;
 
