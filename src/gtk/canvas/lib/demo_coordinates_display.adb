@@ -69,13 +69,13 @@ package body demo_coordinates_display is
 
 		-- Create a table, that contains headers, text labels
 		-- and text views for the actual coordinates:
-		gtk_new (table_coordinates, rows => 11, columns => 2, 
+		gtk_new (table, rows => 11, columns => 2, 
 			homogeneous => false);
 		-- table.set_col_spacings (50);
-		-- table_coordinates.set_border_width (10);
+		-- table.set_border_width (10);
 
 		-- The table shall not expand downward:
-		box_v1.pack_start (table_coordinates, expand => false);
+		box_v1.pack_start (table, expand => false);
 
 
 		-- POINTER / MOUSE:
@@ -227,126 +227,126 @@ package body demo_coordinates_display is
 		-- Put the items in the table:
 
 		-- MOUSE / POINTER:
-		table_coordinates.attach (pointer_header, 
+		table.attach (pointer_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 0, bottom_attach	=> 1);
 
 		-- x-coordinate:
-		table_coordinates.attach (pointer_x_label, 
+		table.attach (pointer_x_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 1, bottom_attach	=> 2);
 
-		table_coordinates.attach (pointer_x_value, 
+		table.attach (pointer_x_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 1, bottom_attach	=> 2);
 
 		-- y-coordinate:
-		table_coordinates.attach (pointer_y_label, 
+		table.attach (pointer_y_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 2, bottom_attach	=> 3);
   
-		table_coordinates.attach (pointer_y_value, 
+		table.attach (pointer_y_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 2, bottom_attach	=> 3);
 
 
 		-- CURSOR:
-		table_coordinates.attach (cursor_header, 
+		table.attach (cursor_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 3, bottom_attach	=> 4);
 
 		-- x-coordinate:
-		table_coordinates.attach (cursor_x_label, 
+		table.attach (cursor_x_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 4, bottom_attach	=> 5);
 
-		table_coordinates.attach (cursor_x_value, 
+		table.attach (cursor_x_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 4, bottom_attach	=> 5);
 
 		-- y-coordinate:
-		table_coordinates.attach (cursor_y_label, 
+		table.attach (cursor_y_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 5, bottom_attach	=> 6);
   
-		table_coordinates.attach (cursor_y_value, 
+		table.attach (cursor_y_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 5, bottom_attach	=> 6);
 
 
 
 		-- DISTANCES:
-		table_coordinates.attach (distances_header, 
+		table.attach (distances_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 6, bottom_attach	=> 7);
 
 		-- x-coordinate:
-		table_coordinates.attach (distances_dx_label, 
+		table.attach (distances_dx_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 7, bottom_attach	=> 8);
 
-		table_coordinates.attach (distances_dx_value, 
+		table.attach (distances_dx_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 7, bottom_attach	=> 8);
 
 		-- y-coordinate:
-		table_coordinates.attach (distances_dy_label, 
+		table.attach (distances_dy_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 9, bottom_attach	=> 10);
   
-		table_coordinates.attach (distances_dy_value, 
+		table.attach (distances_dy_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 9, bottom_attach	=> 10);
 
 		-- absolute:
-		table_coordinates.attach (distances_absolute_label, 
+		table.attach (distances_absolute_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 10, bottom_attach => 11);
   
-		table_coordinates.attach (distances_absolute_value, 
+		table.attach (distances_absolute_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 10, bottom_attach => 11);
 		
 		-- angle:
-		table_coordinates.attach (distances_angle_label, 
+		table.attach (distances_angle_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 11, bottom_attach => 12);
   
-		table_coordinates.attach (distances_angle_value, 
+		table.attach (distances_angle_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 11, bottom_attach => 12);
 
 
 		
 		-- GRID:
-		table_coordinates.attach (grid_header, 
+		table.attach (grid_header, 
 			left_attach	=> 0, right_attach	=> 2, 
 			top_attach	=> 12, bottom_attach => 13);
 
 		-- x-axis:
-		table_coordinates.attach (grid_x_label, 
+		table.attach (grid_x_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 13, bottom_attach => 14);
   
-		table_coordinates.attach (grid_x_value, 
+		table.attach (grid_x_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 13, bottom_attach => 14);
 
 		-- y-axis:
-		table_coordinates.attach (grid_y_label, 
+		table.attach (grid_y_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 14, bottom_attach => 15);
   
-		table_coordinates.attach (grid_y_value, 
+		table.attach (grid_y_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 14, bottom_attach => 15);
 
 		-- zoom:
-		table_coordinates.attach (zoom_label, 
+		table.attach (zoom_label, 
 			left_attach	=> 0, right_attach	=> 1, 
 			top_attach	=> 15, bottom_attach => 16);
   
-		table_coordinates.attach (zoom_value, 
+		table.attach (zoom_value, 
 			left_attach	=> 1, right_attach	=> 2, 
 			top_attach	=> 15, bottom_attach => 16);
 

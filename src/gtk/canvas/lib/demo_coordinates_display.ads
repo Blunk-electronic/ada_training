@@ -45,8 +45,7 @@ with gtk.text_buffer;			use gtk.text_buffer;
 
 package demo_coordinates_display is
 	
-	table_coordinates	: gtk_table; -- incl. relative distances
-	-- CS rename to coordinates_tabel
+	table : gtk_table;
 
 	pointer_header							: gtk_label;
 	pointer_x_label, pointer_y_label		: gtk_label;
