@@ -77,7 +77,7 @@ package body demo_frame is
 		-- These are the four lines that make the 
 		-- main rectangle (landscape format):
 
-		-- CS change dimensions with respect to the safety frame !
+		-- The dimensions adapt to the paper size and margin:
 		c1 := (margin, margin);
 		c2 := (paper.width - margin, margin);
 		c3 := (paper.width - margin, paper.height - margin);

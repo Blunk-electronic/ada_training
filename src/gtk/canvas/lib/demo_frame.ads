@@ -51,10 +51,8 @@ package demo_frame is
 	paper : type_paper;
 	
 	
-	-- The safety frame around all model objects
-	-- is regarded as part of the model and thus inside
-	-- the bounding-box.
-	-- The safety frame has a margin:
+	-- The margin around the drawing frame.
+	-- This is the width of the area around the drawing frame:
 	margin : constant type_distance_model_positive := 5.0;
 
 

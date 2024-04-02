@@ -200,21 +200,21 @@ package body demo_bounding_box is
 		
 
 
-		procedure add_safety_frame is
+		procedure add_margin is
 			use demo_frame;
 			
-			-- The offset due to the safety frame:
+			-- The offset due to the margin:
 			margin_offset : type_vector_model;
 		begin
 			bbox_new.width  := bbox_new.width  + 2.0 * margin;
 			bbox_new.height := bbox_new.height + 2.0 * margin;
 			
-			-- Since we regard the safety frame as inside the bounding-box,
+			-- Since we regard the margin as inside the bounding-box,
 			-- we must move the bounding-box position towards bottom-left
 			-- by the inverted margin_offset:
 			margin_offset := (x	=> margin, y => margin);
 			move_by (bbox_new.position, invert (margin_offset));
-		end add_safety_frame;
+		end add_margin;
 
 		
 	begin
@@ -233,11 +233,10 @@ package body demo_bounding_box is
 		-- The temporary bounding-box bbox_new in its current
 		-- state is the so called "inner bounding-box" (IB).
 
-		-- Now, we expand the temporary bounding-box by the margin
-		-- of the safety frame. The safety frame is regarded
-		-- as part of the model and thus inside
-		-- the bounding-box:
-		add_safety_frame;
+		-- Now, we expand the temporary bounding-box by the margin.
+		-- The area around the drawing frame frame is regarded
+		-- as part of the model and thus inside the bounding-box:
+		add_margin;
 		-- Now, bbox_new has become the "outer bounding-box" (OB).
 		
 		-- Compare the new bounding-box with the old 
