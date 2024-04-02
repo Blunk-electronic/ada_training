@@ -77,10 +77,10 @@ begin
 	demo_frame.make_drawing_frame;
 
 	-- Generate a database with some useless dummy objects:
-	-- demo_objects.make_database_1;
-	-- demo_objects.make_database_2;
-	demo_objects.make_database_3;
-	-- demo_objects.make_database_4; 
+	demo_objects.make_database_1; -- rectangle, triangle, circle
+	-- demo_objects.make_database_2; -- performance test
+	-- demo_objects.make_database_3; -- bridge example
+	-- demo_objects.make_database_4; -- screw
 	
 	demo_grid.set_grid_to_scale;
 

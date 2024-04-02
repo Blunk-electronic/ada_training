@@ -50,11 +50,14 @@ package demo_scale is
 	-- comments in function to_string.
 
 	-- This is the global scale:
-	-- M : type_scale := 1.0;
-	M : type_scale := 50.0;
-	--M : type_scale := 0.04;
-	-- M : type_scale := 100.0;
-	-- M : type_scale := 0.01;
+	M : type_scale := 1.0; 
+	-- use it for the rectangle, triangle and circle
+
+	-- M : type_scale := 50.0; 
+	-- use it for the bridge example
+
+	-- M : type_scale := 0.1;
+	--use it for the screw example
 	
 	-- Examples for usage:
 	-- 1)
