@@ -53,6 +53,7 @@ with demo_conversions;			use demo_conversions;
 package demo_scrolled_window is
 
 -- SCROLLED WINDOW:
+
 	swin : gtk_scrolled_window;
 
 	-- Inside the scrolled window the canvas exists.
@@ -130,7 +131,6 @@ package demo_scrolled_window is
 		-- MODE_1_EXPOSE_CANVAS;
 		-- MODE_2_KEEP_CENTER;
 		MODE_3_ZOOM_FIT;
-
 
 
 

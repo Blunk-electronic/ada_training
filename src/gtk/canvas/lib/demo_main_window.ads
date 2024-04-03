@@ -56,6 +56,5 @@ package demo_main_window is
 	-- the boxes box_h, box_v1 and the separator:
 	procedure create_window;
 	
-	
 end demo_main_window;
 

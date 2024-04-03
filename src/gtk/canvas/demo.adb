@@ -69,9 +69,7 @@ with demo_coordinates_display;
 with demo_zoom;
 with demo_grid;
 
-procedure demo is
-
-begin
+procedure demo is begin
 
 	-- Generate a simple drawing frame:
 	demo_frame.make_drawing_frame;

@@ -54,7 +54,6 @@ package demo_drawing_origin is
 	-- area. Since it is about two simple lines we draw them
 	-- always:
 	procedure draw_origin;
-
 	
 end demo_drawing_origin;
 

@@ -42,9 +42,6 @@ with demo_geometry;				use demo_geometry;
 
 package demo_visibility is
 
-	
-	-- VISIBILTY THRESHOLD:
-	
 	-- If an object occupies a space that is wider or
 	-- higher than this constant, then it will be drawn on the screen:
 	visibility_threshold : constant type_logical_pixels_positive := 5.0;

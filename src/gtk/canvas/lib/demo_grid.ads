@@ -41,7 +41,6 @@ with demo_geometry;				use demo_geometry;
 
 
 package demo_grid is
-
 	
 	-- The grid helps the operator to align or place objects:
 	type type_grid_on_off is (GRID_ON, GRID_OFF);
@@ -63,7 +62,7 @@ package demo_grid is
 	grid_spacing_default : constant type_distance_model_positive := 10.0; 
 	-- use it for the example with the rectangle, triangle and circle
 
-	-- grid_spacing_default : constant type_distance_model_positive := 100.0; 
+	-- grid_spacing_default : constant type_distance_model_positive := 100.0;
 	-- use it for the bridge example
 	
 	-- grid_spacing_default : constant type_distance_model_positive := 1.0; 
@@ -83,7 +82,9 @@ package demo_grid is
 		style	: type_grid_style := STYLE_DOTS;
 		--style	: type_grid_style := STYLE_LINES;
 	end record;
+
 	
+	-- This is the grid used by this demo program:
 	grid : type_grid;
 
 

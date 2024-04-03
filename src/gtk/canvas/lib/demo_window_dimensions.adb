@@ -36,7 +36,6 @@
 --   history of changes:
 --
 
-
 package body demo_window_dimensions is
 
 

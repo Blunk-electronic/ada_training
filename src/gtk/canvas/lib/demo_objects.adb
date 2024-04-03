@@ -316,7 +316,8 @@ package body demo_objects is
 			-- the object was placed on position (0;0).
 			-- When the object is drawn on the canvas or when
 			-- the bounding-box is computed, then the primitve
-			-- objects are moved by the object position (see assignment above).
+			-- objects are moved by the object position 
+			-- (see assignment above).
 
 			-- The object to be created is a square:
 			L := (s => (-5.0, -5.0), e => (5.0, -5.0), w => 1.0);
@@ -584,21 +585,26 @@ package body demo_objects is
 					cp := to_canvas (object.position, S, true);
 
 					-- Set the linewidth:
-					set_line_width (context, to_gdouble (fixed_origin_linewidth));
+					set_line_width (context, 
+						to_gdouble (fixed_origin_linewidth));
 
 					-- Draw the horizontal line from left to right:
 					move_to (context, 
-						to_gdouble (cp.x - fixed_origin_arm_lenght), to_gdouble (cp.y));
+							 to_gdouble (cp.x - fixed_origin_arm_lenght),
+							 to_gdouble (cp.y));
 					
 					line_to (context, 
-						to_gdouble (cp.x + fixed_origin_arm_lenght), to_gdouble (cp.y));
+							 to_gdouble (cp.x + fixed_origin_arm_lenght),
+							 to_gdouble (cp.y));
 
 					-- Draw the vertical line from top to bottom:
 					move_to (context, 
-						to_gdouble (cp.x), to_gdouble (cp.y - fixed_origin_arm_lenght));
+							 to_gdouble (cp.x), 
+							 to_gdouble (cp.y - fixed_origin_arm_lenght));
 					
 					line_to (context, 
-							to_gdouble (cp.x), to_gdouble (cp.y + fixed_origin_arm_lenght));
+							 to_gdouble (cp.x), 
+							 to_gdouble (cp.y + fixed_origin_arm_lenght));
 
 					stroke;
 				end fixed_size;
@@ -611,17 +617,24 @@ package body demo_objects is
 				procedure variable_size is
 					-- The linewidth can be set here. Start and end point
 					-- will follow later:
-					line : type_line := (w => variable_origin_linewidth, others => <>);
+					line : type_line := (w => variable_origin_linewidth,
+										 others => <>);
 				begin
 					-- horizontal line:
-					line.s := (x => - variable_origin_arm_length, y => 0.0); -- start
-					line.e := (x => + variable_origin_arm_length, y => 0.0); -- end
+					line.s := (x => - variable_origin_arm_length,
+							   y => 0.0); -- start
+					
+					line.e := (x => + variable_origin_arm_length,
+							   y => 0.0); -- end
 					
 					draw_line (line, object.position, true);
 					
 					-- vertical line:
-					line.s := (x => 0.0, y => - variable_origin_arm_length); -- start
-					line.e := (x => 0.0, y => + variable_origin_arm_length); -- end
+					line.s := (x => 0.0,
+							   y => - variable_origin_arm_length); -- start
+					
+					line.e := (x => 0.0,
+							   y => + variable_origin_arm_length); -- end
 
 					draw_line (line, object.position, true);
 				end variable_size;

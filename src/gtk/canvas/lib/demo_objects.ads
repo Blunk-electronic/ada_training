@@ -36,18 +36,14 @@
 --   history of changes:
 --
 
-
--- with ada.numerics;
--- with ada.numerics.generic_elementary_functions;
-
 with ada.containers;			use ada.containers;
 with ada.containers.doubly_linked_lists;
 
 with demo_logical_pixels;		use demo_logical_pixels;
 with demo_geometry;				use demo_geometry;
 
-package demo_objects is
 
+package demo_objects is
 
 -- ORIGIN:
 	
@@ -195,7 +191,6 @@ package demo_objects is
 	-- Draws all model objects. Parses the model database
 	-- and draws objects one by one:
 	procedure draw_objects;
-
 	
 end demo_objects;
 

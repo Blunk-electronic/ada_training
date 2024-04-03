@@ -155,7 +155,6 @@ package body demo_scale is
 		return (x => to_model (v.x), y => to_model (v.y));
 	end to_model;
 
-
 	
 end demo_scale;
 

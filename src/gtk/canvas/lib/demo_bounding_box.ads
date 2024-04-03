@@ -36,11 +36,6 @@
 --   history of changes:
 --
 
-
--- NOTE: This package is about the global bounding-box and
--- 		 - related global variables
---		 - related subprograms
-
 with demo_geometry;				use demo_geometry;
 
 
@@ -59,8 +54,6 @@ package demo_bounding_box is
 	
 	bounding_box_height_max : constant 
 		type_distance_model_positive := 1_000.0;
-	
-
 
 
 	

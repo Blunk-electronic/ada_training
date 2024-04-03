@@ -482,7 +482,6 @@ package body demo_coordinates_display is
 		scale_value.set_buffer (scale_buf);
 	end update_scale_display;
 
-
 	
 end demo_coordinates_display;
 

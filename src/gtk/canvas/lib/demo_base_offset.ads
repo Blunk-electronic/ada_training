@@ -49,8 +49,6 @@ package demo_base_offset is
 	-- Sets the global base-offset F according to the current
 	-- bounding-box and the maximal allowed zoom factor:
 	procedure set_base_offset;
-
-	
 	
 end demo_base_offset;
 

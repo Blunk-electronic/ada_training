@@ -105,12 +105,14 @@ package demo_scale is
 		d : in out type_distance_model);
 
 
-	
+
+	-- Converts a vector from model to reality:
 	function to_reality (
 		v : in type_vector_model)
 		return type_vector_model;
 
 
+	-- Converts a vector from reality to model:
 	function to_model (
 		v : in type_vector_model)
 		return type_vector_model;

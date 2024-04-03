@@ -55,7 +55,6 @@ package demo_conversions is
 		point : in type_vector_model)
 		return type_vector_model;
 
-
 	
 
 -- CANVAS <-> MODEL:

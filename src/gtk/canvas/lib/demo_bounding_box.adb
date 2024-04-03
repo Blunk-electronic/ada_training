@@ -311,7 +311,6 @@ package body demo_bounding_box is
 		end if;
 	end compute_bounding_box;
 
-
 	
 end demo_bounding_box;
 

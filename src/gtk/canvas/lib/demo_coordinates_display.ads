@@ -106,7 +106,6 @@ package demo_coordinates_display is
 
 	-- Updates the scale display:
 	procedure update_scale_display;
-
 	
 end demo_coordinates_display;
 
