@@ -315,8 +315,6 @@ package body demo_geometry is
 		A.width  := A_gx - A_lx;
 		A.height := A_gy - A_ly;
 	end merge_areas;
-
-	
 	
 end demo_geometry;
 

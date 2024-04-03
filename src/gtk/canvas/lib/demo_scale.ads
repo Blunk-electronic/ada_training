@@ -57,6 +57,7 @@ package demo_scale is
 	-- use it for the bridge example
 
 	-- M : type_scale := 0.1;
+	-- M : type_scale := 0.04;
 	--use it for the screw example
 	
 	-- Examples for usage:

@@ -40,9 +40,6 @@ with glib;
 
 package demo_logical_pixels is
 
-	
--- DISTANCE AND VECTORS ON THE SCREEN:
-
 	-- GTK3 uses the type gdouble for primitive draw operations
 	-- on the canvas. It also uses gdouble for scrollbar settings.
 	-- A point, a vector or a distance is expressed in
@@ -108,7 +105,6 @@ package demo_logical_pixels is
 	procedure clip_min (
 		value	: in out type_logical_pixels;
 		limit	: in type_logical_pixels);
-
 	
 	
 end demo_logical_pixels;

@@ -39,11 +39,6 @@
 with ada.numerics;
 with ada.numerics.generic_elementary_functions;
 
-with ada.containers;			use ada.containers;
-with ada.containers.doubly_linked_lists;
-
-with demo_logical_pixels;		use demo_logical_pixels;
-
 
 package demo_geometry is
 
@@ -68,8 +63,7 @@ package demo_geometry is
 -- DISTANCE:
 	
 	-- The model coordinates system uses so called
-	-- decimal fixed point numbers for distances and positions:
-	--type type_distance_model is delta 0.01 digits 8
+	-- ordinary binary fixed point numbers for distances and positions:
 	type type_distance_model is delta 0.01
 		range -100_000.00 .. 100_000.00;
 	for type_distance_model'small use 0.01;
@@ -90,11 +84,11 @@ package demo_geometry is
 -- ROTATION / ANGLE:
 	
 	-- The model coordinates system uses so called
-	-- decimal fixed point numbers for angles and rotations:
+	-- ordinary binary fixed point numbers for angles and rotations:
 	rotation_smallest : constant := 0.01;
-	type type_rotation_model is delta rotation_smallest digits 5 
+	type type_rotation_model is delta rotation_smallest
 		range -360.0 + rotation_smallest .. 360.0 - rotation_smallest;
-
+	for type_rotation_model'small use rotation_smallest;
 		
 	-- Converts the given rotation/angle to a string:
 	function to_string (
