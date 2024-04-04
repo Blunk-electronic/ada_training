@@ -52,7 +52,6 @@ package demo_visibility is
 	function above_visibility_threshold (
 		a : in type_area)
 		return boolean;
-
 	
 end demo_visibility;
 

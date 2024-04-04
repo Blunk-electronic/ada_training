@@ -144,10 +144,9 @@ package body demo_frame is
 		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 
 		drawing_frame.lines.iterate (query_line'access);
-		-- CS iterate the lines of the title block separtely ?
+		-- CS iterate the lines of the title block separately ?
 		
 		-- CS texts
-
 		
 	end draw_drawing_frame;
 

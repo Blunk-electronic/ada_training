@@ -56,7 +56,7 @@ with ada.text_io;				use ada.text_io;
 
 with gtk.main;					use gtk.main;
 
-with demo_callbacks;			use demo_callbacks;
+with demo_callbacks;
 with demo_objects;
 with demo_frame;
 with demo_bounding_box;
@@ -103,12 +103,12 @@ procedure demo is begin
 	init; -- inits the GTK-stuff
 
 
-	set_up_main_window; -- incl. box_h, box_v1, separator, box_v2
+	demo_callbacks.set_up_main_window; -- incl. box_h, box_v1, separator, box_v2
 	
 	demo_coordinates_display.set_up_coordinates_display; -- table in box_v1
 	
-	set_up_swin_and_scrollbars;
-	set_up_canvas;
+	demo_callbacks.set_up_swin_and_scrollbars;
+	demo_callbacks.set_up_canvas;
 		
 
 	put_line ("show all widgets");

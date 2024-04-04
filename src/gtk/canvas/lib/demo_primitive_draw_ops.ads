@@ -41,7 +41,6 @@ with demo_objects;			use demo_objects;
 
 
 package demo_primitive_draw_ops is
-
 	
 	-- This is a primitive draw operation that draws a line.
 	-- The argument pos contains the position of the parent

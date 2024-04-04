@@ -42,23 +42,24 @@ with demo_zoom;					use demo_zoom;
 
 package demo_conversions is
 
--- REAL <-> VIRTUAL MODEL COORDINATES:
+-- REAL (CS1) <-> VIRTUAL MODEL COORDINATES (CS2):
 	
-	-- Converts a virtual model point to a real model point:
+	-- Converts a virtual model point to a real model point,
+	-- both in CS1:
 	function to_real (
 		point : in type_vector_model)
 		return type_vector_model;
 
 	
-	-- Converts a real model point to a virtual model point:
+	-- Converts a real model point to a virtual model point,
+	-- both in CS1:
 	function to_virtual (
 		point : in type_vector_model)
 		return type_vector_model;
 
 	
 
--- CANVAS <-> MODEL:
-
+-- CANVAS (CS2 <-> MODEL (CS1):
 
 	-- Converts the given model distance to
 	-- a canvas distance according to the current zoom factor S:
@@ -75,7 +76,7 @@ package demo_conversions is
 
 
 	
-	-- Converts a canvas point to a model point
+	-- Converts a canvas point (CS2) to a model point (CS2)
 	-- according to the given zoom factor, the current
 	-- base-offset and the current tranlate-offset.
 	-- If a real model point is required, then the position
@@ -87,7 +88,7 @@ package demo_conversions is
 		return type_vector_model;
 	
 
-	-- Converts a model point to a canvas point
+	-- Converts a model point (CS1) to a canvas point (CS2)
 	-- according to the given zoom factor and the current
 	-- base-offset.
 	-- If the given model point is real, then the current

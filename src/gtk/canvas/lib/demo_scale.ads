@@ -116,7 +116,6 @@ package demo_scale is
 	function to_model (
 		v : in type_vector_model)
 		return type_vector_model;
-
 	
 end demo_scale;
 
