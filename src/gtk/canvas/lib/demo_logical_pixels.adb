@@ -71,7 +71,7 @@ package body demo_logical_pixels is
 		return glib.gdouble
 	is begin
 		return glib.gdouble (lp);
-	end to_gdouble;
+	end to_gdouble_positive;
 	
 	
 	function to_string (

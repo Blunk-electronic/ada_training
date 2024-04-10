@@ -69,15 +69,19 @@ package demo_logical_pixels is
 		lp : in type_logical_pixels)
 		return glib.gdouble;
 
-	function to_gdouble_positive (
-		lp : in type_logical_pixels_positive)
-		return glib.gdouble;
-
 	
-	-- Use this type for distances, lengths, scrollbar settings, ...
+	-- Use this type for distances, lengths, scrollbar settings, 
+	-- primitive draw operations, ...
 	-- because such things are always positive numbers:
 	subtype type_logical_pixels_positive is type_logical_pixels
 		range 0.0 .. type_logical_pixels'last;
+
+	
+	-- This function converts positive logical pixels
+	-- to a positive gdouble number:
+	function to_gdouble_positive (
+		lp : in type_logical_pixels_positive)
+		return glib.gdouble;
 
 	
 	-- A point, a location vector or a distance vector is
