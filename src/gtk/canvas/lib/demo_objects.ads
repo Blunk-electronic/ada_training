@@ -69,6 +69,20 @@ package demo_objects is
 		w : type_distance_model_positive := 0.1; -- linewidth
 	end record;
 
+
+	-- CS: If lines are to be divided in
+	-- contours and non-contour related, then this
+	-- type declaration might be a start:
+	-- type type_line_2 (contour : boolean) is record
+	-- 	s, e : type_vector_model; -- start and end point
+	-- 	case contour is
+	-- 		when TRUE =>
+	-- 			null;
+	-- 		when FALSE =>
+	-- 			w : type_distance_model_positive := 0.1; -- linewidth
+	-- 	end case;
+	-- end record;	
+	
 	
 	-- Returns the bounding-box of the given line.
 	-- It respects the linewidth and assumes that the line ends
@@ -93,6 +107,22 @@ package demo_objects is
 		-- CS: fill status
 	end record;
 
+
+	-- CS: If circle are to be divided in
+	-- contours and non-contour related, then this
+	-- type declaration might be a start:
+	-- type type_circle_2 (contour : boolean) is record
+	-- 	c : type_vector_model;   -- the center
+	-- 	r : type_distance_model_positive; -- the radius
+	-- 	case contour is
+	-- 		when TRUE =>
+	-- 			null;
+	-- 		when FALSE =>
+	-- 			w : type_distance_model_positive := 0.1; -- linewidth
+	-- 	end case;
+	-- end record;	
+
+	
 	
 	-- Returns the bounding-box of the given circle.
 	-- It respects the linewidth of the circumfence:
