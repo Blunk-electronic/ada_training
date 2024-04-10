@@ -91,15 +91,15 @@ package body demo_primitive_draw_ops is
 			-- If an individual stroke is requested for
 			-- the given line, then set the linewidth:
 			if do_stroke then
-				set_line_width (context, to_gdouble (to_distance (line.w)));
+				set_line_width (context, to_gdouble_positive (to_distance (line.w)));
 			end if;
 
 			c1 := to_canvas (l.s, S, real => true);
 			c2 := to_canvas (l.e, S, real => true);
 
 			-- THESE DRAW OPERATIONS CONSUME THE MOST TIME:
-			move_to (context, to_gdouble (c1.x), to_gdouble (c1.y));
-			line_to (context, to_gdouble (c2.x), to_gdouble (c2.y));
+			move_to (context, to_gdouble_positive (c1.x), to_gdouble_positive (c1.y));
+			line_to (context, to_gdouble_positive (c2.x), to_gdouble_positive (c2.y));
 			
 			-- Direct conversion to gdouble does not improve performance:
 			-- move_to (context, gdouble (c1.x), gdouble (c1.y));
@@ -162,7 +162,7 @@ package body demo_primitive_draw_ops is
 			-- the given circle, then set the linewidth of the 
 			-- circumfence:
 			if do_stroke then
-				set_line_width (context, to_gdouble (to_distance (circle.w)));
+				set_line_width (context, to_gdouble_positive (to_distance (circle.w)));
 			end if;
 
 			m := to_canvas (c.c, S, real => true);
@@ -170,9 +170,9 @@ package body demo_primitive_draw_ops is
 
 			-- THIS DRAW OPERATION CONSUMES THE MOST TIME:
 			arc (context, 
-				 to_gdouble (m.x), 
-				 to_gdouble (m.y),
-				 to_gdouble (r), 
+				 to_gdouble_positive (m.x), 
+				 to_gdouble_positive (m.y),
+				 to_gdouble_positive (r), 
 				 0.0, 6.3 ); -- start and end angle in radians
 
 
