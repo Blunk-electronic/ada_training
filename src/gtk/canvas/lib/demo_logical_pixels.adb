@@ -66,6 +66,13 @@ package body demo_logical_pixels is
 	end to_gdouble;
 
 	
+	function to_gdouble_positive (
+		lp : in type_logical_pixels_positive)
+		return glib.gdouble
+	is begin
+		return glib.gdouble (lp);
+	end to_gdouble;
+	
 	
 	function to_string (
 		v : in type_logical_pixels_vector)

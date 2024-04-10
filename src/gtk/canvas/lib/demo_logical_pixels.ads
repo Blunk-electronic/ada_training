@@ -63,10 +63,14 @@ package demo_logical_pixels is
 		return type_logical_pixels;
 
 	
-	-- This function converts a logical pixels
+	-- This function converts logical pixels
 	-- to a gdouble number:
 	function to_gdouble (
 		lp : in type_logical_pixels)
+		return glib.gdouble;
+
+	function to_gdouble_positive (
+		lp : in type_logical_pixels_positive)
 		return glib.gdouble;
 
 	
