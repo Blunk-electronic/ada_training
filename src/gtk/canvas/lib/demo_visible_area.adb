@@ -101,10 +101,10 @@ package body demo_visible_area is
 		
 		-- Compute the corners of the visible area.
 		-- The corners are real model coordinates:
-		BL := to_model ((h_start, v_end),   S, true);
-		BR := to_model ((h_end, v_end),     S, true);
-		TL := to_model ((h_start, v_start), S, true);
-		TR := to_model ((h_end, v_start),   S, true);
+		BL := to_model ((h_start, v_end),   S);
+		BR := to_model ((h_end, v_end),     S);
+		TL := to_model ((h_start, v_start), S);
+		TR := to_model ((h_end, v_start),   S);
 
 		-- put_line ("BL " & to_string (BL));
 		-- put_line ("BR " & to_string (BR));

@@ -79,12 +79,13 @@ package demo_conversions is
 	-- Converts a canvas point (CS2) to a model point (CS2)
 	-- according to the given zoom factor, the current
 	-- base-offset and the current tranlate-offset.
-	-- If a real model point is required, then the position
+	-- If a real model point is required (default assumption),
+	-- then the position
 	-- of the current bonding-box is also taken into account:
 	function to_model (
 		point	: in type_logical_pixels_vector;
 		zf		: in type_zoom_factor;
-		real 	: in boolean := false) 
+		real 	: in boolean := true) 
 		return type_vector_model;
 	
 

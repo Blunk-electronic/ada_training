@@ -91,7 +91,7 @@ package body demo_conversions is
 	function to_model (
 		point	: in type_logical_pixels_vector;
 		zf		: in type_zoom_factor;
-		real 	: in boolean := false)
+		real 	: in boolean := true)
 		return type_vector_model
 	is 
 		result : type_vector_model;
@@ -108,7 +108,8 @@ package body demo_conversions is
 		result.y := type_distance_model 
 			((-(point.y - T.y) - F.y) / type_logical_pixels (zf));
 
-		-- If real model coordinates are required, then the result 
+		-- If real model coordinates are required (default),
+		-- then the result 
 		-- must be compensated by the bounding-box position:
 		if real then
 			move_by (result, bounding_box.position);

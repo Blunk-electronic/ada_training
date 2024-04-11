@@ -676,10 +676,7 @@ package body demo_callbacks is
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
-		mp : constant type_vector_model := to_model (
-			point 	=> cp,
-			zf		=> S,
-			real	=> true);
+		mp : constant type_vector_model := to_model (cp, S);
 
 		-- CS: For some reason the value of the scrollbars
 		-- must be saved and restored if the canvas grabs the focus:
@@ -765,10 +762,7 @@ package body demo_callbacks is
 
 		-- Convert the canvas point to the corresponding
 		-- real model point:
-		mp : constant type_vector_model := to_model (
-			point 	=> cp,
-			zf		=> S,
-			real	=> true);
+		mp : constant type_vector_model := to_model (cp, S);
 
 		-- The corners of the bounding-box on the canvas before 
 		-- and after zooming:
@@ -884,7 +878,7 @@ package body demo_callbacks is
 			(to_lp (event.x), to_lp (event.y));
 
 		-- Get the real model coordinates:
-		mp : constant type_vector_model := to_model (cp, S, true);
+		mp : constant type_vector_model := to_model (cp, S);
 	begin
 		-- put_line ("cb_canvas_mouse_moved");
 

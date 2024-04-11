@@ -95,7 +95,7 @@ package body demo_zoom is
 		
 		-- Compute the virtual model-point
 		-- according to the zoom factor before zoom:
-		M : constant type_vector_model := to_model (Z1, S1);
+		M : constant type_vector_model := to_model (Z1, S1, false);
 
 		Z2 : type_logical_pixels_vector;
 	begin			
