@@ -95,8 +95,8 @@ package body demo_primitive_draw_ops is
 								to_gdouble_positive (to_distance (line.w)));
 			end if;
 
-			c1 := to_canvas (l.s, S, real => true);
-			c2 := to_canvas (l.e, S, real => true);
+			c1 := to_canvas (l.s, S);
+			c2 := to_canvas (l.e, S);
 
 			-- THESE DRAW OPERATIONS CONSUME THE MOST TIME:
 			move_to (context, 
@@ -170,7 +170,7 @@ package body demo_primitive_draw_ops is
 								to_gdouble_positive (to_distance (circle.w)));
 			end if;
 
-			m := to_canvas (c.c, S, real => true);
+			m := to_canvas (c.c, S);
 			r := to_distance (c.r);
 
 			-- THIS DRAW OPERATION CONSUMES THE MOST TIME:

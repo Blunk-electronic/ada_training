@@ -195,7 +195,7 @@ package body demo_grid is
 				while MP.y <= y2 loop
 					-- Convert the current real model point MP to a
 					-- point on the canvas:
-					CP := to_canvas (MP, S, true);
+					CP := to_canvas (MP, S);
 
 					-- Draw a very small circle with its center at CP:
 					-- arc (context, CP.x, CP.y, 
@@ -268,8 +268,8 @@ package body demo_grid is
 			-- This loop advances from one column to the next and
 			-- draws a vertical line:
 			while MP1.x <= x2 loop
-				CP1 := to_canvas (MP1, S, true);
-				CP2 := to_canvas (MP2, S, true);
+				CP1 := to_canvas (MP1, S);
+				CP2 := to_canvas (MP2, S);
 				
 				move_to (context, 
 					to_gdouble (CP1.x), to_gdouble (CP1.y));
@@ -297,8 +297,8 @@ package body demo_grid is
 			-- This loop advances from one row to the next and
 			-- draws a horizontal line:
 			while MP1.y <= y2 loop
-				CP1 := to_canvas (MP1, S, true);
-				CP2 := to_canvas (MP2, S, true);
+				CP1 := to_canvas (MP1, S);
+				CP2 := to_canvas (MP2, S);
 				
 				move_to (context, 
 					to_gdouble (CP1.x), to_gdouble (CP1.y));

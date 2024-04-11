@@ -131,13 +131,14 @@ package body demo_conversions is
 	function to_canvas (
 		point 	: in type_vector_model;
 		zf		: in type_zoom_factor;
-		real	: in boolean := false)
+		real	: in boolean := true)
 		return type_logical_pixels_vector
 	is
 		P : type_vector_model := point;
 		result : type_logical_pixels_vector;
 	begin
-		-- If real model coordinates are given, then they must
+		-- If real model coordinates are given (by default),
+		-- then they must
 		-- be compensated by the inverted bounding-box position
 		-- in order to get virtual model coordinates:
 		if real then
@@ -150,7 +151,7 @@ package body demo_conversions is
 		result.y := -(type_logical_pixels (P.y) * type_logical_pixels (zf)
 					  + F.y);
 
-		-- If real model coordinates are given, then
+		-- If real model coordinates are given (default), then
 		-- move result by the current translate-offset:
 		if real then
 			result.x := result.x + T.x;
@@ -172,10 +173,10 @@ package body demo_conversions is
 
 	begin
 		-- Convert the corners of the bounding-box to canvas coordinates:
-		result.TL := to_canvas (BC.TL, S, true);
-		result.TR := to_canvas (BC.TR, S, true);
-		result.BL := to_canvas (BC.BL, S, true);
-		result.BR := to_canvas (BC.BR, S, true);
+		result.TL := to_canvas (BC.TL, S);
+		result.TR := to_canvas (BC.TR, S);
+		result.BL := to_canvas (BC.BL, S);
+		result.BR := to_canvas (BC.BR, S);
 		
 		return result;
 	end get_bounding_box_corners;

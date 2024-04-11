@@ -91,13 +91,13 @@ package demo_conversions is
 	-- Converts a model point (CS1) to a canvas point (CS2)
 	-- according to the given zoom factor and the current
 	-- base-offset.
-	-- If the given model point is real, then the current
-	-- tranlate-offset and the position of the current
-	-- bounding-box is also taken into account:
+	-- If the given model point is real (default assumption),
+	-- then the current tranlate-offset and the position of 
+	-- the current bounding-box is also taken into account:
 	function to_canvas (
 		point 	: in type_vector_model;
 		zf		: in type_zoom_factor;
-		real	: in boolean := false)
+		real	: in boolean := true)
 		return type_logical_pixels_vector;
 
 
