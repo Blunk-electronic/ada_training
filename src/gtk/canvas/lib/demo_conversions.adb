@@ -144,12 +144,14 @@ package body demo_conversions is
 			move_by (P, invert (bounding_box.position));
 		end if;
 		
-		result.x :=  (type_logical_pixels (P.x) *
-					  type_logical_pixels (zf) + F.x);
+		result.x :=  (type_logical_pixels (P.x) * type_logical_pixels (zf)
+					  + F.x);
 		
-		result.y := -(type_logical_pixels (P.y) * 
-					  type_logical_pixels (zf) + F.y);
+		result.y := -(type_logical_pixels (P.y) * type_logical_pixels (zf)
+					  + F.y);
 
+		-- If real model coordinates are given, then
+		-- move result by the current translate-offset:
 		if real then
 			result.x := result.x + T.x;
 			result.y := result.y + T.y;
