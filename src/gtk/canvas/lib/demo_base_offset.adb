@@ -2,7 +2,7 @@
 --                                                                          --
 --                              DEMO CANVAS                                 --
 --                                                                          --
---                               GEOMETRY 1                                 --
+--                              BASE OFFSET                                 --
 --                                                                          --
 --                               B o d y                                    --
 --                                                                          --
