@@ -87,11 +87,28 @@ package body demo_conversions is
 
 	
 
+	function to_virtual (
+		point	: in type_logical_pixels_vector;
+		zf		: in type_zoom_factor)
+		return type_vector_model
+	is 
+		result : type_vector_model;
+		debug : boolean := false;
+	begin
+		result.x := type_distance_model 
+			(( (point.x - T.x) - F.x) / type_logical_pixels (zf));
+		
+		result.y := type_distance_model 
+			((-(point.y - T.y) - F.y) / type_logical_pixels (zf));
+
+		return result;
+	end to_virtual;
+
+	
 	
 	function to_model (
 		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor;
-		real 	: in boolean := true)
+		zf		: in type_zoom_factor)
 		return type_vector_model
 	is 
 		result : type_vector_model;
@@ -102,18 +119,14 @@ package body demo_conversions is
 			put_line ("T " & to_string (T));
 		end if;
 		
-		result.x := type_distance_model 
-			(( (point.x - T.x) - F.x) / type_logical_pixels (zf));
+		-- Compute the virtual model point corresponding
+		-- to the given canvas point:
+		result := to_virtual (point, zf);
 		
-		result.y := type_distance_model 
-			((-(point.y - T.y) - F.y) / type_logical_pixels (zf));
+		-- The result must be compensated by the bounding-box position
+		-- in order to obtain a real model point:
+		move_by (result, bounding_box.position);
 
-		-- If real model coordinates are required (default),
-		-- then the result 
-		-- must be compensated by the bounding-box position:
-		if real then
-			move_by (result, bounding_box.position);
-		end if;
 		return result;
 
 		exception
@@ -124,40 +137,49 @@ package body demo_conversions is
 				put_line (" zf    " & to_string (zf));
 				put_line (" T     " & to_string (T));
 				put_line (" F     " & to_string (F));
-				put_line (" real  " & boolean'image (real));
 				raise;						  
 	end to_model;
-	
 
-	function to_canvas (
+
+	
+	function virtual_to_canvas (
 		point 	: in type_vector_model;
-		zf		: in type_zoom_factor;
-		real	: in boolean := true)
+		zf		: in type_zoom_factor)
 		return type_logical_pixels_vector
 	is
 		P : type_vector_model := point;
 		result : type_logical_pixels_vector;
 	begin
-		-- If real model coordinates are given (by default),
-		-- then they must
-		-- be compensated by the inverted bounding-box position
-		-- in order to get virtual model coordinates:
-		if real then
-			move_by (P, invert (bounding_box.position));
-		end if;
-		
 		result.x :=  (type_logical_pixels (P.x) * type_logical_pixels (zf)
-					  + F.x);
+					+ F.x);
 		
 		result.y := -(type_logical_pixels (P.y) * type_logical_pixels (zf)
-					  + F.y);
+					+ F.y);
+		
+		return result;
+	end virtual_to_canvas;
 
-		-- If real model coordinates are given (default), then
-		-- move result by the current translate-offset:
-		if real then
-			result.x := result.x + T.x;
-			result.y := result.y + T.y;
-		end if;
+	
+
+	function to_canvas (
+		point 	: in type_vector_model;
+		zf		: in type_zoom_factor)
+		return type_logical_pixels_vector
+	is
+		P : type_vector_model := point;
+		result : type_logical_pixels_vector;
+	begin
+		-- The given real model point must must
+		-- be compensated by the inverted bounding-box position
+		-- in order to get a virtual model point:
+		move_by (P, invert (bounding_box.position));
+
+
+		result := virtual_to_canvas (P, zf);
+		
+		-- Move result by the current translate-offset:
+		result.x := result.x + T.x;
+		result.y := result.y + T.y;
 		
 		return result;
 	end to_canvas;

@@ -75,30 +75,35 @@ package demo_conversions is
 		return type_distance_model_positive;
 
 
-	
-	-- Converts a canvas point (CS2) to a model point (CS2)
-	-- according to the given zoom factor, the current
-	-- base-offset and the current tranlate-offset.
-	-- If a real model point is required (default assumption),
-	-- then the position
-	-- of the current bonding-box is also taken into account:
-	function to_model (
+	function to_virtual (
 		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor;
-		real 	: in boolean := true) 
+		zf		: in type_zoom_factor)
 		return type_vector_model;
 	
 
-	-- Converts a model point (CS1) to a canvas point (CS2)
-	-- according to the given zoom factor and the current
-	-- base-offset.
-	-- If the given model point is real (default assumption),
-	-- then the current tranlate-offset and the position of 
-	-- the current bounding-box is also taken into account:
+	-- Converts a canvas point (CS2) to a real model point (CS1)
+	-- according to the given zoom factor, the current
+	-- base-offset, the current tranlate-offset and
+	-- then the position of the current bounding-box:
+	function to_model (
+		point	: in type_logical_pixels_vector;
+		zf		: in type_zoom_factor)
+		return type_vector_model;
+	
+
+	function virtual_to_canvas (
+		point 	: in type_vector_model;
+		zf		: in type_zoom_factor)
+		return type_logical_pixels_vector;
+
+	
+	-- Converts a real model point (CS1) to a canvas point (CS2)
+	-- according to the given zoom factor, the current
+	-- base-offset, the current tranlate-offset and
+	-- then the position of the current bounding-box:
 	function to_canvas (
 		point 	: in type_vector_model;
-		zf		: in type_zoom_factor;
-		real	: in boolean := true)
+		zf		: in type_zoom_factor)
 		return type_logical_pixels_vector;
 
 
