@@ -95,7 +95,7 @@ package body demo_zoom is
 
 		-- Compute the virtual model point
 		-- according to the old zoom factor:
-		M : constant type_vector_model := to_virtual (Z1, S1);
+		V : constant type_vector_model := to_virtual (Z1, S1);
 
 		Z2 : type_logical_pixels_vector;
 	begin			
@@ -105,7 +105,7 @@ package body demo_zoom is
 		
 		-- Compute the prospected canvas point according to the 
 		-- new zoom factor:
-		Z2 := virtual_to_canvas (M, S2);
+		Z2 := virtual_to_canvas (V, S2, false);
 
 		-- This is the offset from Z1 to the prospected
 		-- point Z2. The offset must be multiplied by -1 because the
@@ -130,24 +130,23 @@ package body demo_zoom is
 	is 
 		debug : boolean := false;
 		
-		-- Compute the canvas point corresponding to the given
-		-- real model point with the zoom factor before zoom:
-		Z1 : constant type_logical_pixels_vector := to_canvas (M, S1);
-
 		-- Convert the given real model point to 
 		-- a virtual model point:
 		V : constant type_vector_model := to_virtual (M);
 		
-		Z2 : type_logical_pixels_vector;
-		
+		Z1, Z2 : type_logical_pixels_vector;		
 	begin			
 		if debug then
 			put_line ("set_translation_for_zoom");
 		end if;
+
+		-- Convert the virtual model point to a canvas point
+		-- according to the old zoom factor:
+		Z1 := virtual_to_canvas (V, S1, translate => true);
 		
 		-- Compute the prospected canvas point according to the 
 		-- new zoom factor:
-		Z2 := virtual_to_canvas (V, S2);
+		Z2 := virtual_to_canvas (V, S2, translate => false);
 		-- put_line ("Z2 " & to_string (Z2));
 
 		-- This is the offset from point Z1 to the prospected

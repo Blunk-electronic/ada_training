@@ -143,45 +143,46 @@ package body demo_conversions is
 
 	
 	function virtual_to_canvas (
-		point 	: in type_vector_model;
-		zf		: in type_zoom_factor)
+		V 			: in type_vector_model;
+		zf			: in type_zoom_factor;
+		translate	: in boolean)
 		return type_logical_pixels_vector
 	is
-		P : type_vector_model := point;
-		result : type_logical_pixels_vector;
+		Z : type_logical_pixels_vector;
 	begin
-		result.x :=  (type_logical_pixels (P.x) * type_logical_pixels (zf)
+		Z.x :=  (type_logical_pixels (V.x) * type_logical_pixels (zf)
 					+ F.x);
 		
-		result.y := -(type_logical_pixels (P.y) * type_logical_pixels (zf)
+		Z.y := -(type_logical_pixels (V.y) * type_logical_pixels (zf)
 					+ F.y);
+
+		-- If required: Move Z by the current translate-offset:
+		if translate then
+			Z.x := Z.x + T.x;
+			Z.y := Z.y + T.y;
+		end if;
 		
-		return result;
+		return Z;
 	end virtual_to_canvas;
 
 	
 
 	function to_canvas (
-		point 	: in type_vector_model;
-		zf		: in type_zoom_factor)
+		M 	: in type_vector_model;
+		zf	: in type_zoom_factor)
 		return type_logical_pixels_vector
 	is
-		P : type_vector_model := point;
-		result : type_logical_pixels_vector;
+		V : type_vector_model;
+		Z : type_logical_pixels_vector;
 	begin
-		-- The given real model point must must
-		-- be compensated by the inverted bounding-box position
-		-- in order to get a virtual model point:
-		move_by (P, invert (bounding_box.position));
+		-- Convert the given real model point 
+		-- to a virtual model point:
+		V := to_virtual (M);
 
-
-		result := virtual_to_canvas (P, zf);
-		
-		-- Move result by the current translate-offset:
-		result.x := result.x + T.x;
-		result.y := result.y + T.y;
-		
-		return result;
+		-- Convert the virtual model point V to a canvas point:
+		Z := virtual_to_canvas (V, zf, translate => true);
+	
+		return Z;
 	end to_canvas;
 
 	

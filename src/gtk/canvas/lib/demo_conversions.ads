@@ -83,7 +83,7 @@ package demo_conversions is
 
 	-- Converts a canvas point (CS2) to a real model point (CS1)
 	-- according to the given zoom factor, the current
-	-- base-offset, the current tranlate-offset and
+	-- base-offset, the current translate-offset and
 	-- then the position of the current bounding-box:
 	function to_model (
 		point	: in type_logical_pixels_vector;
@@ -92,18 +92,19 @@ package demo_conversions is
 	
 
 	function virtual_to_canvas (
-		point 	: in type_vector_model;
-		zf		: in type_zoom_factor)
+		V	 		: in type_vector_model;
+		zf			: in type_zoom_factor;
+		translate	: in boolean)
 		return type_logical_pixels_vector;
 
 	
 	-- Converts a real model point (CS1) to a canvas point (CS2)
 	-- according to the given zoom factor, the current
-	-- base-offset, the current tranlate-offset and
+	-- base-offset, the current translate-offset and
 	-- then the position of the current bounding-box:
-	function to_canvas (
-		point 	: in type_vector_model;
-		zf		: in type_zoom_factor)
+	function to_canvas ( -- CS: rename to real_to_canvas
+		M 	: in type_vector_model;
+		zf	: in type_zoom_factor)
 		return type_logical_pixels_vector;
 
 
