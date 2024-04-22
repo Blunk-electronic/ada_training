@@ -582,7 +582,7 @@ package body demo_objects is
 					cp : type_logical_pixels_vector;
 				begin
 					-- Compute the center of the origin as canvas point:
-					cp := to_canvas (object.position, S);
+					cp := real_to_canvas (object.position, S);
 
 					-- Set the linewidth:
 					set_line_width (context, 

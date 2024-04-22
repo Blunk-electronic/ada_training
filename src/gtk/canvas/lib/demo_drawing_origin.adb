@@ -52,7 +52,7 @@ package body demo_drawing_origin is
 		use demo_zoom;
 		use demo_conversions;
 		
-		cp : type_logical_pixels_vector := to_canvas (origin, S);
+		cp : type_logical_pixels_vector := real_to_canvas (origin, S);
 	begin
 		set_source_rgb (context, 0.5, 0.5, 0.5); -- gray
 		set_line_width (context, to_gdouble (origin_linewidth));

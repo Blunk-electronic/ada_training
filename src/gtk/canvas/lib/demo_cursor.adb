@@ -149,7 +149,8 @@ package body demo_cursor is
 		use demo_conversions;
 		use demo_zoom;
 		
-		cp : type_logical_pixels_vector := to_canvas (cursor.position, S);
+		cp : type_logical_pixels_vector := 
+			real_to_canvas (cursor.position, S);
 
 		-- These are the start and stop positions for the
 		-- horizontal lines:

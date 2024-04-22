@@ -75,37 +75,50 @@ package demo_conversions is
 		return type_distance_model_positive;
 
 
-	function to_virtual (
-		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor)
-		return type_vector_model;
-	
 
-	-- Converts a canvas point (CS2) to a real model point (CS1)
-	-- according to the given zoom factor, the current
-	-- base-offset, the current translate-offset and
-	-- then the position of the current bounding-box:
-	function to_model (
-		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor)
-		return type_vector_model;
 	
-
+	-- Converts a given virtual model point (CS1)
+	-- to a point on the canvas (CS2) according to 
+	-- the given zoom factor.
+	-- Optionally, if argument "translate" is true, then current
+	-- tranlate-offset will be taken into account.
 	function virtual_to_canvas (
 		V	 		: in type_vector_model;
 		zf			: in type_zoom_factor;
 		translate	: in boolean)
 		return type_logical_pixels_vector;
+	
+	-- Converts a given canvas point (CS2) back
+	-- to a virtual model point (CS1) on the canvas according 
+	-- to the given zoom factor.
+	-- The current tranlate-offset is ALWAYS taken into account.
+	function canvas_to_virtual (
+		P			: in type_logical_pixels_vector;
+		zf			: in type_zoom_factor)
+		return type_vector_model;
+
 
 	
+
 	-- Converts a real model point (CS1) to a canvas point (CS2)
 	-- according to the given zoom factor, the current
 	-- base-offset, the current translate-offset and
 	-- then the position of the current bounding-box:
-	function to_canvas ( -- CS: rename to real_to_canvas
+	function real_to_canvas (
 		M 	: in type_vector_model;
 		zf	: in type_zoom_factor)
 		return type_logical_pixels_vector;
+	
+	-- Converts a canvas point (CS2) back to a real model point (CS1)
+	-- according to the given zoom factor, the current
+	-- base-offset, the current translate-offset and
+	-- then the position of the current bounding-box:
+	function canvas_to_real (
+		P	: in type_logical_pixels_vector;
+		zf	: in type_zoom_factor)
+		return type_vector_model;
+	
+	
 
 
 

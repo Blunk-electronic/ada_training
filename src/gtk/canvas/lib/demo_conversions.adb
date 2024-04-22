@@ -87,61 +87,6 @@ package body demo_conversions is
 
 	
 
-	function to_virtual (
-		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor)
-		return type_vector_model
-	is 
-		result : type_vector_model;
-		debug : boolean := false;
-	begin
-		result.x := type_distance_model 
-			(( (point.x - T.x) - F.x) / type_logical_pixels (zf));
-		
-		result.y := type_distance_model 
-			((-(point.y - T.y) - F.y) / type_logical_pixels (zf));
-
-		return result;
-	end to_virtual;
-
-	
-	
-	function to_model (
-		point	: in type_logical_pixels_vector;
-		zf		: in type_zoom_factor)
-		return type_vector_model
-	is 
-		result : type_vector_model;
-		debug : boolean := false;
-	begin
-		if debug then
-			put_line ("to_model");
-			put_line ("T " & to_string (T));
-		end if;
-		
-		-- Compute the virtual model point corresponding
-		-- to the given canvas point:
-		result := to_virtual (point, zf);
-		
-		-- The result must be compensated by the bounding-box position
-		-- in order to obtain a real model point:
-		move_by (result, bounding_box.position);
-
-		return result;
-
-		exception
-			when constraint_error =>
-				put_line ("ERROR: conversion from canvas point "
-					& "to model point failed !");
-				put_line (" point " & to_string (point));
-				put_line (" zf    " & to_string (zf));
-				put_line (" T     " & to_string (T));
-				put_line (" F     " & to_string (F));
-				raise;						  
-	end to_model;
-
-
-	
 	function virtual_to_canvas (
 		V 			: in type_vector_model;
 		zf			: in type_zoom_factor;
@@ -166,8 +111,28 @@ package body demo_conversions is
 	end virtual_to_canvas;
 
 	
+	
+	function canvas_to_virtual (
+		P			: in type_logical_pixels_vector;
+		zf			: in type_zoom_factor)
+		return type_vector_model
+	is 
+		result : type_vector_model;
+		debug : boolean := false;
+	begin
+		result.x := type_distance_model 
+			(( (P.x - T.x) - F.x) / type_logical_pixels (zf));
+		
+		result.y := type_distance_model 
+			((-(P.y - T.y) - F.y) / type_logical_pixels (zf));
 
-	function to_canvas (
+		return result;
+	end canvas_to_virtual;
+
+	
+
+
+	function real_to_canvas (
 		M 	: in type_vector_model;
 		zf	: in type_zoom_factor)
 		return type_logical_pixels_vector
@@ -179,14 +144,50 @@ package body demo_conversions is
 		-- to a virtual model point:
 		V := to_virtual (M);
 
-		-- Convert the virtual model point V to a canvas point:
+		-- Convert the virtual model point V to a 
+		-- canvas point and take the current translate-offset
+		-- into account:
 		Z := virtual_to_canvas (V, zf, translate => true);
 	
 		return Z;
-	end to_canvas;
+	end real_to_canvas;
 
 	
+	function canvas_to_real (
+		P	: in type_logical_pixels_vector;
+		zf	: in type_zoom_factor)
+		return type_vector_model
+	is 
+		M : type_vector_model;
+		debug : boolean := false;
+	begin
+		if debug then
+			put_line ("canvas_to_real");
+			put_line ("T " & to_string (T));
+		end if;
+		
+		-- Convert the given canvas point to a virtual
+		-- model point:
+		M := canvas_to_virtual (P, zf);
+		
+		-- Convert the virtual model point to
+		-- a real model point:
+		return to_real (M);
 
+		exception
+			when constraint_error =>
+				put_line ("ERROR: conversion from canvas point "
+					& "to model point failed !");
+				put_line (" point " & to_string (P));
+				put_line (" zf    " & to_string (zf));
+				put_line (" T     " & to_string (T));
+				put_line (" F     " & to_string (F));
+				raise;						  
+	end canvas_to_real;
+
+
+	
+	
 	function get_bounding_box_corners
 		return type_bounding_box_corners
 	is
@@ -197,10 +198,10 @@ package body demo_conversions is
 
 	begin
 		-- Convert the corners of the bounding-box to canvas coordinates:
-		result.TL := to_canvas (BC.TL, S);
-		result.TR := to_canvas (BC.TR, S);
-		result.BL := to_canvas (BC.BL, S);
-		result.BR := to_canvas (BC.BR, S);
+		result.TL := real_to_canvas (BC.TL, S);
+		result.TR := real_to_canvas (BC.TR, S);
+		result.BL := real_to_canvas (BC.BL, S);
+		result.BR := real_to_canvas (BC.BR, S);
 		
 		return result;
 	end get_bounding_box_corners;

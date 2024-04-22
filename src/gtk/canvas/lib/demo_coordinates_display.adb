@@ -412,7 +412,7 @@ package body demo_coordinates_display is
 		
 		-- Convert the pointer position to a real
 		-- point in the model:
-		mp := to_model (cp, S);
+		mp := canvas_to_real (cp, S);
 
 		-- Compute the relative distance from cursor
 		-- to pointer:
