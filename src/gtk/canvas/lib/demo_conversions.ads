@@ -89,7 +89,7 @@ package demo_conversions is
 		return type_logical_pixels_vector;
 	
 	-- Converts a given canvas point (CS2) back
-	-- to a virtual model point (CS1) on the canvas according 
+	-- to a virtual model point (CS1) according 
 	-- to the given zoom factor.
 	-- The current tranlate-offset is ALWAYS taken into account.
 	function canvas_to_virtual (

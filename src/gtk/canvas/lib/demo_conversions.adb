@@ -118,7 +118,7 @@ package body demo_conversions is
 		return type_vector_model
 	is 
 		result : type_vector_model;
-		debug : boolean := false;
+		-- debug : boolean := false;
 	begin
 		result.x := type_distance_model 
 			(( (P.x - T.x) - F.x) / type_logical_pixels (zf));

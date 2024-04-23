@@ -89,7 +89,7 @@ package body demo_zoom is
 	procedure set_translation_for_zoom (
 		S1	: in type_zoom_factor;
 		S2	: in type_zoom_factor;
-		Z1	: in type_logical_pixels_vector)
+		Z1	: in type_logical_pixels_vector) -- a canvas point
 	is 
 		debug : boolean := false;
 
