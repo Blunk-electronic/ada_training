@@ -9,7 +9,9 @@ required for a canvas of a CAD-system:
 - displaying objects to scale
 - drawing frame
 - y-axis going upwards
+- cursor
 - coordinates and distances displaying
+- conversions between real world, model and canvas
 - primitve draw operations
 
 This is a screenshot of the demo program. It shows some useless
