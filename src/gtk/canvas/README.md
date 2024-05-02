@@ -41,10 +41,11 @@ Contents <http://www.blunk-electronic.de/eda/canvas_contents_en.pdf>
 
 The book is available at:
 
-Mario Blunk
-Buchfinkenweg 3
-99097 Erfurt
-Germany
+Mario Blunk<br>
+Buchfinkenweg 3<br>
+99097 Erfurt<br>
+Germany<br>
+<br>
 
 Email: mario.blunk@blunk-electronic.de
 
