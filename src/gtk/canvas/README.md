@@ -1,6 +1,7 @@
-# About this Demoprogram
+# About this Demo Program
 
-This demoprogram demonstrates how to realize fundamental things that are
+This demo program demonstrates how to realize 
+fundamental things that are
 required for a canvas of a CAD-system:
 
 - zoom-in/out effects
@@ -38,7 +39,16 @@ English:
 
 Contents <http://www.blunk-electronic.de/eda/canvas_contents_en.pdf>
 
-<!-- The book is available at -->
+The book is available at:
+
+Mario Blunk
+Buchfinkenweg 3
+99097 Erfurt
+Germany
+
+Email: mario.blunk@blunk-electronic.de
+
+
 
 
 
