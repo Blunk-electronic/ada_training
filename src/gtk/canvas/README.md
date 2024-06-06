@@ -1,14 +1,13 @@
 # About this Demo Program
 
-This demo program demonstrates how to realize 
-fundamental things that are
-required for a canvas of a CAD-system:
+This demo program demonstrates how to realize fundamental things that are
+required for a canvas of a CAD-system. These are the core topics:
 
 - zoom-in/out effects
 - scrolled window
 - scrollbars
 - displaying objects to scale
-- drawing frame
+- drawing frame and title block
 - y-axis going upwards
 - cursor
 - coordinates and distances displaying
