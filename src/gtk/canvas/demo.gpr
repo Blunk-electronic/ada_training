@@ -9,7 +9,14 @@ with "gtkada.gpr";
 
 
  	for main use ("demo");
+ 	
+--  package Linker is
+--		for Default_Switches ("Ada") use ("-static");
+--	end Linker;
+ 	
  end demo;
 
+
+ 
 -- build with command "gprbuild"
 -- clean up with command "gprclean"
