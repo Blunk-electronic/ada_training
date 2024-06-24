@@ -120,7 +120,7 @@ package demo_callbacks is
 	-- which widget inside the main window has the focus.
 	-- This callback function is at the top of the event-chain.
 	-- It is called at first on a key-press event.
-	-- If it returns true, then it signals to the 
+	-- If it returns false, then it signals to the 
 	-- next widget in the chain downwards to handle the event
 	-- further.
 	-- The return should depend on the severity of the key.
