@@ -52,10 +52,8 @@ package body demo_canvas is
 		cairo.stroke (context);
 	end stroke;
 
-	
-	procedure refresh (
-		canvas	: access gtk_widget_record'class)
-	is
+
+	procedure refresh is
 		drawing_area : constant gtk_drawing_area := 
 			gtk_drawing_area (canvas);
 	begin
@@ -63,7 +61,7 @@ package body demo_canvas is
 		drawing_area.queue_draw;
 	end refresh;
 
-
+	
 	procedure compute_canvas_size is
 		use demo_logical_pixels;
 		use demo_bounding_box;

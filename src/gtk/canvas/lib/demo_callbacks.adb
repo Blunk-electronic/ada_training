@@ -97,7 +97,7 @@ package body demo_callbacks is
 		add_object;
 
 		-- Redraw the canvas:
-		refresh (canvas);
+		refresh;
 	end cb_add;
 
 	
@@ -108,7 +108,7 @@ package body demo_callbacks is
 		delete_object;
 
 		-- Redraw the canvas:
-		refresh (canvas);
+		refresh;
 	end cb_delete;
 
 	
@@ -391,7 +391,7 @@ package body demo_callbacks is
 			F.y := F.y - dh;
 
 			-- Schedule a refresh to make the size change appear smoothly:
-			refresh (canvas);
+			refresh;
 			
 			-- Approach 2: -- CS never tried
 			-- Modify the y-component of the translate-offset
@@ -539,7 +539,7 @@ package body demo_callbacks is
 	is begin
 		-- put_line ("horizontal moved " & image (clock));
 		-- show_adjustments_h;
-		refresh (canvas);
+		refresh;
 	end cb_horizontal_moved;
 
 	
@@ -548,7 +548,7 @@ package body demo_callbacks is
 	is begin		
 		-- put_line ("vertical moved " & image (clock));
 		-- show_adjustments_v;
-		refresh (canvas);
+		refresh;
 	end cb_vertical_moved;
 
 
@@ -644,6 +644,7 @@ package body demo_callbacks is
 		-- canvas.on_size_allocate (cb_canvas_size_allocate'access);
 		-- canvas.set_redraw_on_allocate (false);
 
+		-- Connect the canvas with the "on_draw"-signal:
 		canvas.on_draw (cb_draw'access);
 		-- NOTE: No context is declared here, because the canvas widget
 		-- passes its own context to the callback procedure cb_draw.
@@ -734,7 +735,7 @@ package body demo_callbacks is
 		end if;
 
 		
-		refresh (canvas);
+		refresh;
 		
 		return event_handled;
 	end cb_canvas_button_pressed;
@@ -854,7 +855,7 @@ package body demo_callbacks is
 		end if;
 
 		
-		refresh (canvas);
+		refresh;
 		
 		return event_handled;
 	end cb_canvas_button_released;
@@ -912,7 +913,7 @@ package body demo_callbacks is
 
 			-- The canvas must be refreshed in order to
 			-- show the rectangle as the mouse is being moved:
-			refresh (canvas);
+			refresh;
 		end if;
 		
 		return event_handled;
@@ -982,7 +983,7 @@ package body demo_callbacks is
 					-- is nearest to the center of the visible area:
 					put_line ("move cursor to center");
 					move_cursor (snap_to_grid (get_center (visible_area)));
-					refresh (canvas);
+					refresh;
 
 				-- when GDK_F2 =>
 
@@ -1080,7 +1081,7 @@ package body demo_callbacks is
 			backup_visible_area (get_visible_area (canvas));
 			
 			-- schedule a redraw:
-			refresh (canvas);
+			refresh;
 		end zoom;
 
 
@@ -1205,7 +1206,8 @@ package body demo_callbacks is
 		use demo_visible_area;
 		
 	begin
-		-- new_line;
+		-- Uncomment the next statement in order
+		-- to monitor when this procedure is called:
 		-- put_line ("cb_draw " & image (clock));
 
 		-- Update the global context:

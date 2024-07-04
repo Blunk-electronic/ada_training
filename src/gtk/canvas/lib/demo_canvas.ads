@@ -64,10 +64,14 @@ package demo_canvas is
 	canvas_size : type_window_size;
 
 
-	-- This procedure should be called in order to schedule
-	-- a refresh (or redraw) of the canvas:
-	procedure refresh (
-		canvas	: access gtk_widget_record'class);
+	-- This procedure should be called in order to 
+	-- explicitley schedule
+	-- a refresh (or redraw) of the canvas.
+	-- It calls the procedure queue_draw, which in turn
+	-- issues the "on_draw"-signal. The "on_draw"-signal
+	-- in turn triggers the callback procedure "cb_draw" (see
+	-- package demo_callbacks):
+	procedure refresh;
 	
 
 	-- This procedure computes the dimensions of the canvas

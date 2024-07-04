@@ -130,7 +130,7 @@ package body demo_cursor is
 
 		end if;
 			
-		refresh (canvas);		
+		refresh;		
 		
 		update_cursor_coordinates;
 		update_distances_display;

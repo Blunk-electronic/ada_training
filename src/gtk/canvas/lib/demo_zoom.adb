@@ -229,7 +229,7 @@ package body demo_zoom is
 		backup_visible_area (get_visible_area (canvas));
 		
 		-- schedule a redraw:
-		refresh (canvas);		
+		refresh;		
 	end zoom_on_cursor;
 
 
@@ -322,7 +322,7 @@ package body demo_zoom is
 		backup_visible_area (bounding_box);
 		
 		-- Schedule a redraw of the canvas:
-		refresh (canvas);
+		refresh;
 	end zoom_to_fit_all;
 	
 
