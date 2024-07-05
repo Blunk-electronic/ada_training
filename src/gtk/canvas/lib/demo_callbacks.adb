@@ -539,7 +539,18 @@ package body demo_callbacks is
 	is begin
 		-- put_line ("horizontal moved " & image (clock));
 		-- show_adjustments_h;
+		null;
+
+		-- CS: If the following statement is commented out,
+		-- then the refresh is triggered solely implicitly by GTK.
+		-- The drawback is that the signal "on_draw" is sent
+		-- not frequently enough. Another strange effect is that
+		-- the callback procedure cb_draw does not work
+		-- properly any more. Currently there is no explanation
+		-- for this strange behaviour.
+		
 		refresh;
+		
 	end cb_horizontal_moved;
 
 	
@@ -1208,7 +1219,8 @@ package body demo_callbacks is
 	begin
 		-- Uncomment the next statement in order
 		-- to monitor when this procedure is called:
-		-- put_line ("cb_draw " & image (clock));
+		
+		put_line ("cb_draw " & image (clock));
 
 		-- Update the global context:
 		context := context_in;

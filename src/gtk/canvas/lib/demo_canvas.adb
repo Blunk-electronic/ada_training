@@ -53,12 +53,13 @@ package body demo_canvas is
 	end stroke;
 
 
-	procedure refresh is
-		drawing_area : constant gtk_drawing_area := 
-			gtk_drawing_area (canvas);
-	begin
-		-- put_line ("refresh " & image (clock)); 
-		drawing_area.queue_draw;
+	procedure refresh is begin
+		-- Uncomment the next statement in order
+		-- to monitor when this procedure is called:
+		
+		-- put_line ("refresh"); 
+
+		canvas.queue_draw;
 	end refresh;
 
 	
