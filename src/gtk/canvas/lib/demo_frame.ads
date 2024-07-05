@@ -73,7 +73,9 @@ package demo_frame is
 
 
 	-- This procedure generates a very simple
-	-- dummy drawing frame:
+	-- dummy drawing frame. It applies the 
+	-- drawing_frame_position (see above) to the 
+	-- drawing_frame.position:
 	procedure make_drawing_frame;
 
 
