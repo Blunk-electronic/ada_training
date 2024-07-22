@@ -278,6 +278,10 @@ package demo_callbacks is
 	-- is to be refreshed when it gets the
 	-- "on_draw"-signal. See also the body of procedure "set_up_canvas"
 	-- where the signal connection is made.
+	--
+	-- NOTE: This function is also called by other signals, such as
+	-- "grab_focus". The corresponding connection is active by default.
+	--
 	-- It draws everything: frame, grid, cursor, objects
 	function cb_draw (
 		canvas		: access gtk_widget_record'class;
