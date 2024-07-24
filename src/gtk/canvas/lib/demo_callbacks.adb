@@ -466,7 +466,8 @@ package body demo_callbacks is
 			-- show_adjustments_h;
 			-- show_adjustments_v;
 			
-			-- Compute the change of width and height:
+			-- Compute the change of width and height
+			-- and convert it to logical pixels:
 			dW := type_logical_pixels (new_size.width - swin_size.width);
 			dH := type_logical_pixels (new_size.height - swin_size.height);
 
