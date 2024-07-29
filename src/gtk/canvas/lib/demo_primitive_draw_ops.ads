@@ -59,6 +59,7 @@ package demo_primitive_draw_ops is
 	procedure draw_line (
 		line		: in type_line;
 		pos			: in type_vector_model;
+		-- CS: default origin (0;0) in case there is no parent object ?
 		do_stroke	: in boolean := false);
 
 	
@@ -67,6 +68,7 @@ package demo_primitive_draw_ops is
 	procedure draw_circle (
 		circle		: in type_circle;
 		pos			: in type_vector_model;
+		-- CS: default origin (0;0) in case there is no parent object ?
 		do_stroke	: in boolean := false);
 	
 	
