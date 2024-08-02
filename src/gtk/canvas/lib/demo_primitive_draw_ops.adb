@@ -173,6 +173,10 @@ package body demo_primitive_draw_ops is
 			m := real_to_canvas (c.c, S);
 			r := to_distance (c.r);
 
+			-- required to suppress an initial line:
+			-- CS new_sub_path (context);
+
+			
 			-- THIS DRAW OPERATION CONSUMES THE MOST TIME:
 			arc (context, 
 				 to_gdouble_positive (m.x), 
