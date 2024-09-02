@@ -169,7 +169,7 @@ package body demo_canvas is
 
 
 
-	procedure shift_canvas (
+	procedure shift_swin (
 		direction	: type_direction;
 		distance	: type_distance_model)
 	is
@@ -243,7 +243,7 @@ package body demo_canvas is
 		end case;
 
 		backup_scrollbar_settings;
-	end shift_canvas;
+	end shift_swin;
 
 	
 end demo_canvas;

@@ -101,14 +101,14 @@ package body demo_cursor is
 					-- then shift the canvas to the right:
 					if cursor.position.x > 
 						visible_area.position.x + visible_area.width then
-						shift_canvas (direction, grid.spacing.x);
+						shift_swin (direction, grid.spacing.x);
 					end if;
 					
 				when DIR_LEFT =>
 					-- If the cursor is left of the visible area,
 					-- then shift the canvas to the left:
 					if cursor.position.x < visible_area.position.x then
-						shift_canvas (direction, grid.spacing.x);
+						shift_swin (direction, grid.spacing.x);
 					end if;
 					
 				when DIR_UP =>
@@ -116,14 +116,14 @@ package body demo_cursor is
 					-- then shift the canvas up:
 					if cursor.position.y > 
 						visible_area.position.y + visible_area.height then
-						shift_canvas (direction, grid.spacing.y);
+						shift_swin (direction, grid.spacing.y);
 					end if;
 
 				when DIR_DOWN =>
 					-- If the cursor is below of the visible area,
 					-- then shift the canvas down:
 					if cursor.position.y < visible_area.position.y then
-						shift_canvas (direction, grid.spacing.y);
+						shift_swin (direction, grid.spacing.y);
 					end if;
 
 			end case;
