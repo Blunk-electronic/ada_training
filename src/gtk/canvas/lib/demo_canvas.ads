@@ -88,9 +88,11 @@ package demo_canvas is
 	-- of the canvas on the console:
 	procedure show_canvas_size;
 
+	
 	-- This procedure creates the canvas, sets its size,
 	-- and adds it into the scrolled window.
-	-- It also adds events to be sensitive to:
+	-- It adds events the canvas is to respond to.
+	-- It also inserts the scrolled window (swin) into box_h:
 	procedure create_canvas;
 
 
