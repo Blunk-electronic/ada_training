@@ -58,7 +58,7 @@ package body demo_main_window is
 
 		-- main_window.set_redraw_on_allocate (false);
 		
-
+		-- Create the main box which contains everything:
 		gtk_new_hbox (box_h);
 
 		
@@ -66,18 +66,22 @@ package body demo_main_window is
 		gtk_new_vbox (box_v1);
 		box_v1.set_border_width (10);
 		
-		-- The left vbox shall not change its width when the 
-		-- main window is resized:
+		-- The box_v1 (on the left, containing the coordinates display)
+		-- must NOT change its width when the main window is resized:
 		box_h.pack_start (box_v1, expand => false);
 
-		-- Place a separator between the left and right
-		-- vertical box:
+		-- Place a separator right of box_v1.
+		-- It must also have a FIXED width:
 		separator := gtk_separator_new (ORIENTATION_VERTICAL);
 		box_h.pack_start (separator, expand => false);
 
-		-- The right vbox shall expand upon resizing the main window:
-		-- box_h.pack_start (box_v2);
+		-- Later, in box_h will be added right of the separator:
+		-- - box_v0 (containing the command buttons) and
+		-- - swin (the scrolled window containing the canvas)
+		-- The scrolled window will
+		-- occupy the remaining space right of box_v0.
 
+		-- Add the main box to the main window:
 		main_window.add (box_h);
 		
 	end create_window;

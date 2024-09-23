@@ -45,11 +45,15 @@ package demo_main_window is
 
 	main_window	: gtk_window;
 	
+	-- The main box that contains everything:
 	box_h 				: gtk_hbox;
-	box_v0				: gtk_vbox;
-	box_v1				: gtk_vbox;
 
+	
+	-- These items will be inserted in box_h 
+	-- from the left to the right:
+	box_v1				: gtk_vbox; -- for the coordinates display
 	separator			: gtk_separator;
+	box_v0				: gtk_vbox; -- for the buttons
 
 
 	-- This procedure creates the main window and
