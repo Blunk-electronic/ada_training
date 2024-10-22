@@ -163,7 +163,9 @@ package body demo_canvas is
 
 		-- Insert the scrolled window in box_h:
 		put_line ("add scrolled window to box_h");
-		box_h.pack_start (swin);
+		box_h.pack_start (swin); 
+		-- The argument "expand" is true by default which
+		-- makes swin changing its size along with box_h.
 		
 	end create_canvas;
 
