@@ -4,7 +4,7 @@
 # --                                                                          --
 # --                           GTKADA INSTALLER                               --
 # --                                                                          --
-# --         Copyright (C) 2023 Mario Blunk, Blunk electronic                 --
+# --         Copyright (C) 2025 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
 # --    This program is free software: you can redistribute it and/or modify  --
 # --    it under the terms of the GNU General Public License as published by  --
@@ -35,6 +35,10 @@
 
 
 #set -e
+
+release=25.0.0
+release_prefix=v$release
+
 
 install_dir=gtkada
 download_required=no
@@ -75,12 +79,8 @@ proc_make_install_dir()
 proc_download_gtkada()
 	{
 	echo "downloading and unpacking gtkada ..."
-	#wget --no-netrc https://github.com/AdaCore/gtkada/archive/gtkada-17.0.tar.gz
-	wget --no-netrc https://github.com/AdaCore/gtkada/archive/refs/tags/v23.0.0.tar.gz
-	tar -xf v23.0.0.tar.gz
-	
-# 	echo "cloning gtkada ..."
-# 	git clone https://github.com/AdaCore/gtkada.git
+	wget --no-netrc https://github.com/AdaCore/gtkada/archive/refs/tags/$release_prefix.tar.gz
+	tar -xf $release_prefix.tar.gz
 	}
 
 	
@@ -238,7 +238,7 @@ else
 	}
 fi
 
-cd gtkada-23.0.0
+cd gtkada-$release
 proc_configure
 
 make

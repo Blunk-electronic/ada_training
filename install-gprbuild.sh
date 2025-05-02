@@ -4,7 +4,7 @@
 # --                                                                          --
 # --                           GPRBUILD iNSTALLER                             --
 # --                                                                          --
-# --         Copyright (C) 2023 Mario Blunk, Blunk electronic                 --
+# --         Copyright (C) 2025 Mario Blunk, Blunk electronic                 --
 # --                                                                          --
 # --    This program is free software: you can redistribute it and/or modify  --
 # --    it under the terms of the GNU General Public License as published by  --
@@ -37,6 +37,9 @@
 # exit this script on error:
 set -e
 
+release=25.0.0
+release_prefix=v$release
+
 install_dir=gprbuild_tmp
 download_required=no
 
@@ -63,9 +66,9 @@ proc_make_install_dir()
 proc_dowload_xmlada()
 	{
 	echo "downloading and unpacking xmlada ..."
-	wget --no-netrc https://github.com/AdaCore/xmlada/archive/refs/tags/v23.0.0.tar.gz
-	tar -xf v23.0.0.tar.gz
-	rm v23.0.0.tar.gz
+	wget --no-netrc https://github.com/AdaCore/xmlada/archive/refs/tags/$release_prefix.tar.gz
+	tar -xf $release_prefix.tar.gz
+	rm $release_prefix.tar.gz
 	# There is no need to build xmlada.
 	}
 
@@ -73,25 +76,26 @@ proc_dowload_xmlada()
 proc_download_gprconfig_kb()
 	{
 	echo "downloading gprconfig_kb ..."
-	git clone https://github.com/AdaCore/gprconfig_kb.git
+	wget --no-netrc https://github.com/AdaCore/gprconfig_kb/archive/refs/tags/$release_prefix.tar.gz
+	tar -xf $release_prefix.tar.gz
+	rm $release_prefix.tar.gz
 	}
 
 	
 proc_download_gprbuild()
 	{
 	echo "downloading gprbuild ..."
-	#git clone https://github.com/AdaCore/gprbuild.git
-	wget --no-netrc https://github.com/AdaCore/gprbuild/archive/refs/tags/v23.0.0.tar.gz
-	tar -xf v23.0.0.tar.gz
-	rm v23.0.0.tar.gz
+	wget --no-netrc https://github.com/AdaCore/gprbuild/archive/refs/tags/$release_prefix.tar.gz
+	tar -xf $release_prefix.tar.gz
+	rm $release_prefix.tar.gz
 	}
 
 	
 proc_bootstrap_gprbuild()
 	{
 	echo "bootstrapping gprbuild ..."
-	cd gprbuild-23.0.0
-	./bootstrap.sh --with-xmlada=../xmlada-23.0.0 --with-kb=../gprconfig_kb --prefix=./bootstrap
+	cd gprbuild-$release
+	./bootstrap.sh --with-xmlada=../xmlada-$release --with-kb=../gprconfig_kb-$release --prefix=./bootstrap
 	export PATH=$PATH:$PWD/bootstrap/bin/
 	cd ..
 	}
@@ -100,7 +104,7 @@ proc_bootstrap_gprbuild()
 proc_build_xmlada()
 	{
 	echo "building xmlada ..."
-	cd xmlada-23.0.0
+	cd xmlada-$release
 	./configure --prefix=$PWD/install
 	make all
 	make install
@@ -112,7 +116,7 @@ proc_build_xmlada()
 proc_build_gprbuild()
 	{
 	echo "building gprbuild ..."
-	cd gprbuild-23.0.0
+	cd gprbuild-$release
 	make all
 	make install
 	cd ..
