@@ -89,7 +89,7 @@ package demo_zoom is
 	-- So there is a procedure set_translation_for_zoom that takes a canvas 
 	-- point and another that takes a real model point.
 	-- Later, when the actual drawing takes place (see function 
-	-- cb_draw_objects) the drawing will be dragged back by the 
+	-- cb_draw) the drawing will be dragged back by the 
 	-- translate-offset so that the operator gets the impression of a 
 	-- zoom-in or zoom-out effect.
 	-- Without applying a translate-offset the drawing would be appearing as 

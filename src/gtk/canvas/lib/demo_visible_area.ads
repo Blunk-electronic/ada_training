@@ -53,7 +53,7 @@ package demo_visible_area is
 	
 
 	-- This visible area is a global variable.
-	-- It is updated by procedure cb_draw_objects.
+	-- It is updated by procedure cb_draw.
 	-- Some subprograms rely on it, for example those which
 	-- move the cursor. For this reason the visible area is
 	-- stored in a global variable.

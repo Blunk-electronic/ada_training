@@ -51,7 +51,7 @@ package demo_canvas is
 
 
 	-- This is the global drawing context.
-	-- It is updated by the function cb_draw_objects:
+	-- It is updated by the function cb_draw:
 	context : cairo.cairo_context;
 
 	

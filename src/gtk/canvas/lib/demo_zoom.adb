@@ -212,7 +212,7 @@ package body demo_zoom is
 
 		-- After changing the zoom factor, the translate-offset must
 		-- be calculated anew. When the actual drawing takes 
-		-- place (see function cb_draw_objects)
+		-- place (see function cb_draw)
 		-- then the drawing will be dragged back by the translate-offset
 		-- so that the operator gets the impression of a zoom-into or 
 		-- zoom-out effect.
