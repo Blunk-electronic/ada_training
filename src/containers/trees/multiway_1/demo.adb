@@ -62,8 +62,10 @@ procedure demo is
 	-- This cursor points to a node in the tree.
 	-- We initialize it right away so that it points
 	-- to the root of the tree:
-	cursor : pac_enterprise_structure.cursor := root (structure);
-											
+	cursor_1 : pac_enterprise_structure.cursor := root (structure);
+								
+	cursor_2, cursor_3 : pac_enterprise_structure.cursor;
+
 	-- 1. Each department is a so called "node".
 	-- 2. A department can have one or more sub-departments
 	--    which are so called "child nodes".
@@ -74,19 +76,51 @@ procedure demo is
 	-- 6. The root has a single child as the first and topmost
 	--    item in the tree. In in our example of an
 	--    enterprise this would be the executive board.
+
+	procedure query_department (c : in pac_enterprise_structure.cursor) is
+		department : type_department renames element (c);
+	begin
+		put_line (to_string (department));
+	end query_department;
+
+
 begin
 	put_line ("demo");
 	
 	-- Create the first node, the "executive board":
 	structure.insert_child (
-		parent 		=> cursor, -- the root as input
+		parent 		=> cursor_1, -- the root as input
 		before		=> no_element,
 		new_item	=> create_department ("executive board", 1),
-		position	=> cursor); -- the node as output
+		position	=> cursor_1); -- the node as output
 
 	-- So cursor now points to the node that has
 	-- just been created:
-	put_line (to_string (element (cursor)));
+	-- put_line (to_string (element (cursor_1)));
 
 
+	-- Now create two departments that are subordinated
+	-- to the executive board:
+	structure.insert_child (
+		parent 		=> cursor_1,
+		before		=> no_element,
+		new_item	=> create_department ("stock management", 10),
+		position	=> cursor_3);
+
+	structure.insert_child (
+		parent 		=> cursor_1,
+		before		=> no_element,
+		new_item	=> create_department ("facility management", 30),
+		position	=> cursor_2);
+
+
+	-- Create a sub-department in "stock management":
+	structure.insert_child (
+		parent 		=> cursor_3, -- points to "stock management" as parent
+		before		=> no_element,
+		new_item	=> create_department ("tool maintenance", 20),
+		position	=> cursor_3);
+
+	-- List all departments:
+	structure.iterate (query_department'access);
 end demo;
